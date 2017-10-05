@@ -1,4 +1,6 @@
-class GraphWindow(object):
+from window import Window
+
+class GraphWindow(Window):
 
     # Data should never be None / null, since if there is no data selected a new
     # graphing window shouldn't even be opened.
@@ -22,3 +24,6 @@ class GraphWindow(object):
     def close(self):
         for window in child_windows: if window.is_open: window.close()
         self.gui.close()
+
+    def open(self):
+        self.gui.open()

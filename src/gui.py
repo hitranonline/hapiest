@@ -11,3 +11,6 @@ class Gui(object):
     # Changes the title of the window
     def set_title(self, title):
         self.window.setWindowTitle(title)
+
+    def open(self):
+        raise NotImplementedError("Should have implemented this")

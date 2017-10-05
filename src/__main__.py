@@ -1,8 +1,13 @@
-import wx
+import sys
+from shutil import copy2
+from PyQt4 import QtGui, uic, QtCore, Qt
+from hapi import *
+from util import *
+from main_window import *
+import matplotlib.pyplot as plt
 
-app = wx.App(False)
-frame = wx.Frame(None, wx.ID_ANY, "Hey")
-frame.Show(True)
-frame2 = wx.Frame(None, wx.ID_ANY, "Hey")
-frame2.Show(True)
-app.MainLoop()
+util_init()
+db_begin('test_data')
+app = QtGui.QApplication(sys.argv)
+window = MainWindow()
+sys.exit(app.exec_())

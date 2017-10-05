@@ -11,5 +11,8 @@ class FetchWindow(object):
     def close(self):
         self.gui.close()
 
+    def open(self):
+        self.gui.open()
+
     def try_fetch(self):
         # TODO: Implement this
