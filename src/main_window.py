@@ -248,10 +248,10 @@ class MainWindowGui(QtGui.QMainWindow):
     # Attempts to convert wn_max text to an integer - if it fails it returns
     # None, on success it returns the number (duh.)
     def get_wn_max(self):
-        return str_to_int(str(self.wn_max.text()))
+        return str_to_float(str(self.wn_max.text()))
 
 
     # Attempts to convert wn_min text to an integer - if it fails it returns
     # None, on success it returns the number (duh.)
     def get_wn_min(self):
-        return str_to_int(self.wn_min.text())
+        return str_to_float(self.wn_min.text())

@@ -54,7 +54,7 @@ class DataHandle(object):
             errors.append(FetchError(FetchErrorKind.BadNuMax))
 
         if len(iso_id_list) == 0:
-            errors.append(FetchError(FetchErrorKindBadIsoList, 'Bad isotopologue list: you must select at least one isotopologue'))
+            errors.append(FetchError(FetchErrorKind.BadIsoList, 'Bad isotopologue list: you must select at least one isotopologue'))
 
         # If the len isn't zero there was an error
         if len(errors) != 0:

@@ -1,4 +1,5 @@
 from hapi import *
+from config import *
 from PyQt4 import QtGui, uic, QtCore, Qt
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -24,10 +25,17 @@ ISOTOPOLOGUE_NAME_TO_GLOBAL_ID = {}
 # it's id in hapi's ISO)
 ISOTOPOLOGUE_NAME_TO_LOCAL_ID = {}
 
+# The program config object
+CONFIG = Configuration()
+
 # Performas all initialization required for data structures
 def util_init(*args, **kwargs):
     init_iso_maps()
 
+def util_close():
+    __TEXT_RECEIVER.running = False
+    print 'Exiting...'
+    __TEXT_THREAD.exit(0)
 
 # Initialize maps that are constructed using data from hapi's ISO map
 def init_iso_maps():
@@ -52,6 +60,15 @@ def init_iso_maps():
 # Attempts to convert a string to an int
 # In the case of an issue or failure, it will return None
 def str_to_int(s):
+    try:
+        x = int(s)
+        return x
+    except ValueError:
+        return None
+
+# Attempts to convert a string to an int
+# In the case of an issue or failure, it will return None
+def str_to_float(s):
     try:
         x = int(s)
         return x
@@ -89,10 +106,11 @@ class TextReceiver(QObject):
     def __init__(self, queue, *args, **kwargs):
         QObject.__init__(self)
         self.queue = queue
+        self.running = True
 
     @pyqtSlot()
     def run(self):
-        while True:
+        while self.running:
             text = self.queue.get()
             self.write_signal.emit(text)
 
