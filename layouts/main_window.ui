@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
-    <height>672</height>
+    <width>800</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>20</x>
       <y>200</y>
-      <width>361</width>
+      <width>301</width>
       <height>301</height>
      </rect>
     </property>
@@ -28,7 +28,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>0</y>
+      <y>40</y>
       <width>181</width>
       <height>40</height>
      </rect>
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>0</y>
+      <y>40</y>
       <width>141</width>
       <height>30</height>
      </rect>
@@ -66,8 +66,8 @@
    <widget class="QLineEdit" name="wn_min">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>20</y>
+      <x>600</x>
+      <y>40</y>
       <width>113</width>
       <height>36</height>
      </rect>
@@ -79,8 +79,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>20</y>
+      <x>380</x>
+      <y>40</y>
       <width>221</width>
       <height>30</height>
      </rect>
@@ -92,8 +92,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>80</y>
+      <x>380</x>
+      <y>100</y>
       <width>221</width>
       <height>30</height>
      </rect>
@@ -105,8 +105,8 @@
    <widget class="QLineEdit" name="wn_max">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>80</y>
+      <x>600</x>
+      <y>100</y>
       <width>113</width>
       <height>36</height>
      </rect>
@@ -118,8 +118,8 @@
    <widget class="QPushButton" name="fetch_button">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>520</y>
+      <x>620</x>
+      <y>560</y>
       <width>168</width>
       <height>51</height>
      </rect>
@@ -132,8 +132,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
-      <width>141</width>
+      <y>100</y>
+      <width>101</width>
       <height>30</height>
      </rect>
     </property>
@@ -145,7 +145,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>60</y>
+      <y>100</y>
       <width>132</width>
       <height>36</height>
      </rect>
@@ -154,7 +154,7 @@
    <widget class="QListWidget" name="param_group_list">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>340</x>
       <y>200</y>
       <width>201</width>
       <height>301</height>
@@ -164,7 +164,7 @@
    <widget class="QListWidget" name="param_list">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>560</x>
       <y>200</y>
       <width>201</width>
       <height>301</height>
@@ -174,7 +174,7 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>340</x>
       <y>160</y>
       <width>221</width>
       <height>30</height>
@@ -187,7 +187,7 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>560</x>
       <y>160</y>
       <width>121</width>
       <height>30</height>
@@ -197,13 +197,61 @@
      <string>Parameters</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="console_output">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>560</y>
+      <width>581</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="acceptRichText">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>520</y>
+      <width>181</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Console Output</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="clear_console">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>640</y>
+      <width>168</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clear Console</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>836</width>
+     <width>800</width>
      <height>43</height>
     </rect>
    </property>
