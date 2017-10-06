@@ -56,6 +56,10 @@ class MainWindow(Window):
         self.gui.fetch_button.clicked.connect(
                                     lambda: self.__handle_fetch_clicked())
 
+        # Set the clear_console button onckick method to the one defined in the class
+        self.gui.clear_console.clicked.connect(
+                                    lambda: self.__handle_clear_console_clicked())
+
         # Display the GUI since we're done configuring it
         self.gui.show()
 
@@ -72,6 +76,7 @@ class MainWindow(Window):
         params = self.gui.get_selected_params()
 
         result = data_handle.try_fetch(
+                                    self,
                                     self.gui.get_selected_isotopologues(),
                                     wn_min,
                                     wn_max,
@@ -87,6 +92,8 @@ class MainWindow(Window):
                 print p, '\n'
             return
 
+    def __handle_clear_console_clicked(self):
+        self.gui.console_output.clear()
 
     # This method repopulates the isotopologue list widget after the molecule
     # that is being worked with changes.
@@ -136,6 +143,11 @@ class MainWindow(Window):
             index += 1
 
 
+    def fetch_error(self, error):
+        return
+        # TODO: Handle the error :)
+
+
     def open_graph_window(self):
         # Open a fetch window
         self.child_windows.append(GraphWindow())
@@ -160,6 +172,10 @@ class MainWindow(Window):
     def open(self):
         self.gui.open()
 
+    @pyqtSlot(str)
+    def append_text(self, text):
+        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
+        self.gui.console_output.insertPlainText(text)
 
 class MainWindowGui(QtGui.QMainWindow):
 

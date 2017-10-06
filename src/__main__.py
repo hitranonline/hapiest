@@ -7,7 +7,8 @@ from main_window import *
 import matplotlib.pyplot as plt
 
 util_init()
-db_begin('test_data')
 app = QtGui.QApplication(sys.argv)
 window = MainWindow()
+init_console_redirect(window, sys.argv)
+db_begin('test_data')
 sys.exit(app.exec_())
