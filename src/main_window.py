@@ -245,13 +245,11 @@ class MainWindowGui(QtGui.QMainWindow):
         return str(self.data_name.text())
 
 
-    # Attempts to convert wn_max text to an integer - if it fails it returns
-    # None, on success it returns the number (duh.)
+    # Fetches the double value from the QDoubleSpinBox wn_max
     def get_wn_max(self):
-        return str_to_float(str(self.wn_max.text()))
+        return self.wn_max.value()
 
 
-    # Attempts to convert wn_min text to an integer - if it fails it returns
-    # None, on success it returns the number (duh.)
+    # Fetches the double value from the QDoubleSpinBox wn_min
     def get_wn_min(self):
-        return str_to_float(self.wn_min.text())
+        return self.wn_min.value()

@@ -84,22 +84,6 @@
      <string>Isotopologues</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="wn_min">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>40</y>
-      <width>113</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
-    </property>
-    <property name="text">
-     <string>4000</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
@@ -124,22 +108,6 @@
     </property>
     <property name="text">
      <string>Wave Number Max</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="wn_max">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>100</y>
-      <width>113</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
-    </property>
-    <property name="text">
-     <string>4200</string>
     </property>
    </widget>
    <widget class="QPushButton" name="fetch_button">
@@ -270,6 +238,26 @@
     </property>
     <property name="text">
      <string>Clear Console</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="wn_min">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>40</y>
+      <width>161</width>
+      <height>36</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="wn_max">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>100</y>
+      <width>161</width>
+      <height>36</height>
+     </rect>
     </property>
    </widget>
   </widget>
