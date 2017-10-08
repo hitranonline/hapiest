@@ -43,6 +43,13 @@ class MainWindow(Window):
 
             self.gui.param_list.addItem(item)
 
+
+        # Connect the function to be executed when wn_max's value changes
+        self.gui.wn_max.valueChanged.connect(
+                                    lambda value: self.__wn_max_change(value))
+        # Connect the function to be executed when wn_min's value changes
+        self.gui.wn_max.valueChanged.connect(
+                                    lambda value: self.__wn_max_change(value))
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
         # the drop-down list is populated so there is something to be selected
@@ -63,6 +70,18 @@ class MainWindow(Window):
         # Display the GUI since we're done configuring it
         self.gui.show()
 
+
+    def __wn_max_change(self, value):
+        self.gui.wn_min.setMaximum(float(value))
+        max = self.gui.wn_max.maximum()
+        if value > max:
+            self.gui.wn_min.setValue(max)
+
+    def __wn_min_change(self, value):
+        self.gui.wn_max.setMinimum(float(value))
+        min = self.gui.wn_min.minimum()
+        if value < min:
+            self.gui.wn_min.setValue(min)
 
     def __handle_fetch_clicked(self):
         molecule = self.gui.get_selected_molecule_id()
@@ -100,6 +119,21 @@ class MainWindow(Window):
     def __molecule_id_index_changed(self):
         # Get the local molecule id
         molecule_id = self.gui.get_selected_molecule_id()
+
+        if molecule_id in MOLECULE_DATA_RANGE:
+            # Get the range
+            min, max = MOLECULE_DATA_RANGE[molecule_id]
+
+            # Change the range for wn
+            self.gui.wn_min.setMinimum(min)
+            self.gui.wn_max.setMaximum(max)
+
+            self.gui.wn_min.setValue(min)
+            self.gui.wn_max.setValue(max)
+
+            print "min: ", min, ", max: ", max
+        else:
+            print "[Log] No wavenumber range-data for molecule id ", molecule_id
 
         # Remove all old elements
         self.gui.iso_list.clear()

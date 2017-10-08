@@ -256,7 +256,7 @@
      <double>100000.000000000000000</double>
     </property>
     <property name="value">
-     <double>4000.000000000000000</double>
+     <double>0.000000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="wn_max">
@@ -275,7 +275,7 @@
      <double>100000.000000000000000</double>
     </property>
     <property name="value">
-     <double>5000.000000000000000</double>
+     <double>0.000000000000000</double>
     </property>
    </widget>
   </widget>
