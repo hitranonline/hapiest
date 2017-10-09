@@ -133,7 +133,6 @@ def util_close():
     print 'Exiting...'
     __TEXT_THREAD.exit(0)
 
-
 # Initialize maps that are constructed using data from hapi's ISO map
 def init_iso_maps():
     global MOLECULE_ID_TO_ISO_COUNT
@@ -219,7 +218,7 @@ def iso_to_html(_iso):
         if dat['count'] != None:
             html += '<sub>' + dat['count'] + '</sub>'
 
-            
+
     return html
 
 

@@ -20,6 +20,11 @@ class MainWindow(Window):
             # The iso list includes molocules and their isotopologues, but if
             # isotopologue_id is 1 it means it is the normal molecule, so we add
             # it to the drop-down menu named molecule_id
+
+            # Molecules with ID greater than 1000, as of right now, don't have
+            # data in HITRAN that can be accessed
+            if molecule_id >= 1000:
+                continue
             if isotopologue_id == 1:
                 self.gui.molecule_id.addItem(ISO[k][4])
 
@@ -71,8 +76,21 @@ class MainWindow(Window):
         self.gui.clear_console.clicked.connect(
                                     lambda: self.__handle_clear_console_clicked())
 
+
+        # Set the function for when an item gets clicked to the one defined in the class
+        self.gui.iso_list.itemPressed.connect(
+                                    lambda item: self.__iso_list_item_click(item))
+
         # Display the GUI since we're done configuring it
         self.gui.show()
+
+
+    # Toggle the item that was activated
+    def __iso_list_item_click(self, item):
+        if item.checkState() == QtCore.Qt.Checked:
+            item.setCheckState(QtCore.Qt.Unchecked)
+        else:
+            item.setCheckState(QtCore.Qt.Checked)
 
 
     def __wn_max_change(self, value):
@@ -199,7 +217,7 @@ class MainWindow(Window):
             # Make sure there is a key associated with the item so we can use it later
             item.setData(QtCore.Qt.UserRole, isotopologue[1])
             item.setFlags(item.flags() |
-                        QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                        QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
 
             # The normal molecule is always at index 1, and we always want that
             # molecule to be selected
