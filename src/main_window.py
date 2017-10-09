@@ -21,7 +21,7 @@ class MainWindow(Window):
             # isotopologue_id is 1 it means it is the normal molecule, so we add
             # it to the drop-down menu named molecule_id
             if isotopologue_id == 1:
-                self.gui.molecule_id.addItem(v[4])
+                self.gui.molecule_id.addItem(ISO[k][4])
 
         # Add all parameter groups to the parameter groups list.
         for (group, _) in PARAMETER_GROUPS.iteritems():
@@ -43,6 +43,10 @@ class MainWindow(Window):
 
             self.gui.param_list.addItem(item)
 
+        # Hide error messages
+        self.gui.err_small_range.hide()
+        self.gui.err_bad_connection.hide()
+        self.gui.err_bad_iso_list.hide()
 
         # Connect the function to be executed when wn_max's value changes
         self.gui.wn_max.valueChanged.connect(
@@ -72,18 +76,42 @@ class MainWindow(Window):
 
 
     def __wn_max_change(self, value):
-        self.gui.wn_min.setMaximum(float(value))
         max = self.gui.wn_max.maximum()
         if value > max:
             self.gui.wn_min.setValue(max)
 
     def __wn_min_change(self, value):
-        self.gui.wn_max.setMinimum(float(value))
         min = self.gui.wn_min.minimum()
         if value < min:
             self.gui.wn_min.setValue(min)
 
+    def fetch_error(self, errors):
+        if not isinstance(errors, list):
+            t = [errors]
+            errors = t
+        for err in errors:
+            # This means the wavenumber range was too small (probably), so
+            # we'll tell the user it is too small
+            if err.error == FetchErrorKind.FailedToRetreiveData:
+                self.gui.err_small_range.show()
+                err_(' The entered wavenumber range is too small, try increasing it')
+            # Not much to do in regards to user feedback in this case....
+            elif err.error == FetchErrorKind.FailedToOpenThread:
+                err_(' Failed to open thread to make query HITRAN')
+            elif err.error == FetchErrorKind.BadConnection:
+                self.gui.err_bad_connection.show()
+                err_(' Error: Failed to connect to HITRAN. Check your internet connection and try again.')
+            elif err.error == FetchErrorKind.BadIsoList:
+                self.gui.err_bad_iso_list.show()
+                err_(' Error: You must select at least one isotopologue.')
+
     def __handle_fetch_clicked(self):
+        # Hide any error messages for now, if they persist they'll be shown
+        # at the end of the method
+        self.gui.err_small_range.hide()
+        self.gui.err_bad_connection.hide()
+        self.gui.err_bad_iso_list.hide()
+
         molecule = self.gui.get_selected_molecule_id()
 
         wn_max = self.gui.get_wn_max()
@@ -106,10 +134,8 @@ class MainWindow(Window):
         if result == True:
             return
         else:
-            # TODO: Handle it here, result is a list of errors
-            for p in result:
-                print p, '\n'
-            return
+            self.fetch_error(errors)
+
 
     def __handle_clear_console_clicked(self):
         self.gui.console_output.clear()
@@ -131,9 +157,8 @@ class MainWindow(Window):
             self.gui.wn_min.setValue(min)
             self.gui.wn_max.setValue(max)
 
-            print "min: ", min, ", max: ", max
         else:
-            print "[Log] No wavenumber range-data for molecule id ", molecule_id
+            log_('No wavenumber range-data for molecule id ' + str(molecule_id))
 
         # Remove all old elements
         self.gui.iso_list.clear()
@@ -163,7 +188,16 @@ class MainWindow(Window):
             isotopologue = ISO[(molecule_id, index)]
 
             # Create a new item, ensure it is enabled and can be checked.
-            item = QtGui.QListWidgetItem(isotopologue[1])
+            item = QtGui.QListWidgetItem()
+
+            # Create a label to allow the rendering of rich text (fancy molecular formulas)
+            label = QtGui.QLabel(ISOTOPOLOGUE_NAME_TO_HTML[isotopologue[1]])
+
+            # Ensure we can use html
+            label.setTextFormat(QtCore.Qt.RichText)
+
+            # Make sure there is a key associated with the item so we can use it later
+            item.setData(QtCore.Qt.UserRole, isotopologue[1])
             item.setFlags(item.flags() |
                         QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
@@ -173,13 +207,9 @@ class MainWindow(Window):
             else: item.setCheckState(QtCore.Qt.Checked)
 
             self.gui.iso_list.addItem(item)
+            self.gui.iso_list.setItemWidget(item, label)
             count += 1
             index += 1
-
-
-    def fetch_error(self, error):
-        return
-        # TODO: Handle the error :)
 
 
     def open_graph_window(self):
@@ -240,7 +270,10 @@ class MainWindowGui(QtGui.QMainWindow):
                 # Convert the item text to a string, and then convert that new
                 # string into a number using the ISOTOPOLOGUE_NAME_TO_GLOBAL_ID
                 # map, then add it to the list of selected isotopologues
-                text = str(item.text())
+                # We bound the QtCore.Qt.UserRole data for the element to be the key
+                # value we need to use if it is checked - so access it and convert it
+                # from QVarient, to QString, to String
+                text = str(item.data(QtCore.Qt.UserRole).toString())
                 selected_isos.append(ISOTOPOLOGUE_NAME_TO_GLOBAL_ID[text])
 
         return selected_isos

@@ -6,6 +6,7 @@ from PyQt4.QtCore import *
 import sys
 from Queue import Queue
 from threading import Thread
+from __main__ import *
 
 # Maps molecule names (e.g. 'H2O') to the number of isotopologues that molecule
 # has in hapi's ISO
@@ -27,6 +28,12 @@ ISOTOPOLOGUE_NAME_TO_LOCAL_ID = {}
 
 # The program config object
 CONFIG = Configuration()
+
+# Maps isotopologues text as defined by ISO in hapi to html equivalent
+ISOTOPOLOGUE_NAME_TO_HTML = {}
+
+# Maps isotopologues HTML to their local ID
+ISOTOPOLOGUE_HTML_TO_GLOBAL_ID = {}
 
 # Data scraped using the scrape.js function
 # The first element in the tuple is the minimum wave number to get data, and the
@@ -83,14 +90,49 @@ MOLECULE_DATA_RANGE = {
     49    :    (793.149, 899.767)
 }
 
+# Regex that captures a single element or isotope in a molecular composition
+# This will only work for molecules in a specific format (the one found in hapi as of now).
+# That is: H2O or (1H)2O
+# Each isotope has it's number of neutrons before the periodic symbol, then the count of the element or isotope after
+ISO_TO_HTML_REGEX = None
+
+
+def print_html(html):
+    global __WINDOW
+    __WINDOW.gui.console_output.insertHtml(html)
+
+
+# Prints to the console_output with a fancy lookin log label
+def log_(dat):
+    print_html('<div style="color: #7878e2">[Log]</div>&nbsp;')
+    print_html(str(dat))
+    print_html('<br>')
+
+
+# Prints to the console_output with a fancy lookin error label
+def err_(dat):
+    print_html('<div style="color: #e27878">[Error]</div>&nbsp;')
+    print_html(str(dat))
+    print_html('<br>')
+
+
+def debug_(dat):
+    print_html('<div style="color: #78e278">[Debug]</div>&nbsp;')
+    print_html(str(dat))
+    print_html('<br>')
+
+
 # Performas all initialization required for data structures
 def util_init(*args, **kwargs):
+    iso_to_html_init()
     init_iso_maps()
 
+# Performs all close operations for the util file
 def util_close():
     __TEXT_RECEIVER.running = False
     print 'Exiting...'
     __TEXT_THREAD.exit(0)
+
 
 # Initialize maps that are constructed using data from hapi's ISO map
 def init_iso_maps():
@@ -99,6 +141,8 @@ def init_iso_maps():
     global MOLECULE_NAME_TO_GLOBAL_ID
     global ISOTOPOLOGUE_NAME_TO_GLOBAL_ID
     global ISOTOPOLOGUE_NAME_TO_LOCAL_ID
+    global ISOTOPOLOGUE_NAME_TO_HTML
+    global ISOTOPOLOGUE_HTML_TO_GLOBAL_ID
 
     for (k, v) in ISO.iteritems():
         (molecule_number, isotopologue_number) = k
@@ -109,8 +153,75 @@ def init_iso_maps():
         if isotopologue_number == 1:
             MOLECULE_NAME_TO_GLOBAL_ID[v[4]] = v[0]
             MOLECULE_NAME_TO_LOCAL_ID[v[4]] = molecule_number
+
+        html = iso_to_html(v[1])
+        ISOTOPOLOGUE_NAME_TO_HTML[v[1]] = html
+        ISOTOPOLOGUE_HTML_TO_GLOBAL_ID[html] = v[0]
+
         ISOTOPOLOGUE_NAME_TO_GLOBAL_ID[v[1]] = v[0]
         ISOTOPOLOGUE_NAME_TO_LOCAL_ID[v[1]] = isotopologue_number
+
+
+# Converts a molecules chemical format (e.g. H2O) to html with super and subscripts
+def iso_to_html_init():
+    global ISO_TO_HTML_REGEX
+    # Note - this has the isotope Deuterium in it as well
+    ELEMENT_REGEX = 'A[cglmrstu]|B[aehikr]?|C[adeflmnorsu]?|D[bsy]?|E[rsu]|F[elmr]?|G[ade]|H[efgos]?|I[nr]?|Kr?|L[airuv]|M[dgnot]|N[abdeiop]?|O(s)?|P[abdmortu]?|R[abefghnu]|S[bcegimnr]?|T[abcehilm]|U(u[opst])?|V|W|Xe|Yb?|Z[nr]'
+    # Regex for an isotope of the form '(12C)', e.g. the number of neutrons before the element, then the periodic symbol
+    ISOTOPE_REGEX = '\\((?P<neutrons>\\d+)(?P<iso_element>(' + ELEMENT_REGEX + '))\\)'
+    # Regex for either an isotope or an element
+    CHUNK_REGEX = '((?P<isotope>' + ISOTOPE_REGEX + ')|(?P<element>(' + ELEMENT_REGEX + ')))' + '(?P<count>\\d+)?'
+
+    ISO_TO_HTML_REGEX = re.compile(CHUNK_REGEX)
+
+
+# Converts an isotopologue in the hapi format to an HTML representation
+def iso_to_html(_iso):
+    iso = '%s' % _iso
+    html = ''
+    start = 0
+
+    # When it's an empty string we're done
+    while iso != '':
+        match = ISO_TO_HTML_REGEX.match(iso)
+
+        # Our regex didn't match - meaning the string is malformed / not a valid chemical
+        if not match:
+            # Special case for NOp (not sure what it is though)
+            if iso == '+':
+                html += iso
+                return html
+            print _iso
+            print('Error parsing isotopologue to html ' + iso)
+            return '<div style="color: red">Error parsing</div>'
+
+        # Start index of our next substring (lob off the part of the string we're using now)
+        start = match.end()
+
+        # This would cause an instant crash so avoid it if possible
+        if start > len(iso):
+            break
+
+        # In the regex, we defined some groups / bound some string values - this is how they get accessed
+        dat = match.groupdict()
+        iso = iso[start:]
+
+        # This is an isotope - handle it as such
+        if dat['neutrons'] != None:
+            html += '&nbsp;<sup>' + dat['neutrons'] + '</sup>'
+            html += dat['iso_element']
+
+        # This is a regular old element
+        else:
+            html += dat['element']
+
+        # How many of the element / isotope
+        if dat['count'] != None:
+            html += '<sub>' + dat['count'] + '</sub>'
+
+            
+    return html
+
 
 # Attempts to convert a string to an int
 # In the case of an issue or failure, it will return None
@@ -121,6 +232,7 @@ def str_to_int(s):
     except ValueError:
         return None
 
+
 # Attempts to convert a string to an int
 # In the case of an issue or failure, it will return None
 def str_to_float(s):
@@ -130,19 +242,23 @@ def str_to_float(s):
     except ValueError:
         return None
 
+
 # A class that can be used to redirect output from stdout and stderr to a
 # QTextEdit
 class TextEditStream(object):
     def __init__(self):
         self.queue = Queue()
 
+
     # Link this object to stdout
     def link(self):
         sys.stdout = self
 
+
     # Restore stdout back to normal console output
     def restore(self):
         sys.stdout = sys.__stdout__
+
 
     # Append text to the text_edit
     # To handle multiple threads attempting to write at once, add very simple
@@ -150,18 +266,22 @@ class TextEditStream(object):
     def write(self, text):
         self.queue.put(QString(text))
 
+
     # Clear the text area of text
     def clear(self):
         self.text_edit.clear()
+
 
 # An object that will hang out in the background and receive all outputs
 class TextReceiver(QObject):
     write_signal = pyqtSignal(str)
 
+
     def __init__(self, queue, *args, **kwargs):
         QObject.__init__(self)
         self.queue = queue
         self.running = True
+
 
     @pyqtSlot()
     def run(self):
@@ -169,14 +289,18 @@ class TextReceiver(QObject):
             text = self.queue.get()
             self.write_signal.emit(text)
 
+
 __TEXT_EDIT_STREAM = TextEditStream()
 __TEXT_RECEIVER = None
 __TEXT_THREAD = None
+__WINDOW = None
 def init_console_redirect(main_window, *args, **kwargs):
     global __TEXT_RECEIVER
     global __TEXT_EDIT_STREAM
     global __TEXT_THREAD
+    global __WINDOW
 
+    __WINDOW = main_window
     # Create a receiver
     __TEXT_RECEIVER = TextReceiver(__TEXT_EDIT_STREAM.queue, *args, **kwargs)
     # Create a thread for the receiver to run in

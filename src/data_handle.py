@@ -5,10 +5,10 @@ from threading import Thread
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data
 class FetchErrorKind(Enum):
-    BadParameter = 1
-    BadParameterGroup = 2
-    BadNuMin = 3
-    BadNuMax = 4
+    BadParameter = 1            # This wont be used
+    BadParameterGroup = 2       # This wont be used
+    BadNuMin = 3                # This wont be used
+    BadNuMax = 4                # This wont be used
     BadConnection = 5
     BadIsoList = 6
     FailedToRetreiveData = 7
@@ -46,12 +46,6 @@ class DataHandle(object):
         # A list to add errors to if there are any
         errors = []
 
-        # Verify that each of the parameters is valid
-        if numin == None:
-            errors.append(FetchError(FetchErrorKind.BadNuMin))
-
-        if numax == None:
-            errors.append(FetchError(FetchErrorKind.BadNuMax))
 
         if len(iso_id_list) == 0:
             errors.append(FetchError(FetchErrorKind.BadIsoList, 'Bad isotopologue list: you must select at least one isotopologue'))
@@ -69,7 +63,7 @@ class DataHandle(object):
                 fetch_by_ids(self.data_name, iso_id_list, numin, numax, parameter_groups, parameters)
             except Exception as e:
                 as_str = str(e)
-                print as_str
+                err_(as_str)
                 # Determine whether the issue is an internet issue or something else
                 if 'connect' in as_str:
                     fetch_window.fetch_error(FetchError(

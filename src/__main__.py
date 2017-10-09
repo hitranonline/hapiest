@@ -8,6 +8,7 @@ from threading import Thread
 import matplotlib.pyplot as plt
 
 util_init()
+iso_to_html_init()
 app = QtGui.QApplication(sys.argv)
 window = MainWindow()
 init_console_redirect(window, sys.argv)
@@ -20,13 +21,20 @@ def start_hapi():
     print 'Finished processing data in data directory'
 
 try:
-    Thread(target = start_hapi, args=()).start()
+    # call db_begin in a daemon thread because it might take a reallyyy long time
+    # if someone exits the program, if it weren't a daemon it would continue to
+    # execute in the background. The daemon will exit when the main thread does.
+    thread = Thread(target = start_hapi, args=())
+    thread.daemon = True
+    thread.start()
 except Exception as e:
     print 'Error initializing hapi database'
     print e
 
+
 # Exit code
 qt_result = app.exec_()
+
 
 util_close()
 
