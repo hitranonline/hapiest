@@ -148,7 +148,6 @@ class MainWindow(Window):
                                     param_groups,
                                     params)
 
-        # TODO: Handle the case where the fetch isn't successfull
         if result == True:
             return
         else:
@@ -265,8 +264,10 @@ class MainWindowGui(QtGui.QMainWindow):
     # and loads the ui layout
     def __init__(self):
         super(MainWindowGui, self).__init__()
-        uic.loadUi('layouts/main_window.ui', self)
-
+        if CONFIG.high_dpi != 'true':
+            uic.loadUi('layouts/main_window.ui', self)
+        else:
+            uic.loadUi('layouts/main_window_high_dpi.ui', self)
 
     # converts the selected molecule to a molecule id
     def get_selected_molecule_id(self):

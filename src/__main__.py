@@ -10,7 +10,12 @@ import matplotlib.pyplot as plt
 util_init()
 iso_to_html_init()
 app = QtGui.QApplication(sys.argv)
+
 window = MainWindow()
+
+window.gui.adjustSize()
+window.gui.setFixedSize(window.gui.size())
+
 init_console_redirect(window, sys.argv)
 
 def start_hapi():

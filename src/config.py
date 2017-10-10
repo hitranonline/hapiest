@@ -2,9 +2,9 @@ import os.path
 import toml
 
 CONFIG_LOCATION = 'Config.toml'
-DEFAULT_CONFIG = '''
-[hapi]
+DEFAULT_CONFIG = '''[hapi]
 data-folder = 'data'
+high-dpi = 'false'
 '''
 
 class Configuration(object):
@@ -29,6 +29,7 @@ class Configuration(object):
     # Sets all required config values to their defaults
     def set_defaults(self):
         self.data_folder = 'data'
+        self.high_dpi = 'false'
 
 
     # Sets values from a parsed toml dictionary
@@ -36,6 +37,7 @@ class Configuration(object):
         self.set_defaults()
         try:
             self.data_folder = dict['hapi']['data-folder']
+            self.high_dpi = dict['hapi']['high-dpi']
 
         except Exception as e:
             print 'Encountered error while initializing program configuration'

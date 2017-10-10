@@ -2,3 +2,4 @@ data/*
 src/*.pyc
 test_data/*
 Config.toml
+.idea/*

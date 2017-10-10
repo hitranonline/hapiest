@@ -1,4 +1,6 @@
 from window import Window
+from PyQt4 import QtGui, uic, QtCore, Qt
+from util import *
 
 class GraphWindow(Window):
 
@@ -22,8 +24,20 @@ class GraphWindow(Window):
         # TODO: Implement this
 
     def close(self):
-        for window in child_windows: if window.is_open: window.close()
+        for window in self.child_windows:
+            if window.is_open:
+                window.close()
         self.gui.close()
 
     def open(self):
         self.gui.open()
+
+
+class GraphWindowGui(QtGui.QWidget):
+
+    def __init__(self):
+            super(GraphWindowGui, self).__init__()
+            if CONFIG.high_dpi != 'true':
+                uic.loadUi('layouts/graph_window.ui', self)
+            else:
+                uic.loadUi('layouts/graph_window_high_dpi.ui', self)
