@@ -507,7 +507,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>43</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -517,17 +517,47 @@
    </widget>
    <widget class="QMenu" name="menuOpen_Window">
     <property name="title">
-     <string>Open Window</string>
+     <string>Graphing</string>
     </property>
-    <addaction name="actionGraphing_Window"/>
+    <addaction name="action_absorption_coefficient"/>
+    <addaction name="action_spectral_lines"/>
+    <addaction name="action_absorption_cross_section"/>
+    <addaction name="action_transmittance_function"/>
+    <addaction name="action_absorption_function"/>
+    <addaction name="action_radiance_function"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOpen_Window"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionGraphing_Window">
+  <action name="action_absorption_coefficient">
    <property name="text">
-    <string>Graphing Window</string>
+    <string>Absorption Coefficient</string>
+   </property>
+  </action>
+  <action name="action_spectral_lines">
+   <property name="text">
+    <string>Spectral Lines</string>
+   </property>
+  </action>
+  <action name="action_absorption_cross_section">
+   <property name="text">
+    <string>Absorption Cross Section</string>
+   </property>
+  </action>
+  <action name="action_transmittance_function">
+   <property name="text">
+    <string>Transmittance Function</string>
+   </property>
+  </action>
+  <action name="action_absorption_function">
+   <property name="text">
+    <string>Absorption Function</string>
+   </property>
+  </action>
+  <action name="action_radiance_function">
+   <property name="text">
+    <string>Radiance Function</string>
    </property>
   </action>
  </widget>
