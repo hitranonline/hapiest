@@ -13,40 +13,10 @@ class MainWindow(Window):
 
         self.is_open = True
 
-        # Extract the name of each molocule that hapi has data on and add it to
-        # our list of molecule names in the gui
-        for k, v in ISO.iteritems():
-            (molecule_id, isotopologue_id) = k
-            # The iso list includes molocules and their isotopologues, but if
-            # isotopologue_id is 1 it means it is the normal molecule, so we add
-            # it to the drop-down menu named molecule_id
+        self.populate_molecule_list()
 
-            # Molecules with ID greater than 1000, as of right now, don't have
-            # data in HITRAN that can be accessed
-            if molecule_id >= 1000:
-                continue
-            if isotopologue_id == 1:
-                self.gui.molecule_id.addItem(ISO[k][4])
+        self.populate_parameter_lists()
 
-        # Add all parameter groups to the parameter groups list.
-        for (group, _) in PARAMETER_GROUPS.iteritems():
-            item = QtGui.QListWidgetItem(group)
-            item.setFlags(item.flags() |
-            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-
-            item.setCheckState(QtCore.Qt.Unchecked)
-
-            self.gui.param_group_list.addItem(item)
-
-        # Add all parameter groups to the parameter groups list.
-        for par in PARLIST_ALL:
-            item = QtGui.QListWidgetItem(par)
-            item.setFlags(item.flags() |
-            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-
-            item.setCheckState(QtCore.Qt.Unchecked)
-
-            self.gui.param_list.addItem(item)
 
         # Hide error messages
         self.gui.err_small_range.hide()
@@ -253,6 +223,49 @@ class MainWindow(Window):
     def open(self):
         self.gui.open()
 
+
+    # Populates the parameter lists with all parameters / parameter groups
+    # that HITRAN has to offer.
+    def populate_parameter_lists(self):
+        # Add all parameter groups to the parameter groups list.
+        for (group, _) in PARAMETER_GROUPS.iteritems():
+            item = QtGui.QListWidgetItem(group)
+            item.setFlags(item.flags() |
+            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            self.gui.param_group_list.addItem(item)
+
+        # Add all parameter groups to the parameter groups list.
+        for par in PARLIST_ALL:
+            item = QtGui.QListWidgetItem(par)
+            item.setFlags(item.flags() |
+            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            self.gui.param_list.addItem(item)
+
+
+    # Extract the name of each molocule that hapi has data on and add it to
+    def populate_molecule_list(self):
+        # our list of molecule names in the gui
+        for k, v in ISO.iteritems():
+            (molecule_id, isotopologue_id) = k
+            # The iso list includes molocules and their isotopologues, but if
+            # isotopologue_id is 1 it means it is the normal molecule, so we add
+            # it to the drop-down menu named molecule_id
+
+            # Molecules with ID greater than 1000, as of right now, don't have
+            # data in HITRAN that can be accessed
+            if molecule_id >= 1000:
+                continue
+            if isotopologue_id == 1:
+                self.gui.molecule_id.addItem(ISO[k][4])
+
+    # Method that get called when the append_text signal is received by the window
+    # This is to allow console output.
     @pyqtSlot(str)
     def append_text(self, text):
         self.gui.console_output.moveCursor(QtGui.QTextCursor.End)

@@ -1,6 +1,7 @@
 from aenum import Enum
 from hapi import *
 from threading import Thread
+from util import *
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data
@@ -61,6 +62,21 @@ class DataHandle(object):
             try:
                 # Call the hapi fetch method
                 fetch_by_ids(self.data_name, iso_id_list, numin, numax, parameter_groups, parameters)
+                # If the fetch was successfull, create a file that has a list of
+                # the different isotopologues that were used. Each global ID is
+                # separated by the comma ','
+                file = open(CONFIG.data_folder + '/' + self.data_name + '.isolist', 'w')
+
+                # Add a comma between each value, but not the last one
+                last_index = len(iso_id_list) - 1
+                i = 0
+                for x in iso_id_list:
+                    file.write(str(x))
+                    if i != last_index:
+                        file.write(',')
+                    i += 1
+                file.close()
+
             except Exception as e:
                 as_str = str(e)
                 err_(as_str)

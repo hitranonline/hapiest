@@ -7,6 +7,7 @@ import sys
 from Queue import Queue
 from threading import Thread
 from __main__ import *
+from os import listdir
 
 # Maps molecule names (e.g. 'H2O') to the number of isotopologues that molecule
 # has in hapi's ISO
@@ -96,6 +97,8 @@ MOLECULE_DATA_RANGE = {
 # Each isotope has it's number of neutrons before the periodic symbol, then the count of the element or isotope after
 ISO_TO_HTML_REGEX = None
 
+# Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
+DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
 
 def print_html(html):
     global __WINDOW
@@ -221,6 +224,17 @@ def iso_to_html(_iso):
 
     return html
 
+
+# Returns a list of all the different data-names in the data directory
+def get_all_data_names():
+    files = listdir(CONFIG.data_folder)
+    datas = []
+    for f in files:
+        match = DATA_FILE_REGEX.match(f)
+        if match == None:
+            continue
+        datas.append(match.groupdict()['data_handle'])
+    return datas
 
 # Attempts to convert a string to an int
 # In the case of an issue or failure, it will return None
