@@ -27,8 +27,8 @@ class MainWindow(Window):
         self.gui.wn_max.valueChanged.connect(
                                     lambda value: self.__wn_max_change(value))
         # Connect the function to be executed when wn_min's value changes
-        self.gui.wn_max.valueChanged.connect(
-                                    lambda value: self.__wn_max_change(value))
+        self.gui.wn_min.valueChanged.connect(
+                                    lambda value: self.__wn_min_change(value))
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
         # the drop-down list is populated so there is something to be selected
@@ -121,7 +121,7 @@ class MainWindow(Window):
         if result == True:
             return
         else:
-            self.fetch_error(errors)
+            self.fetch_error(result)
 
 
     def __handle_clear_console_clicked(self):
