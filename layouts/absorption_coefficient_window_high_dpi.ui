@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Absorption Coefficient</string>
+  </property>
+  <widget class="QPushButton" name="graph_button">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>720</y>
+     <width>168</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Graph</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="data_name">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>20</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>141</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Data Name</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>161</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Temperature</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="temperature">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>80</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>10000000.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>296.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>141</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Line Profile</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="graph_type">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>200</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Voigt</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Lorentz</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Gauss</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>SD Voigt</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Galatry</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>HT</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>260</y>
+     <width>241</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wavenumber Range</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="wn_min">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>300</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="wn_max">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>360</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>300</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Min</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>360</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>420</y>
+     <width>221</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wavenumber Step</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="wn_step">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>460</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>300</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;cm&lt;sup&gt;-1&lt;/sup&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>360</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;cm&lt;sup&gt;-1&lt;/sup&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>460</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;cm&lt;sup&gt;-1&lt;/sup&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>103</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Pressure</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="pressure">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>140</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>520</y>
+     <width>221</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wavenumber Wing</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="wn_wing">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>560</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_13">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>560</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;cm&lt;sup&gt;-1&lt;/sup&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_14">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>80</y>
+     <width>21</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>K
+</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>140</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>atm
+</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_16">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>620</y>
+     <width>361</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wavenumber Wing Halfwidth</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="wn_wing_hw">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>660</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_17">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>20</y>
+     <width>241</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Intensity Threshhold</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="intensity_threshhold">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>60</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>8</number>
+   </property>
+   <property name="maximum">
+    <double>1000000000.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_18">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>120</y>
+     <width>261</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Broadening Parameter</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="broadening_parameter">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>160</y>
+     <width>181</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>gamma_air</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>gamma_self</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QCheckBox" name="wn_step_enabled">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>420</y>
+     <width>41</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="wn_wing_enabled">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>520</y>
+     <width>41</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="wn_wing_hw_enabled">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>620</y>
+     <width>41</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="intensity_threshhold_enabled">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>20</y>
+     <width>41</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

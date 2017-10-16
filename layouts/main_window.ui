@@ -255,9 +255,9 @@
    <widget class="QPushButton" name="clear_console">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>520</y>
-      <width>101</width>
+      <x>460</x>
+      <y>340</y>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
