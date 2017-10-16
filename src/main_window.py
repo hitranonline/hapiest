@@ -277,12 +277,11 @@ class MainWindowGui(QtGui.QMainWindow):
     # and loads the ui layout
     def __init__(self):
         super(MainWindowGui, self).__init__()
-        srcdir = os.path.dirname(__file__)
         if CONFIG.high_dpi != 'true':
-            ui_path = os.path.join(srcdir, '..', 'layouts', 'main_window.ui')            
+            # If the program crashes here, try running "python src" rather than "python src/__main__.py"
+            uic.loadUi('layouts/main_window.ui', self)
         else:
-            ui_path = os.path.join(srcdir, '..', 'layouts', 'main_window_high_dpi.ui')
-        uic.loadUi(ui_path, self)
+            uic.loadUi('layouts/main_window_high_dpi.ui', self)
 
     # converts the selected molecule to a molecule id
     def get_selected_molecule_id(self):
