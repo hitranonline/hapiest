@@ -8,7 +8,7 @@ from threading import Thread
 import matplotlib.pyplot as plt
 
 util_init()
-iso_to_html_init()
+
 app = QtGui.QApplication(sys.argv)
 
 window = MainWindow()

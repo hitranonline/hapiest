@@ -126,7 +126,7 @@ def debug_(dat):
 
 
 # Performas all initialization required for data structures
-def util_init(*args, **kwargs):
+def util_init():
     iso_to_html_init()
     init_iso_maps()
 
