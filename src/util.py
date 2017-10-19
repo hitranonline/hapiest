@@ -1,12 +1,12 @@
-from hapi import *
-from config import *
-from PyQt4 import QtGui, uic, QtCore, Qt
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from src.hapi import *
+from src.config import *
+from PyQt5.QtWidgets import *
+from PyQt5 import QtCore
+from PyQt5 import Qt
+from PyQt5 import uic
+from time import sleep
 import sys
-from Queue import Queue
-from threading import Thread
-from __main__ import *
+from queue import Queue
 from os import listdir
 
 # Maps molecule names (e.g. 'H2O') to the number of isotopologues that molecule
@@ -102,8 +102,13 @@ DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
 
 def print_html(html):
     global __WINDOW
-    __WINDOW.gui.console_output.insertHtml(html)
+    __TEXT_EDIT_STREAM.write_html(html)
 
+
+# A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui
+# element
+def debug(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 # Prints to the console_output with a fancy lookin log label
 def log_(dat):
@@ -133,8 +138,9 @@ def util_init():
 # Performs all close operations for the util file
 def util_close():
     __TEXT_RECEIVER.running = False
-    print 'Exiting...'
+    print('Exiting...')
     __TEXT_THREAD.exit(0)
+
 
 # Initialize maps that are constructed using data from hapi's ISO map
 def init_iso_maps():
@@ -146,7 +152,7 @@ def init_iso_maps():
     global ISOTOPOLOGUE_NAME_TO_HTML
     global ISOTOPOLOGUE_HTML_TO_GLOBAL_ID
 
-    for (k, v) in ISO.iteritems():
+    for (k, v) in ISO.items():
         (molecule_number, isotopologue_number) = k
         if molecule_number in MOLECULE_ID_TO_ISO_COUNT:
             MOLECULE_ID_TO_ISO_COUNT[molecule_number] += 1
@@ -193,7 +199,7 @@ def iso_to_html(_iso):
             if iso == '+':
                 html += iso
                 return html
-            print _iso
+            print(_iso)
             print('Error parsing isotopologue to html ' + iso)
             return '<div style="color: red">Error parsing</div>'
 
@@ -259,9 +265,9 @@ def str_to_float(s):
 # A class that can be used to redirect output from stdout and stderr to a
 # QTextEdit
 class TextEditStream(object):
-    def __init__(self):
+    def __init__(self, window):
         self.queue = Queue()
-
+        self.window = window
 
     # Link this object to stdout
     def link(self):
@@ -277,8 +283,14 @@ class TextEditStream(object):
     # To handle multiple threads attempting to write at once, add very simple
     # semaphore-type usage checking / waiting
     def write(self, text):
-        self.queue.put(QString(text))
+        self.queue.put((0, text))
 
+    # Similar to the write method, but pass a 1 instead of a zero, indicating that the text is html rather than normal text
+    def write_html(self, html):
+        self.queue.put((1, html))
+
+    def flush(self):
+        pass
 
     # Clear the text area of text
     def clear(self):
@@ -286,40 +298,48 @@ class TextEditStream(object):
 
 
 # An object that will hang out in the background and receive all outputs
-class TextReceiver(QObject):
-    write_signal = pyqtSignal(str)
-
+class TextReceiver(Qt.QObject):
+    write_text_signal = QtCore.pyqtSignal(str)
+    write_html_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, queue, *args, **kwargs):
-        QObject.__init__(self)
+        Qt.QObject.__init__(self)
         self.queue = queue
         self.running = True
 
 
-    @pyqtSlot()
     def run(self):
+        sleep(1)
         while self.running:
-            text = self.queue.get()
-            self.write_signal.emit(text)
+            (ty, text) = self.queue.get()
+            if ty == 0:
+                self.write_text_signal.emit(text)
+            else:
+                self.write_html_signal.emit(text)
 
 
-__TEXT_EDIT_STREAM = TextEditStream()
+__TEXT_EDIT_STREAM = None
 __TEXT_RECEIVER = None
 __TEXT_THREAD = None
 __WINDOW = None
+
 def init_console_redirect(main_window, *args, **kwargs):
     global __TEXT_RECEIVER
     global __TEXT_EDIT_STREAM
     global __TEXT_THREAD
     global __WINDOW
 
+    __TEXT_EDIT_STREAM = TextEditStream(main_window)
+
     __WINDOW = main_window
     # Create a receiver
     __TEXT_RECEIVER = TextReceiver(__TEXT_EDIT_STREAM.queue, *args, **kwargs)
     # Create a thread for the receiver to run in
-    __TEXT_THREAD = QThread()
+    __TEXT_THREAD = QtCore.QThread()
     # Connect the signal to the console output handler in the main window
-    __TEXT_RECEIVER.write_signal.connect(main_window.append_text)
+    # Connect the console output signals
+    __TEXT_RECEIVER.write_text_signal.connect(main_window.console_append_text)
+    __TEXT_RECEIVER.write_html_signal.connect(main_window.console_append_html)
     # Move the receiver to the background thread
     __TEXT_RECEIVER.moveToThread(__TEXT_THREAD)
     # When the thread starts, start the text receiver
@@ -328,3 +348,4 @@ def init_console_redirect(main_window, *args, **kwargs):
     __TEXT_THREAD.start()
     # Actually link stdout with out replacement stream
     __TEXT_EDIT_STREAM.link()
+

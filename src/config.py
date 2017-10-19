@@ -16,7 +16,7 @@ class Configuration(object):
                 fh.write(DEFAULT_CONFIG)
                 fh.close()
             except Exception as e:
-                print str(e)
+                print(str(e))
             finally:
                 self.set_defaults()
         else:
@@ -40,8 +40,8 @@ class Configuration(object):
             self.high_dpi = dict['hapi']['high-dpi']
 
         except Exception as e:
-            print 'Encountered error while initializing program configuration'
-            print e
+            print('Encountered error while initializing program configuration')
+            print(e)
 
 
     # Tries to load a configuration, if it fails
@@ -51,6 +51,6 @@ class Configuration(object):
             self.set_values(parsed)
 
         except Exception as e:
-            print 'Encountered error while parsing Config.toml, setting default config options'
-            print e
+            print('Encountered error while parsing Config.toml, setting default config options')
+            print(e)
             self.set_defaults()

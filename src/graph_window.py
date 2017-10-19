@@ -18,6 +18,7 @@ class GraphWindow(Window):
 
     def try_render_graph(self):
         # TODO: Implement this
+        pass
 
     def display_graph(self, graph):
         self.child_windows.append(graph)

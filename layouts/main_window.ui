@@ -24,13 +24,13 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
-    <height>600</height>
+       <width>100000</width>
+       <height>100000</height>
    </size>
   </property>
   <property name="font">
    <font>
-    <pointsize>10</pointsize>
+       <pointsize>9</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -50,7 +50,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
+         <y>130</y>
       <width>241</width>
       <height>161</height>
      </rect>
@@ -80,7 +80,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+         <pointsize>9</pointsize>
      </font>
     </property>
     <property name="text">
@@ -91,8 +91,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>100</y>
-      <width>181</width>
+         <y>110</y>
+         <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -103,12 +103,17 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>21</y>
+         <x>270</x>
+         <y>20</y>
       <width>121</width>
       <height>16</height>
      </rect>
     </property>
+       <property name="font">
+           <font>
+               <pointsize>9</pointsize>
+           </font>
+       </property>
     <property name="text">
      <string>Wave Number Min</string>
     </property>
@@ -116,32 +121,19 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>280</x>
+         <x>270</x>
       <y>60</y>
-      <width>121</width>
+         <width>131</width>
       <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Wave Number Max</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="fetch_button">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>320</y>
-      <width>101</width>
-      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+         <pointsize>9</pointsize>
      </font>
     </property>
     <property name="text">
-     <string>Fetch Data</string>
+        <string>Wave Number Max</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -171,7 +163,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>120</y>
+         <y>130</y>
       <width>141</width>
       <height>161</height>
      </rect>
@@ -181,7 +173,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>120</y>
+         <y>130</y>
       <width>141</width>
       <height>161</height>
      </rect>
@@ -191,8 +183,8 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>100</y>
-      <width>221</width>
+         <y>110</y>
+         <width>141</width>
       <height>16</height>
      </rect>
     </property>
@@ -204,11 +196,16 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>100</y>
+         <y>110</y>
       <width>121</width>
-      <height>16</height>
+         <height>20</height>
      </rect>
     </property>
+       <property name="font">
+           <font>
+               <pointsize>9</pointsize>
+           </font>
+       </property>
     <property name="text">
      <string>Parameters</string>
     </property>
@@ -217,7 +214,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+         <y>370</y>
       <width>561</width>
       <height>181</height>
      </rect>
@@ -243,7 +240,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>340</y>
+         <y>350</y>
       <width>181</width>
       <height>16</height>
      </rect>
@@ -255,9 +252,9 @@
    <widget class="QPushButton" name="clear_console">
     <property name="geometry">
      <rect>
-      <x>460</x>
+         <x>370</x>
       <y>340</y>
-      <width>121</width>
+         <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -273,7 +270,7 @@
    <widget class="QDoubleSpinBox" name="wn_min">
     <property name="geometry">
      <rect>
-      <x>400</x>
+         <x>410</x>
       <y>20</y>
       <width>141</width>
       <height>21</height>
@@ -297,7 +294,7 @@
    <widget class="QDoubleSpinBox" name="wn_max">
     <property name="geometry">
      <rect>
-      <x>400</x>
+         <x>410</x>
       <y>60</y>
       <width>141</width>
       <height>21</height>
@@ -321,7 +318,7 @@
    <widget class="QLabel" name="err_small_range">
     <property name="geometry">
      <rect>
-      <x>320</x>
+         <x>300</x>
       <y>0</y>
       <width>221</width>
       <height>16</height>
@@ -371,9 +368,9 @@
    <widget class="QLabel" name="err_bad_connection">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>300</y>
-      <width>201</width>
+         <x>390</x>
+         <y>310</y>
+         <width>211</width>
       <height>21</height>
      </rect>
     </property>
@@ -422,9 +419,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
-      <width>241</width>
-      <height>30</height>
+         <y>290</y>
+         <width>281</width>
+         <height>21</height>
      </rect>
     </property>
     <property name="palette">
@@ -500,6 +497,30 @@
      <string>You must select at least one isotopologue</string>
     </property>
    </widget>
+      <widget class="QPushButton" name="fetch_button">
+          <property name="geometry">
+              <rect>
+                  <x>480</x>
+                  <y>340</y>
+                  <width>100</width>
+                  <height>21</height>
+              </rect>
+          </property>
+          <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+              </sizepolicy>
+          </property>
+          <property name="font">
+              <font>
+                  <pointsize>10</pointsize>
+              </font>
+          </property>
+          <property name="text">
+              <string>Fetch Data</string>
+          </property>
+      </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -507,7 +528,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>43</height>
+        <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

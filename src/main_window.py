@@ -1,7 +1,9 @@
-from util import *
-from window import Window
-from PyQt4 import QtGui, uic, QtCore, Qt
-from data_handle import *
+from src.util import *
+from src.window import Window
+from PyQt5 import QtCore, QtWidgets, QtGui
+from src.data_handle import *
+from src.hapi import *
+from src.absorption_coefficient_window import *
 
 class MainWindow(Window):
     def __init__(self):
@@ -17,6 +19,8 @@ class MainWindow(Window):
 
         self.populate_parameter_lists()
 
+        # Connect menu actions to handling functions
+        self.gui.action_absorption_coefficient.triggered.connect(self.open_absorption_coefficient_window)
 
         # Hide error messages
         self.gui.err_small_range.hide()
@@ -54,7 +58,6 @@ class MainWindow(Window):
         # Display the GUI since we're done configuring it
         self.gui.show()
 
-
     # Toggle the item that was activated
     def __iso_list_item_click(self, item):
         if item.checkState() == QtCore.Qt.Checked:
@@ -67,11 +70,20 @@ class MainWindow(Window):
         max = self.gui.wn_max.maximum()
         if value > max:
             self.gui.wn_min.setValue(max)
+            return
+        wn_min = self.gui.wn_min.value()
+        if value < wn_min:
+            self.gui.wn_max.setValue(wn_min + 1.0)
 
     def __wn_min_change(self, value):
         min = self.gui.wn_min.minimum()
         if value < min:
             self.gui.wn_min.setValue(min)
+            return
+        wn_max = self.gui.wn_max.value()
+        if value > wn_max:
+            self.gui.wn_min.setValue(wn_max - 1.0)
+
 
     def fetch_error(self, errors):
         if not isinstance(errors, list):
@@ -175,16 +187,16 @@ class MainWindow(Window):
             isotopologue = ISO[(molecule_id, index)]
 
             # Create a new item, ensure it is enabled and can be checked.
-            item = QtGui.QListWidgetItem()
+            item = QtWidgets.QListWidgetItem()
 
             # Create a label to allow the rendering of rich text (fancy molecular formulas)
-            label = QtGui.QLabel(ISOTOPOLOGUE_NAME_TO_HTML[isotopologue[1]])
+            label = QtWidgets.QLabel(ISOTOPOLOGUE_NAME_TO_HTML[isotopologue[1]])
 
             # Ensure we can use html
             label.setTextFormat(QtCore.Qt.RichText)
 
             # Make sure there is a key associated with the item so we can use it later
-            item.setData(QtCore.Qt.UserRole, isotopologue[1])
+            item.setData(QtCore.Qt.UserRole, isotopologue[0])
             item.setFlags(item.flags() |
                         QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
 
@@ -201,8 +213,8 @@ class MainWindow(Window):
 
     def open_graph_window(self):
         # Open a fetch window
-        self.child_windows.append(GraphWindow())
-
+        # self.child_windows.append(GraphWindow())
+        raise Exception("Unsupported: graph operation")
 
     def close_window(self, to_close):
         # Close all occurences of the window to_close in the windows list.
@@ -228,8 +240,8 @@ class MainWindow(Window):
     # that HITRAN has to offer.
     def populate_parameter_lists(self):
         # Add all parameter groups to the parameter groups list.
-        for (group, _) in PARAMETER_GROUPS.iteritems():
-            item = QtGui.QListWidgetItem(group)
+        for (group, _) in PARAMETER_GROUPS.items():
+            item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
             QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
@@ -239,7 +251,7 @@ class MainWindow(Window):
 
         # Add all parameter groups to the parameter groups list.
         for par in PARLIST_ALL:
-            item = QtGui.QListWidgetItem(par)
+            item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() |
             QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
@@ -251,7 +263,7 @@ class MainWindow(Window):
     # Extract the name of each molocule that hapi has data on and add it to
     def populate_molecule_list(self):
         # our list of molecule names in the gui
-        for k, v in ISO.iteritems():
+        for k, v in ISO.items():
             (molecule_id, isotopologue_id) = k
             # The iso list includes molocules and their isotopologues, but if
             # isotopologue_id is 1 it means it is the normal molecule, so we add
@@ -265,23 +277,30 @@ class MainWindow(Window):
                 self.gui.molecule_id.addItem(ISO[k][4])
 
     # Method that get called when the append_text signal is received by the window
-    # This is to allow console output.
-    @pyqtSlot(str)
-    def append_text(self, text):
-        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
+    # This is to allow console output
+    def console_append_text(self, text):
         self.gui.console_output.insertPlainText(text)
+        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
 
-class MainWindowGui(QtGui.QMainWindow):
+    # Method gets called when html formatted text is to be printed to console.
+    def console_append_html(self, html):
+        self.gui.console_output.insertHtml(html)
+        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
+
+    def open_absorption_coefficient_window(self):
+        try:
+            self.child_windows.append(AbsorptionCoefficientWindow(self))
+        except Exception as e:
+            debug(e)
+
+
+class MainWindowGui(QtWidgets.QMainWindow):
 
     # Constructor for the gui - essentially just calls the parent constructor
     # and loads the ui layout
     def __init__(self):
         super(MainWindowGui, self).__init__()
-        if CONFIG.high_dpi != 'true':
-            # If the program crashes here, try running "python src" rather than "python src/__main__.py"
-            uic.loadUi('layouts/main_window.ui', self)
-        else:
-            uic.loadUi('layouts/main_window_high_dpi.ui', self)
+        uic.loadUi('layouts/main_window.ui', self)
 
     # converts the selected molecule to a molecule id
     def get_selected_molecule_id(self):
@@ -292,22 +311,14 @@ class MainWindowGui(QtGui.QMainWindow):
         selected_isos = []
 
         # Iterate through all of the items in the isotopologue list
-        for i in xrange(self.iso_list.count()):
-
+        for i in range(self.iso_list.count()):
             # get the i'th item from the list
             item = self.iso_list.item(i)
 
             # Only add checked items
             if item.checkState() == QtCore.Qt.Checked:
-
-                # Convert the item text to a string, and then convert that new
-                # string into a number using the ISOTOPOLOGUE_NAME_TO_GLOBAL_ID
-                # map, then add it to the list of selected isotopologues
-                # We bound the QtCore.Qt.UserRole data for the element to be the key
-                # value we need to use if it is checked - so access it and convert it
-                # from QVarient, to QString, to String
-                text = str(item.data(QtCore.Qt.UserRole).toString())
-                selected_isos.append(ISOTOPOLOGUE_NAME_TO_GLOBAL_ID[text])
+                id = item.data(QtCore.Qt.UserRole)
+                selected_isos.append(id)
 
         return selected_isos
 
@@ -317,7 +328,7 @@ class MainWindowGui(QtGui.QMainWindow):
         selected_params = []
 
         # Look at each parameter and add the checked ones to the list
-        for i in xrange(self.param_list.count()):
+        for i in range(self.param_list.count()):
 
             item = self.param_list.item(i)
 
@@ -332,7 +343,7 @@ class MainWindowGui(QtGui.QMainWindow):
         selected_groups = []
 
         # Look at each group and add the checked ones to the list
-        for i in xrange(self.param_group_list.count()):
+        for i in range(self.param_group_list.count()):
 
             item = self.param_group_list.item(i)
 

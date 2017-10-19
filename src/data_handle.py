@@ -1,7 +1,7 @@
 from aenum import Enum
-from hapi import *
+from src.hapi import *
 from threading import Thread
-from util import *
+from src.util import *
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data
@@ -47,6 +47,7 @@ class DataHandle(object):
         # A list to add errors to if there are any
         errors = []
 
+        debug("1")
 
         if len(iso_id_list) == 0:
             errors.append(FetchError(FetchErrorKind.BadIsoList, 'Bad isotopologue list: you must select at least one isotopologue'))

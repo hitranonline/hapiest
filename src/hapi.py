@@ -17,7 +17,7 @@ as they are present in almost any programming language.
 Trying to retain functional style for this API.
 '''
 
-#import httplib
+# import http
 #import urllib2
 import json
 import os, os.path
@@ -47,6 +47,7 @@ try:
     import urllib.request as urllib2
 except ImportError:
     import urllib2
+    import http
 
 HAPI_VERSION = '1.1.0.7'
 # CHANGES:
@@ -176,7 +177,7 @@ TABLES = {} # hash/dictionary
 # interface for establishing HTTP connection
 # can return object/structure/handle
 def setupConnection(Host=VARIABLES['GLOBAL_HOST']):
-    Connection = httplib.HTTPConnection(Host)
+    Connection = http.client.HTTPConnection(Host)
     if not empty(Connection):
        return Connection
     else:
@@ -258,7 +259,7 @@ GLOBAL_NODELIST = {
 def createNode(NodeID,NodeList=GLOBAL_NODELIST):
     # create a node, throw if exists
     node = NodeList.get(NodeID)
-    if node: raise Exception('node %s already exists' % NodeName)
+    if node: raise Exception('node %s already exists' % NodeID)
     NodeList[NodeID] = {}
     pass
 
@@ -269,7 +270,7 @@ def getNodeIDs(NodeList=GLOBAL_NODELIST):
 def getNodeProperty(NodeID,PropName,NodeList=GLOBAL_NODELIST):
     # get a property for certain node
     # if not found throw exception
-    node = NodeList.get(NodeName)
+    node = NodeList.get(NodeID)
     if node:
        prop = node.get(PropName)
        if prop:
@@ -3142,7 +3143,7 @@ def queryHITRAN(TableName,iso_id_list,numin,numax,pargroups=[],params=[],dotpar=
     # Download data by chunks.
     if VARIABLES['DISPLAY_FETCH_URL']: print(url+'\n')
     try:
-        print url
+        print(url)
         req = urllib2.urlopen(url)
     except urllib2.HTTPError:
         raise Exception('Failed to retrieve data for given parameters.')
