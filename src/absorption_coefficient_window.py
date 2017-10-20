@@ -8,8 +8,18 @@ class AbsorptionCoefficientWindow():
         self.parent = parent
 
         self.gui = AbsorptionCoefficientWindowGui()
-        self.populate_
+        self.populate_data_names()
         self.gui.show()
+
+    def populate_data_names(self):
+        try:
+            data_names = get_all_data_names()
+            for item in data_names:
+                self.gui.data_name.addItem(item)
+
+        except Exception as e:
+            err_(e)
+            err_("Failed to populate data names...")
 
 
 class AbsorptionCoefficientWindowGui(QtWidgets.QWidget):

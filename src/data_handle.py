@@ -14,6 +14,7 @@ class FetchErrorKind(Enum):
     BadIsoList = 6
     FailedToRetreiveData = 7
     FailedToOpenThread = 8
+    EmptyName = 9
 
 # A class that contains a FetchErrorKind along with a description for the error
 class FetchError(object):
@@ -47,10 +48,12 @@ class DataHandle(object):
         # A list to add errors to if there are any
         errors = []
 
-        debug("1")
-
         if len(iso_id_list) == 0:
             errors.append(FetchError(FetchErrorKind.BadIsoList, 'Bad isotopologue list: you must select at least one isotopologue'))
+
+        if len(self.data_name) == 0:
+            errors.append(
+                FetchError(FetchErrorKind.EmptyName, 'Data name is empty! Please give it a name before fetching'))
 
         # If the len isn't zero there was an error
         if len(errors) != 0:
@@ -66,7 +69,7 @@ class DataHandle(object):
                 # If the fetch was successfull, create a file that has a list of
                 # the different isotopologues that were used. Each global ID is
                 # separated by the comma ','
-                file = open(CONFIG.data_folder + '/' + self.data_name + '.isolist', 'w')
+                file = open(CONFIG.data_folder + '/' + self.data_name + '.hmd', 'w')
 
                 # Add a comma between each value, but not the last one
                 last_index = len(iso_id_list) - 1

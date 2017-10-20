@@ -1,6 +1,7 @@
 from src.util import *
 from src.window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
+import re
 from src.data_handle import *
 from src.hapi import *
 from src.absorption_coefficient_window import *
@@ -15,6 +16,8 @@ class MainWindow(Window):
 
         self.is_open = True
 
+        # A flag used in the __data_name handler to prevent infinite recursion
+
         self.populate_molecule_list()
 
         self.populate_parameter_lists()
@@ -26,6 +29,7 @@ class MainWindow(Window):
         self.gui.err_small_range.hide()
         self.gui.err_bad_connection.hide()
         self.gui.err_bad_iso_list.hide()
+        self.gui.err_empty_name.hide()
 
         # Connect the function to be executed when wn_max's value changes
         self.gui.wn_max.valueChanged.connect(
@@ -54,6 +58,11 @@ class MainWindow(Window):
         # Set the function for when an item gets clicked to the one defined in the class
         self.gui.iso_list.itemPressed.connect(
                                     lambda item: self.__iso_list_item_click(item))
+
+        # Set the function for when data name gets changed, removes any invalid characters
+        re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]+')
+        validator = QtGui.QRegExpValidator(re)
+        self.gui.data_name.setValidator(validator)
 
         # Display the GUI since we're done configuring it
         self.gui.show()
@@ -104,6 +113,8 @@ class MainWindow(Window):
             elif err.error == FetchErrorKind.BadIsoList:
                 self.gui.err_bad_iso_list.show()
                 err_(' Error: You must select at least one isotopologue.')
+            elif err.error == FetchErrorKind.EmptyName:
+                self.gui.err_empty_name.show()
 
     def __handle_fetch_clicked(self):
         # Hide any error messages for now, if they persist they'll be shown
@@ -111,6 +122,7 @@ class MainWindow(Window):
         self.gui.err_small_range.hide()
         self.gui.err_bad_connection.hide()
         self.gui.err_bad_iso_list.hide()
+        self.gui.err_empty_name.hide()
 
         molecule = self.gui.get_selected_molecule_id()
 
