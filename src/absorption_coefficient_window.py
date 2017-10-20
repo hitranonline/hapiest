@@ -11,6 +11,9 @@ class AbsorptionCoefficientWindow():
         self.populate_data_names()
         self.gui.show()
 
+    def graph(self):
+        pass  # TODO: Create a graph class using pyqtchart, actually plot the graph..
+
     def populate_data_names(self):
         try:
             data_names = get_all_data_names()

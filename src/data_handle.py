@@ -28,6 +28,20 @@ class FetchError(object):
         self.description = description
 
 class DataHandle(object):
+    DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
+
+    # Returns a list of all the different data-names in the data directory
+    @staticmethod
+    def get_all_data_names():
+        files = listdir(Config.data_folder)
+        datas = []
+        for f in files:
+            match = DataHandle.DATA_FILE_REGEX.match(f)
+            if match == None:
+                continue
+            datas.append(match.groupdict()['data_handle'])
+        return datas
+
     def __init__(self, data_name):
         self.data_name = data_name
 
@@ -69,7 +83,7 @@ class DataHandle(object):
                 # If the fetch was successfull, create a file that has a list of
                 # the different isotopologues that were used. Each global ID is
                 # separated by the comma ','
-                file = open(CONFIG.data_folder + '/' + self.data_name + '.hmd', 'w')
+                file = open(Config.data_folder + '/' + self.data_name + '.hmd', 'w')
 
                 # Add a comma between each value, but not the last one
                 last_index = len(iso_id_list) - 1
@@ -103,6 +117,6 @@ class DataHandle(object):
         except Exception as e:
             return [FetchError(
                         FetchErrorKind.FailedToOpenThread,
-                        'Thread failure: Failed to open thread tp call fetch')]
+                'Thread failure: Failed to open thread to call fetch')]
 
         return True

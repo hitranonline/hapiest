@@ -7,14 +7,11 @@ from src.main_window import *
 from threading import Thread
 from multiprocessing import Process, Value
 
-util_init()
-
-if CONFIG.high_dpi == 'true':
+if Config.high_dpi == 'true':
     # Enable High DPI display with PyQt5
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 app = QtWidgets.QApplication(sys.argv)
-
 
 window = MainWindow()
 
@@ -26,7 +23,7 @@ init_console_redirect(window, sys.argv)
 def start_hapi():
     window.gui.fetch_button.setDisabled(True)
     print('Proccessing data in data directory')
-    db_begin(CONFIG.data_folder)
+    db_begin(Config.data_folder)
     print('Finished processing data in data directory')
     window.gui.fetch_button.setEnabled(True)
 try:

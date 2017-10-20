@@ -5,6 +5,7 @@ import re
 from src.data_handle import *
 from src.hapi import *
 from src.absorption_coefficient_window import *
+from src.isotopologue import *
 
 class MainWindow(Window):
     def __init__(self):
@@ -124,7 +125,7 @@ class MainWindow(Window):
         self.gui.err_bad_iso_list.hide()
         self.gui.err_empty_name.hide()
 
-        molecule = self.gui.get_selected_molecule_id()
+        molecule = self.gui.get_selected_molecule()
 
         wn_max = self.gui.get_wn_max()
         wn_min = self.gui.get_wn_min()
@@ -155,11 +156,11 @@ class MainWindow(Window):
     # that is being worked with changes.
     def __molecule_id_index_changed(self):
         # Get the local molecule id
-        molecule_id = self.gui.get_selected_molecule_id()
+        molecule = self.gui.get_selected_molecule()
 
-        if molecule_id in MOLECULE_DATA_RANGE:
+        if molecule.id in Isotopologue.MOLECULE_DATA_RANGE:
             # Get the range
-            min, max = MOLECULE_DATA_RANGE[molecule_id]
+            min, max = Isotopologue.MOLECULE_DATA_RANGE[molecule.id]
 
             # Change the range for wn
             self.gui.wn_min.setMinimum(min)
@@ -169,58 +170,42 @@ class MainWindow(Window):
             self.gui.wn_max.setValue(max)
 
         else:
-            log_('No wavenumber range-data for molecule id ' + str(molecule_id))
+            log_('No wavenumber range-data for molecule id ' + str(molecule.id))
+            self.gui.wn_min.setMinimum(0)
+            self.gui.wn_min.setMaximum(1000000)
+            self.gui.wn_max.setMinimum(0)
+            self.gui.wn_max.setMaximum(1000000)
 
         # Remove all old elements
         self.gui.iso_list.clear()
 
         # How many isotopologues this molecule has
-        number_of_isos = MOLECULE_ID_TO_ISO_COUNT[molecule_id]
 
-        # The keys to ISO in hapi are tuples of numbers (k, v), where k is the
-        # molecule id and v is the isotopologue number. It must be taken into
-        # account that the isotopologue numbers are not gaurenteed to be
-        # sequential, and as things stand right now they skip some numbers. So
-        # instead of iterating through 1..n, we iterate through every number
-        # until we have added the appropriate number of isos to the list.
-
-        # How many isotopologues we've added
-        count = 0
-        # the v in the (k, v) key we use to access ISO
-        index = 0
-
-        # while we havent added the appropriate number of items to list, keep
-        # looking for an isotopologue.
-        while count < number_of_isos:
-            if not ((molecule_id, index) in ISO):
-                index += 1
-                continue
-
-            isotopologue = ISO[(molecule_id, index)]
+        for isotopologue in molecule.get_all_isos():
 
             # Create a new item, ensure it is enabled and can be checked.
             item = QtWidgets.QListWidgetItem()
 
             # Create a label to allow the rendering of rich text (fancy molecular formulas)
-            label = QtWidgets.QLabel(ISOTOPOLOGUE_NAME_TO_HTML[isotopologue[1]])
+            label = QtWidgets.QLabel(isotopologue.html)
+
 
             # Ensure we can use html
             label.setTextFormat(QtCore.Qt.RichText)
 
             # Make sure there is a key associated with the item so we can use it later
-            item.setData(QtCore.Qt.UserRole, isotopologue[0])
+            item.setData(QtCore.Qt.UserRole, isotopologue.id)
             item.setFlags(item.flags() |
                         QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
 
             # The normal molecule is always at index 1, and we always want that
             # molecule to be selected
-            if index != 1: item.setCheckState(QtCore.Qt.Unchecked)
+            if isotopologue.iso_id != 1:
+                item.setCheckState(QtCore.Qt.Unchecked)
             else: item.setCheckState(QtCore.Qt.Checked)
 
             self.gui.iso_list.addItem(item)
             self.gui.iso_list.setItemWidget(item, label)
-            count += 1
-            index += 1
 
 
     def open_graph_window(self):
@@ -315,8 +300,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
         uic.loadUi('layouts/main_window.ui', self)
 
     # converts the selected molecule to a molecule id
-    def get_selected_molecule_id(self):
-        return MOLECULE_NAME_TO_LOCAL_ID[str(self.molecule_id.currentText())]
+    def get_selected_molecule(self):
+        return Isotopologue.from_molecule_name(self.molecule_id.currentText())
 
     # Returns a list containing all of the checked isotopologues
     def get_selected_isotopologues(self):
