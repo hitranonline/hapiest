@@ -276,16 +276,16 @@ def getNodeProperty(NodeID,PropName,NodeList=GLOBAL_NODELIST):
        if prop:
           return prop
        else:
-          raise Exception('node %s doesn''t have property %s' % (ModeName,Propname) )
+           raise Exception('node %s doesn''t have property %s' % (NodeID, PropName))
     else:
-       raise Exception('no such node %s' % Nodename)
+        raise Exception('no such node %s' % NodeID)
 
 def setNodeProperty(NodeID,PropName,PropValue,NodeList=GLOBAL_NODELIST):
     # set a property for certain node
     # throw exception if node not found
     # if the property doesn't exist it will appear
     node = NodeList.get(NodeID)
-    if not node: raise Exception('no such node %s ' % NodeName)
+    if not node: raise Exception('no such node %s ' % NodeID)
     NodeList[PropName] = PropValue
     return
 
@@ -340,8 +340,8 @@ def authenticate(UserName,Requisites,Privileges=GLOBAL_PRIVILEGES):
     key_list = [Privileges[User]['ACCESS_KEY'] for User in Privileges.keys]
     return True if Requisites.AccessKey in key_list else False
 
-def checkPrivileges(Path,UserName=GLOBAL_USER,Requisites=GLOBAL_REQUISITES,
-                    Privileges=GLOBAL_PRIVILEGES,NodeList=GLOBAL_NODELIST,Nodenames=GLOBAL_NODENAMES):
+def checkPrivileges(Path, UserName=GLOBAL_USER, Requisites=GLOBAL_REQUISITES,
+                    Privileges=GLOBAL_PRIVILEGES, NodeList=GLOBAL_NODELIST, NodeNames=GLOBAL_NODENAMES):
     # Privileges are checked before executing every query (needs optimization)
     # Path example: SOME_DB::SOME_TABLE::SOME_NODE
     if not authenticate(UserName,Requisites,Privileges): return False

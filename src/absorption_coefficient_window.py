@@ -16,7 +16,7 @@ class AbsorptionCoefficientWindow():
 
     def populate_data_names(self):
         try:
-            data_names = get_all_data_names()
+            data_names = DataHandle.get_all_data_names()
             for item in data_names:
                 self.gui.data_name.addItem(item)
 

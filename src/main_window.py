@@ -43,9 +43,13 @@ class MainWindow(Window):
         # the drop-down list is populated so there is something to be selected
         self.__molecule_id_index_changed()
 
+        def t():
+            try:
+                self.__molecule_id_index_changed()
+            except Exception as e:
+                debug(e)
         # Set the molecule_id change method to the one we defined in the class
-        self.gui.molecule_id.currentIndexChanged.connect(
-                                    lambda: self.__molecule_id_index_changed())
+        self.gui.molecule_id.currentIndexChanged.connect(lambda: t())
 
         # Set the fetch_button onclick method to the one we defined in the class
         self.gui.fetch_button.clicked.connect(
@@ -155,32 +159,22 @@ class MainWindow(Window):
     # This method repopulates the isotopologue list widget after the molecule
     # that is being worked with changes.
     def __molecule_id_index_changed(self):
-        # Get the local molecule id
         molecule = self.gui.get_selected_molecule()
 
-        if molecule.id in Isotopologue.MOLECULE_DATA_RANGE:
-            # Get the range
-            min, max = Isotopologue.MOLECULE_DATA_RANGE[molecule.id]
+        # Get the range
+        min, max = molecule.get_wn_range()
 
-            # Change the range for wn
-            self.gui.wn_min.setMinimum(min)
-            self.gui.wn_max.setMaximum(max)
+        # Change the range for wn
+        self.gui.wn_min.setMinimum(min)
+        self.gui.wn_max.setMaximum(max)
 
-            self.gui.wn_min.setValue(min)
-            self.gui.wn_max.setValue(max)
-
-        else:
-            log_('No wavenumber range-data for molecule id ' + str(molecule.id))
-            self.gui.wn_min.setMinimum(0)
-            self.gui.wn_min.setMaximum(1000000)
-            self.gui.wn_max.setMinimum(0)
-            self.gui.wn_max.setMaximum(1000000)
+        self.gui.wn_min.setValue(min)
+        self.gui.wn_max.setValue(max)
 
         # Remove all old elements
         self.gui.iso_list.clear()
 
-        # How many isotopologues this molecule has
-
+        # For each isotopologue this molecule has..
         for isotopologue in molecule.get_all_isos():
 
             # Create a new item, ensure it is enabled and can be checked.
@@ -260,18 +254,12 @@ class MainWindow(Window):
     # Extract the name of each molocule that hapi has data on and add it to
     def populate_molecule_list(self):
         # our list of molecule names in the gui
-        for k, v in ISO.items():
-            (molecule_id, isotopologue_id) = k
-            # The iso list includes molocules and their isotopologues, but if
-            # isotopologue_id is 1 it means it is the normal molecule, so we add
-            # it to the drop-down menu named molecule_id
-
-            # Molecules with ID greater than 1000, as of right now, don't have
-            # data in HITRAN that can be accessed
+        for molecule_id, _ in Isotopologue.molecules.items():
             if molecule_id >= 1000:
                 continue
-            if isotopologue_id == 1:
-                self.gui.molecule_id.addItem(ISO[k][4])
+            molecule = Isotopologue.from_molecule_id(molecule_id)
+
+            self.gui.molecule_id.addItem(molecule.molecule_name)
 
     # Method that get called when the append_text signal is received by the window
     # This is to allow console output

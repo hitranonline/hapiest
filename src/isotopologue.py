@@ -1,5 +1,5 @@
 from src.hapi import *
-
+from src.util import *
 
 class Isotopologue():
     # Static members
@@ -66,7 +66,7 @@ class Isotopologue():
     MOL_NAME_LOC = 4
 
     # A list of all isotopologues
-    isotopologues = []
+    all_isotopologues = []
 
     # Maps molecule id to a list of all isotopologues of that molecule
     molecules = {}
@@ -144,12 +144,14 @@ class Isotopologue():
         for (key, _) in ISO.items():
             (mid, iid) = key
             iso = Isotopologue(mid, iid)
-            Isotopologue.isotopologues.append(iso)
 
             if mid not in Isotopologue.molecules:
                 Isotopologue.molecules[mid] = [iso]
             else:
                 Isotopologue.molecules[mid].append(iso)
+
+        for (mid, isos) in Isotopologue.molecules.items():
+            Isotopologue.all_isotopologues.extend(isos)
 
     @staticmethod
     def from_molecule_name(mol_name):
@@ -171,6 +173,13 @@ class Isotopologue():
     def from_global_id(gid):
         return Isotopologue.FROM_GLOBAL_ID[gid]
 
+    def get_wn_range(self):
+        if self.molecule_id in Isotopologue.MOLECULE_DATA_RANGE:
+            return Isotopologue.MOLECULE_DATA_RANGE[self.molecule_id]
+        else:
+            log_('No wavenumber range-data for molecule id ', self.molecule_id)
+            return (0, 100000000)
+
     def get_iso_count(self):
         return len(Isotopologue.molecules[self.molecule_id])
 
@@ -178,8 +187,10 @@ class Isotopologue():
         return Isotopologue.molecules[self.molecule_id]
 
     def __init__(self, molecule_id, isotopologue_id):
+        # This should never happen, but just in case...
         if (molecule_id, isotopologue_id) not in ISO:
             raise Exception("Invalid isotopologue")
+
         # Grab data from hapi
         data = ISO[(molecule_id, isotopologue_id)]
 

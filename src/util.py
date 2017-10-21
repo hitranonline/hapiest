@@ -11,9 +11,10 @@ from os import listdir
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
 
-def print_html(html):
+def print_html(*args):
     global __WINDOW
-    __TEXT_EDIT_STREAM.write_html(html)
+    for arg in args:
+        __TEXT_EDIT_STREAM.write_html(args)
 
 
 # A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui
@@ -22,9 +23,9 @@ def debug(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 # Prints to the console_output with a fancy lookin log label
-def log_(dat):
+def log_(*args):
     print_html('<div style="color: #7878e2">[Log]</div>&nbsp;')
-    print_html(str(dat))
+    print_html(*args)
     print_html('<br>')
 
 
@@ -87,7 +88,7 @@ class TextEditStream(object):
     # To handle multiple threads attempting to write at once, add very simple
     # semaphore-type usage checking / waiting
     def write(self, text):
-        self.queue.put((0, text))
+        self.queue.put((0, str(text)))
 
     # Similar to the write method, but pass a 1 instead of a zero, indicating that the text is html rather than normal text
     def write_html(self, html):
