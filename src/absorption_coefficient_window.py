@@ -1,18 +1,61 @@
 from src.util import *
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from src.data_handle import *
-
+from src.graph_window import *
+from src.hmd import *
+import threading
 
 class AbsorptionCoefficientWindow():
+    graph_type_map = {
+        "Voigt": absorptionCoefficient_Voigt,
+        "Lorentz": absorptionCoefficient_Lorentz,
+        "Gauss": absorptionCoefficient_Gauss,
+        "SD Voigt": absorptionCoefficient_SDVoigt,
+        "Galatry": absorptionCoefficient_Doppler,
+        "HT": absorptionCoefficient_HT
+    }
     def __init__(self, parent):
         self.parent = parent
-
+        self.children = []
         self.gui = AbsorptionCoefficientWindowGui()
         self.populate_data_names()
         self.gui.show()
 
+        self.gui.graph_button.clicked.connect(lambda: self.graph())
+
     def graph(self):
-        pass  # TODO: Create a graph class using pyqtchart, actually plot the graph..
+        def function():
+            self.gui.graph_button.setDisabled(True)
+            data_name = self.gui.get_data_name()
+            hmd = HMD(data_name)
+            graph_function = AbsorptionCoefficientWindow.graph_type_map[self.gui.get_graph_type()]
+
+            Components = hmd.iso_tuples[0],
+            SourceTables = data_name,
+            Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
+            GammaL = self.gui.get_broadening_parameter(),
+            WavenumberRange = self.gui.get_wn_range(),
+            WavenumberStep = self.gui.get_wn_step(),
+            WavenumberWing = self.gui.get_wn_wing(),
+            WavenumberWingHW = self.gui.get_wn_wing_hw()
+            x, y = graph_function(
+                Components=Components,
+                SourceTables=SourceTables,
+                Environment=Environment,
+                GammaL=GammaL[0],
+                HITRAN_units=False,
+                WavenumberRange=WavenumberRange[0],
+                WavenumberStep=WavenumberStep[0],
+                WavenumberWing=WavenumberWing[0],
+                WavenumberWingHW=WavenumberWingHW
+            )
+            self.gui.graph_button.setEnabled(True)
+            return x, y
+
+        try:
+            self.children.append(GraphWindow(GraphThread(function)))
+        except Exception as e:
+            debug(str(e))
 
     def populate_data_names(self):
         try:
@@ -47,13 +90,13 @@ class AbsorptionCoefficientWindowGui(QtWidgets.QWidget):
             element.setDisabled(True)
 
     def get_broadening_parameter(self):
-        return str(self.broadening_parameter.text())
+        return self.broadening_parameter.currentText()
 
     def get_data_name(self):
-        return str(self.data_name.text())
+        return self.data_name.currentText()
 
     def get_graph_type(self):
-        return str(self.graph_type.text())
+        return self.graph_type.currentText()
 
     def get_intensity_threshold(self):
         if self.intensity_threshold_enabled.checkState() == QtCore.Qt.Checked:

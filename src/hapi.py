@@ -10228,7 +10228,6 @@ def listOfTuples(a):
         a = [a]
     return a
 
-
 # determine default parameters from those which are passed to absorptionCoefficient_...
 def getDefaultValuesForXsect(Components,SourceTables,Environment,OmegaRange,
                              OmegaStep,OmegaWing,IntensityThreshold,Format):
@@ -10279,6 +10278,7 @@ def getDefaultValuesForXsect(Components,SourceTables,Environment,OmegaRange,
         Format = '%%.%df %%e' % actual_number_of_digits
         """
         Format = '%.12f %e'
+
     return Components,SourceTables,Environment,OmegaRange,\
            OmegaStep,OmegaWing,IntensityThreshold,Format
 
@@ -10904,7 +10904,6 @@ def absorptionCoefficient_SDVoigt(Components=None,SourceTables=None,partitionFun
     if File: save_to_file(File,Format,Omegas,Xsect)
     return Omegas,Xsect
 
-
 def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunction=PYTIPS,
                                 Environment=None,OmegaRange=None,OmegaStep=None,OmegaWing=None,
                                 IntensityThreshold=DefaultIntensityThreshold,
@@ -10985,7 +10984,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
         Omegas = arange_(OmegaRange[0],OmegaRange[1],OmegaStep) # fix
     number_of_points = len(Omegas)
     Xsect = zeros(number_of_points)
-
     # reference temperature and pressure
     Tref = __FloatType__(296.) # K
     pref = __FloatType__(1.) # atm
@@ -11009,7 +11007,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
                 raise Exception('cannot find component M,I = %d,%d.' % (M,I))
         ABUNDANCES[(M,I)] = ni
         NATURAL_ABUNDANCES[(M,I)] = ISO[(M,I)][ISO_INDEX['abundance']]
-
     # precalculation of volume concentration
     if HITRAN_units:
         factor = __FloatType__(1.0)
@@ -11032,7 +11029,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
             Diluent = {'self':1.}
         else:
             raise Exception('Unknown GammaL value: %s' % GammaL)
-
     # Simple check
     for key in Diluent:
         val = Diluent[key]
