@@ -3,28 +3,33 @@ from PyQt5.QtChart import *
 from src.util import *
 from src.config import *
 import numpy as np
-from src.graph_thread import *
-
+from src.worker import *
 
 class GraphWindow():
 
     # Data should never be None / null, since if there is no data selected a new
     # graphing window shouldn't even be opened.
-    def __init__(self, graph_thread):
-        graph_thread.start()
+    def __init__(self, graph_fn):
+        # graph_thread.start()
         self.gui = GraphWindowGui()
-        graph_thread.join()
-        if len(graph_thread.errors) == 0:
-            self.gui.add_graph(graph_thread.x, graph_thread.y)
-        else:
-            for error in graph_thread.errors:
-                err_(str(error))
+        self.graph_fn = graph_fn
+        # graph_thread.join()
+        # if len(graph_thread.errors) == 0:
+        #     self.gui.add_graph(graph_thread.x, graph_thread.y)
+        # else:
+        #     for error in graph_thread.errors:
+        #         err_(str(error))
+        self.worker = Worker(self, self.graph_fn, self.plot)
+        self.worker.start()
 
-    def plot(self, x, y):
+    def plot(self, data):
+        debug("plot start")
+        (x, y) = data
         try:
             self.gui.add_graph(x, y)
         except Exception as e:
             err_(e)
+        debug("plot end")
 
 
     def try_render_graph(self):

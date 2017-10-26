@@ -600,7 +600,11 @@
    <addaction name="menuFile"/>
    <addaction name="menuOpen_Window"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+     <widget class="QStatusBar" name="statusbar">
+         <property name="sizeGripEnabled">
+             <bool>false</bool>
+         </property>
+     </widget>
   <action name="action_absorption_coefficient">
    <property name="text">
     <string>Absorption Coefficient</string>

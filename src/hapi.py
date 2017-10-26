@@ -9891,7 +9891,6 @@ def pcqsdhc(sg0,GamD,Gam0,Gam2,Shift0,Shift2,anuVC,eta,sg):
     #-------------------------------------------------
 
     # sg is the only vector argument which is passed to fusnction
-
     if type(sg) not in set([array,ndarray,list,tuple]):
         sg = array([sg])
 

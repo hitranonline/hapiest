@@ -24,20 +24,21 @@ class AbsorptionCoefficientWindow():
         self.gui.graph_button.clicked.connect(lambda: self.graph())
 
     def graph(self):
-        def function():
-            self.gui.graph_button.setDisabled(True)
-            data_name = self.gui.get_data_name()
-            hmd = HMD(data_name)
-            graph_function = AbsorptionCoefficientWindow.graph_type_map[self.gui.get_graph_type()]
+        self.gui.graph_button.setDisabled(True)
+        data_name = self.gui.get_data_name()
+        hmd = HMD(data_name)
+        graph_function = AbsorptionCoefficientWindow.graph_type_map[self.gui.get_graph_type()]
 
-            Components = hmd.iso_tuples[0],
-            SourceTables = data_name,
-            Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-            GammaL = self.gui.get_broadening_parameter(),
-            WavenumberRange = self.gui.get_wn_range(),
-            WavenumberStep = self.gui.get_wn_step(),
-            WavenumberWing = self.gui.get_wn_wing(),
-            WavenumberWingHW = self.gui.get_wn_wing_hw()
+        Components = hmd.iso_tuples[0],
+        SourceTables = data_name,
+        Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
+        GammaL = self.gui.get_broadening_parameter(),
+        WavenumberRange = self.gui.get_wn_range(),
+        WavenumberStep = self.gui.get_wn_step(),
+        WavenumberWing = self.gui.get_wn_wing(),
+        WavenumberWingHW = self.gui.get_wn_wing_hw()
+
+        def function(self, errors):
             x, y = graph_function(
                 Components=Components,
                 SourceTables=SourceTables,
@@ -49,13 +50,12 @@ class AbsorptionCoefficientWindow():
                 WavenumberWing=WavenumberWing[0],
                 WavenumberWingHW=WavenumberWingHW
             )
-            self.gui.graph_button.setEnabled(True)
-            return x, y
+            return (x, y)
 
         try:
-            self.children.append(GraphWindow(GraphThread(function)))
+            self.children.append(GraphWindow(lambda errors: function(self, errors)))
         except Exception as e:
-            debug(str(e))
+            err_(str(e))
 
     def populate_data_names(self):
         try:

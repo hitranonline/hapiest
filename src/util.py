@@ -114,7 +114,6 @@ class TextReceiver(Qt.QObject):
 
 
     def run(self):
-        sleep(1)
         while self.running:
             (ty, text) = self.queue.get()
             if ty == 0:
@@ -143,8 +142,8 @@ def init_console_redirect(main_window, *args, **kwargs):
     __TEXT_THREAD = QtCore.QThread()
     # Connect the signal to the console output handler in the main window
     # Connect the console output signals
-    __TEXT_RECEIVER.write_text_signal.connect(main_window.console_append_text)
-    __TEXT_RECEIVER.write_html_signal.connect(main_window.console_append_html)
+    __TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.console_append_text(str))
+    __TEXT_RECEIVER.write_html_signal.connect(lambda html: main_window.console_append_html(html))
     # Move the receiver to the background thread
     __TEXT_RECEIVER.moveToThread(__TEXT_THREAD)
     # When the thread starts, start the text receiver
