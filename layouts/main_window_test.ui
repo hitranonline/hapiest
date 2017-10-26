@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>MainWindow</class>
+    <widget class="QMainWindow" name="MainWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>600</width>
+                <height>600</height>
+            </rect>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>600</width>
+                <height>600</height>
+            </size>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>9</pointsize>
+            </font>
+        </property>
+        <property name="windowTitle">
+            <string>hapiest</string>
+        </property>
+        <property name="toolTip">
+            <string/>
+        </property>
+        <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="tabShape">
+            <enum>QTabWidget::Rounded</enum>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <widget class="QWidget" name="gridLayoutWidget">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>360</y>
+                        <width>561</width>
+                        <height>181</height>
+                    </rect>
+                </property>
+                <layout class="QGridLayout" name="gridLayout">
+                    <item row="1" column="0">
+                        <widget class="QTextEdit" name="console_output">
+                            <property name="font">
+                                <font>
+                                    <family>Consolas</family>
+                                    <pointsize>9</pointsize>
+                                    <stylestrategy>PreferAntialias</stylestrategy>
+                                </font>
+                            </property>
+                            <property name="cursor" stdset="0">
+                                <cursorShape>IBeamCursor</cursorShape>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="acceptRichText">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                    </item>
+                    <item row="0" column="0">
+                        <widget class="QLabel" name="label_8">
+                            <property name="text">
+                                <string>Console Output</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item row="1" column="1">
+                        <widget class="QPushButton" name="clear_console">
+                            <property name="font">
+                                <font>
+                                    <pointsize>9</pointsize>
+                                </font>
+                            </property>
+                            <property name="text">
+                                <string>Clear Console</string>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
+            </widget>
+            <widget class="QWidget" name="gridLayoutWidget_3">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>110</y>
+                        <width>561</width>
+                        <height>231</height>
+                    </rect>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_5">
+                    <item row="0" column="0">
+                        <layout class="QHBoxLayout" name="horizontalLayout_3">
+                            <item>
+                                <layout class="QVBoxLayout" name="verticalLayout">
+                                    <item>
+                                        <widget class="QLabel" name="label_2">
+                                            <property name="text">
+                                                <string>Isotopologues</string>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                    <item>
+                                        <widget class="QListWidget" name="iso_list"/>
+                                    </item>
+                                </layout>
+                            </item>
+                            <item>
+                                <layout class="QVBoxLayout" name="verticalLayout_2">
+                                    <item>
+                                        <widget class="QLabel" name="label_6">
+                                            <property name="text">
+                                                <string>Parameter Groups</string>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                    <item>
+                                        <widget class="QListWidget" name="param_group_list"/>
+                                    </item>
+                                </layout>
+                            </item>
+                            <item>
+                                <layout class="QVBoxLayout" name="verticalLayout_3">
+                                    <item>
+                                        <widget class="QLabel" name="label_7">
+                                            <property name="font">
+                                                <font>
+                                                    <pointsize>9</pointsize>
+                                                </font>
+                                            </property>
+                                            <property name="text">
+                                                <string>Parameters</string>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                    <item>
+                                        <widget class="QListWidget" name="param_list"/>
+                                    </item>
+                                </layout>
+                            </item>
+                        </layout>
+                    </item>
+                    <item row="1" column="0">
+                        <layout class="QHBoxLayout" name="horizontalLayout_4">
+                            <item>
+                                <widget class="QLabel" name="err_bad_iso_list">
+                                    <property name="palette">
+                                        <palette>
+                                            <active>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>0</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                                <colorrole role="Text">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>4</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </active>
+                                            <inactive>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>0</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                                <colorrole role="Text">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>4</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </inactive>
+                                            <disabled>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>120</red>
+                                                            <green>120</green>
+                                                            <blue>120</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                                <colorrole role="Text">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>120</red>
+                                                            <green>120</green>
+                                                            <blue>120</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </disabled>
+                                        </palette>
+                                    </property>
+                                    <property name="font">
+                                        <font>
+                                            <stylestrategy>PreferAntialias</stylestrategy>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>You must select at least one isotopologue</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QLabel" name="err_bad_connection">
+                                    <property name="palette">
+                                        <palette>
+                                            <active>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>0</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </active>
+                                            <inactive>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>255</red>
+                                                            <green>0</green>
+                                                            <blue>0</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </inactive>
+                                            <disabled>
+                                                <colorrole role="WindowText">
+                                                    <brush brushstyle="SolidPattern">
+                                                        <color alpha="255">
+                                                            <red>120</red>
+                                                            <green>120</green>
+                                                            <blue>120</blue>
+                                                        </color>
+                                                    </brush>
+                                                </colorrole>
+                                            </disabled>
+                                        </palette>
+                                    </property>
+                                    <property name="text">
+                                        <string>Failed to connect to the internet</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QPushButton" name="fetch_button">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>9</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Fetch Data</string>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                </layout>
+            </widget>
+            <widget class="QWidget" name="verticalLayoutWidget_4">
+                <property name="geometry">
+                    <rect>
+                        <x>310</x>
+                        <y>10</y>
+                        <width>271</width>
+                        <height>92</height>
+                    </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                    <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_6">
+                            <item>
+                                <widget class="QLabel" name="label_3">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>9</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Wave Number Min</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QDoubleSpinBox" name="wn_min">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>10</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="decimals">
+                                        <number>5</number>
+                                    </property>
+                                    <property name="maximum">
+                                        <double>100000.000000000000000</double>
+                                    </property>
+                                    <property name="value">
+                                        <double>0.000000000000000</double>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                    <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_7">
+                            <item>
+                                <widget class="QLabel" name="label_4">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>9</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Wave Number Max</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QDoubleSpinBox" name="wn_max">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>10</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="decimals">
+                                        <number>5</number>
+                                    </property>
+                                    <property name="maximum">
+                                        <double>100000.000000000000000</double>
+                                    </property>
+                                    <property name="value">
+                                        <double>0.000000000000000</double>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                    <item>
+                        <widget class="QLabel" name="err_small_range">
+                            <property name="palette">
+                                <palette>
+                                    <active>
+                                        <colorrole role="WindowText">
+                                            <brush brushstyle="SolidPattern">
+                                                <color alpha="255">
+                                                    <red>255</red>
+                                                    <green>0</green>
+                                                    <blue>0</blue>
+                                                </color>
+                                            </brush>
+                                        </colorrole>
+                                    </active>
+                                    <inactive>
+                                        <colorrole role="WindowText">
+                                            <brush brushstyle="SolidPattern">
+                                                <color alpha="255">
+                                                    <red>255</red>
+                                                    <green>0</green>
+                                                    <blue>0</blue>
+                                                </color>
+                                            </brush>
+                                        </colorrole>
+                                    </inactive>
+                                    <disabled>
+                                        <colorrole role="WindowText">
+                                            <brush brushstyle="SolidPattern">
+                                                <color alpha="255">
+                                                    <red>120</red>
+                                                    <green>120</green>
+                                                    <blue>120</blue>
+                                                </color>
+                                            </brush>
+                                        </colorrole>
+                                    </disabled>
+                                </palette>
+                            </property>
+                            <property name="text">
+                                <string>Wave number range is too small</string>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
+            </widget>
+            <widget class="QWidget" name="verticalLayoutWidget_5">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>10</y>
+                        <width>281</width>
+                        <height>91</height>
+                    </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                    <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_8">
+                            <item>
+                                <widget class="QLabel" name="label">
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>9</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Data Name</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QLineEdit" name="data_name">
+                                    <property name="text">
+                                        <string>default_name</string>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                    <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_9">
+                            <item>
+                                <widget class="QLabel" name="label_5">
+                                    <property name="sizePolicy">
+                                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>Molecule</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QComboBox" name="molecule_id">
+                                    <property name="sizePolicy">
+                                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                </layout>
+            </widget>
+        </widget>
+        <widget class="QMenuBar" name="menubar">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>600</width>
+                    <height>26</height>
+                </rect>
+            </property>
+            <widget class="QMenu" name="menuFile">
+                <property name="title">
+                    <string>File</string>
+                </property>
+            </widget>
+            <widget class="QMenu" name="menuOpen_Window">
+                <property name="title">
+                    <string>Graphing</string>
+                </property>
+                <addaction name="action_absorption_coefficient"/>
+                <addaction name="action_spectral_lines"/>
+                <addaction name="action_absorption_cross_section"/>
+                <addaction name="action_transmittance_function"/>
+                <addaction name="action_absorption_function"/>
+                <addaction name="action_radiance_function"/>
+            </widget>
+            <addaction name="menuFile"/>
+            <addaction name="menuOpen_Window"/>
+        </widget>
+        <widget class="QStatusBar" name="statusbar"/>
+        <action name="action_absorption_coefficient">
+            <property name="text">
+                <string>Absorption Coefficient</string>
+            </property>
+        </action>
+        <action name="action_spectral_lines">
+            <property name="text">
+                <string>Spectral Lines</string>
+            </property>
+        </action>
+        <action name="action_absorption_cross_section">
+            <property name="text">
+                <string>Absorption Cross Section</string>
+            </property>
+        </action>
+        <action name="action_transmittance_function">
+            <property name="text">
+                <string>Transmittance Function</string>
+            </property>
+        </action>
+        <action name="action_absorption_function">
+            <property name="text">
+                <string>Absorption Function</string>
+            </property>
+        </action>
+        <action name="action_radiance_function">
+            <property name="text">
+                <string>Radiance Function</string>
+            </property>
+        </action>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

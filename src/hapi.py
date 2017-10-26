@@ -17,7 +17,7 @@ as they are present in almost any programming language.
 Trying to retain functional style for this API.
 '''
 
-#import httplib
+# import http
 #import urllib2
 import json
 import os, os.path
@@ -47,6 +47,7 @@ try:
     import urllib.request as urllib2
 except ImportError:
     import urllib2
+    import http
 
 HAPI_VERSION = '1.1.0.7'
 # CHANGES:
@@ -176,7 +177,7 @@ TABLES = {} # hash/dictionary
 # interface for establishing HTTP connection
 # can return object/structure/handle
 def setupConnection(Host=VARIABLES['GLOBAL_HOST']):
-    Connection = httplib.HTTPConnection(Host)
+    Connection = http.client.HTTPConnection(Host)
     if not empty(Connection):
        return Connection
     else:
@@ -258,7 +259,7 @@ GLOBAL_NODELIST = {
 def createNode(NodeID,NodeList=GLOBAL_NODELIST):
     # create a node, throw if exists
     node = NodeList.get(NodeID)
-    if node: raise Exception('node %s already exists' % NodeName)
+    if node: raise Exception('node %s already exists' % NodeID)
     NodeList[NodeID] = {}
     pass
 
@@ -269,22 +270,22 @@ def getNodeIDs(NodeList=GLOBAL_NODELIST):
 def getNodeProperty(NodeID,PropName,NodeList=GLOBAL_NODELIST):
     # get a property for certain node
     # if not found throw exception
-    node = NodeList.get(NodeName)
+    node = NodeList.get(NodeID)
     if node:
        prop = node.get(PropName)
        if prop:
           return prop
        else:
-          raise Exception('node %s doesn''t have property %s' % (ModeName,Propname) )
+           raise Exception('node %s doesn''t have property %s' % (NodeID, PropName))
     else:
-       raise Exception('no such node %s' % Nodename)
+        raise Exception('no such node %s' % NodeID)
 
 def setNodeProperty(NodeID,PropName,PropValue,NodeList=GLOBAL_NODELIST):
     # set a property for certain node
     # throw exception if node not found
     # if the property doesn't exist it will appear
     node = NodeList.get(NodeID)
-    if not node: raise Exception('no such node %s ' % NodeName)
+    if not node: raise Exception('no such node %s ' % NodeID)
     NodeList[PropName] = PropValue
     return
 
@@ -339,8 +340,8 @@ def authenticate(UserName,Requisites,Privileges=GLOBAL_PRIVILEGES):
     key_list = [Privileges[User]['ACCESS_KEY'] for User in Privileges.keys]
     return True if Requisites.AccessKey in key_list else False
 
-def checkPrivileges(Path,UserName=GLOBAL_USER,Requisites=GLOBAL_REQUISITES,
-                    Privileges=GLOBAL_PRIVILEGES,NodeList=GLOBAL_NODELIST,Nodenames=GLOBAL_NODENAMES):
+def checkPrivileges(Path, UserName=GLOBAL_USER, Requisites=GLOBAL_REQUISITES,
+                    Privileges=GLOBAL_PRIVILEGES, NodeList=GLOBAL_NODELIST, NodeNames=GLOBAL_NODENAMES):
     # Privileges are checked before executing every query (needs optimization)
     # Path example: SOME_DB::SOME_TABLE::SOME_NODE
     if not authenticate(UserName,Requisites,Privileges): return False
@@ -3142,7 +3143,7 @@ def queryHITRAN(TableName,iso_id_list,numin,numax,pargroups=[],params=[],dotpar=
     # Download data by chunks.
     if VARIABLES['DISPLAY_FETCH_URL']: print(url+'\n')
     try:
-        print url
+        print(url)
         req = urllib2.urlopen(url)
     except urllib2.HTTPError:
         raise Exception('Failed to retrieve data for given parameters.')
@@ -9890,7 +9891,6 @@ def pcqsdhc(sg0,GamD,Gam0,Gam2,Shift0,Shift2,anuVC,eta,sg):
     #-------------------------------------------------
 
     # sg is the only vector argument which is passed to fusnction
-
     if type(sg) not in set([array,ndarray,list,tuple]):
         sg = array([sg])
 
@@ -10227,7 +10227,6 @@ def listOfTuples(a):
         a = [a]
     return a
 
-
 # determine default parameters from those which are passed to absorptionCoefficient_...
 def getDefaultValuesForXsect(Components,SourceTables,Environment,OmegaRange,
                              OmegaStep,OmegaWing,IntensityThreshold,Format):
@@ -10278,6 +10277,7 @@ def getDefaultValuesForXsect(Components,SourceTables,Environment,OmegaRange,
         Format = '%%.%df %%e' % actual_number_of_digits
         """
         Format = '%.12f %e'
+
     return Components,SourceTables,Environment,OmegaRange,\
            OmegaStep,OmegaWing,IntensityThreshold,Format
 
@@ -10903,7 +10903,6 @@ def absorptionCoefficient_SDVoigt(Components=None,SourceTables=None,partitionFun
     if File: save_to_file(File,Format,Omegas,Xsect)
     return Omegas,Xsect
 
-
 def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunction=PYTIPS,
                                 Environment=None,OmegaRange=None,OmegaStep=None,OmegaWing=None,
                                 IntensityThreshold=DefaultIntensityThreshold,
@@ -10984,7 +10983,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
         Omegas = arange_(OmegaRange[0],OmegaRange[1],OmegaStep) # fix
     number_of_points = len(Omegas)
     Xsect = zeros(number_of_points)
-
     # reference temperature and pressure
     Tref = __FloatType__(296.) # K
     pref = __FloatType__(1.) # atm
@@ -11008,7 +11006,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
                 raise Exception('cannot find component M,I = %d,%d.' % (M,I))
         ABUNDANCES[(M,I)] = ni
         NATURAL_ABUNDANCES[(M,I)] = ISO[(M,I)][ISO_INDEX['abundance']]
-
     # precalculation of volume concentration
     if HITRAN_units:
         factor = __FloatType__(1.0)
@@ -11031,7 +11028,6 @@ def absorptionCoefficient_Voigt(Components=None,SourceTables=None,partitionFunct
             Diluent = {'self':1.}
         else:
             raise Exception('Unknown GammaL value: %s' % GammaL)
-
     # Simple check
     for key in Diluent:
         val = Diluent[key]

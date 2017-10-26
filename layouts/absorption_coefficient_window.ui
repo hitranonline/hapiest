@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>800</height>
+       <width>500</width>
+       <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QPushButton" name="graph_button">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>720</y>
-     <width>168</width>
-     <height>51</height>
+        <x>160</x>
+        <y>460</y>
+        <width>71</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -29,10 +29,10 @@
   <widget class="QComboBox" name="data_name">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>20</y>
+        <x>160</x>
+        <y>10</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
   </widget>
@@ -40,9 +40,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
-     <width>141</width>
-     <height>30</height>
+        <y>10</y>
+        <width>121</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -53,9 +53,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
-     <width>161</width>
-     <height>30</height>
+        <y>35</y>
+        <width>121</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -65,10 +65,10 @@
   <widget class="QDoubleSpinBox" name="temperature">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>80</y>
+        <x>160</x>
+        <y>36</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -85,9 +85,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
-     <width>141</width>
-     <height>30</height>
+        <y>100</y>
+        <width>121</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -97,10 +97,10 @@
   <widget class="QComboBox" name="graph_type">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>200</y>
+        <x>160</x>
+        <y>100</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <item>
@@ -138,9 +138,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>260</y>
-     <width>241</width>
-     <height>30</height>
+        <y>160</y>
+        <width>121</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -150,10 +150,10 @@
   <widget class="QDoubleSpinBox" name="wn_min">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>300</y>
+        <x>110</x>
+        <y>190</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -162,14 +162,17 @@
    <property name="maximum">
     <double>1000000000.000000000000000</double>
    </property>
+      <property name="value">
+          <double>1.000000000000000</double>
+      </property>
   </widget>
   <widget class="QDoubleSpinBox" name="wn_max">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>360</y>
+        <x>110</x>
+        <y>220</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -178,14 +181,17 @@
    <property name="maximum">
     <double>1000000000.000000000000000</double>
    </property>
+      <property name="value">
+          <double>100.000000000000000</double>
+      </property>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>300</y>
+        <x>60</x>
+        <y>190</y>
      <width>61</width>
-     <height>30</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -195,10 +201,10 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>360</y>
+        <x>60</x>
+        <y>220</y>
      <width>61</width>
-     <height>30</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -208,9 +214,9 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>420</y>
-     <width>221</width>
+        <x>10</x>
+        <y>260</y>
+        <width>161</width>
      <height>30</height>
     </rect>
    </property>
@@ -224,10 +230,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>460</y>
+        <x>200</x>
+        <y>270</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -240,10 +246,10 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>300</y>
-     <width>61</width>
-     <height>30</height>
+        <x>300</x>
+        <y>190</y>
+        <width>31</width>
+        <height>16</height>
     </rect>
    </property>
    <property name="text">
@@ -253,10 +259,10 @@
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>360</y>
-     <width>61</width>
-     <height>30</height>
+        <x>300</x>
+        <y>220</y>
+        <width>31</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -266,10 +272,10 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>460</y>
-     <width>61</width>
-     <height>30</height>
+        <x>390</x>
+        <y>270</y>
+        <width>31</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -280,9 +286,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>140</y>
-     <width>103</width>
-     <height>30</height>
+        <y>70</y>
+        <width>121</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -292,10 +298,10 @@
   <widget class="QDoubleSpinBox" name="pressure">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>140</y>
+        <x>160</x>
+        <y>70</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -311,9 +317,9 @@
   <widget class="QLabel" name="label_12">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>520</y>
-     <width>221</width>
+        <x>10</x>
+        <y>300</y>
+        <width>161</width>
      <height>30</height>
     </rect>
    </property>
@@ -327,10 +333,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>560</y>
+        <x>200</x>
+        <y>310</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -343,10 +349,10 @@
   <widget class="QLabel" name="label_13">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>560</y>
-     <width>61</width>
-     <height>30</height>
+        <x>390</x>
+        <y>310</y>
+        <width>31</width>
+        <height>16</height>
     </rect>
    </property>
    <property name="text">
@@ -356,10 +362,10 @@
   <widget class="QLabel" name="label_14">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>80</y>
+        <x>350</x>
+        <y>41</y>
      <width>21</width>
-     <height>30</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -370,10 +376,10 @@
   <widget class="QLabel" name="label_15">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>140</y>
-     <width>61</width>
-     <height>30</height>
+        <x>350</x>
+        <y>75</y>
+        <width>21</width>
+        <height>21</height>
     </rect>
    </property>
    <property name="text">
@@ -384,10 +390,10 @@
   <widget class="QLabel" name="label_16">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>620</y>
-     <width>361</width>
-     <height>30</height>
+        <x>10</x>
+        <y>340</y>
+        <width>161</width>
+        <height>16</height>
     </rect>
    </property>
    <property name="text">
@@ -400,10 +406,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>660</y>
+        <x>200</x>
+        <y>340</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -416,26 +422,26 @@
   <widget class="QLabel" name="label_17">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>20</y>
-     <width>241</width>
-     <height>30</height>
+        <x>10</x>
+        <y>370</y>
+        <width>161</width>
+        <height>16</height>
     </rect>
    </property>
    <property name="text">
     <string>Intensity Threshhold</string>
    </property>
   </widget>
-  <widget class="QDoubleSpinBox" name="intensity_threshhold">
+     <widget class="QDoubleSpinBox" name="intensity_threshold">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>60</y>
+        <x>200</x>
+        <y>370</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <property name="decimals">
@@ -448,10 +454,10 @@
   <widget class="QLabel" name="label_18">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>120</y>
-     <width>261</width>
-     <height>30</height>
+        <x>20</x>
+        <y>130</y>
+        <width>141</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -461,10 +467,10 @@
   <widget class="QComboBox" name="broadening_parameter">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>160</y>
+        <x>160</x>
+        <y>130</y>
      <width>181</width>
-     <height>36</height>
+        <height>20</height>
     </rect>
    </property>
    <item>
@@ -481,23 +487,32 @@
   <widget class="QCheckBox" name="wn_step_enabled">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>420</y>
-     <width>41</width>
-     <height>34</height>
+        <x>180</x>
+        <y>270</y>
+        <width>20</width>
+        <height>20</height>
     </rect>
    </property>
+      <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+          </sizepolicy>
+      </property>
    <property name="text">
     <string/>
    </property>
+      <property name="tristate">
+          <bool>false</bool>
+      </property>
   </widget>
   <widget class="QCheckBox" name="wn_wing_enabled">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>520</y>
-     <width>41</width>
-     <height>34</height>
+        <x>180</x>
+        <y>310</y>
+        <width>20</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
@@ -507,23 +522,23 @@
   <widget class="QCheckBox" name="wn_wing_hw_enabled">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>620</y>
-     <width>41</width>
-     <height>34</height>
+        <x>180</x>
+        <y>340</y>
+        <width>20</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
   </widget>
-  <widget class="QCheckBox" name="intensity_threshhold_enabled">
+     <widget class="QCheckBox" name="intensity_threshold_enabled">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>20</y>
-     <width>41</width>
-     <height>34</height>
+        <x>180</x>
+        <y>370</y>
+        <width>20</width>
+        <height>20</height>
     </rect>
    </property>
    <property name="text">

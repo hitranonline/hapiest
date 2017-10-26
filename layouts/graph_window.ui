@@ -13,22 +13,6 @@
   <property name="windowTitle">
    <string>Graph</string>
   </property>
-  <widget class="QStackedWidget" name="stackedWidget">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>20</y>
-     <width>581</width>
-     <height>381</height>
-    </rect>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <widget class="QWidget" name="page_3"/>
-   <widget class="QWidget" name="page_5"/>
-   <widget class="QWidget" name="page_4"/>
-  </widget>
  </widget>
  <resources/>
  <connections/>
