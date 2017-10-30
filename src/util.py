@@ -1,5 +1,5 @@
-from src.hapi import *
-from src.config import *
+from hapi import * #edited src.
+from config import * #edited src.
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 from PyQt5 import Qt
@@ -152,4 +152,3 @@ def init_console_redirect(main_window, *args, **kwargs):
     __TEXT_THREAD.start()
     # Actually link stdout with out replacement stream
     __TEXT_EDIT_STREAM.link()
-

@@ -1,9 +1,9 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from PyQt5.QtChart import *
-from src.util import *
-from src.config import *
+from util import * #edited src.
+from config import * #edited src.
 import numpy as np
-from src.worker import *
+from worker import * #edited src.
 
 class GraphWindow():
 

@@ -1,5 +1,5 @@
-from src.util import *
-from src.isotopologue import *
+from util import * #edited src.
+from isotopologue import * #edited src.
 import csv
 
 
