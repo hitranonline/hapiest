@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from util import * #edited src.
 from isotopologue import * #edited src.
+=======
+from util import *
+from isotopologue import *
+>>>>>>> origin/master
 import csv
 
 

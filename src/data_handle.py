@@ -1,7 +1,13 @@
 from aenum import Enum
+<<<<<<< HEAD
 from hapi import * #edited src.
 from threading import Thread
 from util import * #edited src.
+=======
+from hapi import *
+from threading import Thread
+from util import *
+>>>>>>> origin/master
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data

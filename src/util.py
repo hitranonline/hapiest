@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from hapi import * #edited src.
 from config import * #edited src.
+=======
+from hapi import *
+from config import *
+>>>>>>> origin/master
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 from PyQt5 import Qt
