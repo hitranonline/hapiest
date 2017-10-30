@@ -1,5 +1,5 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore
-from src.util import *
+from util import *
 import multiprocessing
 import pickle
 

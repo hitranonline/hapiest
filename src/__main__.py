@@ -1,9 +1,9 @@
 import sys
 from shutil import copy2
 from PyQt5 import QtWidgets, QtCore
-from src.hapi import *
-from src.util import *
-from src.main_window import *
+from hapi import *
+from util import *
+from main_window import *
 from threading import Thread
 from multiprocessing import Process, Value
 

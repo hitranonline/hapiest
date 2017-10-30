@@ -1,7 +1,7 @@
 from aenum import Enum
-from src.hapi import *
+from hapi import *
 from threading import Thread
-from src.util import *
+from util import *
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data

@@ -1,11 +1,11 @@
-from src.util import *
-from src.window import Window
+from util import *
+from window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
 import re
-from src.data_handle import *
-from src.hapi import *
-from src.absorption_coefficient_window import *
-from src.isotopologue import *
+from data_handle import *
+from hapi import *
+from absorption_coefficient_window import *
+from isotopologue import *
 
 class MainWindow(Window):
     def __init__(self):

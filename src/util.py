@@ -1,5 +1,5 @@
-from src.hapi import *
-from src.config import *
+from hapi import *
+from config import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 from PyQt5 import Qt

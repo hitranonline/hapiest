@@ -1,5 +1,5 @@
-from src.hapi import *
-from src.util import *
+from hapi import *
+from util import *
 
 class Isotopologue():
     # Static members
