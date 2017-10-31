@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-from util import * #edited src.
-from window import Window #edited src.
-from PyQt5 import QtCore, QtWidgets, QtGui
-import re
-from data_handle import * #edited src.
-from hapi import * #edited src.
-from absorption_coefficient_window import * #edited src.
-from isotopologue import * #edited src.
-=======
 from util import *
 from window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -16,7 +6,6 @@ from data_handle import *
 from hapi import *
 from absorption_coefficient_window import *
 from isotopologue import *
->>>>>>> origin/master
 
 class MainWindow(Window):
     def __init__(self):

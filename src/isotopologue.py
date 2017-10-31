@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-from hapi import * #edited src.
-from util import * #edited src.
-=======
 from hapi import *
 from util import *
->>>>>>> origin/master
 
 class Isotopologue():
     # Static members

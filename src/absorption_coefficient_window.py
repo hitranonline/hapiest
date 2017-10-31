@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-from util import * #edited src.
-from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
-from data_handle import * #edited src.
-from graph_window import * #edited src.
-from hmd import * #edited src.
-=======
 from util import *
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from data_handle import *
 from graph_window import *
 from hmd import *
->>>>>>> origin/master
 import threading
 
 class AbsorptionCoefficientWindow():
