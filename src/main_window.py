@@ -6,7 +6,7 @@ from data_handle import *
 from hapi import *
 from absorption_coefficient_window import *
 from isotopologue import *
-
+from PyQt5.QtWidgets import (QWidget, QToolTip, QPushButton, QApplication)
 class MainWindow(Window):
     def __init__(self):
         # Initially an empty list, until other windows are created
@@ -94,6 +94,17 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.init_molecule_list()
 
         self.populate_parameter_lists()
+
+        # TOOLTIPS
+         QToolTip.setFont(QFont('SansSerif', 10))
+         self.param_group_list.setToolTip('Specifies "non-standard" parameter to query.')
+         self.param_list.setToolTip('Specifies parameters to query.')
+         self.iso_list.setToolTip('Select the molecule isotopologues you wish to query.')
+         self.molecule_id.setToolTip('Type in, or use the drop-down menu to select your molecule.')
+         self.data_name.setToolTip('Specify local name for fetched data')
+
+         self.wn_min.setToolTip('Specify lower bound wave number to query, must be positive number.\n(default: absolute min for given molecule).')
+         self.wn_max.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
 
         # Connect menu actions to handling functions
         self.action_absorption_coefficient.triggered.connect(
