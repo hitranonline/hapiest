@@ -1,35 +1,39 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from PyQt5.QtChart import *
-from util import *
+from hapiest_util import *
+import hapiest_util
 from config import *
 import numpy as np
-from worker import *
+import worker
 
-class GraphWindow():
+
+class GraphWindow(Qt.QObject):
+    done_signal = QtCore.pyqtSignal(object)
 
     # Data should never be None / null, since if there is no data selected a new
     # graphing window shouldn't even be opened.
-    def __init__(self, graph_fn):
+    def __init__(self, work_object, parent):
+        Qt.QObject.__init__(self)
+        self.parent = parent
         # graph_thread.start()
         self.gui = GraphWindowGui()
-        self.graph_fn = graph_fn
         # graph_thread.join()
         # if len(graph_thread.errors) == 0:
         #     self.gui.add_graph(graph_thread.x, graph_thread.y)
         # else:
         #     for error in graph_thread.errors:
         #         err_(str(error))
-        self.worker = Worker(self, self.graph_fn, self.plot)
+        self.worker = worker.HapiWorker(work_object, self.plot)
         self.worker.start()
+        self.done_signal.connect(lambda: parent.done_graphing())
 
     def plot(self, data):
-        debug("plot start")
-        (x, y) = data
+        self.done_signal.emit(0)
         try:
+            (x, y) = data
             self.gui.add_graph(x, y)
         except Exception as e:
-            err_(e)
-        debug("plot end")
+            hapiest_util.err_log(e)
 
 
     def try_render_graph(self):

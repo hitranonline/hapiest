@@ -1,8 +1,9 @@
-from util import *
+import hapiest_util
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from data_handle import *
 from graph_window import *
 from hmd import *
+import worker
 import threading
 
 class AbsorptionCoefficientWindow():
@@ -18,54 +19,66 @@ class AbsorptionCoefficientWindow():
         self.parent = parent
         self.children = []
         self.gui = AbsorptionCoefficientWindowGui()
-        self.populate_data_names()
+        try:
+            self.populate_data_names()
+        except Exception as e:
+            print(e)
         self.gui.show()
 
-        self.gui.graph_button.clicked.connect(lambda: self.graph())
+        def f():
+            try:
+                self.graph()
+            except Exception as e:
+                print(str(e))
+
+        self.gui.graph_button.clicked.connect(lambda: f())
 
     def graph(self):
         self.gui.graph_button.setDisabled(True)
         data_name = self.gui.get_data_name()
         hmd = HMD(data_name)
-        graph_function = AbsorptionCoefficientWindow.graph_type_map[self.gui.get_graph_type()]
 
-        Components = hmd.iso_tuples[0],
-        SourceTables = data_name,
+        Components = hmd.iso_tuples
+        SourceTables = data_name
         Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-        GammaL = self.gui.get_broadening_parameter(),
-        WavenumberRange = self.gui.get_wn_range(),
-        WavenumberStep = self.gui.get_wn_step(),
-        WavenumberWing = self.gui.get_wn_wing(),
+        GammaL = self.gui.get_broadening_parameter()
+        WavenumberRange = self.gui.get_wn_range()
+        WavenumberStep = self.gui.get_wn_step()
+        WavenumberWing = self.gui.get_wn_wing()
         WavenumberWingHW = self.gui.get_wn_wing_hw()
+        graph_fn = self.gui.get_graph_type()
 
-        def function(self, errors):
-            x, y = graph_function(
+        work = worker.HapiWorker.echo(
+            type=worker.Work.ABSORPTION_COEFFICIENT,
+            graph_fn=graph_fn,
                 Components=Components,
                 SourceTables=SourceTables,
                 Environment=Environment,
-                GammaL=GammaL[0],
+            GammaL=GammaL,
                 HITRAN_units=False,
-                WavenumberRange=WavenumberRange[0],
-                WavenumberStep=WavenumberStep[0],
-                WavenumberWing=WavenumberWing[0],
-                WavenumberWingHW=WavenumberWingHW
-            )
-            return (x, y)
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW)
 
         try:
-            self.children.append(GraphWindow(lambda errors: function(self, errors)))
+            self.children.append(GraphWindow(work, self))
         except Exception as e:
-            err_(str(e))
+            hapiest_util.err_log(str(e))
 
     def populate_data_names(self):
         try:
-            data_names = DataHandle.get_all_data_names()
+            data_names = hapiest_util.get_all_data_names()
             for item in data_names:
                 self.gui.data_name.addItem(item)
 
         except Exception as e:
-            err_(e)
-            err_("Failed to populate data names...")
+            hapiest_util.debug(str(e))
+            hapiest_util.err_log(str(e))
+            hapiest_util.err_log("Failed to populate data names...")
+
+    def done_graphing(self):
+        self.gui.graph_button.setEnabled(True)
 
 
 class AbsorptionCoefficientWindowGui(QtWidgets.QWidget):

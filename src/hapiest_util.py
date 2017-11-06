@@ -8,14 +8,26 @@ from time import sleep
 import sys
 from queue import Queue
 from os import listdir
+from data_handle import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
 
 def print_html(*args):
     global __WINDOW
     for arg in args:
-        __TEXT_EDIT_STREAM.write_html(args)
+        TEXT_EDIT_STREAM.write_html(args)
 
+
+# Returns a list of all the different data-names in the data directory
+def get_all_data_names():
+    files = listdir(Config.data_folder)
+    datas = []
+    for f in files:
+        match = DataHandle.DATA_FILE_REGEX.match(f)
+        if match == None:
+            continue
+        datas.append(match.groupdict()['data_handle'])
+    return datas
 
 # A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui
 # element
@@ -23,29 +35,29 @@ def debug(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 # Prints to the console_output with a fancy lookin log label
-def log_(*args):
+def log(*args):
     print_html('<div style="color: #7878e2">[Log]</div>&nbsp;')
     print_html(*args)
     print_html('<br>')
 
 
 # Prints to the console_output with a fancy lookin error label
-def err_(dat):
+def err_log(dat):
     print_html('<div style="color: #e27878">[Error]</div>&nbsp;')
     print_html(str(dat))
     print_html('<br>')
 
 
-def debug_(dat):
+def debug_log(dat):
     print_html('<div style="color: #78e278">[Debug]</div>&nbsp;')
     print_html(str(dat))
     print_html('<br>')
 
 # Performs all close operations for the util file
 def util_close():
-    __TEXT_RECEIVER.running = False
+    TEXT_RECEIVER.running = False
     print('Exiting...')
-    __TEXT_THREAD.exit(0)
+    TEXT_THREAD.exit(0)
 
 # Attempts to convert a string to an int
 # In the case of an issue or failure, it will return None
@@ -69,7 +81,7 @@ def str_to_float(s):
 
 # A class that can be used to redirect output from stdout and stderr to a
 # QTextEdit
-class TextEditStream(object):
+class TextEditStream():
     def __init__(self, window):
         self.queue = Queue()
         self.window = window
@@ -122,34 +134,35 @@ class TextReceiver(Qt.QObject):
                 self.write_html_signal.emit(text)
 
 
-__TEXT_EDIT_STREAM = None
-__TEXT_RECEIVER = None
-__TEXT_THREAD = None
-__WINDOW = None
+TEXT_EDIT_STREAM = None
+TEXT_RECEIVER = None
+TEXT_THREAD = None
+WINDOW = None
+
+glob = 1
 
 def init_console_redirect(main_window, *args, **kwargs):
-    global __TEXT_RECEIVER
-    global __TEXT_EDIT_STREAM
-    global __TEXT_THREAD
-    global __WINDOW
+    global TEXT_RECEIVER
+    global TEXT_EDIT_STREAM
+    global TEXT_THREAD
+    global WINDOW
 
-    __TEXT_EDIT_STREAM = TextEditStream(main_window)
+    TEXT_EDIT_STREAM = TextEditStream(main_window)
 
-    __WINDOW = main_window
+    WINDOW = main_window
     # Create a receiver
-    __TEXT_RECEIVER = TextReceiver(__TEXT_EDIT_STREAM.queue, *args, **kwargs)
+    TEXT_RECEIVER = TextReceiver(TEXT_EDIT_STREAM.queue, *args, **kwargs)
     # Create a thread for the receiver to run in
-    __TEXT_THREAD = QtCore.QThread()
+    TEXT_THREAD = QtCore.QThread()
     # Connect the signal to the console output handler in the main window
     # Connect the console output signals
-    __TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.console_append_text(str))
-    __TEXT_RECEIVER.write_html_signal.connect(lambda html: main_window.console_append_html(html))
+    TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.console_append_text(str))
+    TEXT_RECEIVER.write_html_signal.connect(lambda html: main_window.console_append_html(html))
     # Move the receiver to the background thread
-    __TEXT_RECEIVER.moveToThread(__TEXT_THREAD)
+    TEXT_RECEIVER.moveToThread(TEXT_THREAD)
     # When the thread starts, start the text receiver
-    __TEXT_THREAD.started.connect(__TEXT_RECEIVER.run)
+    TEXT_THREAD.started.connect(TEXT_RECEIVER.run)
     # Start thread
-    __TEXT_THREAD.start()
+    TEXT_THREAD.start()
     # Actually link stdout with out replacement stream
-    __TEXT_EDIT_STREAM.link()
-
+    TEXT_EDIT_STREAM.link()

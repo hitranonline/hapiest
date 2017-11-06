@@ -1,4 +1,4 @@
-from util import *
+from hapiest_util import *
 from window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
 import re
@@ -6,6 +6,7 @@ from data_handle import *
 from hapi import *
 from absorption_coefficient_window import *
 from isotopologue import *
+import hapiest_util
 
 class MainWindow(Window):
     def __init__(self):
@@ -17,32 +18,36 @@ class MainWindow(Window):
 
         self.is_open = True
 
-
-
-    def fetch_error(self, errors):
-        if not isinstance(errors, list):
-            t = [errors]
-            errors = t
-        for err in errors:
+    def fetch_done(self, result):
+        # log("done fetching :^)")
+        self.enable_fetch_button()
+        if result == True:
+            return
+        err = result
+        for err in result:
             # This means the wavenumber range was too small (probably), so
             # we'll tell the user it is too small
             if err.error == FetchErrorKind.FailedToRetreiveData:
                 self.gui.err_small_range.show()
-                err_(' The entered wavenumber range is too small, try increasing it')
+                hapiest_util.err_log(' The entered wavenumber range is too small, try increasing it')
             # Not much to do in regards to user feedback in this case....
             elif err.error == FetchErrorKind.FailedToOpenThread:
-                err_(' Failed to open thread to make query HITRAN')
+                hapiest_util.err_log(' Failed to open thread to make query HITRAN')
             elif err.error == FetchErrorKind.BadConnection:
                 self.gui.err_bad_connection.show()
-                err_(' Error: Failed to connect to HITRAN. Check your internet connection and try again.')
+                hapiest_util.err_log(
+                    ' Error: Failed to connect to HITRAN. Check your internet connection and try again.')
             elif err.error == FetchErrorKind.BadIsoList:
                 self.gui.err_bad_iso_list.show()
-                err_(' Error: You must select at least one isotopologue.')
+                hapiest_util.err_log(' Error: You must select at least one isotopologue.')
             elif err.error == FetchErrorKind.EmptyName:
                 self.gui.err_empty_name.show()
 
+    def disable_fetch_button(self):
+        self.gui.fetch_button.setDisabled(True)
 
-
+    def enable_fetch_button(self):
+        self.gui.fetch_button.setEnabled(True)
 
 
     def open_graph_window(self):
@@ -338,7 +343,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.iso_list.setItemWidget(item, label)
 
     def __handle_fetch_clicked(self):
-        debug("Hey")
+        self.parent.disable_fetch_button()
         # Hide any error messages for now, if they persist they'll be shown
         # at the end of the method
         self.err_small_range.hide()
@@ -351,12 +356,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
         wn_max = self.get_wn_max()
         wn_min = self.get_wn_min()
 
-        data_handle = DataHandle(self.get_data_name())
+        self.data_handle = DataHandle(self.get_data_name())
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
 
-        result = data_handle.try_fetch(
+        self.data_handle.try_fetch(
             self.parent,
             self.get_selected_isotopologues(),
             wn_min,
@@ -364,10 +369,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
             param_groups,
             params)
 
-        if result == True:
-            return
-        else:
-            self.fetch_error(result)
 
     def __open_absorption_coefficient_window(self):
         try:
@@ -375,4 +376,4 @@ class MainWindowGui(QtWidgets.QMainWindow):
             # Window.start(window)
             self.parent.child_windows.append(AbsorptionCoefficientWindow(self))
         except Exception as e:
-            debug(e)
+            hapiest_util.debug(e)
