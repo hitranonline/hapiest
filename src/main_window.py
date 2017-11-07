@@ -1,6 +1,8 @@
 from hapiest_util import *
 from window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import (QWidget, QToolTip, QPushButton, QApplication)
+from PyQt5.QtGui import QFont
 import re
 from data_handle import *
 from hapi import *
@@ -103,6 +105,21 @@ class MainWindowGui(QtWidgets.QMainWindow):
         # Connect menu actions to handling functions
         self.action_absorption_coefficient.triggered.connect(
             lambda: self.__open_absorption_coefficient_window())
+
+        # TOOLTIPS
+        QToolTip.setFont(QFont('SansSerif', 10))
+        self.param_group_list.setToolTip('Specifies "non-standard" parameter to query.')
+        self.param_list.setToolTip('Specifies parameters to query.')
+        self.iso_list.setToolTip('Select the molecule isotopologues you wish to query.')
+        self.molecule_id.setToolTip('Type in, or use the drop-down menu to select your molecule.')
+        self.data_name.setToolTip('Specify local name for fetched data')
+
+        self.wn_min.setToolTip(
+            'Specify lower bound wave number to query, must be positive number.\n(default: absolute min for given molecule).')
+        self.wn_max.setToolTip(
+            'Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
+        self.fetch_button.setToolTip('Prompts parameter validation, fetches from HITRAN.')
+        self.clear_console.setToolTip('Clear the console of all current output.')
 
         # Hide error messages
         self.err_small_range.hide()
