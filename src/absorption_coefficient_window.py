@@ -51,15 +51,19 @@ class AbsorptionCoefficientWindow():
         work = worker.HapiWorker.echo(
             type=worker.Work.ABSORPTION_COEFFICIENT,
             graph_fn=graph_fn,
-                Components=Components,
-                SourceTables=SourceTables,
-                Environment=Environment,
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
             GammaL=GammaL,
-                HITRAN_units=False,
+            HITRAN_units=False,
             WavenumberRange=WavenumberRange,
             WavenumberStep=WavenumberStep,
             WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW)
+            WavenumberWingHW=WavenumberWingHW,
+            title="Absorption Coefficient",
+            titlex="wavenumber",
+            titley="coef"
+        )
 
         try:
             self.children.append(GraphWindow(work, self))

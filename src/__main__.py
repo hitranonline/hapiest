@@ -29,6 +29,7 @@ def main():
     util_close()
 
     close = HapiWorker(HapiWorker.echo(type=Work.END_WORK_PROCESS))
+    close.start()
 
     sys.exit(qt_result)
 

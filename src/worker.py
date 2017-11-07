@@ -20,7 +20,7 @@ def WORK_FUNCTION(workq, resultq):
         (job_id, workargs) = workq.get()
         type = workargs['type']
         if type == Work.END_WORK_PROCESS:
-            break
+            return 0
         resultq.put((job_id, Work.do_work(type, workargs)))
 
 
@@ -33,7 +33,7 @@ def start_hapi(**kwargs):
 
 def try_graph_absorption_coefficient(graph_fn, Components, SourceTables, Environment, GammaL, HITRAN_units,
                                      WavenumberRange,
-                                     WavenumberStep, WavenumberWing, WavenumberWingHW, **kwargs):
+                                     WavenumberStep, WavenumberWing, WavenumberWingHW, title, titlex, titley, **kwargs):
     try:
         x, y = AbsorptionCoefficientWindow.graph_type_map[graph_fn](
             Components=Components,
@@ -45,7 +45,7 @@ def try_graph_absorption_coefficient(graph_fn, Components, SourceTables, Environ
             WavenumberStep=WavenumberStep,
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW)
-        return (x, y)
+        return {'x': x, 'y': y, 'title': title, 'titlex': titlex, 'titley': titley}
     except Exception as e:
         return e
 
@@ -153,11 +153,12 @@ class HapiWorker(QtCore.QThread):
         job_id = self.work['job_id']
         Work.WORKQ.put((job_id, self.work))
         while True:
+            sleep(0.1)
             try:
                 (job_id, item) = Work.RESULTQ.get_nowait()
                 if job_id == self.work['job_id']:
                     self.done_signal.emit(item)
-                    return item
+                    return
                 else:
                     HapiWorker.job_results.append((job_id, item))
                     for item in HapiWorker.job_results:
