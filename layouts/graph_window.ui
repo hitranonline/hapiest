@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>600</width>
+       <width>654</width>
     <height>600</height>
    </rect>
   </property>
@@ -14,54 +14,7 @@
    <string>Graph</string>
   </property>
      <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="4">
-             <widget class="QDoubleSpinBox" name="ymax"/>
-         </item>
-         <item row="0" column="0">
-             <widget class="QPushButton" name="reset">
-                 <property name="text">
-                     <string>Reset Viewport</string>
-                 </property>
-             </widget>
-         </item>
-         <item row="0" column="3">
-             <widget class="QLabel" name="label_3">
-                 <property name="text">
-                     <string>y min</string>
-                 </property>
-             </widget>
-         </item>
-         <item row="0" column="4">
-             <widget class="QDoubleSpinBox" name="ymin"/>
-         </item>
-         <item row="1" column="1">
-             <widget class="QLabel" name="label_2">
-                 <property name="text">
-                     <string>x max</string>
-                 </property>
-             </widget>
-         </item>
-         <item row="0" column="2">
-             <widget class="QDoubleSpinBox" name="xmin"/>
-         </item>
-         <item row="1" column="2">
-             <widget class="QDoubleSpinBox" name="xmax"/>
-         </item>
-         <item row="0" column="1">
-             <widget class="QLabel" name="label">
-                 <property name="text">
-                     <string>x min</string>
-                 </property>
-             </widget>
-         </item>
-         <item row="1" column="3">
-             <widget class="QLabel" name="label_4">
-                 <property name="text">
-                     <string>y max</string>
-                 </property>
-             </widget>
-         </item>
-         <item row="3" column="0" colspan="5">
+         <item row="2" column="0" colspan="6">
              <layout class="QVBoxLayout" name="verticalLayout">
                  <property name="sizeConstraint">
                      <enum>QLayout::SetNoConstraint</enum>
@@ -91,34 +44,73 @@
                  </item>
              </layout>
          </item>
-         <item row="2" column="2">
-             <widget class="QPushButton" name="set_xrange">
+         <item row="1" column="5">
+             <widget class="QPushButton" name="set_viewport">
                  <property name="text">
-                     <string>Set x range</string>
+                     <string>Set Viewport</string>
                  </property>
              </widget>
          </item>
-         <item row="2" column="4">
-             <widget class="QPushButton" name="set_yrange">
+         <item row="0" column="0">
+             <widget class="QLabel" name="label">
                  <property name="text">
-                     <string>Set y range</string>
+                     <string>x min</string>
+                 </property>
+                 <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+             </widget>
+         </item>
+         <item row="1" column="0">
+             <widget class="QLabel" name="label_2">
+                 <property name="text">
+                     <string>x max</string>
+                 </property>
+                 <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+             </widget>
+         </item>
+         <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="xmax"/>
+         </item>
+         <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="xmin"/>
+         </item>
+         <item row="0" column="2">
+             <widget class="QLabel" name="label_3">
+                 <property name="text">
+                     <string>y min</string>
+                 </property>
+                 <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+             </widget>
+         </item>
+         <item row="1" column="3">
+             <widget class="QDoubleSpinBox" name="ymax"/>
+         </item>
+         <item row="1" column="2">
+             <widget class="QLabel" name="label_4">
+                 <property name="text">
+                     <string>y max</string>
+                 </property>
+                 <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+             </widget>
+         </item>
+         <item row="0" column="3">
+             <widget class="QDoubleSpinBox" name="ymin"/>
+         </item>
+         <item row="0" column="5">
+             <widget class="QPushButton" name="reset">
+                 <property name="text">
+                     <string>Reset Viewport</string>
                  </property>
              </widget>
          </item>
      </layout>
-     <zorder>set_xrange</zorder>
-     <zorder>set_yrange</zorder>
-     <zorder>reset</zorder>
-     <zorder>ymin</zorder>
-     <zorder>ymax</zorder>
-     <zorder>xmin</zorder>
-     <zorder>xmax</zorder>
-     <zorder>label</zorder>
-     <zorder>label_2</zorder>
-     <zorder>label_3</zorder>
-     <zorder>label_4</zorder>
-     <zorder>verticalLayoutWidget</zorder>
-     <zorder>graph_container</zorder>
  </widget>
  <resources/>
  <connections/>

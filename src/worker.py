@@ -159,13 +159,13 @@ class HapiWorker(QtCore.QThread):
                 if job_id == self.work['job_id']:
                     self.done_signal.emit(item)
                     return
-                else:
-                    HapiWorker.job_results.append((job_id, item))
-                    for item in HapiWorker.job_results:
-                        (job_id, result) = item
-                        if job_id == self.work['job_id']:
-                            HapiWorker.job_results.remove(item)
-                            self.done_signal.emit(result)
-                            return
+                HapiWorker.job_results.append((job_id, item))
             except Exception as e:
                 self.step_signal.emit({})
+            finally:
+                for item in HapiWorker.job_results:
+                    (job_id, result) = item
+                    if job_id == self.work['job_id']:
+                        HapiWorker.job_results.remove(item)
+                        self.done_signal.emit(result)
+                        return
