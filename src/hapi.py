@@ -43,11 +43,8 @@ import pydoc
 simplefilter('always', UserWarning)
 
 # Python 3 compatibility
-try:
-    import urllib.request as urllib2
-except ImportError:
-    import urllib2
-    import http
+
+import urllib.request as urllib2
 
 HAPI_VERSION = '1.1.0.7'
 # CHANGES:

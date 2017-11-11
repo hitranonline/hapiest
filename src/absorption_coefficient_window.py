@@ -88,7 +88,7 @@ class AbsorptionCoefficientWindow():
 class AbsorptionCoefficientWindowGui(QtWidgets.QWidget):
     def __init__(self):
         super(QtWidgets.QWidget, self).__init__()
-        uic.loadUi('layouts/absorption_coefficient_window(1).ui', self)
+        uic.loadUi('layouts/absorption_coefficient_window.ui', self)
         self.wn_step_enabled.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.wn_step_enabled, self.wn_step))
         self.wn_wing_enabled.toggled.connect(
