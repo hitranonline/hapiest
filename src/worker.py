@@ -17,6 +17,7 @@ class WorkWriter():
 
 def WORK_FUNCTION(workq, resultq):
     while True:
+        sys.stdout.flush()
         (job_id, workargs) = workq.get()
         type = workargs['type']
         if type == Work.END_WORK_PROCESS:

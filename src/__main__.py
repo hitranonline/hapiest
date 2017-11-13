@@ -1,3 +1,11 @@
+import os
+import re
+
+# If someone launches the program through the command 'python3 __main__.py' this move the working directory to the proper place
+srcre = re.compile('.+src\\Z')
+if srcre.match(os.getcwd()):
+    os.chdir('..')
+
 from PyQt5 import QtWidgets, QtCore
 from main_window import *
 from worker import *
@@ -8,6 +16,9 @@ def main():
     if Config.high_dpi == 'true':
         # Enable High DPI display with PyQt5
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
+    # Fix for mac-based systems...
+    os.environ['no_proxy'] = '*'
 
     app = QtWidgets.QApplication(sys.argv)
 

@@ -506,7 +506,7 @@
              </rect>
          </property>
          <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
          </property>
          <widget class="QWidget" name="absorption">
              <property name="autoFillBackground">
@@ -515,32 +515,6 @@
              <attribute name="title">
                  <string>Absorption Spectrum</string>
              </attribute>
-             <widget class="QLabel" name="a_spec_a_coef_label">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>10</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Absorption Coefficient*</string>
-                 </property>
-             </widget>
-             <widget class="QLabel" name="a_spec_wave_omega_label">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>40</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Wavenumber/Omegas*</string>
-                 </property>
-             </widget>
              <widget class="QWidget" name="absortion_i_function_optional" native="true">
                  <property name="geometry">
                      <rect>
@@ -946,63 +920,11 @@
                      </property>
                  </widget>
              </widget>
-             <widget class="QLabel" name="label_31">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>10</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Absorption Coefficient*</string>
-                 </property>
-             </widget>
-             <widget class="QLabel" name="label_32">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>40</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Wavenumber/Omegas*</string>
-                 </property>
-             </widget>
          </widget>
          <widget class="QWidget" name="radiance">
              <attribute name="title">
                  <string>Radiance Spectrum</string>
              </attribute>
-             <widget class="QLabel" name="label_14">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>10</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Absorption Coefficient*</string>
-                 </property>
-             </widget>
-             <widget class="QLabel" name="label_15">
-                 <property name="geometry">
-                     <rect>
-                         <x>10</x>
-                         <y>40</y>
-                         <width>141</width>
-                         <height>16</height>
-                     </rect>
-                 </property>
-                 <property name="text">
-                     <string>Wavenumber/Omegas*</string>
-                 </property>
-             </widget>
              <widget class="QWidget" name="radiance_file_optional" native="true">
                  <property name="geometry">
                      <rect>
@@ -1225,6 +1147,20 @@
                      </property>
                  </widget>
              </widget>
+             <zorder>radiance_file_optional</zorder>
+             <zorder>radiance_environment_optional</zorder>
+             <zorder>radiance_i_function_optional</zorder>
+             <zorder>label_20</zorder>
+             <zorder>label_13</zorder>
+             <zorder>label_19</zorder>
+             <zorder>comboBox</zorder>
+             <zorder>doubleSpinBox_2</zorder>
+             <zorder>output_file_format</zorder>
+             <zorder>graph_button_2</zorder>
+             <zorder>doubleSpinBox</zorder>
+             <zorder>label_20</zorder>
+             <zorder>output_filename</zorder>
+             <zorder>label_10</zorder>
          </widget>
      </widget>
      <widget class="QCheckBox" name="toggle_spectrum">
