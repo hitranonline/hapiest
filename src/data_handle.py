@@ -61,7 +61,7 @@ class DataHandle(object):
     # numax:            maximum wavenumber
     # parameter_groups: any aditional groups of parameters to include in the fetch
     # parameters        any additional individual parameters to include in the fetch
-    def try_fetch(self, fetch_window: MainWindow, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
+    def try_fetch(self, fetch_window: 'MainWindow', iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = ()) -> 'HapiWorker':
 
         fetch_window.disable_fetch_button()
