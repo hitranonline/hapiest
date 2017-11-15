@@ -3,6 +3,8 @@ from hapi import *
 from threading import Thread
 from hapiest_util import *
 from worker import *
+from main_window import *
+from isotopologue import *
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
 # and while actually fetching the data
@@ -45,7 +47,7 @@ class DataHandle(object):
 
     def __init__(self, data_name):
         self.data_name = data_name
-
+        self.worker = None
 
     # A safer handle to the try_fetch function that provides feedback on parameters
     # if they're invalid.
@@ -59,16 +61,19 @@ class DataHandle(object):
     # numax:            maximum wavenumber
     # parameter_groups: any aditional groups of parameters to include in the fetch
     # parameters        any additional individual parameters to include in the fetch
-    def try_fetch(self, fetch_window, iso_id_list, numin, numax, parameter_groups = [], parameters = []):
+    def try_fetch(self, fetch_window: MainWindow, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
+                  parameter_groups: List[str] = (), parameters: List[str] = ()) -> 'HapiWorker':
+
         fetch_window.disable_fetch_button()
         work = HapiWorker.echo(
+            type=Work.FETCH,
             data_name=self.data_name,
             iso_id_list=iso_id_list,
             numin=numin,
             numax=numax,
             parameter_groups=parameter_groups,
             parameters=parameters)
-        work['type'] = Work.FETCH
         self.worker = HapiWorker(work, callback=lambda x: fetch_window.fetch_done(x))
         self.worker.start()
+        hapiest_util.log("Sending fetch request...")
         return self.worker

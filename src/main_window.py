@@ -16,29 +16,34 @@ class MainWindow(Window):
         self.child_windows = []
 
         # Create a new instance of the GUI container class
-        self.gui = MainWindowGui(self)
+        self.gui: 'MainWindowGui' = MainWindowGui(self)
 
-        self.is_open = True
+        self.is_open: bool = True
 
-    def fetch_done(self, result):
-        # log("done fetching :^)")
+    def fetch_done(self, result: Union[bool, List['FetchError'], 'FetchError']):
+        self.gui.data_handle.worker.exit()
         self.enable_fetch_button()
         if result == True:
+            hapiest_util.log("Successfully finished fetch.")
             return
-        err = result
-        for err in result:
+        hapiest_util.log("Failed to fetch...")
+        if isinstance(result, list):
+            errs = result
+        else:
+            errs = [result]
+        for err in errs:
             # This means the wavenumber range was too small (probably), so
             # we'll tell the user it is too small
             if err.error == FetchErrorKind.FailedToRetreiveData:
                 self.gui.err_small_range.show()
-                hapiest_util.err_log(' The entered wavenumber range is too small, try increasing it')
+                hapiest_util.err_log('The entered wavenumber range is too small, try increasing it')
             # Not much to do in regards to user feedback in this case....
             elif err.error == FetchErrorKind.FailedToOpenThread:
-                hapiest_util.err_log(' Failed to open thread to make query HITRAN')
+                hapiest_util.err_log('Failed to open thread to make query HITRAN')
             elif err.error == FetchErrorKind.BadConnection:
                 self.gui.err_bad_connection.show()
                 hapiest_util.err_log(
-                    ' Error: Failed to connect to HITRAN. Check your internet connection and try again.')
+                    'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
             elif err.error == FetchErrorKind.BadIsoList:
                 self.gui.err_bad_iso_list.show()
                 hapiest_util.err_log(' Error: You must select at least one isotopologue.')
@@ -94,7 +99,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
     def __init__(self, window):
         super(MainWindowGui, self).__init__()
 
-        self.parent = window
+        self.parent: 'MainWindow' = window
 
         uic.loadUi('layouts/main_window.ui', self)
 
@@ -361,6 +366,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __handle_fetch_clicked(self):
         self.parent.disable_fetch_button()
+        hapiest_util.debug("aa")
         # Hide any error messages for now, if they persist they'll be shown
         # at the end of the method
         self.err_small_range.hide()
@@ -375,6 +381,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         self.data_handle = DataHandle(self.get_data_name())
 
+        hapiest_util.debug("aa")
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
 

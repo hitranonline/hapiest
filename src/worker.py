@@ -6,35 +6,44 @@ import data_handle
 import pickle
 from absorption_coefficient_window import *
 
+from typing import *
 
-class WorkWriter():
-    def __init__(self, outq):
+
+class WorkWriter:
+    def __init__(self, outq: Queue):
         self.outq = outq
 
-    def write(self, x):
+    def write(self, x: Dict[str, Any]) -> None:
         self.outq.put((0, x))
 
 
-def WORK_FUNCTION(workq, resultq):
+def WORK_FUNCTION(workq, resultq) -> int:
     while True:
         sys.stdout.flush()
         (job_id, workargs) = workq.get()
+        hapiest_util.debug(str(workargs))
         type = workargs['type']
         if type == Work.END_WORK_PROCESS:
             return 0
         resultq.put((job_id, Work.do_work(type, workargs)))
 
 
-def start_hapi(**kwargs):
+def start_hapi(**kwargs) -> bool:
     print('Initializing hapi db...')
-    db_begin(Config.data_folder)
-    print('Done initializing hapi db...')
+    try:
+        db_begin(Config.data_folder)
+        print('Done initializing hapi db...')
+    except Exception as e:
+        print('Error initializing hapi db...')
+        return False
     return True
 
 
-def try_graph_absorption_coefficient(graph_fn, Components, SourceTables, Environment, GammaL, HITRAN_units,
-                                     WavenumberRange,
-                                     WavenumberStep, WavenumberWing, WavenumberWingHW, title, titlex, titley, **kwargs):
+def try_graph_absorption_coefficient(
+        graph_fn: Callable, Components: List[Tuple[MoleculeId, IsotopologueId]], SourceTables: List[str],
+        Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+        WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
+        **kwargs) -> Dict[str, Any]:
     try:
         x, y = AbsorptionCoefficientWindow.graph_type_map[graph_fn](
             Components=Components,
@@ -51,7 +60,9 @@ def try_graph_absorption_coefficient(graph_fn, Components, SourceTables, Environ
         return e
 
 
-def try_fetch(data_name, iso_id_list, numin, numax, parameter_groups=[], parameters=[], **kwargs):
+def try_fetch(data_name: str, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
+              parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
+    bool, 'data_handle.FetchError']:
     if len(iso_id_list) == 0:
         return data_handle.FetchError(data_handle.FetchErrorKind.BadIsoList,
                                       'Fetch Failure: Iso list cannot be empty.')
@@ -74,25 +85,25 @@ def try_fetch(data_name, iso_id_list, numin, numax, parameter_groups=[], paramet
 
 
 # A (mostly static) class that contains utilities for
-class Work():
-    START_HAPI = 0
-    END_WORK_PROCESS = 1
-    FETCH = 2
-    ABSORPTION_COEFFICIENT = 3
+class Work:
+    START_HAPI: int = 0
+    END_WORK_PROCESS: int = 1
+    FETCH: int = 2
+    ABSORPTION_COEFFICIENT: int = 3
 
-    WORKQ = mp.Queue()
-    RESULTQ = mp.Queue()
+    WORKQ: Queue = mp.Queue()
+    RESULTQ: Queue = mp.Queue()
 
-    WORKER = None
+    WORKER: 'Work' = None
 
-    WORK_FUNCTIONS = {
+    WORK_FUNCTIONS: Dict[int, Callable] = {
         START_HAPI: start_hapi,
         FETCH: try_fetch,
         ABSORPTION_COEFFICIENT: try_graph_absorption_coefficient
     }
 
     @staticmethod
-    def do_work(type, workargs):
+    def do_work(type: int, workargs: Dict[str, Any]) -> Any:
         if type in Work.WORK_FUNCTIONS:
             fn = Work.WORK_FUNCTIONS[type]
             return fn(**workargs)
@@ -104,57 +115,42 @@ class Work():
         Work.WORKER = Work()
 
     def __init__(self):
-        self.process = mp.Process(target=WORK_FUNCTION, args=(Work.WORKQ, Work.RESULTQ))
+        self.process: mp.Process = mp.Process(target=WORK_FUNCTION, args=(Work.WORKQ, Work.RESULTQ))
         self.process.start()
 
 
 class HapiWorker(QtCore.QThread):
-    job_id = 0
+    job_id: int = 0
 
     step_signal = QtCore.pyqtSignal(object)
     done_signal = QtCore.pyqtSignal(object)
 
-    job_results = []
+    job_results: List[Tuple[int, Any]] = []
 
     # Used to create a map from named arguments
     @staticmethod
-    def echo(**kwargs):
+    def echo(**kwargs) -> Dict[str, Any]:
         return kwargs
 
-    def __init__(self, work, callback=None):
+    def __init__(self, work: Dict[str, Any], callback: Callable = None):
         super(HapiWorker, self).__init__()
-        self.callback = callback
-        self.work = work
-        self.work['job_id'] = HapiWorker.job_id
+        self.callback: Callable = callback
+        self.work: Dict[str, Any] = work
+        self.work['job_id']: int = HapiWorker.job_id
         HapiWorker.job_id += 1
-
 
         self.started.connect(self.__run)
 
-        def t():
-            try:
-                QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents)
-            except Exception as e:
-                hapiest_util.debug(e)
-
-        def call(x):
-            try:
-                self.callback(x)
-            except Exception as e:
-                hapiest_util.debug(e)
-
-        self.step_signal.connect(lambda x: t())
+        self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
 
         if callback:
-            self.done_signal.connect(call)
-
-        self.kwargs = []
+            self.done_signal.connect(self.callback)
 
     def __run(self):
         job_id = self.work['job_id']
         Work.WORKQ.put((job_id, self.work))
         while True:
-            sleep(0.1)
+            sleep(0.01)
             try:
                 (job_id, item) = Work.RESULTQ.get_nowait()
                 if job_id == self.work['job_id']:

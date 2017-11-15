@@ -15,7 +15,7 @@ from data_handle import *
 def print_html(*args):
     global __WINDOW
     for arg in args:
-        TEXT_EDIT_STREAM.write_html(args)
+        TEXT_EDIT_STREAM.write_html(arg)
 
 
 # Returns a list of all the different data-names in the data directory

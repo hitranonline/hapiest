@@ -1,12 +1,19 @@
 from hapi import *
 from hapiest_util import *
+from typing import *
+
+MoleculeId = int
+IsotopologueId = int
+GlobalIsotopologueId = int
+IsoName = AnyStr
+
 
 class Isotopologue():
     # Static members
     # Data scraped using the scrape.js function
     # The first element in the tuple is the minimum wave number to get data, and the
     # second is the maximum wave number
-    MOLECULE_DATA_RANGE = {
+    MOLECULE_DATA_RANGE: Dict[MoleculeId, Tuple[float, float]] = {
         1: (8.400e-5, 25710.825),
         2: (0.757, 14075.298),
         3: (0.026, 6996.681),
@@ -59,41 +66,41 @@ class Isotopologue():
     }
 
     # Indices defined in hapi
-    ID_LOC = 0
-    ISO_NAME_LOC = 1
-    ABUNDANCE_LOC = 2
-    MASS_LOC = 3
-    MOL_NAME_LOC = 4
+    ID_LOC: int = 0
+    ISO_NAME_LOC: int = 1
+    ABUNDANCE_LOC: int = 2
+    MASS_LOC: int = 3
+    MOL_NAME_LOC: int = 4
 
     # A list of all isotopologues
-    all_isotopologues = []
+    all_isotopologues: List['Isotopologue'] = []
 
     # Maps molecule id to a list of all isotopologues of that molecule
-    molecules = {}
+    molecules: Dict[MoleculeId, List['Isotopologue']] = {}
 
     # Maps pointing to Isotopologue objects given name, id, global id, etc.
     # Maps molecule id to Isotopologue object for a normal molecule
-    FROM_MOL_ID = {}
+    FROM_MOL_ID: Dict[MoleculeId, 'Isotopologue'] = {}
     # Maps the name of an isotopologue to the Isotopologue object representing it
-    FROM_ISO_NAME = {}
+    FROM_ISO_NAME: Dict[str, 'Isotopologue'] = {}
     # Maps the global id of an iso to the Isotopologue object representing it
-    FROM_GLOBAL_ID = {}
+    FROM_GLOBAL_ID: Dict[GlobalIsotopologueId, 'Isotopologue'] = {}
     # Maps the pair (molecule_id, iso_id) to the Isotopologue object representing it
-    FROM_MOL_ID_ISO_ID = {}
+    FROM_MOL_ID_ISO_ID: Dict[Tuple[MoleculeId, IsotopologueId], 'Isotopologue'] = {}
     # Maps molecule name to the Isotopologue object representing it
-    FROM_MOL_NAME = {}
+    FROM_MOL_NAME: Dict[str, 'Isotopologue'] = {}
 
     # Regular expressions to create HTML from a molecules chemical definition
-    ELEMENT_REGEX = 'A[cglmrstu]|B[aehikr]?|C[adeflmnorsu]?|D[bsy]?|E[rsu]|F[elmr]?|G[ade]|H[efgos]?|I[nr]?|Kr?|L[airuv]|M[dgnot]|N[abdeiop]?|O(s)?|P[abdmortu]?|R[abefghnu]|S[bcegimnr]?|T[abcehilm]|U(u[opst])?|V|W|Xe|Yb?|Z[nr]'
+    ELEMENT_REGEX: str = 'A[cglmrstu]|B[aehikr]?|C[adeflmnorsu]?|D[bsy]?|E[rsu]|F[elmr]?|G[ade]|H[efgos]?|I[nr]?|Kr?|L[airuv]|M[dgnot]|N[abdeiop]?|O(s)?|P[abdmortu]?|R[abefghnu]|S[bcegimnr]?|T[abcehilm]|U(u[opst])?|V|W|Xe|Yb?|Z[nr]'
     # Regex for an isotope of the form '(12C)', e.g. the number of neutrons before the element, then the periodic symbol
-    ISOTOPE_REGEX = '\\((?P<neutrons>\\d+)(?P<iso_element>(' + ELEMENT_REGEX + '))\\)'
+    ISOTOPE_REGEX: str = '\\((?P<neutrons>\\d+)(?P<iso_element>(' + ELEMENT_REGEX + '))\\)'
     # Regex for either an isotope or an element
-    CHUNK_REGEX = '((?P<isotope>' + ISOTOPE_REGEX + ')|(?P<element>(' + ELEMENT_REGEX + ')))' + '(?P<count>\\d+)?'
+    CHUNK_REGEX: str = '((?P<isotope>' + ISOTOPE_REGEX + ')|(?P<element>(' + ELEMENT_REGEX + ')))' + '(?P<count>\\d+)?'
     # Full regex
-    ISO_TO_HTML_REGEX = re.compile(CHUNK_REGEX)
+    ISO_TO_HTML_REGEX: re = re.compile(CHUNK_REGEX)
 
     @staticmethod
-    def create_html(_iso):
+    def create_html(_iso: str) -> str:
         iso = '%s' % _iso
         html = ''
         start = 0
@@ -138,7 +145,7 @@ class Isotopologue():
 
         return html
 
-    # Creates objects for each one of the isotoplogues as defined in hapi.ISO
+    # Creates 'Isotopologue's for each one of the isotoplogues as defined in hapi.ISO
     @staticmethod
     def populate():
         for (key, _) in ISO.items():
@@ -154,39 +161,39 @@ class Isotopologue():
             Isotopologue.all_isotopologues.extend(isos)
 
     @staticmethod
-    def from_molecule_name(mol_name):
+    def from_molecule_name(mol_name: str) -> 'Isotopologue':
         return Isotopologue.FROM_MOL_NAME[mol_name]
 
     @staticmethod
-    def from_iso_name(iso_name):
+    def from_iso_name(iso_name: str) -> 'Isotopologue':
         return Isotopologue.FROM_ISO_NAME[iso_name]
 
     @staticmethod
-    def from_molecule_id(id):
+    def from_molecule_id(id: int) -> 'Isotopologue':
         return Isotopologue.FROM_MOL_ID[id]
 
     @staticmethod
-    def from_mol_id_iso_id(mid, iid):
+    def from_mol_id_iso_id(mid: int, iid: int) -> 'Isotopologue':
         return Isotopologue.FROM_MOL_ID_ISO_ID[(mid, iid)]
 
     @staticmethod
-    def from_global_id(gid):
+    def from_global_id(gid: int) -> 'Isotopologue':
         return Isotopologue.FROM_GLOBAL_ID[gid]
 
-    def get_wn_range(self):
+    def get_wn_range(self) -> Tuple[float, float]:
         if self.molecule_id in Isotopologue.MOLECULE_DATA_RANGE:
             return Isotopologue.MOLECULE_DATA_RANGE[self.molecule_id]
         else:
-            log_('No wavenumber range-data for molecule id ', self.molecule_id)
+            log('No wavenumber range-data for molecule id ', self.molecule_id)
             return (0, 100000000)
 
-    def get_iso_count(self):
+    def get_iso_count(self) -> int:
         return len(Isotopologue.molecules[self.molecule_id])
 
-    def get_all_isos(self):
+    def get_all_isos(self) -> List['Isotopologue']:
         return Isotopologue.molecules[self.molecule_id]
 
-    def __init__(self, molecule_id, isotopologue_id):
+    def __init__(self, molecule_id: int, isotopologue_id: int):
         # This should never happen, but just in case...
         if (molecule_id, isotopologue_id) not in ISO:
             raise Exception("Invalid isotopologue")
