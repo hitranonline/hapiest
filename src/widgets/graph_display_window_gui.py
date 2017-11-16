@@ -7,7 +7,7 @@ from utils.log import *
 class GraphDisplayWindowGui(QtWidgets.QWidget):
     def __init__(self):
         super(GraphDisplayWindowGui, self).__init__()
-        uic.loadUi('layouts/graph_window.ui', self)
+        uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
         self.chart_view = None
 
