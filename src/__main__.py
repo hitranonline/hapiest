@@ -7,10 +7,10 @@ if srcre.match(os.getcwd()):
     os.chdir('..')
 
 from PyQt5 import QtWidgets, QtCore
-from main_window import *
-from worker import *
-import hapiest_util
-
+from windows.main_window import *
+from worker.hapi_worker import *
+from utils.console_redirect import *
+from utils.log import *
 
 def main():
     if Config.high_dpi == 'true':
@@ -27,23 +27,26 @@ def main():
     window.gui.adjustSize()
     window.gui.setFixedSize(window.gui.size())
 
-    init_console_redirect(window, sys.argv)
+    TextReceiver.init_console_redirect(window, sys.argv)
 
     Work.start_work_process()
 
     start = HapiWorker(HapiWorker.echo(type=Work.START_HAPI))
     start.start()
 
-    # Exit code
     qt_result = app.exec_()
 
-    util_close()
+    TextReceiver.redirect_close()
 
-    close = HapiWorker(HapiWorker.echo(type=Work.END_WORK_PROCESS))
-    close.start()
+    close = HapiWorker(HapiWorker.echo(type=Work.END_WORK_PROCESS), callback=None)
+
+    Work.WORKER.process.join()
 
     sys.exit(qt_result)
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e, "a", file=sys.stderr)

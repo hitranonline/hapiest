@@ -35,7 +35,6 @@ class Config():
         Config.data_folder = 'data'
         Config.high_dpi = 'false'
 
-
     # Sets values from a parsed toml dictionary
     @staticmethod
     def set_values(dict):
@@ -47,7 +46,6 @@ class Config():
         except Exception as e:
             print('Encountered error while initializing program configuration')
             print(e)
-
 
     # Tries to load a configuration, if it fails
     @staticmethod

@@ -1,12 +1,13 @@
-import hapiest_util
-from isotopologue import *
 import csv
-from config import Config
+
+from utils.config import Config
+from utils.isotopologue import *
+from utils.log import *
 
 
 # Hapiest Meta Data class - to be paired with the .data and .header files generated
 # with each fetch request.
-class HMD():
+class HapiMetaData():
     @staticmethod
     def write(data_name, iso_list):
         with open(Config.data_folder + "/" + data_name + ".hmd", "w+") as file:
@@ -31,7 +32,7 @@ class HMD():
                     for iso in row:
                         self.isos.append(Isotopologue.from_global_id(int(iso)))
         except Exception as e:
-            hapiest_util.debug(str(e))
+            err_log(str(e))
 
         for item in self.isos:
             self.iso_tuples.append((item.molecule_id, item.iso_id))

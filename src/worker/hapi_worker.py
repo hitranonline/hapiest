@@ -1,12 +1,14 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore
-from hapiest_util import *
-import hapiest_util
+from utils.hapiest_util import *
+from PyQt5 import QtWidgets, QtCore
+import sys
+import time
+from utils.hapiest_util import *
+from utils.isotopologue import *
+from multiprocessing import Queue
 import multiprocessing as mp
-import data_handle
-import pickle
-from absorption_coefficient_window import *
-
-from typing import *
+from utils.log import *
+from utils.fetch_handler import *
+from utils.hapi_metadata import *
 
 
 class WorkWriter:
@@ -21,7 +23,6 @@ def WORK_FUNCTION(workq, resultq) -> int:
     while True:
         sys.stdout.flush()
         (job_id, workargs) = workq.get()
-        hapiest_util.debug(str(workargs))
         type = workargs['type']
         if type == Work.END_WORK_PROCESS:
             return 0
@@ -39,13 +40,23 @@ def start_hapi(**kwargs) -> bool:
     return True
 
 
+graph_type_map = {
+    "Voigt": absorptionCoefficient_Voigt,
+    "Lorentz": absorptionCoefficient_Lorentz,
+    "Gauss": absorptionCoefficient_Gauss,
+    "SD Voigt": absorptionCoefficient_SDVoigt,
+    "Galatry": absorptionCoefficient_Doppler,
+    "HT": absorptionCoefficient_HT
+}
+
+
 def try_graph_absorption_coefficient(
         graph_fn: Callable, Components: List[Tuple[MoleculeId, IsotopologueId]], SourceTables: List[str],
         Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
         WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
         **kwargs) -> Dict[str, Any]:
     try:
-        x, y = AbsorptionCoefficientWindow.graph_type_map[graph_fn](
+        x, y = graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
             Environment=Environment,
@@ -62,24 +73,24 @@ def try_graph_absorption_coefficient(
 
 def try_fetch(data_name: str, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
               parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
-    bool, 'data_handle.FetchError']:
+    bool, 'FetchError']:
     if len(iso_id_list) == 0:
-        return data_handle.FetchError(data_handle.FetchErrorKind.BadIsoList,
-                                      'Fetch Failure: Iso list cannot be empty.')
+        return FetchError(FetchErrorKind.BadIsoList,
+                          'Fetch Failure: Iso list cannot be empty.')
     try:
         fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
-        hmd = HMD.write(data_name, iso_id_list)
+        hmd = HapiMetaData.write(data_name, iso_id_list)
     except Exception as e:
         as_str = str(e)
         print(as_str, file=sys.stderr)
         # Determine whether the issue is an internet issue or something else
         if 'connect' in as_str:
-            return data_handle.FetchError(
-                data_handle.FetchErrorKind.BadConnection,
+            return FetchError(
+                FetchErrorKind.BadConnection,
                 'Bad connection: Failed to connect to send request. Check your connection.')
         else:
-            return data_handle.FetchError(
-                data_handle.FetchErrorKind.FailedToRetreiveData,
+            return FetchError(
+                FetchErrorKind.FailedToRetreiveData,
                 'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
     return True
 
@@ -134,13 +145,16 @@ class HapiWorker(QtCore.QThread):
 
     def __init__(self, work: Dict[str, Any], callback: Callable = None):
         super(HapiWorker, self).__init__()
-        self.callback: Callable = callback
+        self.callback = callback
         self.work: Dict[str, Any] = work
-        self.work['job_id']: int = HapiWorker.job_id
+        self.work['job_id'] = HapiWorker.job_id
         HapiWorker.job_id += 1
 
         self.started.connect(self.__run)
 
+        if work['type'] == Work.END_WORK_PROCESS:
+            Work.WORKQ.put((self.work['job_id'], self.work))
+            return
         self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
 
         if callback:
@@ -150,7 +164,7 @@ class HapiWorker(QtCore.QThread):
         job_id = self.work['job_id']
         Work.WORKQ.put((job_id, self.work))
         while True:
-            sleep(0.01)
+            time.sleep(0.01)
             try:
                 (job_id, item) = Work.RESULTQ.get_nowait()
                 if job_id == self.work['job_id']:

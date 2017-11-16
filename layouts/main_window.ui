@@ -80,7 +80,7 @@
               <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
           </property>
           <widget class="QWidget" name="fetch_tab">
               <attribute name="title">
@@ -167,32 +167,6 @@
                   </property>
                   <property name="text">
                       <string>Parameter Groups</string>
-                  </property>
-              </widget>
-              <widget class="QTextEdit" name="console_output">
-                  <property name="geometry">
-                      <rect>
-                          <x>10</x>
-                          <y>360</y>
-                          <width>561</width>
-                          <height>181</height>
-                      </rect>
-                  </property>
-                  <property name="font">
-                      <font>
-                          <family>Consolas</family>
-                          <pointsize>9</pointsize>
-                          <stylestrategy>PreferAntialias</stylestrategy>
-                      </font>
-                  </property>
-                  <property name="cursor" stdset="0">
-                      <cursorShape>IBeamCursor</cursorShape>
-                  </property>
-                  <property name="readOnly">
-                      <bool>true</bool>
-                  </property>
-                  <property name="acceptRichText">
-                      <bool>false</bool>
                   </property>
               </widget>
               <widget class="QLabel" name="label_4">
@@ -574,19 +548,6 @@
                       <string>You must select at least one isotopologue</string>
                   </property>
               </widget>
-              <widget class="QLabel" name="label_8">
-                  <property name="geometry">
-                      <rect>
-                          <x>20</x>
-                          <y>340</y>
-                          <width>181</width>
-                          <height>16</height>
-                      </rect>
-                  </property>
-                  <property name="text">
-                      <string>Console Output</string>
-                  </property>
-              </widget>
               <widget class="QPushButton" name="fetch_button">
                   <property name="geometry">
                       <rect>
@@ -782,11 +743,6 @@
      <string>Graphing</string>
     </property>
     <addaction name="action_absorption_coefficient"/>
-    <addaction name="action_spectral_lines"/>
-    <addaction name="action_absorption_cross_section"/>
-    <addaction name="action_transmittance_function"/>
-    <addaction name="action_absorption_function"/>
-    <addaction name="action_radiance_function"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOpen_Window"/>
@@ -798,7 +754,7 @@
      </widget>
   <action name="action_absorption_coefficient">
    <property name="text">
-    <string>Absorption Coefficient</string>
+       <string>Open Graphing Window</string>
    </property>
   </action>
   <action name="action_spectral_lines">

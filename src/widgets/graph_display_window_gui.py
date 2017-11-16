@@ -1,64 +1,13 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
+from utils.hapiest_util import *
 from PyQt5.QtChart import *
-from hapiest_util import *
-import hapiest_util
-from config import *
-import numpy as np
-import worker
+from utils.log import *
 
 
-class GraphWindow(Qt.QObject):
-    done_signal = QtCore.pyqtSignal(object)
-
-    # Data should never be None / null, since if there is no data selected a new
-    # graphing window shouldn't even be opened.
-    def __init__(self, work_object, parent):
-        Qt.QObject.__init__(self)
-        self.parent = parent
-        # graph_thread.start()
-        self.gui = GraphWindowGui()
-        # graph_thread.join()
-        # if len(graph_thread.errors) == 0:
-        #     self.gui.add_graph(graph_thread.x, graph_thread.y)
-        # else:
-        #     for error in graph_thread.errors:
-        #         err_(str(error))
-        self.worker = worker.HapiWorker(work_object, self.plot)
-        self.worker.start()
-        self.done_signal.connect(lambda: parent.done_graphing())
-
-    def plot(self, data):
-        self.done_signal.emit(0)
-        try:
-            (x, y) = (data['x'], data['y'])
-            self.gui.add_graph(x, y, data['title'], data['titlex'], data['titley'])
-        except Exception as e:
-            hapiest_util.err_log(e)
-
-
-    def try_render_graph(self):
-        # TODO: Implement this
-        pass
-
-    def display_graph(self, graph):
-        self.child_windows.append(graph)
-        # TODO: Implement this
-
-    def close(self):
-        for window in self.child_windows:
-            if window.is_open:
-                window.close()
-        self.gui.close()
-
-    def open(self):
-        self.gui.open()
-
-
-class GraphWindowGui(QtWidgets.QWidget):
-
+class GraphDisplayWindowGui(QtWidgets.QWidget):
     def __init__(self):
-        super(GraphWindowGui, self).__init__()
-        uic.loadUi('layouts/graph_window.ui', self)
+        super(GraphDisplayWindowGui, self).__init__()
+        uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
         self.chart_view = None
 
@@ -147,7 +96,6 @@ class GraphWindowGui(QtWidgets.QWidget):
         self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
         self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
-
         layout.addWidget(self.chart_view)
         self.loading_label.setDisabled(True)
         self.graph_container.setLayout(layout)
@@ -160,14 +108,14 @@ class GraphWindowGui(QtWidgets.QWidget):
     def __on_xmax_changed(self, value):
         min = self.xmin.value()
         if value < min:
-            self.xmax.setValue(min)
-            self.xmin.setValue(value)
+            self.xmax.setValue(value)
+            self.xmin.setValue(value - 1)
 
     def __on_xmin_changed(self, value):
         max = self.xmax.value()
         if value > max:
-            self.xmin.setValue(max)
-            self.xmax.setValue(value)
+            self.xmin.setValue(value)
+            self.xmax.setValue(value + 1)
 
     def __on_ymax_changed(self, value):
         min = self.ymin.value()
@@ -193,7 +141,6 @@ class GraphWindowGui(QtWidgets.QWidget):
         if xmin == xmax or ymin == ymax:
             return
 
-        hapiest_util.debug(xmin, ymax, xmax - xmin, ymax - ymin)
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
 
