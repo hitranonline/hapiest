@@ -1,5 +1,5 @@
 from hapi import *
-from hapiest_util import *
+from utils.hapiest_util import *
 from typing import *
 
 MoleculeId = int

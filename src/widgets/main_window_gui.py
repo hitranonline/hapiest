@@ -1,96 +1,10 @@
-from hapiest_util import *
-from window import Window
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import (QWidget, QToolTip, QPushButton, QApplication)
 from PyQt5.QtGui import QFont
-import re
-from data_handle import *
-from hapi import *
-from absorption_coefficient_window import *
-from isotopologue import *
-import hapiest_util
+from PyQt5.QtWidgets import *
 
-class MainWindow(Window):
-    def __init__(self):
-        # Initially an empty list, until other windows are created
-        self.child_windows = []
-
-        # Create a new instance of the GUI container class
-        self.gui: 'MainWindowGui' = MainWindowGui(self)
-
-        self.is_open: bool = True
-
-    def fetch_done(self, result: Union[bool, List['FetchError'], 'FetchError']):
-        self.gui.data_handle.worker.exit()
-        self.enable_fetch_button()
-        if result == True:
-            hapiest_util.log("Successfully finished fetch.")
-            return
-        hapiest_util.log("Failed to fetch...")
-        if isinstance(result, list):
-            errs = result
-        else:
-            errs = [result]
-        for err in errs:
-            # This means the wavenumber range was too small (probably), so
-            # we'll tell the user it is too small
-            if err.error == FetchErrorKind.FailedToRetreiveData:
-                self.gui.err_small_range.show()
-                hapiest_util.err_log('The entered wavenumber range is too small, try increasing it')
-            # Not much to do in regards to user feedback in this case....
-            elif err.error == FetchErrorKind.FailedToOpenThread:
-                hapiest_util.err_log('Failed to open thread to make query HITRAN')
-            elif err.error == FetchErrorKind.BadConnection:
-                self.gui.err_bad_connection.show()
-                hapiest_util.err_log(
-                    'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
-            elif err.error == FetchErrorKind.BadIsoList:
-                self.gui.err_bad_iso_list.show()
-                hapiest_util.err_log(' Error: You must select at least one isotopologue.')
-            elif err.error == FetchErrorKind.EmptyName:
-                self.gui.err_empty_name.show()
-
-    def disable_fetch_button(self):
-        self.gui.fetch_button.setDisabled(True)
-
-    def enable_fetch_button(self):
-        self.gui.fetch_button.setEnabled(True)
-
-
-    def open_graph_window(self):
-        # Open a fetch window
-        # self.child_windows.append(GraphWindow())
-        raise Exception("Unsupported: graph operation")
-
-    def close_window(self, to_close):
-        # Close all occurences of the window to_close in the windows list.
-        # There should only be one but you never know...
-        self.child_windows = filter(
-                        lambda window: window != to_close, self.child_windows)
-        to_close.close()
-
-
-    def close(self):
-        for window in self.child_windows:
-            if window.is_open:
-                window.close()
-
-        self.gui.close()
-
-
-    def open(self):
-        self.gui.open()
-
-    # Method that get called when the append_text signal is received by the window
-    # This is to allow console output
-    def console_append_text(self, text):
-        self.gui.console_output.insertPlainText(text)
-        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
-
-    # Method gets called when html formatted text is to be printed to console.
-    def console_append_html(self, html):
-        self.gui.console_output.insertHtml(html)
-        self.gui.console_output.moveCursor(QtGui.QTextCursor.End)
+from utils.fetch_handler import *
+from windows.graphing_window import *
+from utils.log import *
 
 
 class MainWindowGui(QtWidgets.QMainWindow):
@@ -103,6 +17,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         uic.loadUi('layouts/main_window.ui', self)
 
+        self.status_bar_label = QtWidgets.QLabel("Ready")
+        self.statusbar.addWidget(self.status_bar_label)
         self.init_molecule_list()
 
         self.populate_parameter_lists()
@@ -181,7 +97,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         for (group, _) in PARAMETER_GROUPS.items():
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
-            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 
@@ -191,12 +107,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
         for par in PARLIST_ALL:
             item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() |
-            QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 
             self.param_list.addItem(item)
-
 
     # Extract the name of each molocule that hapi has data on and add it to
     # the molecule list. Also, enable auto-complete for the combobox
@@ -238,7 +153,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         return selected_isos
 
-
     # Returns a list containing all of the checked parameters
     def get_selected_params(self):
         selected_params = []
@@ -252,7 +166,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
                 selected_params.append(str(item.text()))
 
         return selected_params
-
 
     # Returns a list containing all of the checked groups
     def get_selected_param_groups(self):
@@ -271,11 +184,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
     def get_data_name(self):
         return str(self.data_name.text())
 
-
     # Fetches the double value from the QDoubleSpinBox wn_max
     def get_wn_max(self):
         return self.wn_max.value()
-
 
     # Fetches the double value from the QDoubleSpinBox wn_min
     def get_wn_min(self):
@@ -366,7 +277,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __handle_fetch_clicked(self):
         self.parent.disable_fetch_button()
-        hapiest_util.debug("aa")
         # Hide any error messages for now, if they persist they'll be shown
         # at the end of the method
         self.err_small_range.hide()
@@ -379,25 +289,16 @@ class MainWindowGui(QtWidgets.QMainWindow):
         wn_max = self.get_wn_max()
         wn_min = self.get_wn_min()
 
-        self.data_handle = DataHandle(self.get_data_name())
-
-        hapiest_util.debug("aa")
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
 
-        self.data_handle.try_fetch(
-            self.parent,
-            self.get_selected_isotopologues(),
-            wn_min,
-            wn_max,
-            param_groups,
-            params)
-
+        self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
+                                          wn_min, wn_max, param_groups, params)
 
     def __open_absorption_coefficient_window(self):
         try:
             # window = AbsorptionCoefficientWindow(self)
             # Window.start(window)
-            self.parent.child_windows.append(AbsorptionCoefficientWindow(self))
+            self.parent.child_windows.append(GraphingWindow(self))
         except Exception as e:
-            hapiest_util.debug(e)
+            err_log(e)
