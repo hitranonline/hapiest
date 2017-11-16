@@ -5,8 +5,8 @@ from utils.hapiest_util import *
 from utils.isotopologue import *
 from widgets.main_window_gui import MainWindowGui
 from utils.log import *
-from utils.fetch_handler import *
-
+from utils.fetch_handler import FetchErrorKind, FetchError, FetchHandler
+from worker.work_result import *
 
 class MainWindow:
     def __init__(self):
@@ -18,14 +18,16 @@ class MainWindow:
 
         self.is_open: bool = True
 
-    def fetch_done(self, result: Union[bool, List['FetchError'], 'FetchError']):
+    def fetch_done(self, work_result: WorkResult):
+        result = work_result.result
         self.gui.fetch_handler.worker.exit()
         self.enable_fetch_button()
         if result == True:
             log("Successfully finished fetch.")
             return
         log("Failed to fetch...")
-        if isinstance(result, list):
+        debug(str(result))
+        if isinstance(result, List):
             errs = result
         else:
             errs = [result]
@@ -79,7 +81,6 @@ class MainWindow:
     # Method that get called when the append_text signal is received by the window
     # This is to allow console output
     def text_log(self, text):
-        self.gui.status_bar_label.setText("l")
         self.gui.status_bar_label.setText(text)
 
     # Method gets called when html formatted text is to be printed to console.

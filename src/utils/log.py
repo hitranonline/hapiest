@@ -3,10 +3,7 @@ import sys
 
 
 def print_html_to_status_bar(arg):
-    try:
-        TextReceiver.TEXT_EDIT_STREAM.write_html(arg)
-    except Exception as e:
-        debug(e)
+    TextReceiver.TEXT_EDIT_STREAM.write_html(arg)
 
 
 # A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui

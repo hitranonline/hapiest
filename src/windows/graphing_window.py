@@ -44,7 +44,6 @@ class GraphingWindow(QtCore.QObject):
         graph_fn = self.gui.get_graph_type()
 
         work = HapiWorker.echo(
-            type=Work.ABSORPTION_COEFFICIENT,
             graph_fn=graph_fn,
             Components=Components,
             SourceTables=SourceTables,
@@ -61,7 +60,7 @@ class GraphingWindow(QtCore.QObject):
         )
 
         try:
-            self.children.append(GraphDisplayWindow(work, self))
+            self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
         except Exception as e:
             debug(e)
 

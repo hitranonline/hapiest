@@ -2,6 +2,7 @@ from utils.hapiest_util import *
 from windows.main_window import *
 from worker.hapi_worker import *
 from utils.log import *
+from worker.work_request import *
 
 
 # An enum for all possible errors that could be encountered while verifying fetch parameters
@@ -50,10 +51,8 @@ class FetchHandler:
         self.data_name = data_name
         self.worker = None
         self.fetch_window = fetch_window
-
         fetch_window.disable_fetch_button()
         work = HapiWorker.echo(
-            type=Work.FETCH,
             data_name=self.data_name,
             iso_id_list=iso_id_list,
             numin=numin,
@@ -61,6 +60,5 @@ class FetchHandler:
             parameter_groups=parameter_groups,
             parameters=parameters)
 
-        self.worker = HapiWorker(work, callback=fetch_window.fetch_done)
+        self.worker = HapiWorker(WorkRequest.FETCH, work, callback=fetch_window.fetch_done)
         self.worker.start()
-        log("Sending fetch request...")

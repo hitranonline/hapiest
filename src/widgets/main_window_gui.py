@@ -283,7 +283,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.err_bad_connection.hide()
         self.err_bad_iso_list.hide()
         self.err_empty_name.hide()
-
         molecule = self.get_selected_molecule()
 
         wn_max = self.get_wn_max()
@@ -291,9 +290,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
-
-        self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
+        try:
+            log(str("Sending fetch request..."))
+            self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
                                           wn_min, wn_max, param_groups, params)
+        except Exception as e:
+            debug(e)
 
     def __open_absorption_coefficient_window(self):
         try:
