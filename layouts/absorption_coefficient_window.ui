@@ -367,7 +367,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Intensity Threshhold</string>
+    <string>Intensity Threshold</string>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="intensity_threshold">
