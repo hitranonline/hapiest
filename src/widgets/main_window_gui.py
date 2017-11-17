@@ -17,6 +17,19 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         uic.loadUi('layouts/main_window.ui', self)
 
+        self.iso_list = QtWidgets.QListWidget(self)
+        self.param_group_list = QtWidgets.QListWidget(self)
+        self.param_list = QtWidgets.QListWidget(self)
+
+        self.splitter = QtWidgets.QSplitter(self)
+        self.splitter.addWidget(self.iso_list)
+        self.splitter.addWidget(self.param_group_list)
+        self.splitter.addWidget(self.param_list)
+
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(self.splitter)
+        self.list_container.setLayout(layout)
+
         self.status_bar_label = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
         self.init_molecule_list()
@@ -88,8 +101,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         layout.addWidget(self.table, 0, 0)
         self.table_container.setLayout(layout)
 
-        # self.resized.connect()
-
+        self.statusbar.setParent(self)
         # Display the GUI since we're done configuring it
         self.show()
 
@@ -202,7 +214,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
     ###########################################################################
     #  Event Handlers
     ###########################################################################
-
 
     # Toggle the item that was activated
     def __iso_list_item_click(self, item):

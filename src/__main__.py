@@ -29,7 +29,6 @@ def main():
     window = MainWindow()
 
     window.gui.adjustSize()
-    window.gui.setFixedSize(window.gui.size())
 
     TextReceiver.init_console_redirect(window, sys.argv)
 

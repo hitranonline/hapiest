@@ -2,34 +2,19 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>600</width>
-       <height>600</height>
+       <width>885</width>
+       <height>606</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>600</width>
-    <height>600</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>100000</width>
-    <height>100000</height>
-   </size>
   </property>
   <property name="sizeIncrement">
    <size>
@@ -37,32 +22,15 @@
     <height>1</height>
    </size>
   </property>
-  <property name="font">
-   <font>
-    <pointsize>9</pointsize>
-   </font>
-  </property>
   <property name="windowTitle">
-   <string>hapiest</string>
-  </property>
-  <property name="toolTip">
-   <string/>
-  </property>
-  <property name="toolButtonStyle">
-   <enum>Qt::ToolButtonIconOnly</enum>
-  </property>
-  <property name="tabShape">
-   <enum>QTabWidget::Rounded</enum>
+      <string>MainWindow</string>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
       <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
           </sizepolicy>
@@ -74,7 +42,10 @@
           </size>
       </property>
    <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
+       <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -82,6 +53,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+         <property name="sizeIncrement">
+             <size>
+                 <width>1</width>
+                 <height>1</height>
+             </size>
+         </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
       </property>
@@ -93,20 +70,309 @@
         <string>Fetch</string>
        </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
-              <item row="4" column="2" colspan="3">
-                  <widget class="QLabel" name="label_6">
+              <item row="3" column="1" colspan="7">
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                      <property name="sizeConstraint">
+                          <enum>QLayout::SetFixedSize</enum>
+                      </property>
+                      <item>
+                          <widget class="QLabel" name="label_2">
+                              <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                      <horstretch>0</horstretch>
+                                      <verstretch>0</verstretch>
+                                  </sizepolicy>
+                              </property>
+                              <property name="text">
+                                  <string>Isotopologues</string>
+                              </property>
+                          </widget>
+                      </item>
+                      <item>
+                          <widget class="QLabel" name="label_6">
+                              <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                      <horstretch>0</horstretch>
+                                      <verstretch>0</verstretch>
+                                  </sizepolicy>
+                              </property>
+                              <property name="text">
+                                  <string>Parameter Groups</string>
+                              </property>
+                          </widget>
+                      </item>
+                      <item>
+                          <widget class="QLabel" name="label_7">
+                              <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                      <horstretch>0</horstretch>
+                                      <verstretch>0</verstretch>
+                                  </sizepolicy>
+                              </property>
+                              <property name="font">
+                                  <font>
+                                      <pointsize>9</pointsize>
+                                  </font>
+                              </property>
+                              <property name="text">
+                                  <string>Parameters</string>
+                              </property>
+                          </widget>
+                      </item>
+                  </layout>
+              </item>
+              <item row="2" column="2">
+                  <widget class="QComboBox" name="molecule_id"/>
+              </item>
+              <item row="2" column="3" colspan="2">
+                  <widget class="QLabel" name="label_4">
+                      <property name="font">
+                          <font>
+                              <pointsize>9</pointsize>
+                          </font>
+                      </property>
                       <property name="text">
-                          <string>Parameter Groups</string>
+                          <string>Wave Number Max</string>
                       </property>
                   </widget>
               </item>
-              <item row="5" column="2" colspan="3">
-                  <widget class="QListWidget" name="param_group_list"/>
+              <item row="1" column="0">
+                  <widget class="QLabel" name="label">
+                      <property name="font">
+                          <font>
+                              <pointsize>9</pointsize>
+                          </font>
+                      </property>
+                      <property name="text">
+                          <string>Data Name</string>
+                      </property>
+                  </widget>
               </item>
-              <item row="5" column="5" colspan="2">
-                  <widget class="QListWidget" name="param_list"/>
+              <item row="1" column="3" colspan="2">
+                  <widget class="QLabel" name="label_3">
+                      <property name="font">
+                          <font>
+                              <pointsize>9</pointsize>
+                          </font>
+                      </property>
+                      <property name="text">
+                          <string>Wave Number Min</string>
+                      </property>
+                  </widget>
               </item>
-              <item row="6" column="0" colspan="3">
+              <item row="0" column="0" colspan="3">
+                  <widget class="QLabel" name="err_empty_name">
+                      <property name="palette">
+                          <palette>
+                              <active>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </active>
+                              <inactive>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </inactive>
+                              <disabled>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>120</red>
+                                              <green>120</green>
+                                              <blue>120</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </disabled>
+                          </palette>
+                      </property>
+                      <property name="text">
+                          <string>Data name shouldn't be empty</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="0" column="4" colspan="4">
+                  <widget class="QLabel" name="err_small_range">
+                      <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                          </sizepolicy>
+                      </property>
+                      <property name="palette">
+                          <palette>
+                              <active>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </active>
+                              <inactive>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </inactive>
+                              <disabled>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>120</red>
+                                              <green>120</green>
+                                              <blue>120</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </disabled>
+                          </palette>
+                      </property>
+                      <property name="text">
+                          <string>Wave number range is too small</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="7" column="4" colspan="4">
+                  <widget class="QLabel" name="err_bad_connection">
+                      <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                          </sizepolicy>
+                      </property>
+                      <property name="palette">
+                          <palette>
+                              <active>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </active>
+                              <inactive>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>255</red>
+                                              <green>0</green>
+                                              <blue>0</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </inactive>
+                              <disabled>
+                                  <colorrole role="WindowText">
+                                      <brush brushstyle="SolidPattern">
+                                          <color alpha="255">
+                                              <red>120</red>
+                                              <green>120</green>
+                                              <blue>120</blue>
+                                          </color>
+                                      </brush>
+                                  </colorrole>
+                              </disabled>
+                          </palette>
+                      </property>
+                      <property name="text">
+                          <string>Failed to connect to the internet</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="1" column="5" colspan="3">
+                  <widget class="QDoubleSpinBox" name="wn_min">
+                      <property name="font">
+                          <font>
+                              <pointsize>10</pointsize>
+                          </font>
+                      </property>
+                      <property name="decimals">
+                          <number>5</number>
+                      </property>
+                      <property name="maximum">
+                          <double>100000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                          <double>0.000000000000000</double>
+                      </property>
+                  </widget>
+              </item>
+              <item row="2" column="5" colspan="3">
+                  <widget class="QDoubleSpinBox" name="wn_max">
+                      <property name="font">
+                          <font>
+                              <pointsize>10</pointsize>
+                          </font>
+                      </property>
+                      <property name="decimals">
+                          <number>5</number>
+                      </property>
+                      <property name="maximum">
+                          <double>100000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                          <double>0.000000000000000</double>
+                      </property>
+                  </widget>
+              </item>
+              <item row="2" column="0">
+                  <widget class="QLabel" name="label_5">
+                      <property name="text">
+                          <string>Molecule</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="1" column="2">
+                  <widget class="QLineEdit" name="data_name">
+                      <property name="text">
+                          <string>default_name</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="8" column="7">
+                  <widget class="QPushButton" name="fetch_button">
+                      <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                          </sizepolicy>
+                      </property>
+                      <property name="font">
+                          <font>
+                              <pointsize>10</pointsize>
+                          </font>
+                      </property>
+                      <property name="text">
+                          <string>Fetch Data</string>
+                      </property>
+                  </widget>
+              </item>
+              <item row="7" column="0" colspan="4">
                   <widget class="QLabel" name="err_bad_iso_list">
                       <property name="palette">
                           <palette>
@@ -182,224 +448,7 @@
                       </property>
                   </widget>
               </item>
-              <item row="0" column="3" colspan="4">
-                  <widget class="QLabel" name="err_small_range">
-                      <property name="palette">
-                          <palette>
-                              <active>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </active>
-                              <inactive>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </inactive>
-                              <disabled>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>120</red>
-                                              <green>120</green>
-                                              <blue>120</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </disabled>
-                          </palette>
-                      </property>
-                      <property name="text">
-                          <string>Wave number range is too small</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="1" column="0">
-                  <widget class="QLabel" name="label">
-                      <property name="font">
-                          <font>
-                              <pointsize>9</pointsize>
-                          </font>
-                      </property>
-                      <property name="text">
-                          <string>Data Name</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="0" column="0" colspan="2">
-                  <widget class="QLabel" name="err_empty_name">
-                      <property name="palette">
-                          <palette>
-                              <active>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </active>
-                              <inactive>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </inactive>
-                              <disabled>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>120</red>
-                                              <green>120</green>
-                                              <blue>120</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </disabled>
-                          </palette>
-                      </property>
-                      <property name="text">
-                          <string>Data name shouldn't be empty</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="1" column="2" colspan="2">
-                  <widget class="QLabel" name="label_3">
-                      <property name="font">
-                          <font>
-                              <pointsize>9</pointsize>
-                          </font>
-                      </property>
-                      <property name="text">
-                          <string>Wave Number Min</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="2" column="0">
-                  <widget class="QLabel" name="label_5">
-                      <property name="text">
-                          <string>Molecule</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="1" column="1">
-                  <widget class="QLineEdit" name="data_name">
-                      <property name="text">
-                          <string>default_name</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="5" column="0" colspan="2">
-                  <widget class="QListWidget" name="iso_list"/>
-              </item>
-              <item row="2" column="2" colspan="2">
-                  <widget class="QLabel" name="label_4">
-                      <property name="font">
-                          <font>
-                              <pointsize>9</pointsize>
-                          </font>
-                      </property>
-                      <property name="text">
-                          <string>Wave Number Max</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="1" column="4" colspan="3">
-                  <widget class="QDoubleSpinBox" name="wn_min">
-                      <property name="font">
-                          <font>
-                              <pointsize>10</pointsize>
-                          </font>
-                      </property>
-                      <property name="decimals">
-                          <number>5</number>
-                      </property>
-                      <property name="maximum">
-                          <double>100000.000000000000000</double>
-                      </property>
-                      <property name="value">
-                          <double>0.000000000000000</double>
-                      </property>
-                  </widget>
-              </item>
-              <item row="2" column="1">
-                  <widget class="QComboBox" name="molecule_id"/>
-              </item>
-              <item row="2" column="4" colspan="3">
-                  <widget class="QDoubleSpinBox" name="wn_max">
-                      <property name="font">
-                          <font>
-                              <pointsize>10</pointsize>
-                          </font>
-                      </property>
-                      <property name="decimals">
-                          <number>5</number>
-                      </property>
-                      <property name="maximum">
-                          <double>100000.000000000000000</double>
-                      </property>
-                      <property name="value">
-                          <double>0.000000000000000</double>
-                      </property>
-                  </widget>
-              </item>
-              <item row="4" column="0" colspan="2">
-                  <widget class="QLabel" name="label_2">
-                      <property name="text">
-                          <string>Isotopologues</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="4" column="5" colspan="2">
-                  <widget class="QLabel" name="label_7">
-                      <property name="font">
-                          <font>
-                              <pointsize>9</pointsize>
-                          </font>
-                      </property>
-                      <property name="text">
-                          <string>Parameters</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="7" column="6">
-                  <widget class="QPushButton" name="fetch_button">
-                      <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                          </sizepolicy>
-                      </property>
-                      <property name="font">
-                          <font>
-                              <pointsize>10</pointsize>
-                          </font>
-                      </property>
-                      <property name="text">
-                          <string>Fetch Data</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="7" column="3" colspan="3">
+              <item row="8" column="4" colspan="3">
                   <widget class="QPushButton" name="clear_console">
                       <property name="font">
                           <font>
@@ -411,48 +460,15 @@
                       </property>
                   </widget>
               </item>
-              <item row="6" column="3" colspan="4">
-                  <widget class="QLabel" name="err_bad_connection">
-                      <property name="palette">
-                          <palette>
-                              <active>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </active>
-                              <inactive>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>255</red>
-                                              <green>0</green>
-                                              <blue>0</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </inactive>
-                              <disabled>
-                                  <colorrole role="WindowText">
-                                      <brush brushstyle="SolidPattern">
-                                          <color alpha="255">
-                                              <red>120</red>
-                                              <green>120</green>
-                                              <blue>120</blue>
-                                          </color>
-                                      </brush>
-                                  </colorrole>
-                              </disabled>
-                          </palette>
+              <item row="6" column="0" colspan="8">
+                  <widget class="QWidget" name="list_container" native="true">
+                      <property name="minimumSize">
+                          <size>
+                              <width>0</width>
+                              <height>0</height>
+                          </size>
                       </property>
-                      <property name="text">
-                          <string>Failed to connect to the internet</string>
-                      </property>
+                      <zorder>horizontalLayoutWidget</zorder>
                   </widget>
               </item>
               <item row="3" column="0">
@@ -465,7 +481,7 @@
                       </property>
                       <property name="sizeHint" stdset="0">
                           <size>
-                              <width>20</width>
+                              <width>1</width>
                               <height>40</height>
                           </size>
                       </property>
@@ -544,11 +560,7 @@
                   </widget>
               </item>
               <item row="4" column="1" colspan="7">
-                  <widget class="QWidget" name="table_container" native="true">
-                      <zorder>table</zorder>
-                      <zorder>table</zorder>
-                      <zorder>table</zorder>
-                  </widget>
+                  <widget class="QWidget" name="table_container" native="true"/>
               </item>
               <item row="5" column="7">
                   <layout class="QHBoxLayout" name="horizontalLayout">
@@ -585,63 +597,41 @@
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>600</width>
+        <width>885</width>
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuOpen_Window">
+      <widget class="QMenu" name="menuGraphing">
     <property name="title">
      <string>Graphing</string>
     </property>
     <addaction name="action_absorption_coefficient"/>
    </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuOpen_Window"/>
+      <addaction name="menuGraphing"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+      <property name="sizeIncrement">
+          <size>
+              <width>1</width>
+              <height>1</height>
+          </size>
+      </property>
+      <property name="contextMenuPolicy">
+          <enum>Qt::NoContextMenu</enum>
+      </property>
    <property name="sizeGripEnabled">
     <bool>true</bool>
    </property>
   </widget>
   <action name="action_absorption_coefficient">
    <property name="text">
-    <string>Open Graphing Window</string>
-   </property>
-  </action>
-  <action name="action_spectral_lines">
-   <property name="text">
-    <string>Spectral Lines</string>
-   </property>
-  </action>
-  <action name="action_absorption_cross_section">
-   <property name="text">
-    <string>Absorption Cross Section</string>
-   </property>
-  </action>
-  <action name="action_transmittance_function">
-   <property name="text">
-    <string>Transmittance Function</string>
-   </property>
-  </action>
-  <action name="action_absorption_function">
-   <property name="text">
-    <string>Absorption Function</string>
-   </property>
-  </action>
-  <action name="action_radiance_function">
-   <property name="text">
-    <string>Radiance Function</string>
+       <string>Open Graph Window</string>
    </property>
   </action>
  </widget>
