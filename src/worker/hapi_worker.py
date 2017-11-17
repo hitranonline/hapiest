@@ -39,6 +39,9 @@ class HapiWorker(QtCore.QThread):
             end_request = WorkRequest(self.job_id, self.work_type, self.args)
             WorkRequest.WORKQ.put(end_request)
             return
+        if self.work_type == WorkRequest.START_HAPI:
+            WorkRequest.WORKQ.put(WorkRequest(self.job_id, self.work_type, self.args))
+            return
         self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
 
         if callback:

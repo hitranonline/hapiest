@@ -7,13 +7,14 @@ from worker.work_request import *
 class Lines:
     def __init__(self, table_name: str, parameters: Dict[str, List[Union[int, float]]], page: int, page_len: int = 20,
                  last_page: int = False):
+        self.last_page = last_page
         self.table_name = table_name
         self.page: int = page
         self.page_len: int = page_len
         self.parameters: Dict[str, List[Union[int, float]]] = parameters
         self.param_order = []
 
-        self.workers: List[HapiWorker] = []
+        self.workers: List['HapiWorker'] = []
 
         for (param_name, param_list) in parameters.items():
             self.entries: int = len(param_list)

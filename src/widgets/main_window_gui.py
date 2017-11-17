@@ -13,7 +13,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
     # and loads the ui layout
     def __init__(self, window):
         super(MainWindowGui, self).__init__()
-
         self.parent: 'MainWindow' = window
 
         uic.loadUi('layouts/main_window.ui', self)
@@ -42,7 +41,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
             'Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Prompts parameter validation, fetches from HITRAN.')
         self.clear_console.setToolTip('Clear the console of all current output.')
-
         # Hide error messages
         self.err_small_range.hide()
         self.err_bad_connection.hide()
@@ -85,10 +83,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.data_name.setValidator(validator)
 
         # Uncomment this if you'd like to see how HapiTableView looks
-        # self.table = HapiTableView(self, 'default_name')
-        # layout = QtWidgets.QGridLayout(self.table_container)
-        # layout.addWidget(self.table, 0, 0)
-        # self.table_container.setLayout(layout)
+        self.table = HapiTableView(self, 'default_name')
+        layout = QtWidgets.QGridLayout(self.table_container)
+        layout.addWidget(self.table, 0, 0)
+        self.table_container.setLayout(layout)
+
+        # self.resized.connect()
 
         # Display the GUI since we're done configuring it
         self.show()

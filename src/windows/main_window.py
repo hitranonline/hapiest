@@ -12,7 +12,7 @@ class MainWindow:
     def __init__(self):
         # Initially an empty list, until other windows are created
         self.child_windows = []
-
+        debug('a')
         # Create a new instance of the GUI container class
         self.gui: 'MainWindowGui' = MainWindowGui(self)
 
