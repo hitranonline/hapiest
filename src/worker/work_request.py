@@ -7,6 +7,7 @@ from hapi import *
 from utils.log import *
 from utils.fetch_handler import *
 from utils.hapi_metadata import HapiMetaData
+from utils.lines import *
 
 
 class WorkFunctions:
@@ -62,7 +63,6 @@ class WorkFunctions:
             hmd = HapiMetaData.write(data_name, iso_id_list)
         except Exception as e:
             as_str = str(e)
-            print(as_str, file=sys.stderr)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
                 return FetchError(
@@ -74,6 +74,30 @@ class WorkFunctions:
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
         return True
 
+    @staticmethod
+    def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Lines:
+        start_index = page_len * page_number
+        end_index = start_index + page_len
+        result: Dict[str, List[Union[int, float]]] = {}
+        table = LOCAL_TABLE_CACHE[table_name]['data']
+        last_page = False
+        for (param, param_data) in table.items():
+            if len(param_data) < end_index:
+                end_index = len(param_data)
+                last_page = True
+            result[param] = param_data[start_index:end_index]
+
+        return Lines(table_name, result, page_number, page_len, last_page)
+
+    @staticmethod
+    def table_commit_lines_page(table_name: str, start_index: int, data: Dict[str, List[Union[int, float]]]) -> bool:
+        table = LOCAL_TABLE_CACHE[table_name]['data']
+        for (parameter, param_data) in data.items():
+            param = table[parameter]
+            for i in range(start_index, start_index + len(param_data)):
+                param[i] = param_data[i - start_index]
+
+        return True
 
 class WorkRequest:
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
@@ -88,6 +112,8 @@ class WorkRequest:
     FETCH: WorkType = 2
     ABSORPTION_COEFFICIENT: WorkType = 3
     TABLE_META_DATA: WorkType = 4
+    TABLE_GET_LINES_PAGE: WorkType = 5
+    TABLE_COMMIT_LINES_PAGE: WorkType = 6
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -97,7 +123,9 @@ class WorkRequest:
     WORK_FUNCTIONS: Dict[int, Callable] = {
         START_HAPI: WorkFunctions.start_hapi,
         FETCH: WorkFunctions.try_fetch,
-        ABSORPTION_COEFFICIENT: WorkFunctions.try_graph_absorption_coefficient
+        ABSORPTION_COEFFICIENT: WorkFunctions.try_graph_absorption_coefficient,
+        TABLE_GET_LINES_PAGE: WorkFunctions.table_get_lines_page,
+        TABLE_COMMIT_LINES_PAGE: WorkFunctions.table_commit_lines_page
     }
 
     def do_work(self) -> Any:
@@ -116,7 +144,6 @@ class WorkRequest:
 class Work:
     def WORK_FUNCTION(workq: mp.Queue, resultq: mp.Queue) -> int:
         while True:
-            sys.stdout.flush()
             work_request = workq.get()
             if work_request.work_type == WorkRequest.END_WORK_PROCESS:
                 return 0

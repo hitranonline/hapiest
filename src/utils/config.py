@@ -5,12 +5,14 @@ CONFIG_LOCATION = 'Config.toml'
 DEFAULT_CONFIG = '''[hapi]
 data-folder = 'data'
 high-dpi = 'false'
+select-page-length = 20
 '''
 
 
 class Config():
     data_folder = 'data'
     high_dpi = 'false'
+    select_page_length = 20
 
     @staticmethod
     def config_init():
@@ -34,6 +36,7 @@ class Config():
     def set_defaults():
         Config.data_folder = 'data'
         Config.high_dpi = 'false'
+        Config.select_page_length = 20
 
     # Sets values from a parsed toml dictionary
     @staticmethod
@@ -42,7 +45,7 @@ class Config():
         try:
             Config.data_folder = dict['hapi']['data-folder']
             Config.high_dpi = dict['hapi']['high-dpi']
-
+            Config.select_page_length = dict['hapi']['select-page-length']
         except Exception as e:
             print('Encountered error while initializing program configuration')
             print(e)

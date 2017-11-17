@@ -21,6 +21,9 @@ def main():
     # Fix for mac-based systems...
     os.environ['no_proxy'] = '*'
 
+    start = HapiWorker(WorkRequest.START_HAPI, {})
+    start.start()
+
     app = QtWidgets.QApplication(sys.argv)
 
     window = MainWindow()
@@ -32,8 +35,6 @@ def main():
 
     WorkRequest.start_work_process()
 
-    start = HapiWorker(WorkRequest.START_HAPI, {})
-    start.start()
 
     qt_result = app.exec_()
 
@@ -47,4 +48,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        debug(e)

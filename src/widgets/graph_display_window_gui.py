@@ -41,7 +41,6 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         pass
 
     def add_graph(self, x, y, title="", xtitle="", ytitle=""):
-        layout = QtWidgets.QGridLayout()
 
         series = QLineSeries()
         for i in range(0, x.size):
@@ -96,6 +95,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
         self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
+        layout = QtWidgets.QGridLayout()
         layout.addWidget(self.chart_view)
         self.loading_label.setDisabled(True)
         self.graph_container.setLayout(layout)

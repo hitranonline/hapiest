@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from utils.fetch_handler import *
 from windows.graphing_window import *
 from utils.log import *
+from widgets.hapi_table_view import HapiTableView
 
 
 class MainWindowGui(QtWidgets.QMainWindow):
@@ -82,6 +83,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
         re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]*')
         validator = QtGui.QRegExpValidator(re)
         self.data_name.setValidator(validator)
+
+        # Uncomment this if you'd like to see how HapiTableView looks
+        # self.table = HapiTableView(self, 'default_name')
+        # layout = QtWidgets.QGridLayout(self.table_container)
+        # layout.addWidget(self.table, 0, 0)
+        # self.table_container.setLayout(layout)
 
         # Display the GUI since we're done configuring it
         self.show()
