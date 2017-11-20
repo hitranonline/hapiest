@@ -38,10 +38,10 @@ class HapiWorker(QtCore.QThread):
         if self.work_type == WorkRequest.END_WORK_PROCESS:
             end_request = WorkRequest(self.job_id, self.work_type, self.args)
             WorkRequest.WORKQ.put(end_request)
-            return
+            self.started.connect(lambda: ())
         if self.work_type == WorkRequest.START_HAPI:
             WorkRequest.WORKQ.put(WorkRequest(self.job_id, self.work_type, self.args))
-            return
+            self.started.connect(lambda: ())
         self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
 
         if callback:

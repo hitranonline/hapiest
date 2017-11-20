@@ -16,9 +16,11 @@ class HapiTableView(QTableWidget):
 
         self.next_button = parent.next_button
         self.back_button = parent.back_button
+        self.save_button = parent.save_button
 
         self.next_button.clicked.connect(self.next_page)
         self.back_button.clicked.connect(self.back_page)
+        self.save_button.clicked.connect(self.save_table)
 
         self.last_page = False
         self.current_page = 0
@@ -95,7 +97,9 @@ class HapiTableView(QTableWidget):
         self.current_page += 1
 
         args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-        self.start_worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
+        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
+        self.workers.append(worker)
+        worker.start()
 
     def back_page(self):
         if self.current_page == 0:
@@ -105,4 +109,12 @@ class HapiTableView(QTableWidget):
         self.current_page -= 1
 
         args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-        self.start_worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
+        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
+        self.workers.append(worker)
+        worker.start()
+
+    def save_table(self):
+        self.lines.commit_changes()
+
+        args = HapiWorker.echo(table_name=self.table_name)
+        self.start_worker

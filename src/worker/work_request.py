@@ -5,7 +5,7 @@ from worker.work_result import WorkResult
 from utils.isotopologue import *
 from hapi import *
 from utils.log import *
-from utils.fetch_handler import *
+import utils.fetch_handler
 from utils.hapi_metadata import HapiMetaData
 from utils.lines import *
 
@@ -56,7 +56,7 @@ class WorkFunctions:
     def try_fetch(data_name: str, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[bool, 'FetchError']:
         if len(iso_id_list) == 0:
-            return FetchError(FetchErrorKind.BadIsoList,
+            return utils.fetch_handler.FetchError(utils.fetch_handler.FetchErrorKind.BadIsoList,
                               'Fetch Failure: Iso list cannot be empty.')
         try:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
@@ -65,12 +65,12 @@ class WorkFunctions:
             as_str = str(e)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
-                return FetchError(
-                    FetchErrorKind.BadConnection,
+                return utils.fetch_handler.FetchError(
+                    utils.fetch_handler.FetchErrorKind.BadConnection,
                     'Bad connection: Failed to connect to send request. Check your connection.')
             else:
-                return FetchError(
-                    FetchErrorKind.FailedToRetreiveData,
+                return utils.fetch_handler.FetchError(
+                    utils.fetch_handler.FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
         return True
 
