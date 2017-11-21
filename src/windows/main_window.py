@@ -12,13 +12,13 @@ class MainWindow:
     def __init__(self):
         # Initially an empty list, until other windows are created
         self.child_windows = []
-        debug('a')
         # Create a new instance of the GUI container class
         self.gui: 'MainWindowGui' = MainWindowGui(self)
 
         self.is_open: bool = True
 
     def fetch_done(self, work_result: WorkResult):
+        self.gui.fetch_handler.worker.safe_exit()
         result = work_result.result
         self.gui.fetch_handler.worker.exit()
         self.enable_fetch_button()
@@ -26,7 +26,6 @@ class MainWindow:
             log("Successfully finished fetch.")
             return
         log("Failed to fetch...")
-        debug(str(result))
         if isinstance(result, List):
             errs = result
         else:

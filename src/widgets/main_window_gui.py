@@ -94,13 +94,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
         re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]*')
         validator = QtGui.QRegExpValidator(re)
         self.data_name.setValidator(validator)
-
         # Uncomment this if you'd like to see how HapiTableView looks
         self.table = HapiTableView(self, 'default_name')
         layout = QtWidgets.QGridLayout(self.table_container)
         layout.addWidget(self.table, 0, 0)
         self.table_container.setLayout(layout)
-
         self.statusbar.setParent(self)
         # Display the GUI since we're done configuring it
         self.show()

@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import *
-
 import re
 import os
 from utils.config import *
@@ -18,3 +17,8 @@ def get_all_data_names():
             continue
         datas.append(match.groupdict()['data_handle'])
     return datas
+
+
+# Used to create a map from named arguments
+def echo(**kwargs):
+    return kwargs

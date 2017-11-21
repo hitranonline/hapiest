@@ -1,14 +1,12 @@
 from typing import *
 import multiprocessing as mp
-import sys
 from worker.work_result import WorkResult
-from utils.isotopologue import *
 from hapi import *
-from utils.log import *
 import utils.fetch_handler
+from utils.log import *
+from utils.config import Config
 from utils.hapi_metadata import HapiMetaData
-from utils.lines import *
-
+from utils.hapiest_util import echo
 
 class WorkFunctions:
     @staticmethod
@@ -33,7 +31,7 @@ class WorkFunctions:
 
     @staticmethod
     def try_graph_absorption_coefficient(
-            graph_fn: Callable, Components: List[Tuple[MoleculeId, IsotopologueId]], SourceTables: List[str],
+            graph_fn: Callable, Components: List[Tuple['MoleculeId', 'IsotopologueId']], SourceTables: List[str],
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
@@ -53,7 +51,7 @@ class WorkFunctions:
             return e
 
     @staticmethod
-    def try_fetch(data_name: str, iso_id_list: List[GlobalIsotopologueId], numin: float, numax: float,
+    def try_fetch(data_name: str, iso_id_list: List['GlobalIsotopologueId'], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[bool, 'FetchError']:
         if len(iso_id_list) == 0:
             return utils.fetch_handler.FetchError(utils.fetch_handler.FetchErrorKind.BadIsoList,
@@ -75,19 +73,24 @@ class WorkFunctions:
         return True
 
     @staticmethod
-    def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Lines:
+    def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Union[bool, Dict[str, Any]]:
         start_index = page_len * page_number
         end_index = start_index + page_len
         result: Dict[str, List[Union[int, float]]] = {}
         table = LOCAL_TABLE_CACHE[table_name]['data']
         last_page = False
         for (param, param_data) in table.items():
+            if len(param_data) <= end_index + page_len:
+                last_page = True
+            break
+        for (param, param_data) in table.items():
             if len(param_data) < end_index:
                 end_index = len(param_data)
                 last_page = True
             result[param] = param_data[start_index:end_index]
 
-        return Lines(table_name, result, page_number, page_len, last_page)
+        return echo(table_name=table_name, parameters=result, page_number=page_number, page_len=page_len,
+                    last_page=last_page)
 
     @staticmethod
     def table_commit_lines_page(table_name: str, start_index: int, data: Dict[str, List[Union[int, float]]]) -> bool:
@@ -97,6 +100,14 @@ class WorkFunctions:
             for i in range(start_index, start_index + len(param_data)):
                 param[i] = param_data[i - start_index]
 
+        return True
+
+    @staticmethod
+    def table_write_to_disk(**kwargs):
+        try:
+            db_commit()
+        except Exception as e:
+            return e
         return True
 
 class WorkRequest:
@@ -114,6 +125,7 @@ class WorkRequest:
     TABLE_META_DATA: WorkType = 4
     TABLE_GET_LINES_PAGE: WorkType = 5
     TABLE_COMMIT_LINES_PAGE: WorkType = 6
+    TABLE_WRITE_TO_DISK: WorkType = 7
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -125,7 +137,8 @@ class WorkRequest:
         FETCH: WorkFunctions.try_fetch,
         ABSORPTION_COEFFICIENT: WorkFunctions.try_graph_absorption_coefficient,
         TABLE_GET_LINES_PAGE: WorkFunctions.table_get_lines_page,
-        TABLE_COMMIT_LINES_PAGE: WorkFunctions.table_commit_lines_page
+        TABLE_COMMIT_LINES_PAGE: WorkFunctions.table_commit_lines_page,
+        TABLE_WRITE_TO_DISK: WorkFunctions.table_write_to_disk
     }
 
     def do_work(self) -> Any:
@@ -142,6 +155,7 @@ class WorkRequest:
 
 
 class Work:
+    @staticmethod
     def WORK_FUNCTION(workq: mp.Queue, resultq: mp.Queue) -> int:
         while True:
             work_request = workq.get()
