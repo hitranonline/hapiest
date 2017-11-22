@@ -59,10 +59,7 @@ class GraphingWindow(QtCore.QObject):
             titley="coef"
         )
 
-        try:
-            self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
-        except Exception as e:
-            debug(e)
+        self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
 
     def populate_data_names(self):
         try:

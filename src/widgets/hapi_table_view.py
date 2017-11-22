@@ -78,10 +78,17 @@ class HapiTableView(QTableWidget):
 
         self.display_page(work_result)
 
+    def try_display_page(self, work_result: WorkResult):
+        self.display_page(work_result)
+
     def display_page(self, work_result: WorkResult):
         if not work_result:
             self.last_page = True
             return
+
+        self.next_button.setEnabled(True)
+        self.back_button.setEnabled(True)
+
 
         result = work_result.result
         self.last_page = result['last_page']
@@ -90,14 +97,11 @@ class HapiTableView(QTableWidget):
 
         self.last_page = lines.last_page
 
-        try:
-            page_min = result['page_number'] * result['page_len']
-            for i in range(0, self.page_len):
-                item = self.verticalHeaderItem(i)
-                item.setText(str(page_min + i))
-        except Exception as e:
-            debug("wow")
-            debug(e)
+        page_min = result['page_number'] * result['page_len']
+        for i in range(0, self.page_len):
+            item = self.verticalHeaderItem(i)
+            item.setText(str(page_min + i))
+
 
         for row in range(0, self.page_len):
             line = lines.get_line(row)
@@ -113,15 +117,16 @@ class HapiTableView(QTableWidget):
     def next_page(self):
         if self.last_page:
             return
+
+        self.next_button.setDisabled(True)
+        self.back_button.setDisabled(True)
+
         self.lines.commit_changes()
         self.current_page += 1
-        try:
-            args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-            worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
-            self.workers.append(worker)
-            worker.start()
-        except Exception as e:
-            debug(e)
+        args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
+        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.try_display_page)
+        self.workers.append(worker)
+        worker.start()
 
 
     def back_page(self):
@@ -130,25 +135,26 @@ class HapiTableView(QTableWidget):
         if self.last_page:
             self.last_page = False
 
+        self.next_button.setDisabled(True)
+        self.back_button.setDisabled(True)
+
+
         self.lines.commit_changes()
         self.current_page -= 1
 
         args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_page)
+        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.try_display_page)
         self.workers.append(worker)
         worker.start()
 
     def save_table(self):
-        try:
-            self.lines.commit_changes()
+        self.lines.commit_changes()
 
-            self.save_button.setDisabled(True)
+        self.save_button.setDisabled(True)
 
-            worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK, {}, self.done_saving)
-            self.workers.append(worker)
-            worker.start()
-        except Exception as e:
-            debug(e)
+        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK, {}, self.done_saving)
+        self.workers.append(worker)
+        worker.start()
 
     def done_saving(self, work_result: WorkResult):
         result = work_result.result

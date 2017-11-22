@@ -147,7 +147,7 @@ class WorkRequest:
             exec_res = fn(**self.work_args)
             return WorkResult(self.job_id, exec_res)
         else:
-            return None
+            return WorkResult(self.job_id, False)
 
     @staticmethod
     def start_work_process():

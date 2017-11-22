@@ -53,16 +53,16 @@ class Lines:
                                                               self.table_name))
 
     def commit_done(self, work_result: 'WorkResult'):
+        if not work_result:
+            err_log("Failed to commit to table {0}.".format(self.table_name))
+            return
         log("Successfully committed to table {0}.".format(self.table_name))
 
-        try:
-            for worker in self.workers:
-                if worker.job_id == work_result.job_id:
-                    worker.safe_exit()
-                    self.workers.remove(worker)
+        for worker in self.workers:
+            if worker.job_id == work_result.job_id:
+                worker.safe_exit()
+                self.workers.remove(worker)
                 break
-        except Exception as e:
-            debug(e)
 
 class Line:
     def __init__(self, line_number: int, line: List[Union[int, float]], lines: 'Lines'):

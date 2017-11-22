@@ -31,11 +31,11 @@ class HapiWorker(QtCore.QThread):
             end_request = WorkRequest(self.job_id, self.work_type, self.args)
             WorkRequest.WORKQ.put(end_request)
             self.started.connect(lambda: None)
-        if self.work_type == WorkRequest.START_HAPI:
+        elif self.work_type == WorkRequest.START_HAPI:
             WorkRequest.WORKQ.put(WorkRequest(self.job_id, self.work_type, self.args))
             self.started.connect(lambda: None)
-        self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
-        debug(work_type)
+        else:
+            self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
         if callback:
             self.done_signal.connect(self.callback)
 
@@ -63,5 +63,5 @@ class HapiWorker(QtCore.QThread):
                 for work_result in HapiWorker.job_results:
                     if work_result.job_id == self.job_id:
                         HapiWorker.job_results.remove(work_result)
-                        self.done_signal.emit(work_result.result)
+                        self.done_signal.emit(work_result)
                         return

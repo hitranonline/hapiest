@@ -306,12 +306,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
-        try:
-            log(str("Sending fetch request..."))
-            self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
+        log(str("Sending fetch request..."))
+        self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
                                           wn_min, wn_max, param_groups, params)
-        except Exception as e:
-            debug(e)
 
     def __open_absorption_coefficient_window(self):
         try:
