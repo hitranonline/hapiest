@@ -296,6 +296,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
         if self.select_error_label != None:
             self.select_error_label.setText("")
 
+    def remove_table_view(self):
+        if not self.table:
+            return
+
+        self.table_container.layout().removeWidget(self.table)
+
+
     ###########################################################################
     #  Event Handlers
     ###########################################################################
@@ -304,10 +311,16 @@ class MainWindowGui(QtWidgets.QMainWindow):
         try:
             table_name = self.get_select_table_name()
             self.output_name.setText(table_name)
+
+            self.remove_table_view()
+
             self.table = HapiTableView(self, table_name)
-            layout = QtWidgets.QGridLayout(self.table_container)
-            layout.addWidget(self.table)
-            self.table_container.setLayout(layout)
+            if self.table_container.layout() == None:
+                layout = QtWidgets.QGridLayout(self.table_container)
+                layout.addWidget(self.table)
+                self.table_container.setLayout(layout)
+            else:
+                self.table_container.layout().addWidget(self.table)
         except Exception as e:
             debug('edit', e)
 
@@ -377,14 +390,19 @@ class MainWindowGui(QtWidgets.QMainWindow):
             return
         try:
             new_table_name = result['new_table_name']
+            self.remove_table_view()
 
             self.table = HapiTableView(self, new_table_name)
-            layout = QtWidgets.QGridLayout(self.table_container)
-            layout.addWidget(self.table)
-            self.table_container.setLayout(layout)
+            if self.table_container.layout() == None:
+                layout = QtWidgets.QGridLayout(self.table_container)
+                layout.addWidget(self.table)
+                self.table_container.setLayout(layout)
+            else:
+                self.table_container.layout().addWidget(self.table)
 
             log('Select successfully ran.')
         except Exception as e:
+            err_log('Error running select.')
             debug(e)
 
     # When the output name changes, if it is empty, display a warning and disable the run button - otherwise enable it

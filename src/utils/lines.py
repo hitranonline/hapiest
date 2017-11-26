@@ -26,7 +26,6 @@ class Lines:
 
     def get_len(self):
         for (k, v) in self.parameters.items():
-            debug('v=', v)
             return len(v)
 
     def get_line(self, line_number: int) -> Optional['Line']:
