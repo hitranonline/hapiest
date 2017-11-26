@@ -1,16 +1,8 @@
-from utils.hapiest_util import *
-from PyQt5 import QtWidgets, QtCore
-import sys
-import time
-from utils.hapiest_util import *
-from utils.isotopologue import *
-from multiprocessing import Queue
-import multiprocessing as mp
-from utils.log import *
+from PyQt5 import QtCore, QtWidgets
 from utils.fetch_handler import *
-from utils.hapi_metadata import *
-from worker.work_result import WorkResult
+from utils.log import *
 from worker.work_request import *
+import time
 
 class HapiWorker(QtCore.QThread):
     job_id: int = 0
@@ -38,14 +30,20 @@ class HapiWorker(QtCore.QThread):
         if self.work_type == WorkRequest.END_WORK_PROCESS:
             end_request = WorkRequest(self.job_id, self.work_type, self.args)
             WorkRequest.WORKQ.put(end_request)
-            self.started.connect(lambda: ())
-        if self.work_type == WorkRequest.START_HAPI:
+            self.started.connect(lambda: None)
+        elif self.work_type == WorkRequest.START_HAPI:
             WorkRequest.WORKQ.put(WorkRequest(self.job_id, self.work_type, self.args))
-            self.started.connect(lambda: ())
-        self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
-
+            self.started.connect(lambda: None)
+        else:
+            self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
         if callback:
             self.done_signal.connect(self.callback)
+
+    def safe_exit(self):
+        self.terminate()
+        while not self.isFinished():
+            pass
+        return
 
     def __run(self):
         work_request = WorkRequest(self.job_id, self.work_type, self.args)
@@ -65,5 +63,5 @@ class HapiWorker(QtCore.QThread):
                 for work_result in HapiWorker.job_results:
                     if work_result.job_id == self.job_id:
                         HapiWorker.job_results.remove(work_result)
-                        self.done_signal.emit(work_result.result)
+                        self.done_signal.emit(work_result)
                         return

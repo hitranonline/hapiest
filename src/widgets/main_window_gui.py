@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 
 from utils.fetch_handler import *
+from utils.dsl import DSL
 from windows.graphing_window import *
 from utils.log import *
 from widgets.hapi_table_view import HapiTableView
@@ -15,7 +16,41 @@ class MainWindowGui(QtWidgets.QMainWindow):
         super(MainWindowGui, self).__init__()
         self.parent: 'MainWindow' = window
 
+        # Most of the elements that are in the 'Fetch' tab
+        self.data_name: QLineEdit = None
+        self.err_bad_connection: QLabel = None
+        self.err_bad_iso_list: QLabel = None
+        self.err_empty_name: QLabel = None
+        self.err_small_range: QLabel = None
+        self.fetch_button: QPushButton = None
+        self.list_container: QWidget = None
+        self.molecule_id: QComboBox = None
+        self.wn_max: QDoubleSpinBox = None
+        self.wn_min: QDoubleSpinBox = None
+
+        # Most of the elements that are in the 'Select' tab
+        self.back_button: QToolButton = None
+        self.next_button: QToolButton = None
+        self.edit_button: QPushButton = None
+        self.select_error_container: QWidget = None
+        self.export_button: QPushButton = None
+        self.output_name: QLineEdit = None
+        self.run_button: QPushButton = None
+        self.save_button: QPushButton = None
+        self.select_expression: QTextEdit = None
+        self.select_error_label: QLabel = None
+        self.select_parameter_list: QListWidget = None
+        self.table_container: QWidget = None
+        self.table_name: QComboBox = None
+
+        # Other stuff..
+        self.graph_window_action: QAction = None
+        self.statusbar: QStatusBar = None
+
+        # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
+
+        self.workers = []
 
         self.iso_list = QtWidgets.QListWidget(self)
         self.param_group_list = QtWidgets.QListWidget(self)
@@ -37,8 +72,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.populate_parameter_lists()
 
         # Connect menu actions to handling functions
-        self.action_absorption_coefficient.triggered.connect(
-            lambda: self.__open_absorption_coefficient_window())
+        self.graph_window_action.triggered.connect(self.__open_graph_window)
 
         # TOOLTIPS
         QToolTip.setFont(QFont('SansSerif', 10))
@@ -53,7 +87,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.wn_max.setToolTip(
             'Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Prompts parameter validation, fetches from HITRAN.')
-        self.clear_console.setToolTip('Clear the console of all current output.')
         # Hide error messages
         self.err_small_range.hide()
         self.err_bad_connection.hide()
@@ -61,12 +94,10 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.err_empty_name.hide()
 
         # Connect the function to be executed when wn_max's value changes
-        self.wn_max.valueChanged.connect(
-            lambda value: self.__wn_max_change(value))
+        self.wn_max.valueChanged.connect(self.__wn_max_change)
 
         # Connect the function to be executed when wn_min's value changes
-        self.wn_min.valueChanged.connect(
-            lambda value: self.__wn_min_change(value))
+        self.wn_min.valueChanged.connect(self.__wn_min_change)
 
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
@@ -74,40 +105,51 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.__molecule_id_index_changed()
 
         # Set the molecule_id change method to the one we defined in the class
-        self.molecule_id.currentIndexChanged.connect(
-            lambda: self.__molecule_id_index_changed())
+        self.molecule_id.currentIndexChanged.connect(self.__molecule_id_index_changed)
 
         # Set the fetch_button onclick method to the one we defined in the class
-        self.fetch_button.clicked.connect(
-            lambda: self.__handle_fetch_clicked())
-
-        # Set the clear_console button onckick method to the one defined in the class
-        self.clear_console.clicked.connect(
-            lambda: self.__handle_clear_console_clicked())
+        self.fetch_button.clicked.connect(self.__handle_fetch_clicked)
 
         # Set the function for when an item gets clicked to the one defined in the class
-        self.iso_list.itemPressed.connect(
-            lambda item: self.__iso_list_item_click(item))
+        self.iso_list.itemPressed.connect(self.__iso_list_item_click)
+
+        self.output_name.textChanged.connect(self.__on_output_name_change)
+
+        self.run_button.clicked.connect(self.__on_run_button_click)
+
+        self.select_expression.textChanged.connect(self.__on_conditions_finished_editing)
+
+        self.table_name.currentTextChanged.connect(self.__on_select_table_name_selection_changed)
+
+        self.edit_button.clicked.connect(self.__on_edit_button_click)
 
         # A regular expression that all valid data-names match (strips out characters that arent safe for paths in
         # windows / unix operating systems)
         re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]*')
         validator = QtGui.QRegExpValidator(re)
         self.data_name.setValidator(validator)
-
         # Uncomment this if you'd like to see how HapiTableView looks
         # self.table = HapiTableView(self, 'default_name')
         # layout = QtWidgets.QGridLayout(self.table_container)
         # layout.addWidget(self.table, 0, 0)
         # self.table_container.setLayout(layout)
+        # self.statusbar.setParent(self)
 
-        self.statusbar.setParent(self)
+        self.populate_select_table_list()
+
+        self.table = None
+
         # Display the GUI since we're done configuring it
         self.show()
 
     ###########################################################################
     # Initialization Methods
     ###########################################################################
+
+    def populate_select_table_list(self):
+        data_names = get_all_data_names()
+        self.table_name.clear()
+        self.table_name.addItems(data_names)
 
     # Populates the parameter lists with all parameters / parameter groups
     # that HITRAN has to offer.
@@ -211,9 +253,170 @@ class MainWindowGui(QtWidgets.QMainWindow):
     def get_wn_min(self):
         return self.wn_min.value()
 
+    def get_select_table_name(self):
+        return self.table_name.currentText()
+
+    def get_select_expression(self):
+        return self.select_expression.toPlainText()
+
+    def get_output_table_name(self):
+        return self.output_name.text()
+
+    def get_select_parameters(self):
+        selected = []
+        for i in range(self.select_parameter_list.count()):
+            item = self.select_parameter_list.item(i)
+
+            if item.checkState() == QtCore.Qt.Checked:
+                selected.append(item.text())
+
+        return selected
+
+    ###########################################################################
+    # Other Stuff
+    ###########################################################################
+
+    def remove_worker_by_jid(self, jid: int):
+        for worker in self.workers:
+            if worker.job_id == jid:
+                worker.safe_exit()
+                break
+
+    def show_select_error(self, error_message):
+        if self.select_error_label == None:
+            self.select_error_label: QLabel = QLabel('<span style="color:#aa0000;">' + error_message + '</span>')
+            layout = QtWidgets.QGridLayout()
+            layout.addWidget(self.select_error_label)
+            self.select_error_container.setLayout(layout)
+        else:
+            self.clear_select_error()
+            self.select_error_label.setText('<span style="color:#aa0000;">' + error_message + '</span>')
+
+    def clear_select_error(self):
+        if self.select_error_label != None:
+            self.select_error_label.setText("")
+
     ###########################################################################
     #  Event Handlers
     ###########################################################################
+
+    def __on_edit_button_click(self):
+        try:
+            table_name = self.get_select_table_name()
+            self.output_name.setText(table_name)
+            self.table = HapiTableView(self, table_name)
+            layout = QtWidgets.QGridLayout(self.table_container)
+            layout.addWidget(self.table)
+            self.table_container.setLayout(layout)
+        except Exception as e:
+            debug('edit', e)
+
+    # When the table that is being worked with changes, update the parameter list
+    def __on_select_table_name_selection_changed(self, new_selection):
+        self.run_button.setDisabled(True)
+
+        args = HapiWorker.echo(table_name=new_selection)
+        worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
+        worker.start()
+        self.workers.append(worker)
+
+    def __on_select_table_name_complete(self, work_result):
+        self.remove_worker_by_jid(work_result.job_id)
+
+        result = work_result.result
+        if not result:
+            err_log("Something went wrong while requesting meta-data on a table...")
+            return
+
+        parameters = result['parameters']
+        self.select_parameter_list.clear()
+        for par in parameters:
+            item = QtWidgets.QListWidgetItem(par)
+            item.setFlags(item.flags() |
+                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+            self.select_parameter_list.addItem(item)
+
+        self.run_button.setEnabled(True)
+
+        # Check for errors..
+        self.__on_output_name_change()
+
+    # Try to run the select...
+    def __on_run_button_click(self):
+        self.clear_select_error()
+
+        selected_params = self.get_select_parameters()
+        table_name = self.get_select_table_name()
+        new_table_name = self.get_output_table_name()
+        expression = self.get_select_expression()
+        parsed_expression = DSL.parse_expression(expression)
+
+        if parsed_expression == None and expression.strip() != '':
+            err_log('Invalid select expression.')
+            self.show_select_error('Invalid select expression.')
+            return
+        if table_name == new_table_name:
+            err_log('Cannot have select output table be the same as the input table')
+            self.show_select_error('Cannot have select output table be the same as the input table')
+            return
+
+        args = HapiWorker.echo(ParameterNames=selected_params, TableName=table_name,
+                               DestinationTableName='tmp', Conditions=parsed_expression)
+
+        worker = HapiWorker(WorkRequest.SELECT, args, self.__on_run_done)
+        self.workers.append(worker)
+        worker.start()
+
+    def __on_run_done(self, work_result):
+        self.remove_worker_by_jid(work_result.job_id)
+        result = work_result.result
+        if not result:
+            err_log('Error running select..')
+            return
+        try:
+            new_table_name = result['new_table_name']
+
+            self.table = HapiTableView(self, new_table_name)
+            layout = QtWidgets.QGridLayout(self.table_container)
+            layout.addWidget(self.table)
+            self.table_container.setLayout(layout)
+
+            log('Select successfully ran.')
+        except Exception as e:
+            debug(e)
+
+    # When the output name changes, if it is empty, display a warning and disable the run button - otherwise enable it
+    def __on_output_name_change(self):
+        try:
+            output_name = self.output_name.text()
+            if output_name.strip() == '':
+                self.run_button.setDisabled(True)
+            elif output_name == self.get_select_table_name():
+                self.run_button.setDisabled(True)
+                err_log('Cannot have select output table be the same as the input table')
+                self.show_select_error('Cannot have select output table be the same as the input table')
+            else:
+                self.run_button.setEnabled(True)
+                self.clear_select_error()
+
+        except Exception as e:
+            debug(e)
+
+    # When the conditions are changed, make sure they are valid - if they're not, disable the run button
+    # and display a warning.
+    def __on_conditions_finished_editing(self):
+        expression = self.get_select_expression()
+        res = DSL.parse_expression(expression)
+
+        if expression.strip() == '':
+            self.run_button.setEnabled(True)
+        elif res == None:
+            self.run_button.setDisabled(True)
+        else:
+            self.run_button.setEnabled(True)
+
 
     # Toggle the item that was activated
     def __iso_list_item_click(self, item):
@@ -243,10 +446,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         wn_max = self.wn_max.value()
         if value > wn_max:
             self.wn_min.setValue(wn_max - 1.0)
-
-    # Clear the console input
-    def __handle_clear_console_clicked(self):
-        self.console_output.clear()
 
     # This method repopulates the isotopologue list widget after the molecule
     # that is being worked with changes.
@@ -308,17 +507,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()
-        try:
-            log(str("Sending fetch request..."))
-            self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
+        log(str("Sending fetch request..."))
+        self.fetch_handler = FetchHandler(self.get_data_name(), self.parent, self.get_selected_isotopologues(),
                                           wn_min, wn_max, param_groups, params)
-        except Exception as e:
-            debug(e)
 
-    def __open_absorption_coefficient_window(self):
+    def __open_graph_window(self):
         try:
-            # window = AbsorptionCoefficientWindow(self)
-            # Window.start(window)
             self.parent.child_windows.append(GraphingWindow(self))
         except Exception as e:
             err_log(e)

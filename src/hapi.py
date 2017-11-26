@@ -1592,10 +1592,12 @@ def getRowObjectFromString(input_string,TableName):
 # This will substitute putTableToStorage and getTableFromStorage
 def cache2storage(TableName):
     try:
-       os.mkdir(VARIABLES['BACKEND_DATABASE_NAME'])
+        os.mkdir(VARIABLES['BACKEND_DATABASE_NAME'])
     except:
-       pass
-    fullpath_data,fullpath_header = getFullTableAndHeaderName(TableName)
+        pass
+    # fullpath_data,fullpath_header = getFullTableAndHeaderName(TableName) # "lonely header" bug
+    fullpath_data = VARIABLES['BACKEND_DATABASE_NAME'] + '/' + TableName + '.data'  # bugfix
+    fullpath_header = VARIABLES['BACKEND_DATABASE_NAME'] + '/' + TableName + '.header'  # bugfix
     OutfileData = open(fullpath_data,'w')
     OutfileHeader = open(fullpath_header,'w')
     # write table data
@@ -1727,6 +1729,8 @@ def loadCache():
         print(TableName)
         storage2cache(TableName)
 
+
+import sys
 def saveCache():
     try:
         # delete query buffer
@@ -1734,8 +1738,13 @@ def saveCache():
     except:
         pass
     for TableName in LOCAL_TABLE_CACHE:
-        print(TableName)
-        cache2storage(TableName)
+        print(TableName, file=sys.stderr)
+        try:
+            cache2storage(TableName)
+        except Exception as e:
+            print(e)
+        finally:
+            print('aa')
 
 # DB backend level, start transaction
 def databaseBegin(db=None):
@@ -2580,7 +2589,15 @@ def select(TableName,DestinationTableName=QUERY_BUFFER,ParameterNames=None,Condi
     ---
     EXAMPLE OF USAGE:
         select('sampletab',DestinationTableName='outtab',ParameterNames=(p1,p2),
-                Conditions=(('and',('>=','p1',1),('<',('*','p1','p2'),20))))
+                Conditions=(
+                            ('and',
+                                ('>=','p1',1),
+                                ('<',
+                                    ('*','p1','p2'),
+                                    20)
+                                    )
+                                )
+                            )
         Conditions means (p1>=1 and p1*p2<20)
     ---
     """
