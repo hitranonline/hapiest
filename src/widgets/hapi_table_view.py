@@ -16,6 +16,8 @@ class HapiTableView(QTableWidget):
 
         self.table_name = table_name
 
+        self.main_window = parent
+
         self.next_button = parent.next_button
         self.back_button = parent.back_button
         self.save_button = parent.save_button
@@ -153,9 +155,14 @@ class HapiTableView(QTableWidget):
     def save_table(self):
         self.lines.commit_changes()
 
+        self.back_button.setDisabled(True)
+        self.next_button.setDisabled(True)
+
         self.save_button.setDisabled(True)
 
-        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK, {'table_name': self.table_name}, self.done_saving)
+        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
+                            {'source_table': self.table_name, 'output_table': self.main_window.get_output_table_name()},
+                            self.done_saving)
         self.workers.append(worker)
         worker.start()
 

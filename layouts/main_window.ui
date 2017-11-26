@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>886</width>
-       <height>606</height>
+       <width>1012</width>
+       <height>590</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,7 +45,7 @@
        <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
        </property>
-       <item row="0" column="0">
+       <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -481,8 +481,12 @@
         <string>Select</string>
        </attribute>
           <layout class="QGridLayout" name="gridLayout_2">
-              <item row="1" column="6" rowspan="4" colspan="2">
-                  <widget class="QListWidget" name="select_parameter_list"/>
+              <item row="6" column="1" colspan="2">
+                  <widget class="QPushButton" name="save_button">
+                      <property name="text">
+                          <string>Save</string>
+                      </property>
+                  </widget>
               </item>
               <item row="6" column="3" colspan="2">
                   <widget class="QPushButton" name="export_button">
@@ -494,17 +498,7 @@
                       </property>
                   </widget>
               </item>
-              <item row="3" column="1" colspan="5">
-                  <widget class="QTextEdit" name="select_expression"/>
-              </item>
-              <item row="1" column="1" colspan="2">
-                  <widget class="QLabel" name="label_11">
-                      <property name="text">
-                          <string>Conditions</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="6" column="7">
+              <item row="6" column="6">
                   <layout class="QHBoxLayout" name="horizontalLayout">
                       <item>
                           <widget class="QToolButton" name="back_button">
@@ -528,62 +522,7 @@
                       </item>
                   </layout>
               </item>
-              <item row="1" column="5">
-                  <widget class="QPushButton" name="run_button">
-                      <property name="text">
-                          <string>Run</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="6" column="1" colspan="2">
-                  <widget class="QPushButton" name="save_button">
-                      <property name="text">
-                          <string>Save</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="0" column="6">
-                  <widget class="QLabel" name="label_10">
-                      <property name="text">
-                          <string>Parameters</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="4" column="1" colspan="3">
-                  <widget class="QLabel" name="label_13">
-                      <property name="text">
-                          <string>Output</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="0" column="2" colspan="3">
-                  <widget class="QComboBox" name="table_name"/>
-              </item>
-              <item row="4" column="4" colspan="2">
-                  <widget class="QLineEdit" name="output_name">
-                      <property name="text">
-                          <string>tmp</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="0" column="1">
-                  <widget class="QLabel" name="label_9">
-                      <property name="text">
-                          <string>Table</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="1" column="4">
-                  <widget class="QPushButton" name="edit_button">
-                      <property name="text">
-                          <string>Edit</string>
-                      </property>
-                  </widget>
-              </item>
-              <item row="5" column="1" colspan="7">
-                  <widget class="QWidget" name="table_container" native="true"/>
-              </item>
-              <item row="2" column="1" colspan="5">
+              <item row="3" column="1" colspan="5">
                   <widget class="QWidget" name="select_error_container" native="true">
                       <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -597,7 +536,118 @@
                               <height>20</height>
                           </size>
                       </property>
+                      <zorder>label_11</zorder>
+                      <zorder>select_expression</zorder>
+                      <zorder>label_11</zorder>
                   </widget>
+              </item>
+              <item row="3" column="1" colspan="6">
+                  <widget class="QWidget" name="table_container" native="true">
+                      <property name="minimumSize">
+                          <size>
+                              <width>0</width>
+                              <height>100</height>
+                          </size>
+                      </property>
+                      <zorder>gridLayoutWidget</zorder>
+                  </widget>
+              </item>
+              <item row="1" column="1" colspan="6">
+                  <layout class="QGridLayout" name="gridLayout_4">
+                      <property name="sizeConstraint">
+                          <enum>QLayout::SetDefaultConstraint</enum>
+                      </property>
+                      <item row="2" column="2" rowspan="2">
+                          <widget class="QListWidget" name="select_parameter_list"/>
+                      </item>
+                      <item row="0" column="2">
+                          <widget class="QLabel" name="label_10">
+                              <property name="text">
+                                  <string>Parameters</string>
+                              </property>
+                          </widget>
+                      </item>
+                      <item row="4" column="2">
+                          <layout class="QHBoxLayout" name="horizontalLayout_3">
+                              <item>
+                                  <widget class="QPushButton" name="edit_button">
+                                      <property name="text">
+                                          <string>Edit</string>
+                                      </property>
+                                  </widget>
+                              </item>
+                              <item>
+                                  <widget class="QPushButton" name="run_button">
+                                      <property name="text">
+                                          <string>Run</string>
+                                      </property>
+                                  </widget>
+                              </item>
+                          </layout>
+                      </item>
+                      <item row="3" column="1">
+                          <layout class="QVBoxLayout" name="verticalLayout_2">
+                              <item>
+                                  <widget class="QLabel" name="label_11">
+                                      <property name="maximumSize">
+                                          <size>
+                                              <width>16777215</width>
+                                              <height>20</height>
+                                          </size>
+                                      </property>
+                                      <property name="text">
+                                          <string>Conditions</string>
+                                      </property>
+                                  </widget>
+                              </item>
+                              <item>
+                                  <widget class="QTextEdit" name="select_expression">
+                                      <property name="maximumSize">
+                                          <size>
+                                              <width>16777215</width>
+                                              <height>16777215</height>
+                                          </size>
+                                      </property>
+                                  </widget>
+                              </item>
+                              <item>
+                                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                                      <item>
+                                          <widget class="QLabel" name="label_13">
+                                              <property name="text">
+                                                  <string>Output</string>
+                                              </property>
+                                              <property name="alignment">
+                                                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                              </property>
+                                          </widget>
+              </item>
+                                      <item>
+                                          <widget class="QLineEdit" name="output_name">
+                                              <property name="text">
+                                                  <string>tmp</string>
+                                              </property>
+                                          </widget>
+              </item>
+                                  </layout>
+                              </item>
+                          </layout>
+                      </item>
+                      <item row="0" column="1">
+                          <layout class="QHBoxLayout" name="horizontalLayout_5">
+                              <item>
+                                  <widget class="QLabel" name="label_9">
+                                      <property name="text">
+                                          <string>Table</string>
+                                      </property>
+                                  </widget>
+                              </item>
+                              <item>
+                                  <widget class="QComboBox" name="table_name"/>
+                              </item>
+                          </layout>
+                      </item>
+                  </layout>
               </item>
           </layout>
       </widget>
@@ -610,7 +660,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>886</width>
+        <width>1012</width>
      <height>21</height>
     </rect>
    </property>

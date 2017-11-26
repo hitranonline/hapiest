@@ -105,9 +105,10 @@ class WorkFunctions:
         return True
 
     @staticmethod
-    def table_write_to_disk(table_name: str, **kwargs):
+    def table_write_to_disk(source_table: str, output_table: str, **kwargs):
         try:
-            cache2storage(TableName=table_name)
+            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
+            cache2storage(TableName=output_table)
         except Exception as e:
             debug(e)
             return e
