@@ -1,5 +1,4 @@
 from PyQt5 import QtWidgets, QtCore, uic
-
 from utils.hapi_metadata import *
 
 

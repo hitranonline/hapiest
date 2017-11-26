@@ -4,7 +4,7 @@ import os
 from utils.config import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
-DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
+DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\..+\\Z')
 
 
 # Returns a list of all the different data-names in the data directory
@@ -16,7 +16,7 @@ def get_all_data_names():
         if match == None:
             continue
         datas.append(match.groupdict()['data_handle'])
-    return datas
+    return set(datas)
 
 
 # Used to create a map from named arguments

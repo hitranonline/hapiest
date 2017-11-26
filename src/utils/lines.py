@@ -26,6 +26,7 @@ class Lines:
 
     def get_len(self):
         for (k, v) in self.parameters.items():
+            debug('v=', v)
             return len(v)
 
     def get_line(self, line_number: int) -> Optional['Line']:
@@ -34,7 +35,9 @@ class Lines:
         line = []
         for param in self.param_order:
             line.append(self.parameters[param][line_number])
-        return Line(line_number, line, self)
+
+        l = Line(line_number, line, self)
+        return l
 
     def update_line_field(self, line: 'Line', field_index: int):
         self.parameters[self.param_order[field_index]][line.line_number] = line.line[field_index]

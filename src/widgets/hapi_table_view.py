@@ -47,6 +47,21 @@ class HapiTableView(QTableWidget):
         vertical_labels = map(str, range(0, self.page_len))
         self.setVerticalHeaderLabels(vertical_labels)
 
+        def update_field(column, row, line_edit):
+            def f():
+                t = type(self.lines.parameters[self.lines.param_order[column]][0])
+                value = line_edit.text()
+                line = self.lines.get_line(row)
+                if t == int:
+                    line.update_nth_field(column, int(value))
+                elif t == float:
+                    line.update_nth_field(column, float(value))
+                else:
+                    line.update_nth_field(column, value)
+
+            return f
+
+
         self.current_page_len = lines.get_len()
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
@@ -59,23 +74,11 @@ class HapiTableView(QTableWidget):
                 elif type(item) == int:
                     line_edit.setValidator(self.int_validator)
 
-                def update_field():
-                    t = type(self.lines.parameters[self.lines.param_order[column]][0])
-                    value = line_edit.getText()
-                    line = self.lines.get_line(row)
-                    if t == int:
-                        line.update_nth_field(column, int(value))
-                    elif t == float:
-                        line.update_nth_field(column, float(value))
-                    else:
-                        line.update_nth_field(column, value)
-
-                # line_edit.editingFinished.connect(update_field)
+                line_edit.editingFinished.connect(update_field(column, row, line_edit))
 
                 self.setCellWidget(row, column, line_edit)
                 self.items[row].append(line_edit)
                 line_edit.setText(str(item))
-
         self.display_page(work_result)
 
     def try_display_page(self, work_result: WorkResult):
@@ -98,12 +101,11 @@ class HapiTableView(QTableWidget):
         self.last_page = lines.last_page
 
         page_min = result['page_number'] * result['page_len']
-        for i in range(0, self.page_len):
+        for i in range(0, self.current_page_len):
             item = self.verticalHeaderItem(i)
             item.setText(str(page_min + i))
 
-
-        for row in range(0, self.page_len):
+        for row in range(0, self.current_page_len):
             line = lines.get_line(row)
             for column in range(0, len(lines.param_order)):
                 x = line.get_nth_field(column)
@@ -113,6 +115,7 @@ class HapiTableView(QTableWidget):
         for worker in self.workers:
             if worker.job_id == jid:
                 worker.safe_exit()
+                break
 
     def next_page(self):
         if self.last_page:
@@ -152,7 +155,7 @@ class HapiTableView(QTableWidget):
 
         self.save_button.setDisabled(True)
 
-        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK, {}, self.done_saving)
+        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK, {'table_name': self.table_name}, self.done_saving)
         self.workers.append(worker)
         worker.start()
 
@@ -163,3 +166,6 @@ class HapiTableView(QTableWidget):
             err_log("Error saving to disk...")
             return
         self.remove_worker_by_jid(work_result.job_id)
+
+    def close_table(self):
+        self.save_table()
