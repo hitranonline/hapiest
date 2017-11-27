@@ -1,0 +1,164 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utils.lines &#8212; Hapiest 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for utils.lines</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">utils.log</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">worker.hapi_worker</span> <span class="k">import</span> <span class="n">HapiWorker</span>
+<span class="kn">from</span> <span class="nn">worker.work_result</span> <span class="k">import</span> <span class="n">WorkResult</span>
+<span class="kn">from</span> <span class="nn">worker.work_request</span> <span class="k">import</span> <span class="n">WorkRequest</span>
+
+
+<div class="viewcode-block" id="Lines"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines">[docs]</a><span class="k">class</span> <span class="nc">Lines</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span> <span class="n">page_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">page_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">last_page</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_page</span> <span class="o">=</span> <span class="n">last_page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">page_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">page_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_order</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;HapiWorker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">param_list</span><span class="p">)</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_order</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_order</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Lines.get_len"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines.get_len">[docs]</a>    <span class="k">def</span> <span class="nf">get_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lines.get_line"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines.get_line">[docs]</a>    <span class="k">def</span> <span class="nf">get_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="o">&lt;=</span> <span class="n">line_number</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_order</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">param</span><span class="p">][</span><span class="n">line_number</span><span class="p">])</span>
+
+        <span class="n">l</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">line_number</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">l</span></div>
+
+<div class="viewcode-block" id="Lines.update_line_field"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines.update_line_field">[docs]</a>    <span class="k">def</span> <span class="nf">update_line_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="s1">&#39;Line&#39;</span><span class="p">,</span> <span class="n">field_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">param_order</span><span class="p">[</span><span class="n">field_index</span><span class="p">]][</span><span class="n">line</span><span class="o">.</span><span class="n">line_number</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">[</span><span class="n">field_index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Lines.commit_changes"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines.commit_changes">[docs]</a>    <span class="k">def</span> <span class="nf">commit_changes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">start_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_len</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_number</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">start_index</span><span class="o">=</span><span class="n">start_index</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="p">)</span>
+        <span class="n">worker</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_COMMIT_LINES_PAGE</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_done</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">worker</span><span class="p">)</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Committing lines </span><span class="si">{0}</span><span class="s2"> - </span><span class="si">{1}</span><span class="s2"> to table </span><span class="si">{2}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_len</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Lines.commit_done"><a class="viewcode-back" href="../../utils.html#utils.lines.Lines.commit_done">[docs]</a>    <span class="k">def</span> <span class="nf">commit_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_result</span><span class="p">:</span> <span class="s1">&#39;WorkResult&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">work_result</span><span class="p">:</span>
+            <span class="n">err_log</span><span class="p">(</span><span class="s2">&quot;Failed to commit to table </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Successfully committed to table </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">worker</span><span class="o">.</span><span class="n">job_id</span> <span class="o">==</span> <span class="n">work_result</span><span class="o">.</span><span class="n">job_id</span><span class="p">:</span>
+                <span class="n">worker</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">worker</span><span class="p">)</span>
+                <span class="k">break</span></div></div>
+
+<div class="viewcode-block" id="Line"><a class="viewcode-back" href="../../utils.html#utils.lines.Line">[docs]</a><span class="k">class</span> <span class="nc">Line</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">lines</span><span class="p">:</span> <span class="s1">&#39;Lines&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_number</span> <span class="o">=</span> <span class="n">line_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span>
+
+<div class="viewcode-block" id="Line.update_nth_field"><a class="viewcode-back" href="../../utils.html#utils.lines.Line.update_nth_field">[docs]</a>    <span class="k">def</span> <span class="nf">update_nth_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">[</span><span class="n">field_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">update_line_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Line.get_nth_field"><a class="viewcode-back" href="../../utils.html#utils.lines.Line.get_nth_field">[docs]</a>    <span class="k">def</span> <span class="nf">get_nth_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">[</span><span class="n">field_index</span><span class="p">]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Hapi team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

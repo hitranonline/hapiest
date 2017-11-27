@@ -1,0 +1,248 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>widgets.graph_display_window_gui &#8212; Hapiest 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for widgets.graph_display_window_gui</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">uic</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">utils.hapiest_util</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtChart</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.log</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="GraphDisplayWindowGui"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui">[docs]</a><span class="k">class</span> <span class="nc">GraphDisplayWindowGui</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphDisplayWindowGui</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">uic</span><span class="o">.</span><span class="n">loadUi</span><span class="p">(</span><span class="s1">&#39;layouts/graph_display_window.ui&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart_view</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_zoom_reset_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_viewport</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_set_viewport_pressed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_xmax_changed</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_xmin_changed</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_ymax_changed</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_ymin_changed</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grabGesture</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PanGesture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grabGesture</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PinchGesture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GraphDisplayWindowGui.eventFilter"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.eventFilter">[docs]</a>    <span class="k">def</span> <span class="nf">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sceneEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="n">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphDisplayWindowGui.set_chart_title"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.set_chart_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_chart_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="GraphDisplayWindowGui.add_graph"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.add_graph">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+        <span class="n">series</span> <span class="o">=</span> <span class="n">QLineSeries</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series</span> <span class="o">=</span> <span class="n">series</span>
+        <span class="n">series</span><span class="o">.</span><span class="n">setUseOpenGL</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span> <span class="o">=</span> <span class="n">QChart</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">addSeries</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">removeAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">removeAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span> <span class="o">=</span> <span class="n">QValueAxis</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">setTickCount</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">setTitleText</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">addAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">attachAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span> <span class="o">=</span> <span class="n">QValueAxis</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">setTitleText</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">setTickCount</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">addAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">attachAxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axixs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart_view</span> <span class="o">=</span> <span class="n">QChartView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart_view</span><span class="o">.</span><span class="n">setRubberBand</span><span class="p">(</span><span class="n">QChartView</span><span class="o">.</span><span class="n">RectangleRubberBand</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chart_view</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGridLayout</span><span class="p">()</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_view</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading_label</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_container</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__on_zoom_reset_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_xmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_xmax</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_ymin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_ymax</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__on_xmax_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__on_xmin_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__on_ymax_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">min</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__on_ymin_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__on_set_viewport_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">xmin</span> <span class="o">==</span> <span class="n">xmax</span> <span class="ow">or</span> <span class="n">ymin</span> <span class="o">==</span> <span class="n">ymax</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisx</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axisy</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphDisplayWindowGui.sceneEvent"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.sceneEvent">[docs]</a>    <span class="k">def</span> <span class="nf">sceneEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Gesture</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gestureEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphDisplayWindowGui.gestureEvent"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.gestureEvent">[docs]</a>    <span class="k">def</span> <span class="nf">gestureEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span>  <span class="c1"># Ignore touch events...</span>
+        <span class="n">gesture</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">gesture</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PanGesture</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gesture</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">gesture</span><span class="o">.</span><span class="n">delta</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="o">-</span><span class="n">delta</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">delta</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">gesture</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">gesture</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PinchGesture</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gesture</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">gesture</span><span class="o">.</span><span class="n">changeFlags</span><span class="p">()</span><span class="o">.</span><span class="fm">__iand__</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPinchGesture</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chart</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">gesture</span><span class="o">.</span><span class="n">scaleFactor</span><span class="p">())</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Hapi team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
