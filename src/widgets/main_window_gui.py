@@ -84,21 +84,18 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.data_name.setToolTip('Specify local name for fetched data')
         self.wn_min.setToolTip('Specify lower bound wave number to query, must be positive number.\n(default: absolute min for given molecule).')
         self.wn_max.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
-        self.fetch_button.setToolTip('Prompts parameter validation, fetches from HITRAN.')
+        self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
             #Select tab
-        self.back_button.setToolTip("undo")
-        self.next_button.setToolTip("redo")
-        self.edit_button.setToolTip("Opens interactable data table")
-        self.export_button.setToolTip("Export data into desired format")
-        self.save_button.setToolTip("Save data table")
-        self.select_parameter_list.setToolTip("Select parameters with which perform transformations on data")
+        self.back_button.setToolTip("(Edit) Previous page.")
+        self.next_button.setToolTip("(Edit) Next page.")
+        self.edit_button.setToolTip("Opens interactable data table.")
+        self.export_button.setToolTip("Export data into desired format.")
+        self.save_button.setToolTip("Save data table.")
+        self.table_name.setToolTip("Select data table you wish to augment.")
+        self.select_parameter_list.setToolTip("Select the parameters for select() function.")
 
 
-
-
-
-        self.statusbar.setToolTip("Gimme a second...")
 
 
 
