@@ -70,7 +70,7 @@ class WorkFunctions:
                 return utils.fetch_handler.FetchError(
                     utils.fetch_handler.FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
-        return True
+        return { 'all_tables': list(tableList()) }
 
     @staticmethod
     def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Union[bool, Dict[str, Any]]:
@@ -107,7 +107,7 @@ class WorkFunctions:
     @staticmethod
     def table_write_to_disk(source_table: str, output_table: str, **kwargs):
         try:
-            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
+            #select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
             cache2storage(TableName=output_table)
         except Exception as e:
             debug(e)
@@ -140,7 +140,9 @@ class WorkFunctions:
         try:
             select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
                    Conditions=Conditions, Output=Output, File=File)
-            return echo(new_table_name=DestinationTableName)
+            hmd = HapiMetaData(TableName)
+            new_table_hmd = HapiMetaData.write(DestinationTableName, list(map(lambda iso: iso.id, hmd.isos)))
+            return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
         except Exception as e:
             debug('try_select: ', e)
             return False

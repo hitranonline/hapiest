@@ -13,6 +13,9 @@ from utils.console_redirect import *
 from utils.log import *
 from worker.work_request import *
 
+if not os.path.exists(Config.data_folder):
+    os.makedirs(Config.data_folder)
+
 def main():
     if Config.high_dpi == 'true':
         # Enable High DPI display with PyQt5
@@ -21,8 +24,11 @@ def main():
     # Fix for mac-based systems...
     os.environ['no_proxy'] = '*'
 
+
+    WorkRequest.start_work_process()
+
     start = HapiWorker(WorkRequest.START_HAPI, {})
-    start.start()
+    # start.start() # When a start_hapi request is sent, it starts automatically.
 
     app = QtWidgets.QApplication(sys.argv)
 
@@ -30,9 +36,8 @@ def main():
 
     window.gui.adjustSize()
 
-    TextReceiver.init_console_redirect(window, sys.argv)
 
-    WorkRequest.start_work_process()
+    TextReceiver.init_console_redirect(window, sys.argv)
 
 
     qt_result = app.exec_()

@@ -18,6 +18,7 @@ class HapiMetaData():
                     file.write(",")
 
     def __init__(self, filename):
+        debug(filename)
         self.filename = filename
 
         # A list of the isotopologues that this hmd file has
@@ -29,10 +30,11 @@ class HapiMetaData():
             with open(Config.data_folder + "/" + self.filename + ".hmd") as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    for iso in row:
-                        self.isos.append(Isotopologue.from_global_id(int(iso)))
+                    for item in row:
+                        debug('iso=', item)
+                        self.isos.append(Isotopologue.from_global_id(int(item)))
         except Exception as e:
-            err_log(str(e))
+            debug(str(e))
 
         for item in self.isos:
             self.iso_tuples.append((item.molecule_id, item.iso_id))

@@ -5,3 +5,4 @@ src/__pycache__/
 test_data/*
 Config.toml
 .idea/*
+*.iml

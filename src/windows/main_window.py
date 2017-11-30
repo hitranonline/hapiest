@@ -22,8 +22,9 @@ class MainWindow:
         result = work_result.result
         self.gui.fetch_handler.worker.exit()
         self.enable_fetch_button()
-        if result == True:
+        if 'all_tables' in result:
             log("Successfully finished fetch.")
+            self.gui.populate_select_table_list(result['all_tables'])
             return
         log("Failed to fetch...")
         if isinstance(result, List):

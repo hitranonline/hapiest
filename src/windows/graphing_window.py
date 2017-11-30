@@ -31,7 +31,7 @@ class GraphingWindow(QtCore.QObject):
     def graph(self):
         self.gui.graph_button.setDisabled(True)
         data_name = self.gui.get_data_name()
-        hmd = HapiMetaData(data_name)
+        #hmd = HapiMetaData(data_name)
 
         Components = hmd.iso_tuples
         SourceTables = data_name

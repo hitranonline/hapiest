@@ -160,8 +160,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
     # Initialization Methods
     ###########################################################################
 
-    def populate_select_table_list(self):
-        data_names = get_all_data_names()
+    def populate_select_table_list(self, data_names=None):
+        if data_names == None:
+            data_names = get_all_data_names()
         self.table_name.clear()
         self.table_name.addItems(data_names)
 
@@ -390,7 +391,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
             return
 
         args = HapiWorker.echo(ParameterNames=selected_params, TableName=table_name,
-                               DestinationTableName='tmp', Conditions=parsed_expression)
+                               DestinationTableName=new_table_name, Conditions=parsed_expression)
 
         worker = HapiWorker(WorkRequest.SELECT, args, self.__on_run_done)
         self.workers.append(worker)
@@ -403,6 +404,10 @@ class MainWindowGui(QtWidgets.QMainWindow):
             err_log('Error running select..')
             return
         try:
+            if 'all_tables' in result:
+                all_tables = result['all_tables']
+                self.populate_select_table_list(all_tables)
+
             new_table_name = result['new_table_name']
             self.remove_table_view()
 
