@@ -4,7 +4,7 @@ import os
 from utils.config import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
-DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\..+\\Z')
+DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')
 
 
 # Returns a list of all the different data-names in the data directory
