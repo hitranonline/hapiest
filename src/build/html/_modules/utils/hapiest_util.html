@@ -45,7 +45,7 @@
 <span class="kn">from</span> <span class="nn">utils.config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="c1"># Regex that captures files ending in .data, and binds everything before the .data to &#39;data_handle&#39;</span>
-<span class="n">DATA_FILE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(?P&lt;data_handle&gt;.+)</span><span class="se">\\</span><span class="s1">..+</span><span class="se">\\</span><span class="s1">Z&#39;</span><span class="p">)</span>
+<span class="n">DATA_FILE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(?P&lt;data_handle&gt;.+)</span><span class="se">\\</span><span class="s1">.(data|par)</span><span class="se">\\</span><span class="s1">Z&#39;</span><span class="p">)</span>
 
 
 <span class="c1"># Returns a list of all the different data-names in the data directory</span>

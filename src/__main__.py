@@ -1,5 +1,7 @@
 import os
 import re
+import inspect
+import sys
 
 # If someone launches the program through the command 'python3 __main__.py' this move the working directory to the proper place
 srcre = re.compile('.+src\\Z')
@@ -45,10 +47,10 @@ def main():
     TextReceiver.redirect_close()
 
     close = HapiWorker(WorkRequest.END_WORK_PROCESS, {}, callback=None)
-
+    close.safe_exit()
     WorkRequest.WORKER.process.join()
-
-    sys.exit(qt_result)
+    WorkRequest.WORKER.process.terminate()
+    sys.exit(0)
 
 
 if __name__ == '__main__':

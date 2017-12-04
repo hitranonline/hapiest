@@ -2,7 +2,7 @@ from typing import *
 import multiprocessing as mp
 from worker.work_result import WorkResult
 from hapi import *
-import utils.fetch_handler
+from utils.fetch_error import FetchErrorKind, FetchError
 from utils.log import *
 from utils.config import Config
 from utils.hapi_metadata import HapiMetaData
@@ -31,7 +31,7 @@ class WorkFunctions:
 
     @staticmethod
     def try_graph_absorption_coefficient(
-            graph_fn: Callable, Components: List[Tuple['MoleculeId', 'IsotopologueId']], SourceTables: List[str],
+            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
@@ -51,10 +51,10 @@ class WorkFunctions:
             return e
 
     @staticmethod
-    def try_fetch(data_name: str, iso_id_list: List['GlobalIsotopologueId'], numin: float, numax: float,
+    def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[bool, 'FetchError']:
         if len(iso_id_list) == 0:
-            return utils.fetch_handler.FetchError(utils.fetch_handler.FetchErrorKind.BadIsoList,
+            return FetchError(FetchErrorKind.BadIsoList,
                               'Fetch Failure: Iso list cannot be empty.')
         try:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
@@ -63,12 +63,12 @@ class WorkFunctions:
             as_str = str(e)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
-                return utils.fetch_handler.FetchError(
-                    utils.fetch_handler.FetchErrorKind.BadConnection,
+                return FetchError(
+                    FetchErrorKind.BadConnection,
                     'Bad connection: Failed to connect to send request. Check your connection.')
             else:
-                return utils.fetch_handler.FetchError(
-                    utils.fetch_handler.FetchErrorKind.FailedToRetreiveData,
+                return FetchError(
+                    FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
         return { 'all_tables': list(tableList()) }
 

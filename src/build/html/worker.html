@@ -83,15 +83,15 @@
 </dd></dl>
 
 </div>
-<div class="section" id="worker-work-request-module">
-<h2>worker.work_request module<a class="headerlink" href="#worker-work-request-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-worker.work_request"></span><dl class="class">
+<div class="section" id="module-worker.work_request">
+<span id="worker-work-request-module"></span><h2>worker.work_request module<a class="headerlink" href="#module-worker.work_request" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
 <dt id="worker.work_request.Work">
 <em class="property">class </em><code class="descclassname">worker.work_request.</code><code class="descname">Work</code><a class="reference internal" href="_modules/worker/work_request.html#Work"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.Work" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="staticmethod">
 <dt id="worker.work_request.Work.WORK_FUNCTION">
-<em class="property">static </em><code class="descname">WORK_FUNCTION</code><span class="sig-paren">(</span><em>workq: &lt;bound method BaseContext.Queue of &lt;multiprocessing.context.DefaultContext object at 0x00000000039409B0&gt;&gt;</em>, <em>resultq: &lt;bound method BaseContext.Queue of &lt;multiprocessing.context.DefaultContext object at 0x00000000039409B0&gt;&gt;</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/worker/work_request.html#Work.WORK_FUNCTION"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.Work.WORK_FUNCTION" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">WORK_FUNCTION</code><span class="sig-paren">(</span><em>workq: &lt;bound method BaseContext.Queue of &lt;multiprocessing.context.DefaultContext object at 0x000001FB1D421860&gt;&gt;</em>, <em>resultq: &lt;bound method BaseContext.Queue of &lt;multiprocessing.context.DefaultContext object at 0x000001FB1D421860&gt;&gt;</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/worker/work_request.html#Work.WORK_FUNCTION"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.Work.WORK_FUNCTION" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -137,12 +137,12 @@
 
 <dl class="staticmethod">
 <dt id="worker.work_request.WorkFunctions.try_fetch">
-<em class="property">static </em><code class="descname">try_fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/worker/work_request.html#WorkFunctions.try_fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.WorkFunctions.try_fetch" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">try_fetch</code><span class="sig-paren">(</span><em>data_name: str, iso_id_list: typing.List[int], numin: float, numax: float, parameter_groups: typing.List[str] = (), parameters: typing.List[str] = (), **kwargs</em><span class="sig-paren">)</span> &#x2192; typing.Union[bool, _ForwardRef('FetchError')]<a class="reference internal" href="_modules/worker/work_request.html#WorkFunctions.try_fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.WorkFunctions.try_fetch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="worker.work_request.WorkFunctions.try_graph_absorption_coefficient">
-<em class="property">static </em><code class="descname">try_graph_absorption_coefficient</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/worker/work_request.html#WorkFunctions.try_graph_absorption_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.WorkFunctions.try_graph_absorption_coefficient" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">try_graph_absorption_coefficient</code><span class="sig-paren">(</span><em>graph_fn: typing.Callable, Components: typing.List[typing.Tuple[int, int]], SourceTables: typing.List[str], Environment: typing.Dict[str, typing.Any], GammaL: str, HITRAN_units: bool, WavenumberRange: typing.Tuple[float, float], WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str, **kwargs</em><span class="sig-paren">)</span> &#x2192; typing.Union[typing.Dict[str, typing.Any], Exception]<a class="reference internal" href="_modules/worker/work_request.html#WorkFunctions.try_graph_absorption_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#worker.work_request.WorkFunctions.try_graph_absorption_coefficient" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">

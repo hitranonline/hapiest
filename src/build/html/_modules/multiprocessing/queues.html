@@ -142,7 +142,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">block</span><span class="p">:</span>
                     <span class="n">timeout</span> <span class="o">=</span> <span class="n">deadline</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="n">Empty</span>
                 <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">():</span>
                     <span class="k">raise</span> <span class="n">Empty</span>
@@ -210,14 +210,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="n">debug</span><span class="p">(</span><span class="s1">&#39;... done self._thread.start()&#39;</span><span class="p">)</span>
 
-        <span class="c1"># On process exit we will wait for data to be flushed to pipe.</span>
-        <span class="c1">#</span>
-        <span class="c1"># However, if this process created the queue then all</span>
-        <span class="c1"># processes which use the queue will be descendants of this</span>
-        <span class="c1"># process.  Therefore waiting for the queue to be flushed</span>
-        <span class="c1"># is pointless once all the child processes have been joined.</span>
-        <span class="n">created_by_this_process</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_opid</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joincancelled</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">created_by_this_process</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joincancelled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_jointhread</span> <span class="o">=</span> <span class="n">Finalize</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="p">,</span> <span class="n">Queue</span><span class="o">.</span><span class="n">_finalize_join</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="p">)],</span>

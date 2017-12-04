@@ -82,7 +82,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="GraphDisplayWindowGui.add_graph"><a class="viewcode-back" href="../../widgets.html#widgets.graph_display_window_gui.GraphDisplayWindowGui.add_graph">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-
+        <span class="n">debug</span><span class="p">(</span><span class="s1">&#39;add_graph&#39;</span><span class="p">)</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">QLineSeries</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
             <span class="n">series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>

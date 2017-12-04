@@ -41,10 +41,6 @@
   <h1>Source code for parsy</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
 
-<span class="c1"># End-user documentation is in ../../doc/ and so is for the most part not</span>
-<span class="c1"># duplicated here in the form of doc strings. Code comments and docstrings</span>
-<span class="c1"># are mainly for internal use.</span>
-
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -52,8 +48,6 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 
 <span class="kn">from</span> <span class="nn">.version</span> <span class="k">import</span> <span class="n">__version__</span>  <span class="c1"># noqa: F401</span>
-
-<span class="n">noop</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
 
 
 <span class="k">def</span> <span class="nf">line_info_at</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -164,8 +158,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="k">lambda</span> <span class="n">res</span><span class="p">:</span> <span class="n">success</span><span class="p">(</span><span class="n">combine_fn</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">combine_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combine_fn</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="k">lambda</span> <span class="n">res</span><span class="p">:</span> <span class="n">success</span><span class="p">(</span><span class="n">combine_fn</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                                                           <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">})))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="k">lambda</span> <span class="n">res</span><span class="p">:</span> <span class="n">success</span><span class="p">(</span><span class="n">combine_fn</span><span class="p">(</span><span class="o">**</span><span class="n">res</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
@@ -411,13 +404,12 @@
     <span class="k">return</span> <span class="n">Parser</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Result</span><span class="o">.</span><span class="n">failure</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">expected</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">noop</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="n">slen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="n">transformed_s</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
     <span class="nd">@Parser</span>
     <span class="k">def</span> <span class="nf">string_parser</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">transform</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="n">slen</span><span class="p">])</span> <span class="o">==</span> <span class="n">transformed_s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="n">slen</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="n">slen</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">failure</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
@@ -463,9 +455,9 @@
     <span class="k">return</span> <span class="n">test_item</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">item</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">string_from</span><span class="p">(</span><span class="o">*</span><span class="n">strings</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">noop</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">string_from</span><span class="p">(</span><span class="o">*</span><span class="n">strings</span><span class="p">):</span>
     <span class="c1"># Sort longest first, so that overlapping options work correctly</span>
-    <span class="k">return</span> <span class="n">alt</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">alt</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
 
 
 <span class="k">def</span> <span class="nf">char_from</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
@@ -489,14 +481,6 @@
         <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">failure</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;EOF&#39;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">from_enum</span><span class="p">(</span><span class="n">enum_cls</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">noop</span><span class="p">):</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="nb">str</span><span class="p">(</span><span class="n">enum_item</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">enum_item</span><span class="p">)</span> <span class="k">for</span> <span class="n">enum_item</span> <span class="ow">in</span> <span class="n">enum_cls</span><span class="p">],</span>
-                   <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-                   <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">alt</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">enum_item</span><span class="p">)</span>
-                 <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">enum_item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span>
 </pre></div>
 
           </div>
