@@ -1,11 +1,10 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from utils.hapiest_util import *
 from utils.isotopologue import *
 from widgets.main_window_gui import MainWindowGui
 from utils.log import *
-from utils.fetch_handler import FetchErrorKind, FetchError, FetchHandler
+from utils.fetch_error import FetchErrorKind, FetchError
 from worker.work_result import *
 
 class MainWindow:
