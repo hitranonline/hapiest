@@ -417,7 +417,7 @@
     <span class="k">if</span> <span class="p">(</span>
         <span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;_Union&#39;</span><span class="p">,</span> <span class="s1">&#39;_Optional&#39;</span><span class="p">)</span> <span class="ow">and</span>
         <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">TypingMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_gorg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Generic</span><span class="p">,</span> <span class="n">_Protocol</span><span class="p">)</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">TypingMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Generic</span><span class="p">,</span> <span class="n">_Protocol</span><span class="p">)</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Plain </span><span class="si">%s</span><span class="s2"> is not valid as type argument&quot;</span> <span class="o">%</span> <span class="n">arg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">arg</span>
@@ -890,29 +890,6 @@
 <span class="n">Optional</span> <span class="o">=</span> <span class="n">_Optional</span><span class="p">(</span><span class="n">_root</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_gorg</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the farthest origin of a generic class (internal helper).&quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">a</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">__origin__</span>
-    <span class="k">return</span> <span class="n">a</span>
-
-
-<span class="k">def</span> <span class="nf">_geqv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return whether two generic classes are equivalent (internal helper).</span>
-
-<span class="sd">    The intention is to consider generic class X and any of its</span>
-<span class="sd">    parameterized forms (X[T], X[int], etc.) as equivalent.</span>
-
-<span class="sd">    However, X is not equivalent to a subclass of X.</span>
-
-<span class="sd">    The relation is reflexive, symmetric and transitive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span>
-    <span class="c1"># Reduce each to its origin.</span>
-    <span class="k">return</span> <span class="n">_gorg</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">is</span> <span class="n">_gorg</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">_next_in_mro</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Helper for Generic.__new__.</span>
 
@@ -922,7 +899,7 @@
     <span class="n">next_in_mro</span> <span class="o">=</span> <span class="nb">object</span>
     <span class="c1"># Look for the last occurrence of Generic or Generic[...].</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_gorg</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Generic</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Generic</span><span class="p">:</span>
             <span class="n">next_in_mro</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">next_in_mro</span>
 
@@ -1032,14 +1009,15 @@
         <span class="n">initial_bases</span> <span class="o">=</span> <span class="n">bases</span>
         <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span> <span class="ow">is</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span> <span class="ow">and</span> <span class="n">extra</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
             <span class="n">bases</span> <span class="o">=</span> <span class="p">(</span><span class="n">extra</span><span class="p">,)</span> <span class="o">+</span> <span class="n">bases</span>
-        <span class="n">bases</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_gorg</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="k">else</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">)</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">_gorg</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="k">else</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">)</span>
 
         <span class="c1"># remove bare Generic from bases if there are other generic bases</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Generic</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">):</span>
             <span class="n">bases</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span> <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Generic</span><span class="p">)</span>
         <span class="n">namespace</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;__origin__&#39;</span><span class="p">:</span> <span class="n">origin</span><span class="p">,</span> <span class="s1">&#39;__extra__&#39;</span><span class="p">:</span> <span class="n">extra</span><span class="p">})</span>
         <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">_root</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+        <span class="nb">super</span><span class="p">(</span><span class="n">GenericMeta</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s1">&#39;_gorg&#39;</span><span class="p">,</span>
+                                             <span class="bp">self</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">origin</span> <span class="k">else</span> <span class="n">origin</span><span class="o">.</span><span class="n">_gorg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span> <span class="o">=</span> <span class="n">tvars</span>
         <span class="c1"># Be prepared that GenericMeta will be subclassed by TupleMeta</span>
         <span class="c1"># and CallableMeta, those two allow ..., (), or [] in __args___.</span>
@@ -1082,7 +1060,7 @@
     <span class="k">def</span> <span class="nf">_abc_negative_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__extra__</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extra__</span><span class="o">.</span><span class="n">_abc_negative_cache</span>
-        <span class="k">return</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_abc_generic_negative_cache</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span><span class="o">.</span><span class="n">_abc_generic_negative_cache</span>
 
     <span class="nd">@_abc_negative_cache</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">_abc_negative_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1096,7 +1074,7 @@
     <span class="k">def</span> <span class="nf">_abc_negative_cache_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__extra__</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extra__</span><span class="o">.</span><span class="n">_abc_negative_cache_version</span>
-        <span class="k">return</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_abc_generic_negative_cache_version</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span><span class="o">.</span><span class="n">_abc_generic_negative_cache_version</span>
 
     <span class="nd">@_abc_negative_cache_version</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">_abc_negative_cache_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1146,7 +1124,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="n">tree_args</span> <span class="o">=</span> <span class="n">_subs_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tvars</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">),)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tree_args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tree_args</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">GenericMeta</span><span class="p">):</span>
@@ -1162,7 +1140,7 @@
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">params</span><span class="p">,)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Tuple</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Parameter list to </span><span class="si">%s</span><span class="s2">[...] cannot be empty&quot;</span> <span class="o">%</span> <span class="n">_qualname</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Parameters to generic types must be types.&quot;</span>
@@ -1230,14 +1208,14 @@
                               <span class="bp">self</span><span class="o">.</span><span class="n">__extra__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__orig_bases__</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="c1"># We consider all the subscripted genrics as proxies for original class</span>
+        <span class="c1"># We consider all the subscripted generics as proxies for original class</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">attr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">or</span>
             <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_abc_&#39;</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">GenericMeta</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">GenericMeta</span><span class="p">,</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">GenericMeta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
 <span class="c1"># Prevent checks for Generic to crash when defining Generic.</span>
@@ -1250,7 +1228,7 @@
     <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">base_cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">origin</span> <span class="o">=</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">base_cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">__orig_class__</span> <span class="o">=</span> <span class="bp">cls</span>
@@ -1284,7 +1262,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Generic</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Generic</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Generic cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;it can be used only as a base class&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__next_in_mro__</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -1306,7 +1284,7 @@
 
     <span class="nd">@_tp_cache</span>
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Tuple</span><span class="p">:</span>
             <span class="c1"># Normal generic rules apply if this is not the first subscription</span>
             <span class="c1"># or a subscription of a subclass.</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
@@ -1348,7 +1326,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Tuple</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Tuple cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use tuple() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -1363,7 +1341,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subs_tree</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_tree_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_gorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Callable</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_tree_repr</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
         <span class="c1"># For actual Callable (not its subclass) we override</span>
         <span class="c1"># super()._tree_repr() for nice formatting.</span>
@@ -1383,7 +1361,7 @@
 <span class="sd">        with hashable arguments to improve speed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Callable</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Callable must be used as &quot;</span>
@@ -1425,7 +1403,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Callable</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Callable cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use a non-abstract subclass instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__next_in_mro__</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -1544,8 +1522,9 @@
 <span class="sd">    search order is locals first, then globals.</span>
 
 <span class="sd">    - If no dict arguments are passed, an attempt is made to use the</span>
-<span class="sd">      globals from obj, and these are also used as the locals.  If the</span>
-<span class="sd">      object does not appear to have globals, an exception is raised.</span>
+<span class="sd">      globals from obj (or the respective module&#39;s globals for classes),</span>
+<span class="sd">      and these are also used as the locals.  If the object does not appear</span>
+<span class="sd">      to have globals, an empty dictionary is used.</span>
 
 <span class="sd">    - If one dict argument is passed, it is used for both globals and</span>
 <span class="sd">      locals.</span>
@@ -1556,25 +1535,33 @@
 
     <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__no_type_check__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">globalns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">globalns</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__globals__&#39;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="k">if</span> <span class="n">localns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">localns</span> <span class="o">=</span> <span class="n">globalns</span>
-    <span class="k">elif</span> <span class="n">localns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">localns</span> <span class="o">=</span> <span class="n">globalns</span>
     <span class="c1"># Classes require a special treatment.</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="n">hints</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">globalns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">base_globals</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">base</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base_globals</span> <span class="o">=</span> <span class="n">globalns</span>
             <span class="n">ann</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">_ForwardRef</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">_eval_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">globalns</span><span class="p">,</span> <span class="n">localns</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">_eval_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base_globals</span><span class="p">,</span> <span class="n">localns</span><span class="p">)</span>
                 <span class="n">hints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">hints</span>
+
+    <span class="k">if</span> <span class="n">globalns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">):</span>
+            <span class="n">globalns</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">globalns</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__globals__&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="n">localns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">localns</span> <span class="o">=</span> <span class="n">globalns</span>
+    <span class="k">elif</span> <span class="n">localns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">localns</span> <span class="o">=</span> <span class="n">globalns</span>
     <span class="n">hints</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">hints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Return empty annotations for something that _could_ have them.</span>
@@ -1609,7 +1596,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="n">arg_attrs</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__bases__</span> <span class="o">+</span> <span class="p">(</span><span class="n">arg</span><span class="p">,):</span>
                 <span class="n">arg_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">arg_attrs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">):</span>
@@ -1728,6 +1715,7 @@
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;__annotations__&#39;</span> <span class="ow">and</span>
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;__weakref__&#39;</span> <span class="ow">and</span>
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;_is_protocol&#39;</span> <span class="ow">and</span>
+                            <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;_gorg&#39;</span> <span class="ow">and</span>
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;__dict__&#39;</span> <span class="ow">and</span>
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;__args__&#39;</span> <span class="ow">and</span>
                             <span class="n">attr</span> <span class="o">!=</span> <span class="s1">&#39;__slots__&#39;</span> <span class="ow">and</span>
@@ -1933,7 +1921,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">List</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type List cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use list() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -1944,7 +1932,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Deque</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Deque</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
@@ -1954,7 +1942,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Set</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Set</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Set cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use set() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -1964,7 +1952,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">FrozenSet</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">FrozenSet</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type FrozenSet cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use frozenset() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -2055,7 +2043,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Dict</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Dict cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;use dict() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
@@ -2067,7 +2055,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">DefaultDict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">DefaultDict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
@@ -2077,7 +2065,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Counter</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Counter</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
@@ -2092,7 +2080,7 @@
         <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
         <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ChainMap</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">ChainMap</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">ChainMap</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">ChainMap</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
@@ -2111,7 +2099,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_geqv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Generator</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_gorg</span> <span class="ow">is</span> <span class="n">Generator</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Generator cannot be instantiated; &quot;</span>
                             <span class="s2">&quot;create a subclass instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_generic_new</span><span class="p">(</span><span class="n">_G_base</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>

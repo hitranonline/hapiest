@@ -1,32 +1,6 @@
-from utils.hapiest_util import *
-from windows.main_window import *
 from worker.hapi_worker import *
-from utils.log import *
 from worker.work_request import *
-
-
-
-class FetchErrorKind:
-    BadParameter = 1  # This wont be used
-    BadParameterGroup = 2  # This wont be used
-    BadNuMin = 3  # This wont be used
-    BadNuMax = 4  # This wont be used
-    BadConnection = 5
-    BadIsoList = 6
-    FailedToRetreiveData = 7
-    FailedToOpenThread = 8
-    EmptyName = 9
-
-
-
-class FetchError:
-    # Constructor for FetchError
-    #
-    # errors: a FetchErrorKind object
-    # description: a textual description of the error
-    def __init__(self, error, description=''):
-        self.error = error
-        self.description = description
+from utils.isotopologue import GlobalIsotopologueId
 
 
 class FetchHandler:
@@ -47,7 +21,7 @@ class FetchHandler:
             datas.append(match.groupdict()['data_handle'])
         return datas
 
-    def __init__(self, data_name: str, fetch_window: 'MainWindow', iso_id_list: List[GlobalIsotopologueId],
+    def __init__(self, data_name: str, fetch_window, iso_id_list: List['GlobalIsotopologueId'],
                  numin: float, numax: float,
                  parameter_groups: List[str] = (), parameters: List[str] = ()):
         """
