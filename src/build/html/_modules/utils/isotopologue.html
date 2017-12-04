@@ -50,10 +50,12 @@
 
 
 <div class="viewcode-block" id="Isotopologue"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue">[docs]</a><span class="k">class</span> <span class="nc">Isotopologue</span><span class="p">():</span>
-    <span class="c1"># Static members</span>
-    <span class="c1"># Data scraped using the scrape.js function</span>
-    <span class="c1"># The first element in the tuple is the minimum wave number to get data, and the</span>
-    <span class="c1"># second is the maximum wave number</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Static members.</span>
+<span class="sd">     Data scraped using the scrape.js function.</span>
+<span class="sd">     The first element in the tuple is the minimum wave number to get data, and the</span>
+<span class="sd">     second is the maximum wave number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">MOLECULE_DATA_RANGE</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MoleculeId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mf">8.400e-5</span><span class="p">,</span> <span class="mf">25710.825</span><span class="p">),</span>
         <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.757</span><span class="p">,</span> <span class="mf">14075.298</span><span class="p">),</span>
@@ -142,6 +144,9 @@
 
 <div class="viewcode-block" id="Isotopologue.create_html"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.create_html">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_html</span><span class="p">(</span><span class="n">_iso</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates html for isotopologues on fetch window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">iso</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">_iso</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>

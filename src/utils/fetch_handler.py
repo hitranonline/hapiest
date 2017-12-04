@@ -6,9 +6,12 @@ from utils.isotopologue import GlobalIsotopologueId
 class FetchHandler:
     DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
 
-    # Returns a list of all the different data-names in the data directory
+
     @staticmethod
     def get_all_data_names():
+        """
+        Returns a list of all the different data-names in the data directory.
+        """
         files = listdir(Config.data_folder)
         datas = []
         for f in files:
@@ -21,6 +24,9 @@ class FetchHandler:
     def __init__(self, data_name: str, fetch_window, iso_id_list: List['GlobalIsotopologueId'],
                  numin: float, numax: float,
                  parameter_groups: List[str] = (), parameters: List[str] = ()):
+        """
+        test.
+        """
         self.data_name = data_name
         self.worker = None
         self.fetch_window = fetch_window

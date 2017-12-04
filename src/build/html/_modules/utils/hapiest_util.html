@@ -48,8 +48,11 @@
 <span class="n">DATA_FILE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(?P&lt;data_handle&gt;.+)</span><span class="se">\\</span><span class="s1">.(data|par)</span><span class="se">\\</span><span class="s1">Z&#39;</span><span class="p">)</span>
 
 
-<span class="c1"># Returns a list of all the different data-names in the data directory</span>
+
 <div class="viewcode-block" id="get_all_data_names"><a class="viewcode-back" href="../../utils.html#utils.hapiest_util.get_all_data_names">[docs]</a><span class="k">def</span> <span class="nf">get_all_data_names</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of all the different data-names in the data directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span><span class="p">)</span>
     <span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>

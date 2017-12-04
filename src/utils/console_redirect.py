@@ -4,6 +4,9 @@ from PyQt5 import QtCore
 
 # A class that can be used to redirect output from stdout and stderr to a
 # QTextEdit
+"""
+*This module is no longer apart of the functionality of the GUI.*
+"""
 class TextEditStream():
     def __init__(self, window):
         self.queue = Queue()

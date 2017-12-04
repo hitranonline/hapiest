@@ -49,14 +49,16 @@
 <span class="s1">select-page-length = 10</span>
 <span class="s1">&#39;&#39;&#39;</span>
 
-
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../utils.html#utils.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">():</span>
     <span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
     <span class="n">high_dpi</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span>
     <span class="n">select_page_length</span> <span class="o">=</span> <span class="mi">10</span>
 
+    
 <div class="viewcode-block" id="Config.config_init"><a class="viewcode-back" href="../../utils.html#utils.config.Config.config_init">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">config_init</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;*Reads in config file. If not file, calls load_config()*&quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CONFIG_LOCATION</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">CONFIG_LOCATION</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
@@ -72,16 +74,22 @@
 
                 <span class="n">Config</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-    <span class="c1"># Sets all required config values to their defaults</span>
+
 <div class="viewcode-block" id="Config.set_defaults"><a class="viewcode-back" href="../../utils.html#utils.config.Config.set_defaults">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">set_defaults</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Sets default values for program&#39;s startup.**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
         <span class="n">Config</span><span class="o">.</span><span class="n">high_dpi</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span>
         <span class="n">Config</span><span class="o">.</span><span class="n">select_page_length</span> <span class="o">=</span> <span class="mi">10</span></div>
 
-    <span class="c1"># Sets values from a parsed toml dictionary</span>
+
 <div class="viewcode-block" id="Config.set_values"><a class="viewcode-back" href="../../utils.html#utils.config.Config.set_values">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">set_values</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Sets values from a parsed toml dictionary.**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Config</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;hapi&#39;</span><span class="p">][</span><span class="s1">&#39;data-folder&#39;</span><span class="p">]</span>
@@ -94,6 +102,9 @@
     <span class="c1"># Tries to load a configuration, if it fails</span>
 <div class="viewcode-block" id="Config.load_config"><a class="viewcode-back" href="../../utils.html#utils.config.Config.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">config_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Sets the default values if config_init fails.**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">parsed</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config_text</span><span class="p">)</span>
             <span class="n">Config</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
