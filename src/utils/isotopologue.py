@@ -9,10 +9,12 @@ IsoName = AnyStr
 
 
 class Isotopologue():
-    # Static members
-    # Data scraped using the scrape.js function
-    # The first element in the tuple is the minimum wave number to get data, and the
-    # second is the maximum wave number
+    """
+     Static members.
+     Data scraped using the scrape.js function.
+     The first element in the tuple is the minimum wave number to get data, and the
+     second is the maximum wave number.
+    """
     MOLECULE_DATA_RANGE: Dict[MoleculeId, Tuple[float, float]] = {
         1: (8.400e-5, 25710.825),
         2: (0.757, 14075.298),
@@ -101,6 +103,9 @@ class Isotopologue():
 
     @staticmethod
     def create_html(_iso: str) -> str:
+        """
+        Creates html for isotopologues on fetch window.
+        """
         iso = '%s' % _iso
         html = ''
         start = 0

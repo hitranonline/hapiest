@@ -7,8 +7,11 @@ from utils.config import *
 DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')
 
 
-# Returns a list of all the different data-names in the data directory
+
 def get_all_data_names():
+    """
+    Returns a list of all the different data-names in the data directory.
+    """
     files = os.listdir(Config.data_folder)
     datas = []
     for f in files:

@@ -5,8 +5,7 @@ from utils.log import *
 from worker.work_request import *
 
 
-# An enum for all possible errors that could be encountered while verifying fetch parameters
-# and while actually fetching the data
+
 class FetchErrorKind:
     BadParameter = 1  # This wont be used
     BadParameterGroup = 2  # This wont be used
@@ -19,7 +18,7 @@ class FetchErrorKind:
     EmptyName = 9
 
 
-# A class that contains a FetchErrorKind along with a description for the error
+
 class FetchError:
     # Constructor for FetchError
     #
@@ -33,9 +32,12 @@ class FetchError:
 class FetchHandler:
     DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.data\\Z')
 
-    # Returns a list of all the different data-names in the data directory
+
     @staticmethod
     def get_all_data_names():
+        """
+        Returns a list of all the different data-names in the data directory.
+        """
         files = listdir(Config.data_folder)
         datas = []
         for f in files:
@@ -48,6 +50,9 @@ class FetchHandler:
     def __init__(self, data_name: str, fetch_window: 'MainWindow', iso_id_list: List[GlobalIsotopologueId],
                  numin: float, numax: float,
                  parameter_groups: List[str] = (), parameters: List[str] = ()):
+        """
+        test.
+        """
         self.data_name = data_name
         self.worker = None
         self.fetch_window = fetch_window

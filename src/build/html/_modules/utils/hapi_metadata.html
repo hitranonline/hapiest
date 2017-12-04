@@ -46,11 +46,18 @@
 <span class="kn">from</span> <span class="nn">utils.log</span> <span class="k">import</span> <span class="o">*</span>
 
 
-<span class="c1"># Hapiest Meta Data class - to be paired with the .data and .header files generated</span>
-<span class="c1"># with each fetch request.</span>
+
 <div class="viewcode-block" id="HapiMetaData"><a class="viewcode-back" href="../../utils.html#utils.hapi_metadata.HapiMetaData">[docs]</a><span class="k">class</span> <span class="nc">HapiMetaData</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hapiest Meta Data class - to be paired with the .data and .header files generated</span>
+<span class="sd">    with each fetch request.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="HapiMetaData.write"><a class="viewcode-back" href="../../utils.html#utils.hapi_metadata.HapiMetaData.write">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">data_name</span><span class="p">,</span> <span class="n">iso_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Params: data_name and iso_list.</span>
+<span class="sd">        This method creates a .hmd file and populates it with the HITRAN meta data isotopologue list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">data_name</span> <span class="o">+</span> <span class="s2">&quot;.hmd&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">last_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iso_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">last_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -59,6 +66,7 @@
                     <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">debug</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 
         <span class="c1"># A list of the isotopologues that this hmd file has</span>
@@ -70,10 +78,11 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.hmd&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">iso</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">isos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Isotopologue</span><span class="o">.</span><span class="n">from_global_id</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">iso</span><span class="p">)))</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                        <span class="n">debug</span><span class="p">(</span><span class="s1">&#39;iso=&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">isos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Isotopologue</span><span class="o">.</span><span class="n">from_global_id</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">err_log</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">isos</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">iso_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">molecule_id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">iso_id</span><span class="p">))</span></div>

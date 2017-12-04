@@ -63,8 +63,9 @@
         <span class="n">result</span> <span class="o">=</span> <span class="n">work_result</span><span class="o">.</span><span class="n">result</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_handler</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enable_fetch_button</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;all_tables&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
             <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Successfully finished fetch.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">populate_select_table_list</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;all_tables&#39;</span><span class="p">])</span>
             <span class="k">return</span>
         <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Failed to fetch...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>

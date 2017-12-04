@@ -39,7 +39,8 @@
           <div class="body" role="main">
             
   <h1>Source code for widgets.graphing_window_gui</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">uic</span>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">uic</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QFont</span>
 <span class="kn">from</span> <span class="nn">utils.hapi_metadata</span> <span class="k">import</span> <span class="o">*</span>
 
 
@@ -55,6 +56,26 @@
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__handle_checkbox_toggle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wn_wing_hw_enabled</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wn_wing_hw</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">intensity_threshold_enabled</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__handle_checkbox_toggle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity_threshold_enabled</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity_threshold</span><span class="p">))</span>
+        <span class="c1">#TOOLTIPS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_name</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select the name of the data you wish to graph.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select the temperature to graph the data at.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select the pressure to graph the data at.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">broadening_parameter</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select broadening paramater for data.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity_threshold</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Absolute value of minimum intensity.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wn_min</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select min wavelength for graph.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wn_max</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select max wavelength for graph.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wn_step</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Select increment for wave number (wn).&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wn_wing</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Set distance from the center of each line to the farthest point where the profile is considered to be non zero.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wn_wing_hw</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Set relative value of the line wing in halfwidths&quot;</span><span class="p">)</span>
+
+
+
+
+
+
+
+
 
     <span class="c1"># A handler for checkboxes that will either enable or disable the given</span>
     <span class="c1"># element, depending on whether the checkbox is checked or not</span>

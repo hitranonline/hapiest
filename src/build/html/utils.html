@@ -54,7 +54,8 @@
 <dl class="staticmethod">
 <dt id="utils.config.Config.config_init">
 <em class="property">static </em><code class="descname">config_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.config_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.config_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Reads in config file. If not file, calls load_config()</em></p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="utils.config.Config.data_folder">
@@ -69,7 +70,8 @@
 <dl class="staticmethod">
 <dt id="utils.config.Config.load_config">
 <em class="property">static </em><code class="descname">load_config</code><span class="sig-paren">(</span><em>config_text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.load_config" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><strong>Sets the default values if config_init fails.</strong></p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="utils.config.Config.select_page_length">
@@ -79,12 +81,14 @@
 <dl class="staticmethod">
 <dt id="utils.config.Config.set_defaults">
 <em class="property">static </em><code class="descname">set_defaults</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.set_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.set_defaults" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><strong>Sets default values for program’s startup.</strong></p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.config.Config.set_values">
 <em class="property">static </em><code class="descname">set_values</code><span class="sig-paren">(</span><em>dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.set_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.set_values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><strong>Sets values from a parsed toml dictionary.</strong></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -362,10 +366,14 @@
 <dt id="utils.hapi_metadata.HapiMetaData">
 <em class="property">class </em><code class="descclassname">utils.hapi_metadata.</code><code class="descname">HapiMetaData</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/hapi_metadata.html#HapiMetaData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.hapi_metadata.HapiMetaData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Hapiest Meta Data class - to be paired with the .data and .header files generated
+with each fetch request.</p>
 <dl class="staticmethod">
 <dt id="utils.hapi_metadata.HapiMetaData.write">
 <em class="property">static </em><code class="descname">write</code><span class="sig-paren">(</span><em>data_name</em>, <em>iso_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/hapi_metadata.html#HapiMetaData.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.hapi_metadata.HapiMetaData.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Params: data_name and iso_list.
+This method creates a .hmd file and populates it with the HITRAN meta data isotopologue list.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -380,7 +388,8 @@
 <dl class="function">
 <dt id="utils.hapiest_util.get_all_data_names">
 <code class="descclassname">utils.hapiest_util.</code><code class="descname">get_all_data_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/hapiest_util.html#get_all_data_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.hapiest_util.get_all_data_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a list of all the different data-names in the data directory.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-utils.isotopologue">
@@ -389,6 +398,10 @@
 <dt id="utils.isotopologue.Isotopologue">
 <em class="property">class </em><code class="descclassname">utils.isotopologue.</code><code class="descname">Isotopologue</code><span class="sig-paren">(</span><em>molecule_id: int</em>, <em>isotopologue_id: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Static members.
+Data scraped using the scrape.js function.
+The first element in the tuple is the minimum wave number to get data, and the
+second is the maximum wave number.</p>
 <dl class="attribute">
 <dt id="utils.isotopologue.Isotopologue.ABUNDANCE_LOC">
 <code class="descname">ABUNDANCE_LOC</code><em class="property"> = 2</em><a class="headerlink" href="#utils.isotopologue.Isotopologue.ABUNDANCE_LOC" title="Permalink to this definition">¶</a></dt>
@@ -472,7 +485,8 @@
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.create_html">
 <em class="property">static </em><code class="descname">create_html</code><span class="sig-paren">(</span><em>_iso: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.create_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.create_html" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates html for isotopologues on fetch window.</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_global_id">

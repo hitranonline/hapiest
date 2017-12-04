@@ -5,11 +5,18 @@ from utils.isotopologue import *
 from utils.log import *
 
 
-# Hapiest Meta Data class - to be paired with the .data and .header files generated
-# with each fetch request.
+
 class HapiMetaData():
+    """
+    Hapiest Meta Data class - to be paired with the .data and .header files generated
+    with each fetch request.
+    """
     @staticmethod
     def write(data_name, iso_list):
+        """
+        Params: data_name and iso_list.
+        This method creates a .hmd file and populates it with the HITRAN meta data isotopologue list.
+        """
         with open(Config.data_folder + "/" + data_name + ".hmd", "w+") as file:
             last_index = len(iso_list) - 1
             for i in range(0, last_index + 1):
