@@ -20,7 +20,7 @@ class HapiTableView(QTableWidget):
 
         self.next_button = parent.next_button
         self.back_button = parent.back_button
-        self.save_button = parent.save_button
+        self.save_button = parent.edit_save_button
 
         self.next_button.clicked.connect(self.next_page)
         self.back_button.clicked.connect(self.back_page)
@@ -32,11 +32,18 @@ class HapiTableView(QTableWidget):
         self.page_len = Config.select_page_length
         self.setRowCount(self.page_len)
 
-        self.workers = []
-        args = HapiWorker.echo(table_name=table_name, page_len=self.page_len, page_number=self.current_page)
+        if self.table_name != None:
+            self.workers = []
+            args = HapiWorker.echo(table_name=table_name, page_len=self.page_len, page_number=self.current_page)
 
-        self.start_worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_first_page)
-        self.start_worker.start()
+            self.start_worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_first_page)
+            self.start_worker.start()
+        else:
+            self.workers = []
+            self.next_button.setDisabled(True)
+            self.back_button.setDisabled(True)
+            self.save_button.setDisabled(True)
+
         self.items = []
         self.double_validator = QDoubleValidator()
         self.double_validator.setNotation(QDoubleValidator.ScientificNotation)
@@ -112,6 +119,8 @@ class HapiTableView(QTableWidget):
             for column in range(0, len(lines.param_order)):
                 x = line.get_nth_field(column)
                 self.items[row][column].setText(str(line.get_nth_field(column)))
+        self.main_window.edit_button.setEnabled(True)
+        self.save_button.setEnabled(True)
 
     def remove_worker_by_jid(self, jid: int):
         for worker in self.workers:
@@ -125,6 +134,7 @@ class HapiTableView(QTableWidget):
 
         self.next_button.setDisabled(True)
         self.back_button.setDisabled(True)
+        self.save_button.setDisabled(True)
 
         self.lines.commit_changes()
         self.current_page += 1
@@ -142,6 +152,7 @@ class HapiTableView(QTableWidget):
 
         self.next_button.setDisabled(True)
         self.back_button.setDisabled(True)
+        self.save_button.setDisabled(True)
 
 
         self.lines.commit_changes()
@@ -161,7 +172,7 @@ class HapiTableView(QTableWidget):
         self.save_button.setDisabled(True)
 
         worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
-                            {'source_table': self.table_name, 'output_table': self.main_window.get_output_table_name()},
+                            {'source_table': self.table_name, 'output_table': self.main_window.get_edit_output_name()},
                             self.done_saving)
         self.workers.append(worker)
         worker.start()
@@ -175,4 +186,5 @@ class HapiTableView(QTableWidget):
         self.remove_worker_by_jid(work_result.job_id)
 
     def close_table(self):
-        self.save_table()
+        if self.table_name:
+            self.save_table()

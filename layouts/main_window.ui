@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>776</width>
-       <height>694</height>
+    <width>797</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -45,10 +45,10 @@
     <property name="sizeConstraint">
      <enum>QLayout::SetDefaultConstraint</enum>
     </property>
-    <item row="0" column="1">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -66,7 +66,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-          <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="fetch_tab">
        <attribute name="title">
@@ -484,73 +484,6 @@
         <string>Select</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="6" column="1" colspan="2">
-         <widget class="QPushButton" name="save_button">
-          <property name="text">
-           <string>Save</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="3" colspan="2">
-         <widget class="QPushButton" name="export_button">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Export</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="6">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QToolButton" name="back_button">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::LeftArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="next_button">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::RightArrow</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="3" column="1" colspan="5">
-         <widget class="QWidget" name="select_error_container" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" colspan="6">
-         <widget class="QWidget" name="table_container" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>100</height>
-           </size>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1" colspan="6">
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="sizeConstraint">
@@ -561,20 +494,6 @@
           </item>
           <item row="4" column="2">
               <layout class="QHBoxLayout" name="horizontalLayout_3"/>
-          </item>
-             <item row="0" column="1">
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-                <widget class="QLabel" name="label_9">
-              <property name="text">
-                  <string>Table</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-                <widget class="QComboBox" name="table_name"/>
-            </item>
-           </layout>
           </item>
           <item row="3" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -645,6 +564,20 @@
             </item>
            </layout>
           </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Table</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="table_name"/>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
            <item row="2" column="6">
@@ -654,27 +587,162 @@
                    </property>
                </widget>
            </item>
-           <item row="2" column="5">
-               <widget class="QPushButton" name="edit_button">
-                   <property name="text">
-                       <string>Edit</string>
-                   </property>
-               </widget>
-           </item>
-           <item row="2" column="2">
-               <widget class="QLabel" name="current_table_label">
-                   <property name="text">
-                       <string/>
-                   </property>
-               </widget>
-           </item>
-           <item row="2" column="1">
+        <item row="3" column="1" colspan="5">
+         <widget class="QWidget" name="select_error_container" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="save_button">
+          <property name="text">
+           <string>Save to Disk</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="export_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Export</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="edit_tab">
+       <attribute name="title">
+        <string>Edit</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Table</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="edit_table_name"/>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="edit_button">
+          <property name="text">
+           <string>Edit</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QWidget" name="table_container" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>100</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetFixedSize</enum>
+            </property>
+            <item>
+             <layout class="QFormLayout" name="formLayout">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
+              </property>
+              <item row="1" column="0">
                <widget class="QLabel" name="label_8">
-                   <property name="text">
-                       <string>Current Table:</string>
-                   </property>
+                <property name="text">
+                 <string>Destination Table Name</string>
+                </property>
                </widget>
-           </item>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="edit_output_name">
+                <property name="text">
+                 <string>tmp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="edit_save_button">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Save to Disk</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
+              </property>
+              <item>
+               <widget class="QToolButton" name="back_button">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::LeftArrow</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="next_button">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::RightArrow</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="current_table_label">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="about_tab">
@@ -684,6 +752,70 @@
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="0">
          <widget class="QTextEdit" name="textEdit">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Light">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Light">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Light">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -693,39 +825,53 @@
 p, li { white-space: pre-wrap; }
                &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;
                font-weight:400; font-style:normal;&quot;&gt;
+            &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+            -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
                &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HAPIEST was developed in a software
-               engineering course&lt;/p&gt;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hapiest was developed in a software
+            engineering course at SUNY Oswego by students Benji Caro, Joshua Karns, Dominik Lohmann, Wyatt Matt,
+            Ethan Messer, and Michael Sova in conjunction with proffesors Iouli Gordan and Roman Kochanov of Harvard
+            University, and with advisement from SUNY Oswego professors Bastian Tenbergen and Shashi Kanbur. &lt;/p&gt;
+            &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px;
+            margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
                &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;at SUNY Oswego by students Benji Caro,
-               Joshua Karns, Dominik Lohmann, Wyatt Matt, Ethan Messer, and Michael Sova in conjunction with proffesors
-               Iouli Gordan and Roman Kochanov of Harvard University. HAPIEST is a GUI developed to take place of using
-               command line prompts in accessing molecular spectroscopy data from the HITRAN database. It was developed
-               in Python and designed using PyQt designer...&lt;/p&gt;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hapiest is a GUI developed to take place
+            of using command line prompts in accessing molecular spectroscopy data from the HITRAN database. It was
+            developed in Python and designed using PyQt designer... &lt;/p&gt;
+            &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
                &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px;
                margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
                &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Window Features&lt;/p&gt;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;
+            font-weight:600; font-style:italic;&quot;&gt;Window Features &lt;/span&gt;&lt;span style=&quot;
+            font-size:12pt;&quot;&gt; &lt;/span&gt; &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Main Window&lt;/span&gt;&lt;/p&gt;
+            -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Main
+            Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;The main window can be use to retrieve molecuar
                spectroscopy data according to the input parameters. This data, once fetched, will be saved onto the
-               local computer to be graphed by HAPIEST's graphing window.&lt;/p&gt;
+            local computer to be graphed by HAPIEST's graphing window. The retreived data can then be modified
+            through the select feature, and directly modified through the edit feature.&lt;/p&gt;
+            &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Graphing
-               Window&lt;/span&gt;&lt;/p&gt;
+            -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Graphing
+            Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;HAPIEST is able to graph the data you retrieve from HITRAN
                in many ways including a graph for the Absorption, Transmittance, and Radiance Spectrum. You can also use
-               HAPEST to graph multiple isotopologues at once. It can be accessed through the toolbar (Graphing -&amp;gt;
-               Open Graph Window)&lt;/p&gt;
+            HAPIEST to graph multiple isotopologues at once. It can be accessed through the toolbar (Graphing -&amp;gt;
+            Open Graph Window).&lt;/p&gt;
+            &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px;
+            margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Graph
-               Display Window&lt;/span&gt;&lt;/p&gt;
+            -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Graph
+            Display Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;In the graph display window you are able to view the graphs
-               made in the graphing window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+            made in the graphing window. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
            </string>
           </property>
          </widget>
@@ -741,7 +887,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>776</width>
+     <width>797</width>
      <height>21</height>
     </rect>
    </property>

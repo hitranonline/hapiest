@@ -29,9 +29,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.wn_min: QDoubleSpinBox = None
 
         # Most of the elements that are in the 'Select' tab
-        self.back_button: QToolButton = None
-        self.next_button: QToolButton = None
-        self.edit_button: QPushButton = None
         self.select_error_container: QWidget = None
         self.export_button: QPushButton = None
         self.output_name: QLineEdit = None
@@ -40,10 +37,18 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.select_expression: QTextEdit = None
         self.select_error_label: QLabel = None
         self.select_parameter_list: QListWidget = None
-        self.table_container: QWidget = None
         self.table_name: QComboBox = None
         self.current_table_label: QLabel = None
-        self.select_all_button: QButton = None
+        self.select_all_button: QPushButton = None
+
+        # Most elements in the 'edit' tab
+        self.back_button: QToolButton = None
+        self.next_button: QToolButton = None
+        self.edit_button: QPushButton = None
+        self.table_container: QWidget = None
+        self.edit_save_button: QPushButton = None
+        self.edit_output_name: QLineEdit = None
+        self.edit_table_name: QComboBox = None
 
         # Other stuff..
         self.graph_window_action: QAction = None
@@ -63,9 +68,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.splitter.addWidget(self.param_group_list)
         self.splitter.addWidget(self.param_list)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(self.splitter)
-        self.list_container.setLayout(layout)
+        list_layout = QtWidgets.QGridLayout()
+        list_layout.addWidget(self.splitter)
+        self.list_container.setLayout(list_layout)
 
         self.status_bar_label = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
@@ -147,9 +152,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
         # self.table_container.setLayout(layout)
         # self.statusbar.setParent(self)
 
-        self.populate_select_table_list()
+        self.populate_table_lists()
 
         self.table = None
+
+        if 0 != self.edit_table_name.count():
+            self.__on_edit_button_click()
+
 
         # Display the GUI since we're done configuring it
         self.show()
@@ -158,11 +167,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
     # Initialization Methods
     ###########################################################################
 
-    def populate_select_table_list(self, data_names=None):
+    def populate_table_lists(self, data_names=None):
         if data_names == None:
             data_names = get_all_data_names()
         self.table_name.clear()
         self.table_name.addItems(data_names)
+        self.edit_table_name.clear()
+        self.edit_table_name.addItems(data_names)
 
     # Populates the parameter lists with all parameters / parameter groups
     # that HITRAN has to offer.
@@ -285,6 +296,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         return selected
 
+    def get_edit_table_name(self):
+        return self.edit_table_name.currentText()
+
+    def get_edit_output_name(self):
+        return self.edit_output_name.text()
+
     ###########################################################################
     # Other Stuff
     ###########################################################################
@@ -318,9 +335,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
 
     def __on_edit_button_click(self):
-        table_name = self.get_select_table_name()
-        self.output_name.setText(table_name)
-
+        table_name = self.get_edit_table_name()
+        self.edit_button.setDisabled(True)
         if self.table:
             self.table.close_table()
             self.table.close()
@@ -402,20 +418,18 @@ class MainWindowGui(QtWidgets.QMainWindow):
         try:
             if 'all_tables' in result:
                 all_tables = result['all_tables']
-                self.populate_select_table_list(all_tables)
+                self.populate_table_lists(all_tables)
 
-            new_table_name = result['new_table_name']
-
-            if self.table:
-                self.table.close_table()
-                self.table.close()
-                QWidget().setLayout(self.table_container.layout())
-
-            self.table = HapiTableView(self, new_table_name)
-            layout = QtWidgets.QGridLayout(self.table_container)
-            layout.addWidget(self.table)
-            self.table_container.setLayout(layout)
-            self.current_table_label.setText(new_table_name)
+            # if self.table:
+            #     self.table.close_table()
+            #     self.table.close()
+            #     QWidget().setLayout(self.table_container.layout())
+            #
+            # self.table = HapiTableView(self, new_table_name)
+            # layout = QtWidgets.QGridLayout(self.table_container)
+            # layout.addWidget(self.table)
+            # self.table_container.setLayout(layout)
+            # self.current_table_label.setText(new_table_name)
 
             log('Select successfully ran.')
         except Exception as e:
