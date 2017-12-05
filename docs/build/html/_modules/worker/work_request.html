@@ -1,0 +1,302 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>worker.work_request &#8212; Hapiest 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for worker.work_request</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">worker.work_result</span> <span class="k">import</span> <span class="n">WorkResult</span>
+<span class="kn">from</span> <span class="nn">hapi</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.fetch_error</span> <span class="k">import</span> <span class="n">FetchErrorKind</span><span class="p">,</span> <span class="n">FetchError</span>
+<span class="kn">from</span> <span class="nn">utils.log</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.config</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">utils.hapi_metadata</span> <span class="k">import</span> <span class="n">HapiMetaData</span>
+<span class="kn">from</span> <span class="nn">utils.hapiest_util</span> <span class="k">import</span> <span class="n">echo</span>
+
+<div class="viewcode-block" id="WorkFunctions"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions">[docs]</a><span class="k">class</span> <span class="nc">WorkFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="WorkFunctions.start_hapi"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.start_hapi">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">start_hapi</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing hapi db...&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_begin</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">data_folder</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done initializing hapi db...&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error initializing hapi db...&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="n">graph_type_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Voigt&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_Voigt</span><span class="p">,</span>
+        <span class="s2">&quot;Lorentz&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_Lorentz</span><span class="p">,</span>
+        <span class="s2">&quot;Gauss&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_Gauss</span><span class="p">,</span>
+        <span class="s2">&quot;SD Voigt&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_SDVoigt</span><span class="p">,</span>
+        <span class="s2">&quot;Galatry&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_Doppler</span><span class="p">,</span>
+        <span class="s2">&quot;HT&quot;</span><span class="p">:</span> <span class="n">absorptionCoefficient_HT</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="WorkFunctions.try_graph_absorption_coefficient"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.try_graph_absorption_coefficient">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">try_graph_absorption_coefficient</span><span class="p">(</span>
+            <span class="n">graph_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">SourceTables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">Environment</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">GammaL</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">HITRAN_units</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">WavenumberRange</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+            <span class="n">WavenumberStep</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">WavenumberWing</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">WavenumberWingHW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">titlex</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">titley</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="ne">Exception</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">graph_type_map</span><span class="p">[</span><span class="n">graph_fn</span><span class="p">](</span>
+                <span class="n">Components</span><span class="o">=</span><span class="n">Components</span><span class="p">,</span>
+                <span class="n">SourceTables</span><span class="o">=</span><span class="n">SourceTables</span><span class="p">,</span>
+                <span class="n">Environment</span><span class="o">=</span><span class="n">Environment</span><span class="p">,</span>
+                <span class="n">GammaL</span><span class="o">=</span><span class="n">GammaL</span><span class="p">,</span>
+                <span class="n">HITRAN_units</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">WavenumberRange</span><span class="o">=</span><span class="n">WavenumberRange</span><span class="p">,</span>
+                <span class="n">WavenumberStep</span><span class="o">=</span><span class="n">WavenumberStep</span><span class="p">,</span>
+                <span class="n">WavenumberWing</span><span class="o">=</span><span class="n">WavenumberWing</span><span class="p">,</span>
+                <span class="n">WavenumberWingHW</span><span class="o">=</span><span class="n">WavenumberWingHW</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;titlex&#39;</span><span class="p">:</span> <span class="n">titlex</span><span class="p">,</span> <span class="s1">&#39;titley&#39;</span><span class="p">:</span> <span class="n">titley</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.try_fetch"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.try_fetch">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">try_fetch</span><span class="p">(</span><span class="n">data_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">iso_id_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">numin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">numax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                  <span class="n">parameter_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;FetchError&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iso_id_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FetchError</span><span class="p">(</span><span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadIsoList</span><span class="p">,</span>
+                              <span class="s1">&#39;Fetch Failure: Iso list cannot be empty.&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fetch_by_ids</span><span class="p">(</span><span class="n">data_name</span><span class="p">,</span> <span class="n">iso_id_list</span><span class="p">,</span> <span class="n">numin</span><span class="p">,</span> <span class="n">numax</span><span class="p">,</span> <span class="n">parameter_groups</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+            <span class="n">hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_name</span><span class="p">,</span> <span class="n">iso_id_list</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">as_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="c1"># Determine whether the issue is an internet issue or something else</span>
+            <span class="k">if</span> <span class="s1">&#39;connect&#39;</span> <span class="ow">in</span> <span class="n">as_str</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">FetchError</span><span class="p">(</span>
+                    <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadConnection</span><span class="p">,</span>
+                    <span class="s1">&#39;Bad connection: Failed to connect to send request. Check your connection.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">FetchError</span><span class="p">(</span>
+                    <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">FailedToRetreiveData</span><span class="p">,</span>
+                    <span class="s1">&#39;Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="s1">&#39;all_tables&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tableList</span><span class="p">())</span> <span class="p">}</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.table_get_lines_page"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.table_get_lines_page">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">table_get_lines_page</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">page_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">page_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">start_index</span> <span class="o">=</span> <span class="n">page_len</span> <span class="o">*</span> <span class="n">page_number</span>
+        <span class="n">end_index</span> <span class="o">=</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">page_len</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="p">:</span>
+            <span class="n">debug</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="p">[</span><span class="n">table_name</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="n">last_page</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">end_index</span> <span class="o">+</span> <span class="n">page_len</span><span class="p">:</span>
+                <span class="n">last_page</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">end_index</span><span class="p">:</span>
+                <span class="n">end_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_data</span><span class="p">)</span>
+                <span class="n">last_page</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_data</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">echo</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="n">page_number</span><span class="p">,</span> <span class="n">page_len</span><span class="o">=</span><span class="n">page_len</span><span class="p">,</span>
+                    <span class="n">last_page</span><span class="o">=</span><span class="n">last_page</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.table_commit_lines_page"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.table_commit_lines_page">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">table_commit_lines_page</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="p">[</span><span class="n">table_name</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">param_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_data</span><span class="p">)):</span>
+                <span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_data</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">start_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.table_write_to_disk"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.table_write_to_disk">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">table_write_to_disk</span><span class="p">(</span><span class="n">source_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1">#select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)</span>
+            <span class="n">cache2storage</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="n">output_table</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">e</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.table_meta_data"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.table_meta_data">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">table_meta_data</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="p">[</span><span class="n">table_name</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="p">[</span><span class="n">table_name</span><span class="p">][</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;number_of_rows&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">param_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">echo</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WorkFunctions.table_names"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.table_names">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">table_names</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span> <span class="ow">in</span> <span class="n">LOCAL_TABLE_CACHE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">table_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">echo</span><span class="p">(</span><span class="n">table_names</span><span class="o">=</span><span class="n">table_names</span><span class="p">)</span></div>
+
+    <span class="c1"># def select(TableName,DestinationTableName=QUERY_BUFFER,ParameterNames=None,Conditions=None,Output=True,File=None):</span>
+<div class="viewcode-block" id="WorkFunctions.try_select"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkFunctions.try_select">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">try_select</span><span class="p">(</span><span class="n">TableName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">DestinationTableName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">QUERY_BUFFER</span><span class="p">,</span> <span class="n">ParameterNames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">Conditions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">File</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="n">TableName</span><span class="p">,</span> <span class="n">DestinationTableName</span><span class="o">=</span><span class="n">DestinationTableName</span><span class="p">,</span> <span class="n">ParameterNames</span><span class="o">=</span><span class="n">ParameterNames</span><span class="p">,</span>
+                   <span class="n">Conditions</span><span class="o">=</span><span class="n">Conditions</span><span class="p">,</span> <span class="n">Output</span><span class="o">=</span><span class="n">Output</span><span class="p">,</span> <span class="n">File</span><span class="o">=</span><span class="n">File</span><span class="p">)</span>
+            <span class="n">hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="p">(</span><span class="n">TableName</span><span class="p">)</span>
+            <span class="n">new_table_hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">DestinationTableName</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">iso</span><span class="p">:</span> <span class="n">iso</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">hmd</span><span class="o">.</span><span class="n">isos</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">echo</span><span class="p">(</span><span class="n">new_table_name</span><span class="o">=</span><span class="n">DestinationTableName</span><span class="p">,</span> <span class="n">all_tables</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">tableList</span><span class="p">()))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">debug</span><span class="p">(</span><span class="s1">&#39;try_select: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div></div>
+
+<div class="viewcode-block" id="WorkRequest"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkRequest">[docs]</a><span class="k">class</span> <span class="nc">WorkRequest</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">work_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">work_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_type</span> <span class="o">=</span> <span class="n">work_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_args</span> <span class="o">=</span> <span class="n">work_args</span>
+
+    <span class="n">WorkType</span> <span class="o">=</span> <span class="nb">int</span>
+
+    <span class="n">START_HAPI</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">END_WORK_PROCESS</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">FETCH</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ABSORPTION_COEFFICIENT</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">TABLE_META_DATA</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">TABLE_GET_LINES_PAGE</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">TABLE_COMMIT_LINES_PAGE</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">TABLE_WRITE_TO_DISK</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">TABLE_NAMES</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">SELECT</span><span class="p">:</span> <span class="n">WorkType</span> <span class="o">=</span> <span class="mi">9</span>
+
+    <span class="n">WORKQ</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+    <span class="n">RESULTQ</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+    <span class="n">WORKER</span><span class="p">:</span> <span class="s1">&#39;Work&#39;</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">WORK_FUNCTIONS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">WorkType</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="WorkRequest.do_work"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkRequest.do_work">[docs]</a>    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_type</span> <span class="ow">in</span> <span class="n">WorkRequest</span><span class="o">.</span><span class="n">WORK_FUNCTIONS</span><span class="p">:</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">WorkRequest</span><span class="o">.</span><span class="n">WORK_FUNCTIONS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">work_type</span><span class="p">]</span>
+            <span class="n">exec_res</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">work_args</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">WorkResult</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">,</span> <span class="n">exec_res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">WorkResult</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WorkRequest.start_work_process"><a class="viewcode-back" href="../../worker.html#worker.work_request.WorkRequest.start_work_process">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">start_work_process</span><span class="p">():</span>
+        <span class="n">WorkRequest</span><span class="o">.</span><span class="n">WORKER</span> <span class="o">=</span> <span class="n">Work</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Work"><a class="viewcode-back" href="../../worker.html#worker.work_request.Work">[docs]</a><span class="k">class</span> <span class="nc">Work</span><span class="p">:</span>
+<div class="viewcode-block" id="Work.WORK_FUNCTION"><a class="viewcode-back" href="../../worker.html#worker.work_request.Work.WORK_FUNCTION">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">WORK_FUNCTION</span><span class="p">(</span><span class="n">workq</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span> <span class="n">resultq</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">WorkRequest</span><span class="o">.</span><span class="n">WORK_FUNCTIONS</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">START_HAPI</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">start_hapi</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">FETCH</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">try_fetch</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">ABSORPTION_COEFFICIENT</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">try_graph_absorption_coefficient</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_GET_LINES_PAGE</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">table_get_lines_page</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_COMMIT_LINES_PAGE</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">table_commit_lines_page</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_WRITE_TO_DISK</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">table_write_to_disk</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_NAMES</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">table_names</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_META_DATA</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">table_meta_data</span><span class="p">,</span>
+            <span class="n">WorkRequest</span><span class="o">.</span><span class="n">SELECT</span><span class="p">:</span> <span class="n">WorkFunctions</span><span class="o">.</span><span class="n">try_select</span>
+        <span class="p">}</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">work_request</span> <span class="o">=</span> <span class="n">workq</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">work_request</span><span class="o">.</span><span class="n">work_type</span> <span class="o">==</span> <span class="n">WorkRequest</span><span class="o">.</span><span class="n">END_WORK_PROCESS</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">work_request</span><span class="o">.</span><span class="n">do_work</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">resultq</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Work</span><span class="o">.</span><span class="n">WORK_FUNCTION</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">WORKQ</span><span class="p">,</span> <span class="n">WorkRequest</span><span class="o">.</span><span class="n">RESULTQ</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Hapi team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
