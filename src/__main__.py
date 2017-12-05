@@ -14,6 +14,7 @@ from worker.hapi_worker import *
 from utils.console_redirect import *
 from utils.log import *
 from worker.work_request import *
+from worker.hapi_thread import HapiThread
 
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
@@ -50,6 +51,7 @@ def main():
     close.safe_exit()
     WorkRequest.WORKER.process.join()
     WorkRequest.WORKER.process.terminate()
+    HapiThread.kill_all()
     sys.exit(0)
 
 
