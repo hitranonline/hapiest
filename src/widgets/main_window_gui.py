@@ -42,6 +42,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.select_parameter_list: QListWidget = None
         self.table_container: QWidget = None
         self.table_name: QComboBox = None
+        self.current_table_label: QLabel = None
+        self.select_all_button: QButton = None
 
         # Other stuff..
         self.graph_window_action: QAction = None
@@ -95,17 +97,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.select_parameter_list.setToolTip("Select the parameters for select() function.")
 
-
-
-
-
-
-
         # Hide error messages
         self.err_small_range.hide()
         self.err_bad_connection.hide()
         self.err_bad_iso_list.hide()
         self.err_empty_name.hide()
+
+        self.select_all_button.clicked.connect(self.__on_select_all_button_click)
 
         # Connect the function to be executed when wn_max's value changes
         self.wn_max.valueChanged.connect(self.__wn_max_change)
@@ -311,39 +309,37 @@ class MainWindowGui(QtWidgets.QMainWindow):
         if self.select_error_label != None:
             self.select_error_label.setText("")
 
-    def remove_table_view(self):
-        if not self.table:
-            return
-
-        self.table_container.layout().removeWidget(self.table)
-
-
     ###########################################################################
     #  Event Handlers
     ###########################################################################
 
+    def __on_select_all_button_click(self):
+        for i in range(0, self.select_parameter_list.count()):
+            self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
+
     def __on_edit_button_click(self):
-        try:
-            table_name = self.get_select_table_name()
-            self.output_name.setText(table_name)
+        table_name = self.get_select_table_name()
+        self.output_name.setText(table_name)
 
-            self.remove_table_view()
+        if self.table:
+            self.table.close_table()
+            self.table.close()
+            QWidget().setLayout(self.table_container.layout())
 
-            self.table = HapiTableView(self, table_name)
-            if self.table_container.layout() == None:
-                layout = QtWidgets.QGridLayout(self.table_container)
-                layout.addWidget(self.table)
-                self.table_container.setLayout(layout)
-            else:
-                self.table_container.layout().addWidget(self.table)
-        except Exception as e:
-            debug('edit', e)
+        self.table = HapiTableView(self, table_name)
+        layout = QtWidgets.QGridLayout(self.table_container)
+        layout.addWidget(self.table)
+        self.table_container.setLayout(layout)
+        self.current_table_label.setText(table_name)
 
     # When the table that is being worked with changes, update the parameter list
     def __on_select_table_name_selection_changed(self, new_selection):
         self.run_button.setDisabled(True)
+        if new_selection == '':
+            return
 
         args = HapiWorker.echo(table_name=new_selection)
+
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
         worker.start()
         self.workers.append(worker)
@@ -409,15 +405,17 @@ class MainWindowGui(QtWidgets.QMainWindow):
                 self.populate_select_table_list(all_tables)
 
             new_table_name = result['new_table_name']
-            self.remove_table_view()
+
+            if self.table:
+                self.table.close_table()
+                self.table.close()
+                QWidget().setLayout(self.table_container.layout())
 
             self.table = HapiTableView(self, new_table_name)
-            if self.table_container.layout() == None:
-                layout = QtWidgets.QGridLayout(self.table_container)
-                layout.addWidget(self.table)
-                self.table_container.setLayout(layout)
-            else:
-                self.table_container.layout().addWidget(self.table)
+            layout = QtWidgets.QGridLayout(self.table_container)
+            layout.addWidget(self.table)
+            self.table_container.setLayout(layout)
+            self.current_table_label.setText(new_table_name)
 
             log('Select successfully ran.')
         except Exception as e:

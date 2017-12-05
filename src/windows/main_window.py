@@ -50,7 +50,6 @@ class MainWindow:
                 elif err.error == FetchErrorKind.EmptyName:
                     self.gui.err_empty_name.show()
         except Exception as e:
-            debug('fug')
             debug(e)
 
     def disable_fetch_button(self):

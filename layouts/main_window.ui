@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
-    <height>590</height>
+       <width>776</width>
+       <height>694</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,7 +66,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+          <number>1</number>
       </property>
       <widget class="QWidget" name="fetch_tab">
        <attribute name="title">
@@ -559,28 +559,20 @@
           <item row="2" column="2" rowspan="2">
            <widget class="QListWidget" name="select_parameter_list"/>
           </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Parameters</string>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+          </item>
+             <item row="0" column="1">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QPushButton" name="edit_button">
+                <widget class="QLabel" name="label_9">
               <property name="text">
-               <string>Edit</string>
+                  <string>Table</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="run_button">
-              <property name="text">
-               <string>Run</string>
-              </property>
-             </widget>
+                <widget class="QComboBox" name="table_name"/>
             </item>
            </layout>
           </item>
@@ -632,22 +624,57 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item row="4" column="0">
+                 <layout class="QVBoxLayout" name="verticalLayout"/>
+             </item>
+             <item row="0" column="2">
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
-             <widget class="QLabel" name="label_9">
+                <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>Table</string>
+                  <string>Parameters</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="table_name"/>
+                <widget class="QPushButton" name="select_all_button">
+                    <property name="text">
+                        <string>Select All</string>
+                    </property>
+                </widget>
             </item>
            </layout>
           </item>
          </layout>
         </item>
+           <item row="2" column="6">
+               <widget class="QPushButton" name="run_button">
+                   <property name="text">
+                       <string>Run</string>
+                   </property>
+               </widget>
+           </item>
+           <item row="2" column="5">
+               <widget class="QPushButton" name="edit_button">
+                   <property name="text">
+                       <string>Edit</string>
+                   </property>
+               </widget>
+           </item>
+           <item row="2" column="2">
+               <widget class="QLabel" name="current_table_label">
+                   <property name="text">
+                       <string/>
+                   </property>
+               </widget>
+           </item>
+           <item row="2" column="1">
+               <widget class="QLabel" name="label_8">
+                   <property name="text">
+                       <string>Current Table:</string>
+                   </property>
+               </widget>
+           </item>
        </layout>
       </widget>
       <widget class="QWidget" name="about_tab">
@@ -664,17 +691,42 @@
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;HAPIEST was developed in a software engineering course&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;at SUNY Oswego by students Benji Caro, Joshua Karns, Dominik Lohmann, Wyatt Matt, Ethan Messer, and Michael Sova in conjunction with proffesors Iouli Gordan and Roman Kochanov of Harvard University. HAPIEST is a GUI developed to take place of using command line prompts in accessing molecular spectroscopy data from the HITRAN database. It was developed in Python and designed using PyQt designer...&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Window Features&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Main Window&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;The main window can be use to retrieve molecuar spectroscopy data according to the input parameters. This data, once fetched, will be saved onto the local computer to be graphed by HAPIEST's graphing window.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Graphing Window&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;HAPIEST is able to graph the data you retrieve from HITRAN in many ways including a graph for the Absorption, Transmittance, and Radiance Spectrum. You can also use HAPEST to graph multiple isotopologues at once. It can be accessed through the toolbar (Graphing -&amp;gt; Open Graph Window)&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Graph Display Window&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;In the graph display window you are able to view the graphs made in the graphing window.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;
+               font-weight:400; font-style:normal;&quot;&gt;
+               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
+               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HAPIEST was developed in a software
+               engineering course&lt;/p&gt;
+               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
+               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;at SUNY Oswego by students Benji Caro,
+               Joshua Karns, Dominik Lohmann, Wyatt Matt, Ethan Messer, and Michael Sova in conjunction with proffesors
+               Iouli Gordan and Roman Kochanov of Harvard University. HAPIEST is a GUI developed to take place of using
+               command line prompts in accessing molecular spectroscopy data from the HITRAN database. It was developed
+               in Python and designed using PyQt designer...&lt;/p&gt;
+               &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px;
+               margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
+               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Window Features&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Main Window&lt;/span&gt;&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;The main window can be use to retrieve molecuar
+               spectroscopy data according to the input parameters. This data, once fetched, will be saved onto the
+               local computer to be graphed by HAPIEST's graphing window.&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Graphing
+               Window&lt;/span&gt;&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;HAPIEST is able to graph the data you retrieve from HITRAN
+               in many ways including a graph for the Absorption, Transmittance, and Radiance Spectrum. You can also use
+               HAPEST to graph multiple isotopologues at once. It can be accessed through the toolbar (Graphing -&amp;gt;
+               Open Graph Window)&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Graph
+               Display Window&lt;/span&gt;&lt;/p&gt;
+               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;In the graph display window you are able to view the graphs
+               made in the graphing window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+           </string>
           </property>
          </widget>
         </item>
@@ -689,7 +741,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>674</width>
+        <width>776</width>
      <height>21</height>
     </rect>
    </property>

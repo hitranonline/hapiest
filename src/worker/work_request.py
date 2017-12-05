@@ -14,6 +14,7 @@ class WorkFunctions:
         print('Initializing hapi db...')
         try:
             db_begin(Config.data_folder)
+            del LOCAL_TABLE_CACHE['sampletab']
             print('Done initializing hapi db...')
         except Exception as e:
             print('Error initializing hapi db...')
@@ -35,6 +36,7 @@ class WorkFunctions:
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
+        debug(WavenumberRange, WavenumberStep)
         try:
             x, y = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -52,7 +54,8 @@ class WorkFunctions:
 
     @staticmethod
     def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
-                  parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[bool, 'FetchError']:
+                  parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
+        Dict[str, List[str]], 'FetchError']:
         if len(iso_id_list) == 0:
             return FetchError(FetchErrorKind.BadIsoList,
                               'Fetch Failure: Iso list cannot be empty.')
@@ -60,6 +63,7 @@ class WorkFunctions:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
             hmd = HapiMetaData.write(data_name, iso_id_list)
         except Exception as e:
+            debug('Fetch error: ', e)
             as_str = str(e)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
@@ -144,7 +148,7 @@ class WorkFunctions:
             new_table_hmd = HapiMetaData.write(DestinationTableName, list(map(lambda iso: iso.id, hmd.isos)))
             return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
         except Exception as e:
-            debug('try_select: ', e)
+            debug('Error calling select ', e)
             return False
 
 class WorkRequest:
@@ -178,8 +182,8 @@ class WorkRequest:
             fn = WorkRequest.WORK_FUNCTIONS[self.work_type]
             exec_res = fn(**self.work_args)
             return WorkResult(self.job_id, exec_res)
-        else:
-            return WorkResult(self.job_id, False)
+
+        return WorkResult(self.job_id, False)
 
     @staticmethod
     def start_work_process():
@@ -205,11 +209,11 @@ class Work:
             if work_request.work_type == WorkRequest.END_WORK_PROCESS:
                 return 0
             else:
+                result = None
                 try:
                     result = work_request.do_work()
                 except Exception as e:
-                    result = None
-                    debug('Error executing work request: ', e)
+                    debug('Error executing work request: ', e, type(e), result)
                 finally:
                     resultq.put(result)
 

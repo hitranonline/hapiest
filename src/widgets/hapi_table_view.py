@@ -101,11 +101,11 @@ class HapiTableView(QTableWidget):
         self.lines = lines
 
         self.last_page = lines.last_page
-
         page_min = result['page_number'] * result['page_len']
-        for i in range(0, self.current_page_len):
-            item = self.verticalHeaderItem(i)
-            item.setText(str(page_min + i))
+        self.setVerticalHeaderLabels(map(str, range(page_min, page_min + self.current_page_len)))
+        # for i in range(0, self.current_page_len):
+        #    item = self.verticalHeaderItem(i)
+        #    item.setText(str(page_min + i))
 
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
