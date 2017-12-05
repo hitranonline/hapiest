@@ -7,7 +7,7 @@ REM Command file for Sphinx documentation
 if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
-set SOURCEDIR=source
+set SOURCEDIR=src
 set BUILDDIR=build
 set SPHINXPROJ=Hapiest
 
