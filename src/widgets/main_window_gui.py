@@ -469,9 +469,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         if value > max:
             self.wn_min.setValue(max)
             return
-        wn_min = self.get_wn_min()
-        if value < wn_min:
-            self.wn_max.setValue(wn_min + 1.0)
 
     # when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
     # isn't below the minimum
@@ -479,10 +476,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         min = self.wn_min.minimum()
         if value < min:
             self.wn_min.setValue(min)
-            return
-        wn_max = self.wn_max.value()
-        if value > wn_max:
-            self.wn_min.setValue(wn_max - 1.0)
 
     # This method repopulates the isotopologue list widget after the molecule
     # that is being worked with changes.
@@ -541,6 +534,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         wn_max = self.get_wn_max()
         wn_min = self.get_wn_min()
+
+        if wn_max < wn_min:
+            self.wn_max.setValue(wn_min)
+            self.wn_min.setValue(wn_max)
+            temp = wn_min
+            wn_min = wn_max
+            wn_max = temp
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()

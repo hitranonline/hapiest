@@ -17,15 +17,15 @@ class MainWindow:
         self.is_open: bool = True
 
     def fetch_done(self, work_result: WorkResult):
-        self.gui.fetch_handler.worker.safe_exit()
-        result = work_result.result
-        self.gui.fetch_handler.worker.exit()
-        self.enable_fetch_button()
-        if 'all_tables' in result:
-            log("Successfully finished fetch.")
-            self.gui.populate_select_table_list(result['all_tables'])
-            return
         try:
+            self.gui.fetch_handler.worker.safe_exit()
+            result = work_result.result
+            self.gui.fetch_handler.worker.exit()
+            self.enable_fetch_button()
+            if 'all_tables' in result:
+                log("Successfully finished fetch.")
+                self.gui.populate_select_table_list(result['all_tables'])
+                return
             log("Failed to fetch...")
             if isinstance(result, List):
                 errs = result
@@ -50,6 +50,7 @@ class MainWindow:
                 elif err.error == FetchErrorKind.EmptyName:
                     self.gui.err_empty_name.show()
         except Exception as e:
+            debug('fug')
             debug(e)
 
     def disable_fetch_button(self):

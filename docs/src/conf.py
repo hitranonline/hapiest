@@ -19,7 +19,8 @@
 #
 import os
 import sys
-sys.path.insert(0, 'C:/Users/jkarn/Documents/Fall 2017/CSC 380/hapiest/src')
+
+sys.path.insert(0, './../src')
 
 # -- General configuration ------------------------------------------------
 

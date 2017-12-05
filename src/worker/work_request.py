@@ -209,7 +209,7 @@ class Work:
                     result = work_request.do_work()
                 except Exception as e:
                     result = None
-                    debug(e)
+                    debug('Error executing work request: ', e)
                 finally:
                     resultq.put(result)
 
