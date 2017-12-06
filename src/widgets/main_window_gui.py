@@ -39,6 +39,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.table_name: QComboBox = None
         self.current_table_label: QLabel = None
         self.select_all_button: QPushButton = None
+        self.deselect_all_button: QPushButton = None
 
         # Most elements in the 'edit' tab
         self.back_button: QToolButton = None
@@ -59,17 +60,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.workers = []
 
         self.iso_list = QtWidgets.QListWidget(self)
-        self.iso_list.setMinimumWidth(1)
-        self.iso_list.setMinimumHeight(50)
         self.param_group_list = QtWidgets.QListWidget(self)
-        self.param_group_list.setMinimumWidth(1)
-        self.param_group_list.setMinimumHeight(50)
         self.param_list = QtWidgets.QListWidget(self)
-        self.param_list.setMinimumWidth(1)
-        self.param_list.setMinimumHeight(50)
 
         self.splitter = QtWidgets.QSplitter(self)
-        self.splitter.setSizePolicy(QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum))
+        self.splitter.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum))
         self.splitter.addWidget(self.iso_list)
         self.splitter.addWidget(self.param_group_list)
         self.splitter.addWidget(self.param_list)
@@ -114,6 +109,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.err_empty_name.hide()
 
         self.select_all_button.clicked.connect(self.__on_select_all_button_click)
+        self.deselect_all_button_click.connect(self.__on_deselect_all_button_click)
 
         # Connect the function to be executed when wn_max's value changes
         self.wn_max.valueChanged.connect(self.__wn_max_change)
@@ -150,12 +146,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]*')
         validator = QtGui.QRegExpValidator(re)
         self.data_name.setValidator(validator)
-        # Uncomment this if you'd like to see how HapiTableView looks
-        # self.table = HapiTableView(self, 'default_name')
-        # layout = QtWidgets.QGridLayout(self.table_container)
-        # layout.addWidget(self.table, 0, 0)
-        # self.table_container.setLayout(layout)
-        # self.statusbar.setParent(self)
 
         self.populate_table_lists()
 
@@ -184,7 +174,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
     # that HITRAN has to offer.
     def populate_parameter_lists(self):
         # Add all parameter groups to the parameter groups list.
-        for (group, _) in PARAMETER_GROUPS.items():
+        for group in sorted(PARAMETER_GROUPS.keys(), key=str.lower):
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
                           QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
@@ -194,7 +184,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.param_group_list.addItem(item)
 
         # Add all parameter groups to the parameter groups list.
-        for par in PARLIST_ALL:
+        for par in sorted(PARLIST_ALL, key=str.lower):
             item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() |
                           QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
