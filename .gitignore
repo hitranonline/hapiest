@@ -6,4 +6,4 @@ test_data/*
 Config.toml
 .idea/*
 *.iml
-src/build/*
+docs/build/*
