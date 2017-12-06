@@ -206,7 +206,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         self.molecule_id.setCompleter(None)
         self.molecule_id.setEditable(True)
-        self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.InsertAtCurrent)
 
     ###########################################################################
     # Getter methods
