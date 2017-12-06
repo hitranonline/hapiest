@@ -109,7 +109,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.err_empty_name.hide()
 
         self.select_all_button.clicked.connect(self.__on_select_all_button_click)
-        self.deselect_all_button_click.connect(self.__on_deselect_all_button_click)
+        self.deselect_all_button.connect(self.__on_deselect_all_button_click)
 
         # Connect the function to be executed when wn_max's value changes
         self.wn_max.valueChanged.connect(self.__wn_max_change)
