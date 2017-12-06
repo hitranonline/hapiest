@@ -30,13 +30,31 @@ class WorkFunctions:
         "HT": absorptionCoefficient_HT
     }
 
+    instrumental_fn_map = {
+        "rectangular": SLIT_RECTANGULAR,
+        "triangular": SLIT_TRIANGULAR,
+        "gaussian": SLIT_GAUSSIAN,
+        "diffraction": SLIT_DIFFRACTION,
+        "michelson": SLIT_MICHELSON,
+        "dispersion": SLIT_DISPERSION
+    }
+
+    @staticmethod
+    def convolve_spectrum(x, y, instrumental_fn: str, Resolution: float, AF_wing: float):
+        instrumental_fn = instrumental_fn.lower()
+        if instrumental_fn not in WorkFunctions.instrumental_fn_map:
+            return x, y
+        else:
+            newx, newy, i, j, slit = convolveSpectrum(x, y, Resolution=Resolution, AF_wing=AF_wing,
+                                                      SlitFunction=WorkFunctions.instrumental_fn_map[instrumental_fn])
+            return newx, newy
+
     @staticmethod
     def try_graph_absorption_coefficient(
             graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
-        debug(WavenumberRange, WavenumberStep)
         try:
             x, y = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -51,6 +69,79 @@ class WorkFunctions:
             return {'x': x, 'y': y, 'title': title, 'titlex': titlex, 'titley': titley}
         except Exception as e:
             return e
+
+    @staticmethod
+    def try_graph_absorption_spectrum(
+            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
+            Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+        wn, ac = WorkFunctions.graph_type_map[graph_fn](
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
+            GammaL=GammaL,
+            HITRAN_units=False,
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW)
+        Environment = {'l': path_length}
+        x, y = absorptionSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
+        rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
+        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+
+    @staticmethod
+    def try_graph_radiance_spectrum(
+            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
+            Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+        try:
+            wn, ac = WorkFunctions.graph_type_map[graph_fn](
+                Components=Components,
+                SourceTables=SourceTables,
+                Environment=Environment,
+                GammaL=GammaL,
+                HITRAN_units=False,
+                WavenumberRange=WavenumberRange,
+                WavenumberStep=WavenumberStep,
+                WavenumberWing=WavenumberWing,
+                WavenumberWingHW=WavenumberWingHW)
+            Environment['l'] = path_length
+            x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
+            rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
+            return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def try_graph_transmittance_spectrum(
+            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
+            Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+        try:
+            wn, ac = WorkFunctions.graph_type_map[graph_fn](
+                Components=Components,
+                SourceTables=SourceTables,
+                Environment=Environment,
+                GammaL=GammaL,
+                HITRAN_units=False,
+                WavenumberRange=WavenumberRange,
+                WavenumberStep=WavenumberStep,
+                WavenumberWing=WavenumberWing,
+                WavenumberWingHW=WavenumberWingHW)
+            Environment = {'l': path_length}
+            x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
+            rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
+            return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+        except Exception as e:
+            return e
+
 
     @staticmethod
     def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
@@ -81,8 +172,6 @@ class WorkFunctions:
         start_index = page_len * page_number
         end_index = start_index + page_len
         result: Dict[str, List[Union[int, float]]] = {}
-        if table_name not in LOCAL_TABLE_CACHE:
-            debug(table_name)
         table = LOCAL_TABLE_CACHE[table_name]['data']
         last_page = False
         for (param, param_data) in table.items():
@@ -109,7 +198,7 @@ class WorkFunctions:
         return True
 
     @staticmethod
-    def table_write_to_disk(source_table: str, output_table: str, **kwargs):
+    def table_write_to_disk(output_table: str, **kwargs):
         try:
             #select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
             cache2storage(TableName=output_table)
@@ -122,11 +211,8 @@ class WorkFunctions:
     def table_meta_data(table_name: str):
         table = LOCAL_TABLE_CACHE[table_name]['data']
         header = LOCAL_TABLE_CACHE[table_name]['header']
-        parameters = []
+        parameters = list(table.keys())
         length = header['number_of_rows']
-        for (param_name, param_data) in table.items():
-            parameters.append(param_name)
-
         return echo(length=length, header=header, parameters=parameters)
 
     @staticmethod
@@ -146,6 +232,8 @@ class WorkFunctions:
                    Conditions=Conditions, Output=Output, File=File)
             hmd = HapiMetaData(TableName)
             new_table_hmd = HapiMetaData.write(DestinationTableName, list(map(lambda iso: iso.id, hmd.isos)))
+            WorkFunctions.table_write_to_disk(DestinationTableName)
+
             return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
         except Exception as e:
             debug('Error calling select ', e)
@@ -169,6 +257,9 @@ class WorkRequest:
     TABLE_WRITE_TO_DISK: WorkType = 7
     TABLE_NAMES: WorkType = 8
     SELECT: WorkType = 9
+    TRANSMITTANCE_SPECTRUM: WorkType = 10
+    RADIANCE_SPECTRUM: WorkType = 11
+    ABSORPTION_SPECTRUM: WorkType = 12
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -202,8 +293,12 @@ class Work:
             WorkRequest.TABLE_WRITE_TO_DISK: WorkFunctions.table_write_to_disk,
             WorkRequest.TABLE_NAMES: WorkFunctions.table_names,
             WorkRequest.TABLE_META_DATA: WorkFunctions.table_meta_data,
-            WorkRequest.SELECT: WorkFunctions.try_select
+            WorkRequest.SELECT: WorkFunctions.try_select,
+            WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.try_graph_absorption_spectrum,
+            WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.try_graph_transmittance_spectrum,
+            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.try_graph_radiance_spectrum
         }
+
         while True:
             work_request = workq.get()
             if work_request.work_type == WorkRequest.END_WORK_PROCESS:

@@ -11870,10 +11870,11 @@ def convolveSpectrum(Omega,CrossSection,Resolution=0.1,AF_wing=10.,
     x = arange_(-AF_wing,AF_wing+step,step) # fix
     slit = SlitFunction(x,Resolution)
     slit /= sum(slit)*step # simple normalization
-    left_bnd = len(slit)/2
-    right_bnd = len(Omega) - len(slit)/2
+    left_bnd = int(len(slit) / 2)
+    right_bnd = int(len(Omega) - len(slit) / 2)
     CrossSectionLowRes = convolve(CrossSection,slit,mode='same')*step
-    return Omega[left_bnd:right_bnd],CrossSectionLowRes[left_bnd:right_bnd],left_bnd,right_bnd,slit
+    p = (Omega[left_bnd:right_bnd], CrossSectionLowRes[left_bnd:right_bnd], left_bnd, right_bnd, slit)
+    return p
 
 # spectral convolution with an apparatus (slit) function
 def convolveSpectrumSame(Omega,CrossSection,Resolution=0.1,AF_wing=10.,

@@ -38,10 +38,8 @@ class HapiMetaData():
                 reader = csv.reader(file)
                 for row in reader:
                     for item in row:
-                        debug('iso=', item)
                         self.isos.append(Isotopologue.from_global_id(int(item)))
         except Exception as e:
-            debug(str(e))
-
+            debug('Error initializing HapiMetaData object - ', str(e))
         for item in self.isos:
             self.iso_tuples.append((item.molecule_id, item.iso_id))

@@ -26,11 +26,11 @@ class GraphDisplayWindow(QtCore.QObject):
         self.done_signal.connect(lambda: parent.done_graphing())
 
     def plot(self, work_result: WorkResult):
+        self.done_signal.emit(0)
         if type(work_result.result) != dict:
-            debug('error graphing')
+            err_log('Encountered error while graphing: ' + str(work_result.result))
             return
         try:
-            self.done_signal.emit(0)
             result = work_result.result
             (x, y) = result['x'], result['y']
             self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'])

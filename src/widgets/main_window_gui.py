@@ -33,7 +33,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.export_button: QPushButton = None
         self.output_name: QLineEdit = None
         self.run_button: QPushButton = None
-        self.save_button: QPushButton = None
         self.select_expression: QTextEdit = None
         self.select_error_label: QLabel = None
         self.select_parameter_list: QListWidget = None
@@ -60,10 +59,17 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.workers = []
 
         self.iso_list = QtWidgets.QListWidget(self)
+        self.iso_list.setMinimumWidth(1)
+        self.iso_list.setMinimumHeight(50)
         self.param_group_list = QtWidgets.QListWidget(self)
+        self.param_group_list.setMinimumWidth(1)
+        self.param_group_list.setMinimumHeight(50)
         self.param_list = QtWidgets.QListWidget(self)
+        self.param_list.setMinimumWidth(1)
+        self.param_list.setMinimumHeight(50)
 
         self.splitter = QtWidgets.QSplitter(self)
+        self.splitter.setSizePolicy(QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum))
         self.splitter.addWidget(self.iso_list)
         self.splitter.addWidget(self.param_group_list)
         self.splitter.addWidget(self.param_list)
@@ -98,7 +104,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.next_button.setToolTip("(Edit) Next page.")
         self.edit_button.setToolTip("Opens interactable data table.")
         self.export_button.setToolTip("Export data into desired format.")
-        self.save_button.setToolTip("Save data table.")
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.select_parameter_list.setToolTip("Select the parameters for select() function.")
 
@@ -333,6 +338,10 @@ class MainWindowGui(QtWidgets.QMainWindow):
     def __on_select_all_button_click(self):
         for i in range(0, self.select_parameter_list.count()):
             self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
+
+    def __on_deselect_all_button_click(self):
+        for i in range(0, self.select_parameter_list.count()):
+            self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Unchecked)
 
     def __on_edit_button_click(self):
         table_name = self.get_edit_table_name()

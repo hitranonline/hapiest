@@ -41,7 +41,6 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         pass
 
     def add_graph(self, x, y, title="", xtitle="", ytitle=""):
-        debug('add_graph')
         series = QLineSeries()
         for i in range(0, x.size):
             series.append(x[i], y[i])
