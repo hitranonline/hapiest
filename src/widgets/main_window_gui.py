@@ -204,9 +204,10 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
             self.molecule_id.addItem(molecule.molecule_name)
 
-        self.molecule_id.setCompleter(None)
-        self.molecule_id.setEditable(True)
-        self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.InsertAtCurrent)
+            # completer = QCompleter(map(lambda x: Isotopologue.from_molecule_id(x).molecule_name, Isotopologue.molecules.keys()))
+            # self.molecule_id.setCompleter(completer)
+            # self.molecule_id.setEditable(True)
+            # self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.InsertAtCurrent)
 
     ###########################################################################
     # Getter methods
