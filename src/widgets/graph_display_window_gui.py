@@ -105,24 +105,28 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
             self.axisy.setRange(self.view_ymin, self.view_ymax)
 
     def __on_xmax_changed(self, value):
+        return
         min = self.xmin.value()
         if value < min:
             self.xmax.setValue(value)
             self.xmin.setValue(value - 1)
 
     def __on_xmin_changed(self, value):
+        return
         max = self.xmax.value()
         if value > max:
             self.xmin.setValue(value)
             self.xmax.setValue(value + 1)
 
     def __on_ymax_changed(self, value):
+        return
         min = self.ymin.value()
         if value < min:
             self.ymax.setValue(min)
             self.ymin.setValue(value)
 
     def __on_ymin_changed(self, value):
+        return
         max = self.ymax.value()
         if value > max:
             self.ymin.setValue(max)
@@ -139,6 +143,18 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
 
         if xmin == xmax or ymin == ymax:
             return
+        if xmin > xmax:
+            t = xmin
+            xmin = xmax
+            xmax = t
+            self.xmin.setValue(xmin)
+            self.xmax.setValue(xmax)
+        if ymin > ymax:
+            t = ymin
+            ymin = ymax
+            ymax = t
+            self.ymin.setValue(ymin)
+            self.xmin.setValue(ymax)
 
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
