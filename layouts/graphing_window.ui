@@ -435,6 +435,9 @@
                     </item>
                     <item row="13" column="1">
                         <widget class="QLineEdit" name="output_filename">
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
                             <property name="placeholderText">
                                 <string>File not created if blank</string>
                             </property>
@@ -449,6 +452,9 @@
                     </item>
                     <item row="14" column="1">
                         <widget class="QLineEdit" name="output_file_format">
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
                             <property name="placeholderText">
                                 <string>Output file format</string>
                             </property>
