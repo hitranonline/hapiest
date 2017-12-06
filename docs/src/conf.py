@@ -19,7 +19,8 @@
 #
 import os
 import sys
-sys.path.insert(0, '/new Folder/hapiest/src')
+
+sys.path.insert(0, './../src')
 
 # -- General configuration ------------------------------------------------
 

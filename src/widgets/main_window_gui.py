@@ -29,19 +29,26 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.wn_min: QDoubleSpinBox = None
 
         # Most of the elements that are in the 'Select' tab
-        self.back_button: QToolButton = None
-        self.next_button: QToolButton = None
-        self.edit_button: QPushButton = None
         self.select_error_container: QWidget = None
         self.export_button: QPushButton = None
         self.output_name: QLineEdit = None
         self.run_button: QPushButton = None
-        self.save_button: QPushButton = None
         self.select_expression: QTextEdit = None
         self.select_error_label: QLabel = None
         self.select_parameter_list: QListWidget = None
-        self.table_container: QWidget = None
         self.table_name: QComboBox = None
+        self.current_table_label: QLabel = None
+        self.select_all_button: QPushButton = None
+        self.deselect_all_button: QPushButton = None
+
+        # Most elements in the 'edit' tab
+        self.back_button: QToolButton = None
+        self.next_button: QToolButton = None
+        self.edit_button: QPushButton = None
+        self.table_container: QWidget = None
+        self.edit_save_button: QPushButton = None
+        self.edit_output_name: QLineEdit = None
+        self.edit_table_name: QComboBox = None
 
         # Other stuff..
         self.graph_window_action: QAction = None
@@ -57,13 +64,14 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.param_list = QtWidgets.QListWidget(self)
 
         self.splitter = QtWidgets.QSplitter(self)
+        self.splitter.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum))
         self.splitter.addWidget(self.iso_list)
         self.splitter.addWidget(self.param_group_list)
         self.splitter.addWidget(self.param_list)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(self.splitter)
-        self.list_container.setLayout(layout)
+        list_layout = QtWidgets.QGridLayout()
+        list_layout.addWidget(self.splitter)
+        self.list_container.setLayout(list_layout)
 
         self.status_bar_label = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
@@ -91,21 +99,17 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.next_button.setToolTip("(Edit) Next page.")
         self.edit_button.setToolTip("Opens interactable data table.")
         self.export_button.setToolTip("Export data into desired format.")
-        self.save_button.setToolTip("Save data table.")
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.select_parameter_list.setToolTip("Select the parameters for select() function.")
-
-
-
-
-
-
 
         # Hide error messages
         self.err_small_range.hide()
         self.err_bad_connection.hide()
         self.err_bad_iso_list.hide()
         self.err_empty_name.hide()
+
+        self.select_all_button.clicked.connect(self.__on_select_all_button_click)
+        self.deselect_all_button.clicked.connect(self.__on_deselect_all_button_click)
 
         # Connect the function to be executed when wn_max's value changes
         self.wn_max.valueChanged.connect(self.__wn_max_change)
@@ -142,16 +146,14 @@ class MainWindowGui(QtWidgets.QMainWindow):
         re = QtCore.QRegExp('[^<>?\\\\/*\x00-\x1F]*')
         validator = QtGui.QRegExpValidator(re)
         self.data_name.setValidator(validator)
-        # Uncomment this if you'd like to see how HapiTableView looks
-        # self.table = HapiTableView(self, 'default_name')
-        # layout = QtWidgets.QGridLayout(self.table_container)
-        # layout.addWidget(self.table, 0, 0)
-        # self.table_container.setLayout(layout)
-        # self.statusbar.setParent(self)
 
-        self.populate_select_table_list()
+        self.populate_table_lists()
 
         self.table = None
+
+        if 0 != self.edit_table_name.count():
+            self.__on_edit_button_click()
+
 
         # Display the GUI since we're done configuring it
         self.show()
@@ -160,17 +162,19 @@ class MainWindowGui(QtWidgets.QMainWindow):
     # Initialization Methods
     ###########################################################################
 
-    def populate_select_table_list(self, data_names=None):
+    def populate_table_lists(self, data_names=None):
         if data_names == None:
             data_names = get_all_data_names()
         self.table_name.clear()
         self.table_name.addItems(data_names)
+        self.edit_table_name.clear()
+        self.edit_table_name.addItems(data_names)
 
     # Populates the parameter lists with all parameters / parameter groups
     # that HITRAN has to offer.
     def populate_parameter_lists(self):
         # Add all parameter groups to the parameter groups list.
-        for (group, _) in PARAMETER_GROUPS.items():
+        for group in sorted(PARAMETER_GROUPS.keys(), key=str.lower):
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
                           QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
@@ -180,7 +184,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.param_group_list.addItem(item)
 
         # Add all parameter groups to the parameter groups list.
-        for par in PARLIST_ALL:
+        for par in sorted(PARLIST_ALL, key=str.lower):
             item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() |
                           QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
@@ -200,9 +204,10 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
             self.molecule_id.addItem(molecule.molecule_name)
 
-        self.molecule_id.setCompleter(None)
-        self.molecule_id.setEditable(True)
-        self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+            # completer = QCompleter(map(lambda x: Isotopologue.from_molecule_id(x).molecule_name, Isotopologue.molecules.keys()))
+            # self.molecule_id.setCompleter(completer)
+            # self.molecule_id.setEditable(True)
+            # self.molecule_id.setInsertPolicy(QtWidgets.QComboBox.InsertAtCurrent)
 
     ###########################################################################
     # Getter methods
@@ -287,6 +292,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         return selected
 
+    def get_edit_table_name(self):
+        return self.edit_table_name.currentText()
+
+    def get_edit_output_name(self):
+        return self.edit_output_name.text()
+
     ###########################################################################
     # Other Stuff
     ###########################################################################
@@ -311,39 +322,40 @@ class MainWindowGui(QtWidgets.QMainWindow):
         if self.select_error_label != None:
             self.select_error_label.setText("")
 
-    def remove_table_view(self):
-        if not self.table:
-            return
-
-        self.table_container.layout().removeWidget(self.table)
-
-
     ###########################################################################
     #  Event Handlers
     ###########################################################################
 
+    def __on_select_all_button_click(self):
+        for i in range(0, self.select_parameter_list.count()):
+            self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
+
+    def __on_deselect_all_button_click(self):
+        for i in range(0, self.select_parameter_list.count()):
+            self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Unchecked)
+
     def __on_edit_button_click(self):
-        try:
-            table_name = self.get_select_table_name()
-            self.output_name.setText(table_name)
+        table_name = self.get_edit_table_name()
+        self.edit_button.setDisabled(True)
+        if self.table:
+            self.table.close_table()
+            self.table.close()
+            QWidget().setLayout(self.table_container.layout())
 
-            self.remove_table_view()
-
-            self.table = HapiTableView(self, table_name)
-            if self.table_container.layout() == None:
-                layout = QtWidgets.QGridLayout(self.table_container)
-                layout.addWidget(self.table)
-                self.table_container.setLayout(layout)
-            else:
-                self.table_container.layout().addWidget(self.table)
-        except Exception as e:
-            debug('edit', e)
+        self.table = HapiTableView(self, table_name)
+        layout = QtWidgets.QGridLayout(self.table_container)
+        layout.addWidget(self.table)
+        self.table_container.setLayout(layout)
+        self.current_table_label.setText(table_name)
 
     # When the table that is being worked with changes, update the parameter list
     def __on_select_table_name_selection_changed(self, new_selection):
         self.run_button.setDisabled(True)
+        if new_selection == '':
+            return
 
         args = HapiWorker.echo(table_name=new_selection)
+
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
         worker.start()
         self.workers.append(worker)
@@ -406,18 +418,18 @@ class MainWindowGui(QtWidgets.QMainWindow):
         try:
             if 'all_tables' in result:
                 all_tables = result['all_tables']
-                self.populate_select_table_list(all_tables)
+                self.populate_table_lists(all_tables)
 
-            new_table_name = result['new_table_name']
-            self.remove_table_view()
-
-            self.table = HapiTableView(self, new_table_name)
-            if self.table_container.layout() == None:
-                layout = QtWidgets.QGridLayout(self.table_container)
-                layout.addWidget(self.table)
-                self.table_container.setLayout(layout)
-            else:
-                self.table_container.layout().addWidget(self.table)
+            # if self.table:
+            #     self.table.close_table()
+            #     self.table.close()
+            #     QWidget().setLayout(self.table_container.layout())
+            #
+            # self.table = HapiTableView(self, new_table_name)
+            # layout = QtWidgets.QGridLayout(self.table_container)
+            # layout.addWidget(self.table)
+            # self.table_container.setLayout(layout)
+            # self.current_table_label.setText(new_table_name)
 
             log('Select successfully ran.')
         except Exception as e:
@@ -469,9 +481,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         if value > max:
             self.wn_min.setValue(max)
             return
-        wn_min = self.get_wn_min()
-        if value < wn_min:
-            self.wn_max.setValue(wn_min + 1.0)
 
     # when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
     # isn't below the minimum
@@ -479,10 +488,6 @@ class MainWindowGui(QtWidgets.QMainWindow):
         min = self.wn_min.minimum()
         if value < min:
             self.wn_min.setValue(min)
-            return
-        wn_max = self.wn_max.value()
-        if value > wn_max:
-            self.wn_min.setValue(wn_max - 1.0)
 
     # This method repopulates the isotopologue list widget after the molecule
     # that is being worked with changes.
@@ -541,6 +546,13 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         wn_max = self.get_wn_max()
         wn_min = self.get_wn_min()
+
+        if wn_max < wn_min:
+            self.wn_max.setValue(wn_min)
+            self.wn_min.setValue(wn_max)
+            temp = wn_min
+            wn_min = wn_max
+            wn_max = temp
 
         param_groups = self.get_selected_param_groups()
         params = self.get_selected_params()

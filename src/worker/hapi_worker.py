@@ -1,10 +1,12 @@
 from PyQt5 import QtCore, QtWidgets
 from utils.fetch_handler import *
 from utils.log import *
+from worker.hapi_thread import HapiThread
 from worker.work_request import *
 import time
 
-class HapiWorker(QtCore.QThread):
+
+class HapiWorker(HapiThread):
     job_id: int = 0
 
     step_signal = QtCore.pyqtSignal(object)
@@ -41,7 +43,7 @@ class HapiWorker(QtCore.QThread):
 
     def safe_exit(self):
         self.terminate()
-        while not self.isFinished():
+        while self.isRunning():
             pass
         return
 

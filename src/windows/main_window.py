@@ -17,37 +17,40 @@ class MainWindow:
         self.is_open: bool = True
 
     def fetch_done(self, work_result: WorkResult):
-        self.gui.fetch_handler.worker.safe_exit()
-        result = work_result.result
-        self.gui.fetch_handler.worker.exit()
-        self.enable_fetch_button()
-        if 'all_tables' in result:
-            log("Successfully finished fetch.")
-            self.gui.populate_select_table_list(result['all_tables'])
-            return
-        log("Failed to fetch...")
-        if isinstance(result, List):
-            errs = result
-        else:
-            errs = [result]
-        for err in errs:
-            # This means the wavenumber range was too small (probably), so
-            # we'll tell the user it is too small
-            if err.error == FetchErrorKind.FailedToRetreiveData:
-                self.gui.err_small_range.show()
-                err_log('The entered wavenumber range is too small, try increasing it')
-            # Not much to do in regards to user feedback in this case....
-            elif err.error == FetchErrorKind.FailedToOpenThread:
-                err_log('Failed to open thread to make query HITRAN')
-            elif err.error == FetchErrorKind.BadConnection:
-                self.gui.err_bad_connection.show()
-                err_log(
-                    'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
-            elif err.error == FetchErrorKind.BadIsoList:
-                self.gui.err_bad_iso_list.show()
-                err_log(' Error: You must select at least one isotopologue.')
-            elif err.error == FetchErrorKind.EmptyName:
-                self.gui.err_empty_name.show()
+        try:
+            self.gui.fetch_handler.worker.safe_exit()
+            result = work_result.result
+            self.gui.fetch_handler.worker.exit()
+            self.enable_fetch_button()
+            if 'all_tables' in result:
+                log("Successfully finished fetch.")
+                self.gui.populate_table_lists(result['all_tables'])
+                return
+            log("Failed to fetch...")
+            if isinstance(result, List):
+                errs = result
+            else:
+                errs = [result]
+            for err in errs:
+                # This means the wavenumber range was too small (probably), so
+                # we'll tell the user it is too small
+                if err.error == FetchErrorKind.FailedToRetreiveData:
+                    self.gui.err_small_range.show()
+                    err_log('The entered wavenumber range is too small, try increasing it')
+                # Not much to do in regards to user feedback in this case....
+                elif err.error == FetchErrorKind.FailedToOpenThread:
+                    err_log('Failed to open thread to make query HITRAN')
+                elif err.error == FetchErrorKind.BadConnection:
+                    self.gui.err_bad_connection.show()
+                    err_log(
+                        'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
+                elif err.error == FetchErrorKind.BadIsoList:
+                    self.gui.err_bad_iso_list.show()
+                    err_log(' Error: You must select at least one isotopologue.')
+                elif err.error == FetchErrorKind.EmptyName:
+                    self.gui.err_empty_name.show()
+        except Exception as e:
+            debug(e)
 
     def disable_fetch_button(self):
         self.gui.fetch_button.setDisabled(True)
