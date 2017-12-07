@@ -24,6 +24,7 @@ class GraphDisplayWindow(QtCore.QObject):
         self.worker = HapiWorker(type, work_object, self.plot)
         self.worker.start()
         self.done_signal.connect(lambda: parent.done_graphing())
+        self.gui.setWindowTitle(work_object['title'])
 
     def plot(self, work_result: WorkResult):
         self.done_signal.emit(0)

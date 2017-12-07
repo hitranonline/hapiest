@@ -50,6 +50,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         self.chart = QChart()
         self.chart.addSeries(series)
         self.chart.setTitle(title)
+        self.setWindowTitle(title)
 
         if self.axisy:
             self.chart.removeAxis(self.axisy)
