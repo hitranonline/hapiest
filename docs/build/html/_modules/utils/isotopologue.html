@@ -145,7 +145,7 @@
 <div class="viewcode-block" id="Isotopologue.create_html"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.create_html">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_html</span><span class="p">(</span><span class="n">_iso</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates html for isotopologues on fetch window.</span>
+<span class="sd">        *Creates html for isotopologues on fetch window.*</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">iso</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">_iso</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -191,9 +191,12 @@
 
         <span class="k">return</span> <span class="n">html</span></div>
 
-    <span class="c1"># Creates &#39;Isotopologue&#39;s for each one of the isotoplogues as defined in hapi.ISO</span>
+
 <div class="viewcode-block" id="Isotopologue.populate"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.populate">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">populate</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        * Creates &#39;Isotopologue&#39;s for each one of the isotoplogues as defined in hapi.ISO.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ISO</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">iid</span><span class="p">)</span> <span class="o">=</span> <span class="n">key</span>
             <span class="n">iso</span> <span class="o">=</span> <span class="n">Isotopologue</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">iid</span><span class="p">)</span>
@@ -208,25 +211,43 @@
 
 <div class="viewcode-block" id="Isotopologue.from_molecule_name"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.from_molecule_name">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_molecule_name</span><span class="p">(</span><span class="n">mol_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Isotopologue&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Converts a string molecule name into an Isotopologue object.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">FROM_MOL_NAME</span><span class="p">[</span><span class="n">mol_name</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Isotopologue.from_iso_name"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.from_iso_name">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_iso_name</span><span class="p">(</span><span class="n">iso_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Isotopologue&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Converts a string Isotopologue name into an Isotopologue object.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">FROM_ISO_NAME</span><span class="p">[</span><span class="n">iso_name</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Isotopologue.from_molecule_id"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.from_molecule_id">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_molecule_id</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Isotopologue&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Converts an integer molecule id into an Isotopologue object*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">FROM_MOL_ID</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Isotopologue.from_mol_id_iso_id"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.from_mol_id_iso_id">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_mol_id_iso_id</span><span class="p">(</span><span class="n">mid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">iid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Isotopologue&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Converts an int molecule ID and an int iso id and returns an isotopologue object.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">FROM_MOL_ID_ISO_ID</span><span class="p">[(</span><span class="n">mid</span><span class="p">,</span> <span class="n">iid</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="Isotopologue.from_global_id"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.from_global_id">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_global_id</span><span class="p">(</span><span class="n">gid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Isotopologue&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Returns a Isotopologue object, given an integer: Global id.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">FROM_GLOBAL_ID</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Isotopologue.get_wn_range"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.get_wn_range">[docs]</a>    <span class="k">def</span> <span class="nf">get_wn_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Returns wave number range as a tuple.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_id</span> <span class="ow">in</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">MOLECULE_DATA_RANGE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Isotopologue</span><span class="o">.</span><span class="n">MOLECULE_DATA_RANGE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">molecule_id</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -234,6 +255,9 @@
             <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100000000</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Isotopologue.get_iso_count"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.get_iso_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_iso_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of Isotopologues of a given molecule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">Isotopologue</span><span class="o">.</span><span class="n">molecules</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">molecule_id</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Isotopologue.get_all_isos"><a class="viewcode-back" href="../../utils.html#utils.isotopologue.Isotopologue.get_all_isos">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_isos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;Isotopologue&#39;</span><span class="p">]:</span>

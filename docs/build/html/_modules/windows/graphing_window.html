@@ -68,6 +68,9 @@
                 <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_rs_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_rs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_as</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_ts_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_ts</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GraphingWindow.graph"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.graph">[docs]</a>    <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -102,6 +105,150 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GraphDisplayWindow</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">ABSORPTION_COEFFICIENT</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
 
+<div class="viewcode-block" id="GraphingWindow.graph_as"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.graph_as">[docs]</a>    <span class="k">def</span> <span class="nf">graph_as</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_data_name</span><span class="p">()</span>
+        <span class="n">hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="p">(</span><span class="n">data_name</span><span class="p">)</span>
+
+        <span class="n">Components</span> <span class="o">=</span> <span class="n">hmd</span><span class="o">.</span><span class="n">iso_tuples</span>
+        <span class="n">SourceTables</span> <span class="o">=</span> <span class="n">data_name</span>
+        <span class="n">Environment</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_pressure</span><span class="p">(),</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_temp</span><span class="p">()}</span>
+        <span class="n">GammaL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_broadening_parameter</span><span class="p">()</span>
+        <span class="n">WavenumberRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_range</span><span class="p">()</span>
+        <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_step</span><span class="p">()</span>
+        <span class="n">WavenumberWing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing</span><span class="p">()</span>
+        <span class="n">WavenumberWingHW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing_hw</span><span class="p">()</span>
+        <span class="n">graph_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_graph_type</span><span class="p">()</span>
+        <span class="n">path_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_as_path_length</span><span class="p">()</span>
+        <span class="n">instrumental_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_as_instrumental_fn</span><span class="p">()</span>
+        <span class="n">AF_wing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_as_instrumental_fn_wing</span><span class="p">()</span>
+        <span class="n">Resolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_as_instrumental_resolution</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">WavenumberStep</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="n">Resolution</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">WavenumberStep</span> <span class="o">&lt;=</span> <span class="n">Resolution</span><span class="p">:</span>
+            <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;Wavenumber Step must be less than Instrumental Resolution&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">work</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="n">graph_fn</span><span class="o">=</span><span class="n">graph_fn</span><span class="p">,</span>
+            <span class="n">Components</span><span class="o">=</span><span class="n">Components</span><span class="p">,</span>
+            <span class="n">SourceTables</span><span class="o">=</span><span class="n">SourceTables</span><span class="p">,</span>
+            <span class="n">Environment</span><span class="o">=</span><span class="n">Environment</span><span class="p">,</span>
+            <span class="n">GammaL</span><span class="o">=</span><span class="n">GammaL</span><span class="p">,</span>
+            <span class="n">HITRAN_units</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">WavenumberRange</span><span class="o">=</span><span class="n">WavenumberRange</span><span class="p">,</span>
+            <span class="n">WavenumberStep</span><span class="o">=</span><span class="n">WavenumberStep</span><span class="p">,</span>
+            <span class="n">WavenumberWing</span><span class="o">=</span><span class="n">WavenumberWing</span><span class="p">,</span>
+            <span class="n">WavenumberWingHW</span><span class="o">=</span><span class="n">WavenumberWingHW</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Absorption Spectrum&quot;</span><span class="p">,</span>
+            <span class="n">titlex</span><span class="o">=</span><span class="s2">&quot;wavenumber&quot;</span><span class="p">,</span>
+            <span class="n">titley</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span>
+            <span class="n">path_length</span><span class="o">=</span><span class="n">path_length</span><span class="p">,</span>
+            <span class="n">instrumental_fn</span><span class="o">=</span><span class="n">instrumental_fn</span><span class="p">,</span>
+            <span class="n">Resolution</span><span class="o">=</span><span class="n">Resolution</span><span class="p">,</span>
+            <span class="n">AF_wing</span><span class="o">=</span><span class="n">AF_wing</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GraphDisplayWindow</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">ABSORPTION_SPECTRUM</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GraphingWindow.graph_rs"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.graph_rs">[docs]</a>    <span class="k">def</span> <span class="nf">graph_rs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_rs_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_data_name</span><span class="p">()</span>
+        <span class="n">hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="p">(</span><span class="n">data_name</span><span class="p">)</span>
+
+        <span class="n">Components</span> <span class="o">=</span> <span class="n">hmd</span><span class="o">.</span><span class="n">iso_tuples</span>
+        <span class="n">SourceTables</span> <span class="o">=</span> <span class="n">data_name</span>
+        <span class="n">Environment</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_pressure</span><span class="p">(),</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_temp</span><span class="p">()}</span>
+        <span class="n">GammaL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_broadening_parameter</span><span class="p">()</span>
+        <span class="n">WavenumberRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_range</span><span class="p">()</span>
+        <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_step</span><span class="p">()</span>
+        <span class="n">WavenumberWing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing</span><span class="p">()</span>
+        <span class="n">WavenumberWingHW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing_hw</span><span class="p">()</span>
+        <span class="n">graph_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_graph_type</span><span class="p">()</span>
+        <span class="n">path_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_rs_path_length</span><span class="p">()</span>
+        <span class="n">instrumental_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_rs_instrumental_fn</span><span class="p">()</span>
+        <span class="n">AF_wing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_rs_instrumental_fn_wing</span><span class="p">()</span>
+        <span class="n">Resolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_rs_instrumental_resolution</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">WavenumberStep</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="n">Resolution</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">WavenumberStep</span> <span class="o">&lt;=</span> <span class="n">Resolution</span><span class="p">:</span>
+            <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;Wavenumber Step must be less than Instrumental Resolution&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">work</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="n">graph_fn</span><span class="o">=</span><span class="n">graph_fn</span><span class="p">,</span>
+            <span class="n">Components</span><span class="o">=</span><span class="n">Components</span><span class="p">,</span>
+            <span class="n">SourceTables</span><span class="o">=</span><span class="n">SourceTables</span><span class="p">,</span>
+            <span class="n">Environment</span><span class="o">=</span><span class="n">Environment</span><span class="p">,</span>
+            <span class="n">GammaL</span><span class="o">=</span><span class="n">GammaL</span><span class="p">,</span>
+            <span class="n">HITRAN_units</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">WavenumberRange</span><span class="o">=</span><span class="n">WavenumberRange</span><span class="p">,</span>
+            <span class="n">WavenumberStep</span><span class="o">=</span><span class="n">WavenumberStep</span><span class="p">,</span>
+            <span class="n">WavenumberWing</span><span class="o">=</span><span class="n">WavenumberWing</span><span class="p">,</span>
+            <span class="n">WavenumberWingHW</span><span class="o">=</span><span class="n">WavenumberWingHW</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Radiance Spectrum&quot;</span><span class="p">,</span>
+            <span class="n">titlex</span><span class="o">=</span><span class="s2">&quot;wavenumber&quot;</span><span class="p">,</span>
+            <span class="n">titley</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span>
+            <span class="n">path_length</span><span class="o">=</span><span class="n">path_length</span><span class="p">,</span>
+            <span class="n">instrumental_fn</span><span class="o">=</span><span class="n">instrumental_fn</span><span class="p">,</span>
+            <span class="n">Resolution</span><span class="o">=</span><span class="n">Resolution</span><span class="p">,</span>
+            <span class="n">AF_wing</span><span class="o">=</span><span class="n">AF_wing</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GraphDisplayWindow</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">RADIANCE_SPECTRUM</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GraphingWindow.graph_ts"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.graph_ts">[docs]</a>    <span class="k">def</span> <span class="nf">graph_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_ts_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_data_name</span><span class="p">()</span>
+        <span class="n">hmd</span> <span class="o">=</span> <span class="n">HapiMetaData</span><span class="p">(</span><span class="n">data_name</span><span class="p">)</span>
+
+        <span class="n">Components</span> <span class="o">=</span> <span class="n">hmd</span><span class="o">.</span><span class="n">iso_tuples</span>
+        <span class="n">SourceTables</span> <span class="o">=</span> <span class="n">data_name</span>
+        <span class="n">Environment</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_pressure</span><span class="p">(),</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_temp</span><span class="p">()}</span>
+        <span class="n">GammaL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_broadening_parameter</span><span class="p">()</span>
+        <span class="n">WavenumberRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_range</span><span class="p">()</span>
+        <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_step</span><span class="p">()</span>
+        <span class="n">WavenumberWing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing</span><span class="p">()</span>
+        <span class="n">WavenumberWingHW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_wn_wing_hw</span><span class="p">()</span>
+        <span class="n">graph_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_graph_type</span><span class="p">()</span>
+        <span class="n">path_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_ts_path_length</span><span class="p">()</span>
+        <span class="n">instrumental_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_ts_instrumental_fn</span><span class="p">()</span>
+        <span class="n">AF_wing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_ts_instrumental_fn_wing</span><span class="p">()</span>
+        <span class="n">Resolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">get_ts_instrumental_resolution</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">WavenumberStep</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">WavenumberStep</span> <span class="o">=</span> <span class="n">Resolution</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">WavenumberStep</span> <span class="o">&lt;=</span> <span class="n">Resolution</span><span class="p">:</span>
+            <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;Wavenumber Step must be less than Instrumental Resolution&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">work</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="n">graph_fn</span><span class="o">=</span><span class="n">graph_fn</span><span class="p">,</span>
+            <span class="n">Components</span><span class="o">=</span><span class="n">Components</span><span class="p">,</span>
+            <span class="n">SourceTables</span><span class="o">=</span><span class="n">SourceTables</span><span class="p">,</span>
+            <span class="n">Environment</span><span class="o">=</span><span class="n">Environment</span><span class="p">,</span>
+            <span class="n">GammaL</span><span class="o">=</span><span class="n">GammaL</span><span class="p">,</span>
+            <span class="n">HITRAN_units</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">WavenumberRange</span><span class="o">=</span><span class="n">WavenumberRange</span><span class="p">,</span>
+            <span class="n">WavenumberStep</span><span class="o">=</span><span class="n">WavenumberStep</span><span class="p">,</span>
+            <span class="n">WavenumberWing</span><span class="o">=</span><span class="n">WavenumberWing</span><span class="p">,</span>
+            <span class="n">WavenumberWingHW</span><span class="o">=</span><span class="n">WavenumberWingHW</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Transmittance Spectrum&quot;</span><span class="p">,</span>
+            <span class="n">titlex</span><span class="o">=</span><span class="s2">&quot;wavenumber&quot;</span><span class="p">,</span>
+            <span class="n">titley</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span>
+            <span class="n">path_length</span><span class="o">=</span><span class="n">path_length</span><span class="p">,</span>
+            <span class="n">instrumental_fn</span><span class="o">=</span><span class="n">instrumental_fn</span><span class="p">,</span>
+            <span class="n">Resolution</span><span class="o">=</span><span class="n">Resolution</span><span class="p">,</span>
+            <span class="n">AF_wing</span><span class="o">=</span><span class="n">AF_wing</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GraphDisplayWindow</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">TRANSMITTANCE_SPECTRUM</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
+
 <div class="viewcode-block" id="GraphingWindow.populate_data_names"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.populate_data_names">[docs]</a>    <span class="k">def</span> <span class="nf">populate_data_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data_names</span> <span class="o">=</span> <span class="n">get_all_data_names</span><span class="p">()</span>
@@ -112,7 +259,10 @@
             <span class="n">err_log</span><span class="p">(</span><span class="s2">&quot;Failed to populate data names...&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GraphingWindow.done_graphing"><a class="viewcode-back" href="../../windows.html#windows.graphing_window.GraphingWindow.done_graphing">[docs]</a>    <span class="k">def</span> <span class="nf">done_graphing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_ts_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_rs_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">graph_as_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

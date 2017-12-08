@@ -113,6 +113,9 @@ class GraphingWindow(QtCore.QObject):
         self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_SPECTRUM, work, self))
 
     def graph_rs(self):
+        """
+        Radiance spectrum graphing.
+        """
         self.gui.graph_rs_button.setDisabled(True)
         data_name = self.gui.get_data_name()
         hmd = HapiMetaData(data_name)
@@ -161,6 +164,9 @@ class GraphingWindow(QtCore.QObject):
         self.children.append(GraphDisplayWindow(WorkRequest.RADIANCE_SPECTRUM, work, self))
 
     def graph_ts(self):
+        """
+        Transmittance spectrum graping.
+        """
         self.gui.graph_ts_button.setDisabled(True)
         data_name = self.gui.get_data_name()
         hmd = HapiMetaData(data_name)

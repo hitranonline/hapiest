@@ -58,37 +58,40 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="MainWindow.fetch_done"><a class="viewcode-back" href="../../windows.html#windows.main_window.MainWindow.fetch_done">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_result</span><span class="p">:</span> <span class="n">WorkResult</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_handler</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">work_result</span><span class="o">.</span><span class="n">result</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_handler</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">enable_fetch_button</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s1">&#39;all_tables&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Successfully finished fetch.&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">populate_select_table_list</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;all_tables&#39;</span><span class="p">])</span>
-            <span class="k">return</span>
-        <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Failed to fetch...&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
-            <span class="n">errs</span> <span class="o">=</span> <span class="n">result</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">errs</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errs</span><span class="p">:</span>
-            <span class="c1"># This means the wavenumber range was too small (probably), so</span>
-            <span class="c1"># we&#39;ll tell the user it is too small</span>
-            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">FailedToRetreiveData</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_small_range</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-                <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;The entered wavenumber range is too small, try increasing it&#39;</span><span class="p">)</span>
-            <span class="c1"># Not much to do in regards to user feedback in this case....</span>
-            <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">FailedToOpenThread</span><span class="p">:</span>
-                <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;Failed to open thread to make query HITRAN&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadConnection</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_bad_connection</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-                <span class="n">err_log</span><span class="p">(</span>
-                    <span class="s1">&#39;Error: Failed to connect to HITRAN. Check your internet connection and try again.&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadIsoList</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_bad_iso_list</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-                <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39; Error: You must select at least one isotopologue.&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">EmptyName</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_empty_name</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_handler</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">work_result</span><span class="o">.</span><span class="n">result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_handler</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable_fetch_button</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;all_tables&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Successfully finished fetch.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">populate_table_lists</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;all_tables&#39;</span><span class="p">])</span>
+                <span class="k">return</span>
+            <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Failed to fetch...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+                <span class="n">errs</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">errs</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errs</span><span class="p">:</span>
+                <span class="c1"># This means the wavenumber range was too small (probably), so</span>
+                <span class="c1"># we&#39;ll tell the user it is too small</span>
+                <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">FailedToRetreiveData</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_small_range</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                    <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;The entered wavenumber range is too small, try increasing it&#39;</span><span class="p">)</span>
+                <span class="c1"># Not much to do in regards to user feedback in this case....</span>
+                <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">FailedToOpenThread</span><span class="p">:</span>
+                    <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39;Failed to open thread to make query HITRAN&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadConnection</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_bad_connection</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                    <span class="n">err_log</span><span class="p">(</span>
+                        <span class="s1">&#39;Error: Failed to connect to HITRAN. Check your internet connection and try again.&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">BadIsoList</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_bad_iso_list</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                    <span class="n">err_log</span><span class="p">(</span><span class="s1">&#39; Error: You must select at least one isotopologue.&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">FetchErrorKind</span><span class="o">.</span><span class="n">EmptyName</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">err_empty_name</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MainWindow.disable_fetch_button"><a class="viewcode-back" href="../../windows.html#windows.main_window.MainWindow.disable_fetch_button">[docs]</a>    <span class="k">def</span> <span class="nf">disable_fetch_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">fetch_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>

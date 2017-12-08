@@ -17,6 +17,9 @@ class MainWindow:
         self.is_open: bool = True
 
     def fetch_done(self, work_result: WorkResult):
+        """
+        *Gives user feedback about fetching success or failure.*
+        """
         try:
             self.gui.fetch_handler.worker.safe_exit()
             result = work_result.result
@@ -59,13 +62,16 @@ class MainWindow:
         self.gui.fetch_button.setEnabled(True)
 
     def open_graph_window(self):
-        # Open a fetch window
-        # self.child_windows.append(GraphWindow())
+        """
+        Open a fetch window, self.child_windows.append(GraphWindow()).
+        """
         raise Exception("Unsupported: graph operation")
 
     def close_window(self, to_close):
-        # Close all occurences of the window to_close in the windows list.
-        # There should only be one but you never know...
+        """
+        Close all occurences of the window to_close in the windows list.
+        There should only be one but you never know...
+        """
         self.child_windows = filter(
             lambda window: window != to_close, self.child_windows)
         to_close.close()
@@ -80,11 +86,17 @@ class MainWindow:
     def open(self):
         self.gui.open()
 
-    # Method that get called when the append_text signal is received by the window
-    # This is to allow console output
+
     def text_log(self, text):
+        """
+        *Method that get called when the append_text signal is received by the window
+        This is to allow console output.*
+        """
         self.gui.status_bar_label.setText(text)
 
-    # Method gets called when html formatted text is to be printed to console.
+
     def html_log(self, html):
+        """
+        *Method gets called when html formatted text is to be printed to console..*
+        """
         self.gui.status_bar_label.setText(html)

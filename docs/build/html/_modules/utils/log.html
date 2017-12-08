@@ -47,25 +47,35 @@
     <span class="n">TextReceiver</span><span class="o">.</span><span class="n">TEXT_EDIT_STREAM</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span></div>
 
 
-<span class="c1"># A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui</span>
-<span class="c1"># element</span>
+
 <div class="viewcode-block" id="debug"><a class="viewcode-back" href="../../utils.html#utils.log.debug">[docs]</a><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    * A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui element.*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<span class="c1"># Prints to the console_output with a fancy lookin log label</span>
+
 <div class="viewcode-block" id="log"><a class="viewcode-back" href="../../utils.html#utils.log.log">[docs]</a><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Prints to the console_output with a fancy lookin log label.*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">print_html_to_status_bar</span><span class="p">(</span><span class="s1">&#39;&lt;div style=&quot;color: #7878e2&quot;&gt;[Log]&lt;/div&gt;&amp;nbsp;&#39;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Log] &quot;</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span><span class="p">)</span></div>
 
 
-<span class="c1"># Prints to the console_output with a fancy lookin error label</span>
 <div class="viewcode-block" id="err_log"><a class="viewcode-back" href="../../utils.html#utils.log.err_log">[docs]</a><span class="k">def</span> <span class="nf">err_log</span><span class="p">(</span><span class="n">dat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Prints to the console_output with a fancy lookin error label.*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">print_html_to_status_bar</span><span class="p">(</span><span class="s1">&#39;&lt;div style=&quot;color: #e27878&quot;&gt;[Error]&lt;/div&gt;&amp;nbsp;&#39;</span> <span class="o">+</span> <span class="n">dat</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Err] &quot;</span><span class="p">,</span> <span class="n">dat</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="debug_log"><a class="viewcode-back" href="../../utils.html#utils.log.debug_log">[docs]</a><span class="k">def</span> <span class="nf">debug_log</span><span class="p">(</span><span class="n">dat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *prints error to status bar.*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">print_html_to_status_bar</span><span class="p">(</span><span class="s1">&#39;&lt;div style=&quot;color: #78e278&quot;&gt;[Debug]&lt;/div&gt;&amp;nbsp;&#39;</span> <span class="o">+</span> <span class="n">dat</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Log] &quot;</span><span class="p">,</span> <span class="n">dat</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span><span class="p">)</span></div>
 </pre></div>

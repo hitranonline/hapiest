@@ -4,9 +4,11 @@ from time import sleep
 
 
 class HapiThread(QThread):
-    # A list of all HapiThreads that have been created. This is so when the program exits,
-    # all threads can be closed; the threads should be closed safely anyways but in the event that
-    # they are not, this will work as a failsafe
+    """
+    A list of all HapiThreads that have been created. This is so when the program exits,
+    all threads can be closed; the threads should be closed safely anyways but in the event that
+    they are not, this will work as a failsafe.
+    """
     threads: List['HapiThread'] = []
 
     @staticmethod

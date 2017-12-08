@@ -50,6 +50,9 @@ class HapiTableView(QTableWidget):
         self.int_validator = QIntValidator()
 
     def display_first_page(self, work_result: WorkResult):
+        """
+        *Displays first page of info for edit functionity.*
+        """
         lines: Lines = Lines(**work_result.result)
         self.setColumnCount(len(lines.param_order))
         self.setHorizontalHeaderLabels(lines.param_order)
@@ -57,6 +60,9 @@ class HapiTableView(QTableWidget):
         self.setVerticalHeaderLabels(vertical_labels)
 
         def update_field(column, row, line_edit):
+            """
+            *Given a column, row, and a line edit, the method alters a field in the data.*
+            """
             def f():
                 t = type(self.lines.parameters[self.lines.param_order[column]][0])
                 value = line_edit.text()
@@ -123,12 +129,18 @@ class HapiTableView(QTableWidget):
         self.save_button.setEnabled(True)
 
     def remove_worker_by_jid(self, jid: int):
+        """
+        *Params : int jid (job id), the method terminates a worker thread based on a given job id.*
+        """
         for worker in self.workers:
             if worker.job_id == jid:
                 worker.safe_exit()
                 break
 
     def next_page(self):
+        """
+        *Advance the page by one.*
+        """
         if self.last_page:
             return
 
@@ -145,6 +157,9 @@ class HapiTableView(QTableWidget):
 
 
     def back_page(self):
+        """
+        *Displays previous page, or nothing if already on first page.*
+        """
         if self.current_page == 0:
             return
         if self.last_page:
@@ -164,6 +179,9 @@ class HapiTableView(QTableWidget):
         worker.start()
 
     def save_table(self):
+        """
+        *Saves table information to local machine.*
+        """
         self.lines.commit_changes()
 
         self.back_button.setDisabled(True)
@@ -178,6 +196,9 @@ class HapiTableView(QTableWidget):
         worker.start()
 
     def done_saving(self, work_result: WorkResult):
+        """
+        *handles user feedback for saving of edit tab data.*
+        """
         result = work_result.result
         self.save_button.setEnabled(True)
         if result != True:

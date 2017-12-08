@@ -61,7 +61,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">next_button</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">next_button</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">back_button</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">save_button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">edit_save_button</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">next_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_page</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">back_page</span><span class="p">)</span>
@@ -73,17 +73,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">page_len</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">select_page_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_len</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">page_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_len</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">page_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_len</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_worker</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_GET_LINES_PAGE</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_first_page</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_worker</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_GET_LINES_PAGE</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_first_page</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">double_validator</span> <span class="o">=</span> <span class="n">QDoubleValidator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">double_validator</span><span class="o">.</span><span class="n">setNotation</span><span class="p">(</span><span class="n">QDoubleValidator</span><span class="o">.</span><span class="n">ScientificNotation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">int_validator</span> <span class="o">=</span> <span class="n">QIntValidator</span><span class="p">()</span>
 
 <div class="viewcode-block" id="HapiTableView.display_first_page"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.display_first_page">[docs]</a>    <span class="k">def</span> <span class="nf">display_first_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_result</span><span class="p">:</span> <span class="n">WorkResult</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Displays first page of info for edit functionity.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lines</span><span class="p">:</span> <span class="n">Lines</span> <span class="o">=</span> <span class="n">Lines</span><span class="p">(</span><span class="o">**</span><span class="n">work_result</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="o">.</span><span class="n">param_order</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">(</span><span class="n">lines</span><span class="o">.</span><span class="n">param_order</span><span class="p">)</span>
@@ -91,6 +101,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalHeaderLabels</span><span class="p">(</span><span class="n">vertical_labels</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">update_field</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">line_edit</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            *Given a column, row, and a line edit, the method alters a field in the data.*</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">param_order</span><span class="p">[</span><span class="n">column</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -142,30 +155,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">last_page</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">last_page</span>
-
         <span class="n">page_min</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;page_number&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;page_len&#39;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page_len</span><span class="p">):</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeaderItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">page_min</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalHeaderLabels</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">page_min</span><span class="p">,</span> <span class="n">page_min</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page_len</span><span class="p">)))</span>
+        <span class="c1"># for i in range(0, self.current_page_len):</span>
+        <span class="c1">#    item = self.verticalHeaderItem(i)</span>
+        <span class="c1">#    item.setText(str(page_min + i))</span>
 
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page_len</span><span class="p">):</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="o">.</span><span class="n">param_order</span><span class="p">)):</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">get_nth_field</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">get_nth_field</span><span class="p">(</span><span class="n">column</span><span class="p">)))</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">get_nth_field</span><span class="p">(</span><span class="n">column</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">edit_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HapiTableView.remove_worker_by_jid"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.remove_worker_by_jid">[docs]</a>    <span class="k">def</span> <span class="nf">remove_worker_by_jid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Params : int jid (job id), the method terminates a worker thread based on a given job id.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">worker</span><span class="o">.</span><span class="n">job_id</span> <span class="o">==</span> <span class="n">jid</span><span class="p">:</span>
                 <span class="n">worker</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
                 <span class="k">break</span></div>
 
 <div class="viewcode-block" id="HapiTableView.next_page"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.next_page">[docs]</a>    <span class="k">def</span> <span class="nf">next_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Advance the page by one.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_page</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">next_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">commit_changes</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -176,6 +198,9 @@
 
 
 <div class="viewcode-block" id="HapiTableView.back_page"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.back_page">[docs]</a>    <span class="k">def</span> <span class="nf">back_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Displays previous page, or nothing if already on first page.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_page</span><span class="p">:</span>
@@ -183,6 +208,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">next_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">commit_changes</span><span class="p">()</span>
@@ -194,6 +220,9 @@
         <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="HapiTableView.save_table"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.save_table">[docs]</a>    <span class="k">def</span> <span class="nf">save_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Saves table information to local machine.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">commit_changes</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">back_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -202,12 +231,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">worker</span> <span class="o">=</span> <span class="n">HapiWorker</span><span class="p">(</span><span class="n">WorkRequest</span><span class="o">.</span><span class="n">TABLE_WRITE_TO_DISK</span><span class="p">,</span>
-                            <span class="p">{</span><span class="s1">&#39;source_table&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="s1">&#39;output_table&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">get_output_table_name</span><span class="p">()},</span>
+                            <span class="p">{</span><span class="s1">&#39;source_table&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="s1">&#39;output_table&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">get_edit_output_name</span><span class="p">()},</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">done_saving</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">worker</span><span class="p">)</span>
         <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="HapiTableView.done_saving"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.done_saving">[docs]</a>    <span class="k">def</span> <span class="nf">done_saving</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_result</span><span class="p">:</span> <span class="n">WorkResult</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *handles user feedback for saving of edit tab data.*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">work_result</span><span class="o">.</span><span class="n">result</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
@@ -216,7 +248,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_worker_by_jid</span><span class="p">(</span><span class="n">work_result</span><span class="o">.</span><span class="n">job_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HapiTableView.close_table"><a class="viewcode-back" href="../../widgets.html#widgets.hapi_table_view.HapiTableView.close_table">[docs]</a>    <span class="k">def</span> <span class="nf">close_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_table</span><span class="p">()</span></div></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_table</span><span class="p">()</span></div></div>
 </pre></div>
 
           </div>

@@ -26,6 +26,9 @@ class GraphDisplayWindow(QtCore.QObject):
         self.done_signal.connect(lambda: parent.done_graphing())
 
     def plot(self, work_result: WorkResult):
+        """
+        *Plots graph and handles errors Encountered.*
+        """
         self.done_signal.emit(0)
         if type(work_result.result) != dict:
             err_log('Encountered error while graphing: ' + str(work_result.result))

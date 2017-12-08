@@ -502,33 +502,38 @@ second is the maximum wave number.</p>
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.create_html">
 <em class="property">static </em><code class="descname">create_html</code><span class="sig-paren">(</span><em>_iso: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.create_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.create_html" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates html for isotopologues on fetch window.</p>
+<dd><p><em>Creates html for isotopologues on fetch window.</em></p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_global_id">
 <em class="property">static </em><code class="descname">from_global_id</code><span class="sig-paren">(</span><em>gid: int</em><span class="sig-paren">)</span> &#x2192; utils.isotopologue.Isotopologue<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.from_global_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.from_global_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Returns a Isotopologue object, given an integer: Global id.</em></p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_iso_name">
 <em class="property">static </em><code class="descname">from_iso_name</code><span class="sig-paren">(</span><em>iso_name: str</em><span class="sig-paren">)</span> &#x2192; utils.isotopologue.Isotopologue<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.from_iso_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.from_iso_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Converts a string Isotopologue name into an Isotopologue object.</em></p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_mol_id_iso_id">
 <em class="property">static </em><code class="descname">from_mol_id_iso_id</code><span class="sig-paren">(</span><em>mid: int</em>, <em>iid: int</em><span class="sig-paren">)</span> &#x2192; utils.isotopologue.Isotopologue<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.from_mol_id_iso_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.from_mol_id_iso_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Converts an int molecule ID and an int iso id and returns an isotopologue object.</em></p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_molecule_id">
 <em class="property">static </em><code class="descname">from_molecule_id</code><span class="sig-paren">(</span><em>id: int</em><span class="sig-paren">)</span> &#x2192; utils.isotopologue.Isotopologue<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.from_molecule_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.from_molecule_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Converts an integer molecule id into an Isotopologue object</em></p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.from_molecule_name">
 <em class="property">static </em><code class="descname">from_molecule_name</code><span class="sig-paren">(</span><em>mol_name: str</em><span class="sig-paren">)</span> &#x2192; utils.isotopologue.Isotopologue<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.from_molecule_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.from_molecule_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Converts a string molecule name into an Isotopologue object.</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.isotopologue.Isotopologue.get_all_isos">
@@ -538,12 +543,14 @@ second is the maximum wave number.</p>
 <dl class="method">
 <dt id="utils.isotopologue.Isotopologue.get_iso_count">
 <code class="descname">get_iso_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.get_iso_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.get_iso_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the number of Isotopologues of a given molecule.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.isotopologue.Isotopologue.get_wn_range">
 <code class="descname">get_wn_range</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.Tuple[float, float]<a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.get_wn_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.get_wn_range" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Returns wave number range as a tuple.</em></p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="utils.isotopologue.Isotopologue.molecules">
@@ -553,7 +560,10 @@ second is the maximum wave number.</p>
 <dl class="staticmethod">
 <dt id="utils.isotopologue.Isotopologue.populate">
 <em class="property">static </em><code class="descname">populate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/isotopologue.html#Isotopologue.populate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.isotopologue.Isotopologue.populate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><ul class="simple">
+<li>Creates ‘Isotopologue’s for each one of the isotoplogues as defined in hapi.ISO.*</li>
+</ul>
+</dd></dl>
 
 </dd></dl>
 
@@ -567,12 +577,14 @@ second is the maximum wave number.</p>
 <dl class="method">
 <dt id="utils.lines.Line.get_nth_field">
 <code class="descname">get_nth_field</code><span class="sig-paren">(</span><em>field_index: int</em><span class="sig-paren">)</span> &#x2192; typing.Union[int, float]<a class="reference internal" href="_modules/utils/lines.html#Line.get_nth_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Line.get_nth_field" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Returns a line given a field_index.</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.lines.Line.update_nth_field">
 <code class="descname">update_nth_field</code><span class="sig-paren">(</span><em>field_index: int, new_value: typing.Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/lines.html#Line.update_nth_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Line.update_nth_field" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Given params: (self), int field_index, and a new values : [int,float], updates a field for the Line class.</em></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -583,27 +595,32 @@ second is the maximum wave number.</p>
 <dl class="method">
 <dt id="utils.lines.Lines.commit_changes">
 <code class="descname">commit_changes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/lines.html#Lines.commit_changes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Lines.commit_changes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Saves any changes to lines to local machine, puts feedback into console..</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.lines.Lines.commit_done">
 <code class="descname">commit_done</code><span class="sig-paren">(</span><em>work_result: worker.work_result.WorkResult</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/lines.html#Lines.commit_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Lines.commit_done" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Handles feedback to the user about the success or failure of saving data.</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.lines.Lines.get_len">
 <code class="descname">get_len</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/lines.html#Lines.get_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Lines.get_len" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Returns the length of the current page of data for the edit functionality.</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.lines.Lines.get_line">
 <code class="descname">get_line</code><span class="sig-paren">(</span><em>line_number: int</em><span class="sig-paren">)</span> &#x2192; typing.Union[_ForwardRef('Line'), NoneType]<a class="reference internal" href="_modules/utils/lines.html#Lines.get_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Lines.get_line" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Params: (self) and integer line nmber, returns a line object.</em></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="utils.lines.Lines.update_line_field">
 <code class="descname">update_line_field</code><span class="sig-paren">(</span><em>line: utils.lines.Line</em>, <em>field_index: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/lines.html#Lines.update_line_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.lines.Lines.update_line_field" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Updates line field.</em></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -613,22 +630,28 @@ second is the maximum wave number.</p>
 <dl class="function">
 <dt id="utils.log.debug">
 <code class="descclassname">utils.log.</code><code class="descname">debug</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/log.html#debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.log.debug" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><ul class="simple">
+<li>A binding to the print function that prints to stderr rather than stdout, since stdout gets redirected into a gui element.*</li>
+</ul>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.log.debug_log">
 <code class="descclassname">utils.log.</code><code class="descname">debug_log</code><span class="sig-paren">(</span><em>dat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/log.html#debug_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.log.debug_log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>prints error to status bar.</em></p>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.log.err_log">
 <code class="descclassname">utils.log.</code><code class="descname">err_log</code><span class="sig-paren">(</span><em>dat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/log.html#err_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.log.err_log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Prints to the console_output with a fancy lookin error label.</em></p>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.log.log">
 <code class="descclassname">utils.log.</code><code class="descname">log</code><span class="sig-paren">(</span><em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/log.html#log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.log.log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>Prints to the console_output with a fancy lookin log label.</em></p>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.log.print_html_to_status_bar">

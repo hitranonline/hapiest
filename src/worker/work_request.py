@@ -11,6 +11,9 @@ from utils.hapiest_util import echo
 class WorkFunctions:
     @staticmethod
     def start_hapi(**kwargs) -> bool:
+        """
+        *Initilizes hapi, calls db begin, error handling.*
+        """
         print('Initializing hapi db...')
         try:
             db_begin(Config.data_folder)
@@ -41,6 +44,9 @@ class WorkFunctions:
 
     @staticmethod
     def convolve_spectrum(x, y, instrumental_fn: str, Resolution: float, AF_wing: float):
+        """
+        *Calls proper method if user selected instrumental_fn to be used, otherwise uses original x and y coordinate arrays, calls convolve spectrum method form hapi.*
+        """
         instrumental_fn = instrumental_fn.lower()
         if instrumental_fn not in WorkFunctions.instrumental_fn_map:
             return x, y
@@ -55,6 +61,9 @@ class WorkFunctions:
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
+            """
+            *Generates coordinates for absorption coeffecient graph.*
+            """
         try:
             x, y = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -77,6 +86,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+                """
+                *Generates coordinates for absorption spectrum graph.*
+                """
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -99,6 +111,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+                """
+                *Generates coordinates for radiance spectrum graph.*
+                """
         try:
             wn, ac = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -124,6 +139,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
+                """
+                *Generates coordinates for transmittance spectrum graph.*
+                """
         try:
             wn, ac = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -147,6 +165,9 @@ class WorkFunctions:
     def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
         Dict[str, List[str]], 'FetchError']:
+            """
+            *Method handles verification of user input for fetch function.*
+            """
         if len(iso_id_list) == 0:
             return FetchError(FetchErrorKind.BadIsoList,
                               'Fetch Failure: Iso list cannot be empty.')
@@ -169,6 +190,9 @@ class WorkFunctions:
 
     @staticmethod
     def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Union[bool, Dict[str, Any]]:
+        """
+        *Reads the page_number'th page from table table_name, with page length page_len.*
+        """
         start_index = page_len * page_number
         end_index = start_index + page_len
         result: Dict[str, List[Union[int, float]]] = {}
@@ -189,6 +213,9 @@ class WorkFunctions:
 
     @staticmethod
     def table_commit_lines_page(table_name: str, start_index: int, data: Dict[str, List[Union[int, float]]]) -> bool:
+        """
+        *Caches data from edit tab to local machine.*
+        """
         table = LOCAL_TABLE_CACHE[table_name]['data']
         for (parameter, param_data) in data.items():
             param = table[parameter]
@@ -199,6 +226,9 @@ class WorkFunctions:
 
     @staticmethod
     def table_write_to_disk(output_table: str, **kwargs):
+        """
+        *Attempts to save cached data to local machine.*
+        """
         try:
             #select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
             cache2storage(TableName=output_table)
@@ -209,6 +239,9 @@ class WorkFunctions:
 
     @staticmethod
     def table_meta_data(table_name: str):
+        """
+        *Initilizes meta data file.*
+        """
         table = LOCAL_TABLE_CACHE[table_name]['data']
         header = LOCAL_TABLE_CACHE[table_name]['header']
         parameters = list(table.keys())
@@ -217,6 +250,9 @@ class WorkFunctions:
 
     @staticmethod
     def table_names(**kwargs):
+        """
+        *Returns all table names in local cache.*
+        """
         table_names = []
         for (table_name, table) in LOCAL_TABLE_CACHE.items():
             table_names.append(table_name)
@@ -227,6 +263,9 @@ class WorkFunctions:
     @staticmethod
     def try_select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
                    Conditions: List[Any] = None, Output: bool = False, File=None, **kwargs):
+        """
+        *Attempts to call the select() method from hapi.*
+        """
         try:
             select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
                    Conditions=Conditions, Output=Output, File=File)
@@ -269,6 +308,9 @@ class WorkRequest:
     WORK_FUNCTIONS: Dict[WorkType, Callable] = {}
 
     def do_work(self) -> Any:
+        """
+        *Executes the appropriate function, based on the specified work_type in the work request.*
+        """
         if self.work_type in WorkRequest.WORK_FUNCTIONS:
             fn = WorkRequest.WORK_FUNCTIONS[self.work_type]
             exec_res = fn(**self.work_args)
@@ -284,6 +326,9 @@ class WorkRequest:
 class Work:
     @staticmethod
     def WORK_FUNCTION(workq: mp.Queue, resultq: mp.Queue) -> int:
+        """
+        *Handles the calling of most hapi functions.*
+        """
         WorkRequest.WORK_FUNCTIONS = {
             WorkRequest.START_HAPI: WorkFunctions.start_hapi,
             WorkRequest.FETCH: WorkFunctions.try_fetch,

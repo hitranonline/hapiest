@@ -42,10 +42,12 @@
 <span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 <span class="kn">from</span> <span class="nn">utils.fetch_handler</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">utils.log</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">worker.hapi_thread</span> <span class="k">import</span> <span class="n">HapiThread</span>
 <span class="kn">from</span> <span class="nn">worker.work_request</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<div class="viewcode-block" id="HapiWorker"><a class="viewcode-back" href="../../worker.html#worker.hapi_worker.HapiWorker">[docs]</a><span class="k">class</span> <span class="nc">HapiWorker</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HapiWorker"><a class="viewcode-back" href="../../worker.html#worker.hapi_worker.HapiWorker">[docs]</a><span class="k">class</span> <span class="nc">HapiWorker</span><span class="p">(</span><span class="n">HapiThread</span><span class="p">):</span>
     <span class="n">job_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">step_signal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
@@ -82,7 +84,7 @@
 
 <div class="viewcode-block" id="HapiWorker.safe_exit"><a class="viewcode-back" href="../../worker.html#worker.hapi_worker.HapiWorker.safe_exit">[docs]</a>    <span class="k">def</span> <span class="nf">safe_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isFinished</span><span class="p">():</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">isRunning</span><span class="p">():</span>
             <span class="k">pass</span>
         <span class="k">return</span></div>
 

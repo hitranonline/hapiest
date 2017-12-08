@@ -14,9 +14,12 @@ class HapiWorker(HapiThread):
 
     job_results: List[WorkResult] = []
 
-    # Used to create a map from named arguments
+
     @staticmethod
     def echo(**kwargs) -> Dict[str, Any]:
+        """
+        *Used to create a map from named arguments.*
+        """
         return kwargs
 
     def __init__(self, work_type: WorkRequest.WorkType, args: Dict[str, Any], callback: Callable = None):

@@ -25,10 +25,16 @@ class Lines:
         self.param_order = tuple(self.param_order)
 
     def get_len(self):
+        """
+        *Returns the length of the current page of data for the edit functionality.*
+        """
         for (k, v) in self.parameters.items():
             return len(v)
 
     def get_line(self, line_number: int) -> Optional['Line']:
+        """
+        *Params: (self) and integer line nmber, returns a line object.*
+        """
         if self.entries <= line_number:
             return None
         line = []
@@ -39,9 +45,15 @@ class Lines:
         return l
 
     def update_line_field(self, line: 'Line', field_index: int):
+        """
+        *Updates line field.*
+        """
         self.parameters[self.param_order[field_index]][line.line_number] = line.line[field_index]
 
     def commit_changes(self):
+        """
+        *Saves any changes to lines to local machine, puts feedback into console..*
+        """
         start_index = self.page_len * self.page_number
         args = HapiWorker.echo(
             table_name=self.table_name,
@@ -55,6 +67,9 @@ class Lines:
                                                               self.table_name))
 
     def commit_done(self, work_result: 'WorkResult'):
+        """
+        *Handles feedback to the user about the success or failure of saving data.*
+        """
         if not work_result:
             err_log("Failed to commit to table {0}.".format(self.table_name))
             return
@@ -73,8 +88,14 @@ class Line:
         self.lines = lines
 
     def update_nth_field(self, field_index: int, new_value: Union[int, float]):
+        """
+        *Given params: (self), int field_index, and a new values : [int,float], updates a field for the Line class.*
+        """
         self.line[field_index] = new_value
         self.lines.update_line_field(self, field_index)
 
     def get_nth_field(self, field_index: int) -> Union[int, float]:
+        """
+        *Returns a line given a field_index.*
+        """
         return self.line[field_index]

@@ -100,35 +100,54 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         self.graph_container.setLayout(layout)
 
     def __on_zoom_reset_click(self):
+        """
+        *Sets the screen focus to maximum values of y and x.*
+        """
         if self.chart:
             self.axisx.setRange(self.view_xmin, self.view_xmax)
             self.axisy.setRange(self.view_ymin, self.view_ymax)
 
     def __on_xmax_changed(self, value):
+        """
+        *Params: self, value. Checks to make sure that the values are proper. If the value passed in is
+        smaller than the already established x min value, then the x min value is set to be the value -1 and the x max is set to be value passed into the method
+        """
         min = self.xmin.value()
         if value < min:
             self.xmax.setValue(value)
             self.xmin.setValue(value - 1)
 
     def __on_xmin_changed(self, value):
+        """
+        *If the value of the number passed in is larger than the currently established max value for x, then the min value is set to be the value passed in , and the max is set to be the value passed into the method + 1.*
+        """
         max = self.xmax.value()
         if value > max:
             self.xmin.setValue(value)
             self.xmax.setValue(value + 1)
 
     def __on_ymax_changed(self, value):
+        """
+        *Sets the value for y max, if the value passed in is smaller than the current y min, then the y max is set to y min, and y min is set to the value passed into the method .*
+        """
         min = self.ymin.value()
         if value < min:
             self.ymax.setValue(min)
             self.ymin.setValue(value)
 
     def __on_ymin_changed(self, value):
+        """
+        *Sets the value for y min, if the value passed in is larger than current y max, then the value of y min is set to be the value of y max, and the y max value is set as the value passed into the method.*
+        """
         max = self.ymax.value()
         if value > max:
             self.ymin.setValue(max)
             self.ymax.setValue(value)
 
     def __on_set_viewport_pressed(self):
+        """
+        *Handles the changing in a viewport for graphing view .*
+        """
         if self.chart == None:
             return
 
@@ -144,10 +163,16 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         self.axisy.setRange(ymin, ymax)
 
     def sceneEvent(self, event):
+        """
+        *Event handler for graph.*
+        """
         if event.type() == QtCore.QEvent.Gesture:
             self.gestureEvent(event)
 
     def gestureEvent(self, event):
+        """
+        *Event handler for graph, for additonal information see documentation on PyQt QGestureEvent.*
+        """
         return  # Ignore touch events...
         gesture = event.gesture(QtCore.Qt.PanGesture)
         if gesture:
