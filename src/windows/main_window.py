@@ -21,11 +21,11 @@ class MainWindow:
         *Gives user feedback about fetching success or failure.*
         """
         try:
+            debug(1)
             self.gui.fetch_handler.worker.safe_exit()
             result = work_result.result
-            self.gui.fetch_handler.worker.exit()
             self.enable_fetch_button()
-            if 'all_tables' in result:
+            if result != None and 'all_tables' in result:
                 log("Successfully finished fetch.")
                 self.gui.populate_table_lists(result['all_tables'])
                 return
