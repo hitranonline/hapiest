@@ -163,6 +163,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
     ###########################################################################
 
     def populate_table_lists(self, data_names=None):
+        """
+        *This method initializes the default table values for the fetch tab and the edit tab.*
+        """
         if data_names == None:
             data_names = get_all_data_names()
         self.table_name.clear()
@@ -193,9 +196,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
             self.param_list.addItem(item)
 
-    # Extract the name of each molocule that hapi has data on and add it to
-    # the molecule list. Also, enable auto-complete for the combobox
+
     def init_molecule_list(self):
+        """
+        *Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.*
+        """
         # our list of molecule names in the gui
         for molecule_id, _ in Isotopologue.molecules.items():
             if molecule_id >= 1000:
@@ -214,15 +219,21 @@ class MainWindowGui(QtWidgets.QMainWindow):
     ###########################################################################
 
 
-    # converts the selected molecule to a molecule id
+
     def get_selected_molecule(self):
+        """
+        *converts the selected molecule to a molecule id.*
+        """
         return Isotopologue.from_molecule_name(self.molecule_id.currentText())
 
-    # Returns a list containing all of the checked isotopologues
+
     def get_selected_isotopologues(self):
+        """
+        *Returns a list containing all of the checked isotopologues.*
+        """
         selected_isos = []
 
-        # Iterate through all of the items in the isotopologue list
+
         for i in range(self.iso_list.count()):
             # get the i'th item from the list
             item = self.iso_list.item(i)
@@ -234,8 +245,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         return selected_isos
 
-    # Returns a list containing all of the checked parameters
+
     def get_selected_params(self):
+        """
+        *Returns a list containing all of the checked parameters.*
+        """
         selected_params = []
 
         # Look at each parameter and add the checked ones to the list
@@ -248,8 +262,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
         return selected_params
 
-    # Returns a list containing all of the checked groups
+
     def get_selected_param_groups(self):
+        """
+        *Returns a list containing all of the checked groups.*
+        """
         selected_groups = []
 
         # Look at each group and add the checked ones to the list
@@ -263,26 +280,47 @@ class MainWindowGui(QtWidgets.QMainWindow):
         return selected_groups
 
     def get_data_name(self):
+        """
+        *Returns data name for fetch tab.*
+        """
         return str(self.data_name.text())
 
-    # Fetches the double value from the QDoubleSpinBox wn_max
+
     def get_wn_max(self):
+        """
+        *Fetches the double value from the QDoubleSpinBox wn_max.*
+        """
         return self.wn_max.value()
 
-    # Fetches the double value from the QDoubleSpinBox wn_min
+
     def get_wn_min(self):
+        """
+        *Fetches the double value from the QDoubleSpinBox wn_min.*
+        """
         return self.wn_min.value()
 
     def get_select_table_name(self):
+        """
+        *Returns the select table name.*
+        """
         return self.table_name.currentText()
 
     def get_select_expression(self):
+        """
+        *Returns select expression entered in by user.*
+        """
         return self.select_expression.toPlainText()
 
     def get_output_table_name(self):
+        """
+        *Returns the destination table name the user entered for select function.*
+        """
         return self.output_name.text()
 
     def get_select_parameters(self):
+        """
+        *Returns the paramaters the user chose for the select function.*
+        """
         selected = []
         for i in range(self.select_parameter_list.count()):
             item = self.select_parameter_list.item(i)
@@ -293,9 +331,15 @@ class MainWindowGui(QtWidgets.QMainWindow):
         return selected
 
     def get_edit_table_name(self):
+        """
+        *Returns the name of the table entered by user for edit tab.*
+        """
         return self.edit_table_name.currentText()
 
     def get_edit_output_name(self):
+        """
+        *Returns name of destination table name entered in by user.*
+        """
         return self.edit_output_name.text()
 
     ###########################################################################
@@ -303,12 +347,18 @@ class MainWindowGui(QtWidgets.QMainWindow):
     ###########################################################################
 
     def remove_worker_by_jid(self, jid: int):
+        """
+        *Params : int jid (job id), the method terminates a worker thread based on a given job id.*
+        """
         for worker in self.workers:
             if worker.job_id == jid:
                 worker.safe_exit()
                 break
 
     def show_select_error(self, error_message):
+        """
+        *Shows error to user regarding select function.*
+        """
         if self.select_error_label == None:
             self.select_error_label: QLabel = QLabel('<span style="color:#aa0000;">' + error_message + '</span>')
             layout = QtWidgets.QGridLayout()
@@ -335,6 +385,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Unchecked)
 
     def __on_edit_button_click(self):
+        """
+        *Disables edit button, displays table.*
+        """
         table_name = self.get_edit_table_name()
         self.edit_button.setDisabled(True)
         if self.table:
@@ -348,8 +401,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.table_container.setLayout(layout)
         self.current_table_label.setText(table_name)
 
-    # When the table that is being worked with changes, update the parameter list
+
     def __on_select_table_name_selection_changed(self, new_selection):
+        """
+        *When the table that is being worked with changes, update the parameter list.*
+        """
         self.run_button.setDisabled(True)
         if new_selection == '':
             return
@@ -361,6 +417,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.workers.append(worker)
 
     def __on_select_table_name_complete(self, work_result):
+        """
+        *Removes worker thread, returns results or handles error if no result is returned.*
+        """
         self.remove_worker_by_jid(work_result.job_id)
 
         result = work_result.result
@@ -383,8 +442,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
         # Check for errors..
         self.__on_output_name_change()
 
-    # Try to run the select...
+
     def __on_run_button_click(self):
+        """
+        *Tries to run the select function*
+        """
         self.clear_select_error()
 
         selected_params = self.get_select_parameters()
@@ -410,6 +472,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
         worker.start()
 
     def __on_run_done(self, work_result):
+        """
+        *Handles user feedback on success or failure of select function.*
+        """
         self.remove_worker_by_jid(work_result.job_id)
         result = work_result.result
         if not result:
@@ -436,8 +501,11 @@ class MainWindowGui(QtWidgets.QMainWindow):
             err_log('Error running select.')
             debug(e)
 
-    # When the output name changes, if it is empty, display a warning and disable the run button - otherwise enable it
+
     def __on_output_name_change(self):
+        """
+        *When the output name changes, if it is empty, display a warning and disable the run button - otherwise enable it.*
+        """
         try:
             output_name = self.output_name.text()
             if output_name.strip() == '':
@@ -453,9 +521,12 @@ class MainWindowGui(QtWidgets.QMainWindow):
         except Exception as e:
             debug(e)
 
-    # When the conditions are changed, make sure they are valid - if they're not, disable the run button
-    # and display a warning.
+
     def __on_conditions_finished_editing(self):
+        """
+        *When the conditions are changed, make sure they are valid - if they're not, disable the run button
+        and display a warning..*
+        """
         expression = self.get_select_expression()
         res = DSL.parse_expression(expression)
 
@@ -467,31 +538,43 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.run_button.setEnabled(True)
 
 
-    # Toggle the item that was activated
+
     def __iso_list_item_click(self, item):
+        """
+        *Toggle the item that was activated.*
+        """
         if item.checkState() == QtCore.Qt.Checked:
             item.setCheckState(QtCore.Qt.Unchecked)
         else:
             item.setCheckState(QtCore.Qt.Checked)
 
-    # when the wn_max spinbox changes, make sure it's value isn't lower than that of wn_min, and ensure the value isn't
-    # greater than the maximum.
+
     def __wn_max_change(self, value):
+        """
+        when the wn_max spinbox changes, make sure it's value isn't lower than that of wn_min, and ensure the value isn't
+        greater than the maximum.
+        """
         max = self.wn_max.maximum()
         if value > max:
             self.wn_min.setValue(max)
             return
 
-    # when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
-    # isn't below the minimum
+
     def __wn_min_change(self, value):
+        """
+        *when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
+        isn't below the minimum.*
+        """
         min = self.wn_min.minimum()
         if value < min:
             self.wn_min.setValue(min)
 
-    # This method repopulates the isotopologue list widget after the molecule
-    # that is being worked with changes.
+
     def __molecule_id_index_changed(self):
+        """
+        *This method repopulates the isotopologue list widget after the molecule
+        that is being worked with changes.*
+        """
         molecule = self.get_selected_molecule()
 
         # Get the range
@@ -535,6 +618,9 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.iso_list.setItemWidget(item, label)
 
     def __handle_fetch_clicked(self):
+        """
+        *Handles fetching of data, checks to make sure that certain things are proper such as min values being smaller than max numbers.*
+        """
         self.parent.disable_fetch_button()
         # Hide any error messages for now, if they persist they'll be shown
         # at the end of the method

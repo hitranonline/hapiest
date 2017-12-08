@@ -104,7 +104,7 @@ class Isotopologue():
     @staticmethod
     def create_html(_iso: str) -> str:
         """
-        Creates html for isotopologues on fetch window.
+        *Creates html for isotopologues on fetch window.*
         """
         iso = '%s' % _iso
         html = ''
@@ -150,9 +150,12 @@ class Isotopologue():
 
         return html
 
-    # Creates 'Isotopologue's for each one of the isotoplogues as defined in hapi.ISO
+
     @staticmethod
     def populate():
+        """
+        * Creates 'Isotopologue's for each one of the isotoplogues as defined in hapi.ISO.*
+        """
         for (key, _) in ISO.items():
             (mid, iid) = key
             iso = Isotopologue(mid, iid)
@@ -167,25 +170,43 @@ class Isotopologue():
 
     @staticmethod
     def from_molecule_name(mol_name: str) -> 'Isotopologue':
+        """
+        *Converts a string molecule name into an Isotopologue object.*
+        """
         return Isotopologue.FROM_MOL_NAME[mol_name]
 
     @staticmethod
     def from_iso_name(iso_name: str) -> 'Isotopologue':
+        """
+        *Converts a string Isotopologue name into an Isotopologue object.*
+        """
         return Isotopologue.FROM_ISO_NAME[iso_name]
 
     @staticmethod
     def from_molecule_id(id: int) -> 'Isotopologue':
+        """
+        *Converts an integer molecule id into an Isotopologue object*
+        """
         return Isotopologue.FROM_MOL_ID[id]
 
     @staticmethod
     def from_mol_id_iso_id(mid: int, iid: int) -> 'Isotopologue':
+        """
+        *Converts an int molecule ID and an int iso id and returns an isotopologue object.*
+        """
         return Isotopologue.FROM_MOL_ID_ISO_ID[(mid, iid)]
 
     @staticmethod
     def from_global_id(gid: int) -> 'Isotopologue':
+        """
+        *Returns a Isotopologue object, given an integer: Global id.*
+        """
         return Isotopologue.FROM_GLOBAL_ID[gid]
 
     def get_wn_range(self) -> Tuple[float, float]:
+        """
+        *Returns wave number range as a tuple.*
+        """
         if self.molecule_id in Isotopologue.MOLECULE_DATA_RANGE:
             return Isotopologue.MOLECULE_DATA_RANGE[self.molecule_id]
         else:
@@ -193,6 +214,9 @@ class Isotopologue():
             return (0, 100000000)
 
     def get_iso_count(self) -> int:
+        """
+        Returns the number of Isotopologues of a given molecule.
+        """
         return len(Isotopologue.molecules[self.molecule_id])
 
     def get_all_isos(self) -> List['Isotopologue']:
