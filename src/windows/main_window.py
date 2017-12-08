@@ -63,7 +63,7 @@ class MainWindow:
 
     def open_graph_window(self):
         """
-        Open a fetch window, self.child_windows.append(GraphWindow()).
+        Raises an exception when called (?).
         """
         raise Exception("Unsupported: graph operation")
 
@@ -84,6 +84,11 @@ class MainWindow:
         self.gui.close()
 
     def open(self):
+        """
+        *Method that takes self.
+        It then, calls the method gui on self. It then proceeds to open the result of the gui method
+        It then implicitly returns the result of the open method.*
+        """
         self.gui.open()
 
 
@@ -97,6 +102,6 @@ class MainWindow:
 
     def html_log(self, html):
         """
-        *Method gets called when html formatted text is to be printed to console..*
+        *Method gets called when html formatted text is to be printed to console.*
         """
         self.gui.status_bar_label.setText(html)

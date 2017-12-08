@@ -61,9 +61,9 @@ class WorkFunctions:
             Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
-            """
-            *Generates coordinates for absorption coeffecient graph.*
-            """
+        """
+        *Generates coordinates for absorption coeffecient graph.*
+        """
         try:
             x, y = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -86,9 +86,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
-                """
-                *Generates coordinates for absorption spectrum graph.*
-                """
+        """
+        *Generates coordinates for absorption spectrum graph.*
+        """
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -111,9 +111,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
-                """
-                *Generates coordinates for radiance spectrum graph.*
-                """
+        """
+        *Generates coordinates for radiance spectrum graph.*
+        """
         try:
             wn, ac = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -139,9 +139,9 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
-                """
-                *Generates coordinates for transmittance spectrum graph.*
-                """
+        """
+        *Generates coordinates for transmittance spectrum graph.*
+        """
         try:
             wn, ac = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -165,9 +165,9 @@ class WorkFunctions:
     def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
         Dict[str, List[str]], 'FetchError']:
-            """
-            *Method handles verification of user input for fetch function.*
-            """
+        """
+        *Method handles verification of user input for fetch function.*
+        """
         if len(iso_id_list) == 0:
             return FetchError(FetchErrorKind.BadIsoList,
                               'Fetch Failure: Iso list cannot be empty.')
