@@ -257,7 +257,7 @@ class GraphingWindowGui(QtWidgets.QWidget):
 
     def __on_data_name_chagned(self, new_table):
         """
-        *Disables all graph buttons. (Inner method callback : disables graph buttons unless necessary params to graph are supplied.).*
+        *Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.).*
         """
         self.data_name_error.setText('')
         self.set_graph_buttons_enabled(False)
