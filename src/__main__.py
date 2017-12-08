@@ -30,7 +30,8 @@ def main():
 
     WorkRequest.start_work_process()
 
-    start = HapiWorker(WorkRequest.START_HAPI, {})
+    # Hapi is now started automatically in the work process
+    # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
     app = QtWidgets.QApplication(sys.argv)

@@ -299,6 +299,8 @@ class Work:
             WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.try_graph_radiance_spectrum
         }
 
+        WorkFunctions.start_hapi(**{})
+
         while True:
             work_request = workq.get()
             if work_request.work_type == WorkRequest.END_WORK_PROCESS:
