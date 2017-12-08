@@ -11,7 +11,7 @@
             </rect>
         </property>
         <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
             </sizepolicy>
@@ -53,13 +53,6 @@
                                 <widget class="QComboBox" name="data_name"/>
                             </item>
                         </layout>
-                    </item>
-                    <item row="1" column="1">
-                        <widget class="QLabel" name="data_name_error">
-                            <property name="text">
-                                <string/>
-                            </property>
-                        </widget>
                     </item>
                     <item row="2" column="0">
                         <widget class="QLabel" name="temperature_label">
@@ -467,6 +460,16 @@
                             </property>
                         </widget>
                     </item>
+                    <item row="1" column="1">
+                        <widget class="QLabel" name="data_name_error">
+                            <property name="text">
+                                <string/>
+                            </property>
+                            <property name="wordWrap">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                    </item>
                 </layout>
             </item>
             <item row="1" column="0">
@@ -476,6 +479,12 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>560</width>
+                            <height>0</height>
+                        </size>
                     </property>
                     <property name="currentIndex">
                         <number>0</number>

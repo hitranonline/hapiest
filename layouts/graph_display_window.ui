@@ -6,7 +6,7 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>654</width>
+                <width>1273</width>
                 <height>600</height>
             </rect>
         </property>
@@ -14,7 +14,7 @@
             <string>Graph</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-            <item row="2" column="0" colspan="6">
+            <item row="3" column="0" colspan="9">
                 <layout class="QVBoxLayout" name="verticalLayout">
                     <property name="sizeConstraint">
                         <enum>QLayout::SetNoConstraint</enum>
@@ -30,119 +30,127 @@
                             <widget class="QLabel" name="loading_label">
                                 <property name="geometry">
                                     <rect>
-                                        <x>250</x>
-                                        <y>190</y>
-                                        <width>71</width>
-                                        <height>16</height>
+                                        <x>450</x>
+                                        <y>220</y>
+                                        <width>45</width>
+                                        <height>13</height>
                                     </rect>
                                 </property>
                                 <property name="text">
                                     <string>Loading..</string>
+                                </property>
+                                <property name="textFormat">
+                                    <enum>Qt::PlainText</enum>
+                                </property>
+                                <property name="wordWrap">
+                                    <bool>true</bool>
                                 </property>
                             </widget>
                         </widget>
                     </item>
                 </layout>
             </item>
-            <item row="1" column="5">
-                <widget class="QPushButton" name="set_viewport">
-                    <property name="text">
-                        <string>Set Viewport</string>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="0">
-                <widget class="QLabel" name="label">
-                    <property name="text">
-                        <string>x min</string>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                </widget>
-            </item>
-            <item row="1" column="0">
-                <widget class="QLabel" name="label_2">
-                    <property name="text">
-                        <string>x max</string>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                </widget>
-            </item>
-            <item row="1" column="1">
-                <widget class="QDoubleSpinBox" name="xmax">
-                    <property name="decimals">
-                        <number>8</number>
-                    </property>
-                    <property name="maximum">
-                        <double>9007199254740992.000000000000000</double>
-                    </property>
-                    <property name="value">
-                        <double>100.000000000000000</double>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="1">
-                <widget class="QDoubleSpinBox" name="xmin">
-                    <property name="decimals">
-                        <number>8</number>
-                    </property>
-                    <property name="maximum">
-                        <double>9007199254740992.000000000000000</double>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="2">
-                <widget class="QLabel" name="label_3">
-                    <property name="text">
-                        <string>y min</string>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                </widget>
-            </item>
-            <item row="1" column="3">
-                <widget class="QDoubleSpinBox" name="ymax">
-                    <property name="decimals">
-                        <number>8</number>
-                    </property>
-                    <property name="maximum">
-                        <double>9007199254740992.000000000000000</double>
-                    </property>
-                    <property name="value">
-                        <double>100.000000000000000</double>
-                    </property>
-                </widget>
-            </item>
-            <item row="1" column="2">
-                <widget class="QLabel" name="label_4">
-                    <property name="text">
-                        <string>y max</string>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="3">
-                <widget class="QDoubleSpinBox" name="ymin">
-                    <property name="decimals">
-                        <number>8</number>
-                    </property>
-                    <property name="maximum">
-                        <double>9007199254740992.000000000000000</double>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="5">
+            <item row="2" column="7">
                 <widget class="QPushButton" name="reset">
                     <property name="text">
-                        <string>Reset Viewport</string>
+                        <string>Reset</string>
                     </property>
                 </widget>
+            </item>
+            <item row="2" column="6">
+                <widget class="QPushButton" name="set_viewport">
+                    <property name="text">
+                        <string>Apply</string>
+                    </property>
+                </widget>
+            </item>
+            <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                    <item>
+                        <widget class="QLabel" name="label_2">
+                            <property name="text">
+                                <string>X</string>
+                            </property>
+                            <property name="alignment">
+                                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QDoubleSpinBox" name="xmin">
+                            <property name="decimals">
+                                <number>8</number>
+                            </property>
+                            <property name="maximum">
+                                <double>9007199254740992.000000000000000</double>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QLabel" name="label">
+                            <property name="text">
+                                <string>to</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QDoubleSpinBox" name="xmax">
+                            <property name="decimals">
+                                <number>8</number>
+                            </property>
+                            <property name="maximum">
+                                <double>9007199254740992.000000000000000</double>
+                            </property>
+                            <property name="value">
+                                <double>100.000000000000000</double>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
+            </item>
+            <item row="2" column="2" colspan="2">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                    <item>
+                        <widget class="QLabel" name="label_4">
+                            <property name="text">
+                                <string>Y</string>
+                            </property>
+                            <property name="alignment">
+                                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QDoubleSpinBox" name="ymin">
+                            <property name="decimals">
+                                <number>8</number>
+                            </property>
+                            <property name="maximum">
+                                <double>9007199254740992.000000000000000</double>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QLabel" name="label_3">
+                            <property name="text">
+                                <string>to</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QDoubleSpinBox" name="ymax">
+                            <property name="decimals">
+                                <number>8</number>
+                            </property>
+                            <property name="maximum">
+                                <double>9007199254740992.000000000000000</double>
+                            </property>
+                            <property name="value">
+                                <double>100.000000000000000</double>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
             </item>
         </layout>
     </widget>

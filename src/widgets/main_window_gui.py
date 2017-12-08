@@ -359,14 +359,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
         """
         *Shows error to user regarding select function.*
         """
-        if self.select_error_label == None:
-            self.select_error_label: QLabel = QLabel('<span style="color:#aa0000;">' + error_message + '</span>')
-            layout = QtWidgets.QGridLayout()
-            layout.addWidget(self.select_error_label)
-            self.select_error_container.setLayout(layout)
-        else:
-            self.clear_select_error()
-            self.select_error_label.setText('<span style="color:#aa0000;">' + error_message + '</span>')
+        self.clear_select_error()
+        self.select_error_label.setText('<span style="color:#aa0000;">' + error_message + '</span>')
 
     def clear_select_error(self):
         if self.select_error_label != None:
@@ -449,6 +443,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         """
         self.clear_select_error()
 
+
         selected_params = self.get_select_parameters()
         table_name = self.get_select_table_name()
         new_table_name = self.get_output_table_name()
@@ -464,6 +459,8 @@ class MainWindowGui(QtWidgets.QMainWindow):
             self.show_select_error('Cannot have select output table be the same as the input table')
             return
 
+        self.run_button.setDisabled(True)
+
         args = HapiWorker.echo(ParameterNames=selected_params, TableName=table_name,
                                DestinationTableName=new_table_name, Conditions=parsed_expression)
 
@@ -475,15 +472,21 @@ class MainWindowGui(QtWidgets.QMainWindow):
         """
         *Handles user feedback on success or failure of select function.*
         """
+        self.run_button.setEnabled(True)
         self.remove_worker_by_jid(work_result.job_id)
         result = work_result.result
         if not result:
             err_log('Error running select..')
+            self.select_error_label.setText('Possible malformed expression - see console output for details.')
             return
         try:
             if 'all_tables' in result:
                 all_tables = result['all_tables']
                 self.populate_table_lists(all_tables)
+            else:
+                text = 'Error running select: \'' + str(result) + '\''
+                err_log(text)
+                self.select_error_label.setText(text)
 
             # if self.table:
             #     self.table.close_table()

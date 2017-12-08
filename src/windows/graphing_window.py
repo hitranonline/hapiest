@@ -88,6 +88,9 @@ class GraphingWindow(QtCore.QObject):
         elif WavenumberStep <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
             return
 
         work = HapiWorker.echo(
@@ -139,6 +142,9 @@ class GraphingWindow(QtCore.QObject):
         elif WavenumberStep <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
             return
 
         work = HapiWorker.echo(
@@ -187,9 +193,12 @@ class GraphingWindow(QtCore.QObject):
 
         if WavenumberStep == None:
             WavenumberStep = Resolution / 2
-        elif WavenumberStep <= Resolution:
+        elif WavenumberStep >= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
             return
 
         work = HapiWorker.echo(

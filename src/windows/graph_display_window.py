@@ -33,7 +33,11 @@ class GraphDisplayWindow(QtCore.QObject):
         self.done_signal.emit(0)
         if type(work_result.result) != dict:
             err_log('Encountered error while graphing: ' + str(work_result.result))
+            self.gui.loading_label.setText(
+                '<span style="color:#aa0000;">' + 'Encountered error while graphing: \'' + str(
+                    work_result.result) + '\'' + '</span>')
             return
+
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
