@@ -58,8 +58,8 @@ class GraphingWindow(QtCore.QObject):
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW,
             title="Absorption Coefficient",
-            titlex="wavenumber",
-            titley="coef"
+            titlex="Wavenumber",
+            titley="Coefficient"
         )
 
         self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
@@ -102,8 +102,8 @@ class GraphingWindow(QtCore.QObject):
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW,
             title="Absorption Spectrum",
-            titlex="wavenumber",
-            titley="intensity",
+            titlex="Wavenumber",
+            titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
@@ -153,8 +153,8 @@ class GraphingWindow(QtCore.QObject):
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW,
             title="Radiance Spectrum",
-            titlex="wavenumber",
-            titley="intensity",
+            titlex="Wavenumber",
+            titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
@@ -204,8 +204,8 @@ class GraphingWindow(QtCore.QObject):
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW,
             title="Transmittance Spectrum",
-            titlex="wavenumber",
-            titley="intensity",
+            titlex="Wavenumber",
+            titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,

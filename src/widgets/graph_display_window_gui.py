@@ -50,6 +50,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         self.chart = QChart()
         self.chart.addSeries(series)
         self.chart.setTitle(title)
+        self.setWindowTitle(title)
 
         if self.axisy:
             self.chart.removeAxis(self.axisy)
@@ -112,6 +113,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         *Params: self, value. Checks to make sure that the values are proper. If the value passed in is
         smaller than the already established x min value, then the x min value is set to be the value -1 and the x max is set to be value passed into the method
         """
+        return
         min = self.xmin.value()
         if value < min:
             self.xmax.setValue(value)
@@ -121,6 +123,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         """
         *If the value of the number passed in is larger than the currently established max value for x, then the min value is set to be the value passed in , and the max is set to be the value passed into the method + 1.*
         """
+        return
         max = self.xmax.value()
         if value > max:
             self.xmin.setValue(value)
@@ -130,6 +133,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         """
         *Sets the value for y max, if the value passed in is smaller than the current y min, then the y max is set to y min, and y min is set to the value passed into the method .*
         """
+        return
         min = self.ymin.value()
         if value < min:
             self.ymax.setValue(min)
@@ -139,6 +143,7 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
         """
         *Sets the value for y min, if the value passed in is larger than current y max, then the value of y min is set to be the value of y max, and the y max value is set as the value passed into the method.*
         """
+        return
         max = self.ymax.value()
         if value > max:
             self.ymin.setValue(max)
@@ -158,6 +163,18 @@ class GraphDisplayWindowGui(QtWidgets.QWidget):
 
         if xmin == xmax or ymin == ymax:
             return
+        if xmin > xmax:
+            t = xmin
+            xmin = xmax
+            xmax = t
+            self.xmin.setValue(xmin)
+            self.xmax.setValue(xmax)
+        if ymin > ymax:
+            t = ymin
+            ymin = ymax
+            ymax = t
+            self.ymin.setValue(ymin)
+            self.xmin.setValue(ymax)
 
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
