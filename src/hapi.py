@@ -3887,7 +3887,7 @@ Exceptions in Python are handled with try-except [exceptionname] blocks:
             # Exception didn't occur, we're good.
             pass
         finally:
-            # This is executed after the code block is run
+            # This is executed after the code block is install.py
             # and all exceptions have been handled, even
             # if a new exception is raised while handling.
             print "We're done with that."
@@ -4599,7 +4599,7 @@ For doing that, let's have a table downloaded from HITRANonline.
 # get data on CO2 main isotopologue in the range 2000-2100 cm-1
 >>> fetch('CO2',2,1,2000,2100)
 
-OK, now we're ready to run a fast example of how to calculate an
+OK, now we're ready to install.py a fast example of how to calculate an
 absorption coefficient cross section:
 
 >>> nu,coef = absorptionCoefficient_Lorentz(SourceTables='CO2')
@@ -4911,8 +4911,8 @@ Prerequisites:
        Matplotlib can be obtained by the link http://matplotlib.org/
    2) Numpy  (required by HAPI itself)
        Numpy can be obtained via pip:
-          sudo pip install numpy (under Linux and Mac)
-          pip install numpy (under Windows)
+          sudo pip install.py numpy (under Linux and Mac)
+          pip install.py numpy (under Windows)
        Or by the link http://www.numpy.org/
 
 As an option, user can download one of the many scientific Python

@@ -44,7 +44,7 @@ class TextReceiver(QtCore.QObject):
         TextReceiver.WINDOW = main_window
         # Create a receiver
         TextReceiver.TEXT_RECEIVER = TextReceiver(TextReceiver.TEXT_EDIT_STREAM.queue, *args, **kwargs)
-        # Create a thread for the receiver to run in
+        # Create a thread for the receiver to install.py in
         TextReceiver.TEXT_THREAD = QtCore.QThread()
         # Connect the signal to the console output handler in the main window
         # Connect the console output signals

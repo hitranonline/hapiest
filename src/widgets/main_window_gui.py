@@ -439,7 +439,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __on_run_button_click(self):
         """
-        *Tries to run the select function*
+        *Tries to install.py the select function*
         """
         self.clear_select_error()
 
@@ -507,7 +507,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __on_output_name_change(self):
         """
-        *When the output name changes, if it is empty, display a warning and disable the run button - otherwise enable it.*
+        *When the output name changes, if it is empty, display a warning and disable the install.py button - otherwise enable it.*
         """
         try:
             output_name = self.output_name.text()
@@ -527,7 +527,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __on_conditions_finished_editing(self):
         """
-        *When the conditions are changed, make sure they are valid - if they're not, disable the run button
+        *When the conditions are changed, make sure they are valid - if they're not, disable the install.py button
         and display a warning..*
         """
         expression = self.get_select_expression()
