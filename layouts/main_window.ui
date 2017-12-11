@@ -66,7 +66,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-          <number>0</number>
+          <number>3</number>
       </property>
       <widget class="QWidget" name="fetch_tab">
        <attribute name="title">
@@ -853,26 +853,16 @@ p, li { white-space: pre-wrap; }
                &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;
                font-weight:400; font-style:normal;&quot;&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt; Hapiest was developed in a software engineering course at
+               SUNY Oswego by students Benji Caro, Joshua Karns, Dominik Lohmann, Wyatt Matt, Ethan Messer, and Michael
+               Sova in conjunction with proffesors Iouli Gordan and Roman Kochanov of Harvard University, and with
+               advisement from SUNY Oswego professors Bastian Tenbergen and Shashi Kanbur. Hapiest is a GUI developed to
+               take place of using command line prompts in accessing molecular spectroscopy data from the HITRAN
+               database. It was developed in Python and designed using PyQt designer... &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
-               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
-               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hapiest was developed in a software
-               engineering course at SUNY Oswego by students Benji Caro, Joshua Karns, Dominik Lohmann, Wyatt Matt,
-               Ethan Messer, and Michael Sova in conjunction with proffesors Iouli Gordan and Roman Kochanov of Harvard
-               University, and with advisement from SUNY Oswego professors Bastian Tenbergen and Shashi Kanbur. Hapiest
-               is a GUI developed to take place of using command line prompts in accessing molecular spectroscopy data
-               from the HITRAN database. It was developed in Python and designed using PyQt designer... &lt;/p&gt;
-               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
-               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
-               &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px;
-               margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;
-               font-weight:600; font-style:italic;&quot;&gt;Window Features &lt;/span&gt;&lt;span style=&quot;
-               font-size:12pt;&quot;&gt; &lt;/span&gt; &lt;/p&gt;
+               -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;
+               font-style:italic;&quot;&gt;Window Features &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;
+               &lt;/span&gt; &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Main
                Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt; &lt;/p&gt;
@@ -882,8 +872,6 @@ p, li { white-space: pre-wrap; }
                local computer to be graphed by HAPIEST's graphing window. The retreived data can then be modified
                through the select feature, and directly modified through the edit feature. &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
-               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Graphing
                Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt; &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
@@ -891,8 +879,6 @@ p, li { white-space: pre-wrap; }
                in many ways including a graph for the Absorption, Transmittance, and Radiance Spectrum. You can also use
                HAPIEST to graph multiple isotopologues at once. It can be accessed through the toolbar (Graphing -&amp;gt;
                Open Graph Window). &lt;/p&gt;
-               &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
-               -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;/p&gt;
                &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
                -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Graph
                Display Window&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; &lt;/span&gt; &lt;/p&gt;
