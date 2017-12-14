@@ -225,13 +225,15 @@ class WorkFunctions:
         return True
 
     @staticmethod
-    def table_write_to_disk(output_table: str, **kwargs):
+    def table_write_to_disk(source_table: str, output_table: str, **kwargs):
         """
         *Attempts to save cached data to local machine.*
         """
         try:
-            #select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
+            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
             cache2storage(TableName=output_table)
+            hmd = HapiMetaData(source_table)
+            HapiMetaData.write(output_table, list(map(lambda iso: iso.id, hmd.isos)))
         except Exception as e:
             debug(e)
             return e
