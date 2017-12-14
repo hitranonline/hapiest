@@ -439,7 +439,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
 
     def __on_run_button_click(self):
         """
-        *Tries to install.py the select function*
+        *Tries to run the select function*
         """
         self.clear_select_error()
 
