@@ -6,4 +6,6 @@ test_data/*
 Config.toml
 .idea/*
 *.iml
-docs/build/*
+docs/html
+docs/latex
+*.pdf
