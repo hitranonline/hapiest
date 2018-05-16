@@ -1,0 +1,22 @@
+PROJECT_NAME        = hapiest
+PROJECT_NUMBER      = 
+FILE_PATTERNS       = *.py
+RECURSIVE           = YES
+INPUT               = ../../src/widgets ../../src/utils ../../src/windows ../../src/worker ../../src/__main__.py
+OUTPUT_DIRECTORY    = ../
+OUTPUT_LANGUAGE     = English
+EXTRACT_ALL         = NO
+EXTRACT_PRIVATE     = NO
+EXTRACT_STATIC      = YES
+HIDE_UNDOC_MEMBERS  = YES
+HIDE_UNDOC_CLASSES  = YES
+CLASS_DIAGRAMS      = YES
+INLINE_SOURCES      = YES
+GENERATE_TODOLIST   = YES
+
+
+HTML_HEADER             = header.html
+HTML_FOOTER             = footer.html
+HTML_EXTRA_STYLESHEET   = customdoxygen.css
+HTML_EXTRA_FILES        = doxy-boot.js
+
