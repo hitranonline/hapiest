@@ -9,14 +9,26 @@ select-page-length = 10
 '''
 
 class Config():
+    """
+    The configuration class is a singleton class that contains static members for each of the possible user
+    configurable settings.
+    """
+    
+    ## The folder where data is stored
     data_folder = 'data'
+
+    ## Whether the program should be ran with high-dpi scaling enabled.
     high_dpi = 'false'
+
+    ## The number of rows that tables should be paginated with.
     select_page_length = 10
 
     
     @staticmethod
     def config_init():
-        """*Reads in config file. If not file, calls load_config()*"""
+        """
+        Reads in the config file. If it doesn't eist, it will create it with the default settings set.
+        """
 
         if not os.path.isfile(CONFIG_LOCATION):
             try:
@@ -37,17 +49,23 @@ class Config():
     @staticmethod
     def set_defaults():
         """
-        **Sets default values for program's startup.**
+        Sets default values.
         """
-        Config.data_folder = 'data'
-        Config.high_dpi = 'false'
-        Config.select_page_length = 10
-
+        def set_if_none(name, default_value):
+            if Config[name] == None:
+                Config[name] = default_value
+        
+        set_if_none('data_folder', 'data')
+        set_if_none('high_dpi', 'false')
+        set_if_none('select_page_length', 10)
 
     @staticmethod
     def set_values(dict):
         """
-        **Sets values from a parsed toml dictionary.**
+        Sets values from a parsed toml dictionary.
+
+        Args:
+            dict: The parsed toml key-value dictionary.
         """
         Config.set_defaults()
         try:
@@ -62,7 +80,10 @@ class Config():
     @staticmethod
     def load_config(config_text):
         """
-        **Sets the default values if config_init fails.**
+        Attempts to load a configuration from the supplied text. If it fails to do so, it sets unspecified values to their defaults.
+        
+        Args:
+            config_text: The text of the configuration file.
         """
         try:
             parsed = toml.loads(config_text)
@@ -73,5 +94,5 @@ class Config():
             print(e)
             Config.set_defaults()
 
-
+# Statically loads the configuration!
 Config.config_init()
