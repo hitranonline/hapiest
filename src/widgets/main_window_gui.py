@@ -9,11 +9,12 @@ from utils.log import *
 from widgets.hapi_table_view import HapiTableView
 from widgets.gui import GUI
 
-class MainWindowGui(QMainWindow):
+class MainWindowGui(GUI, QMainWindow):
     # Constructor for the gui - essentially just calls the parent constructor
     # and loads the ui layout
     def __init__(self):
-        super(MainWindowGui, self).__init__()
+        GUI.__init__(self)
+        QMainWindow.__init__(self)
     
         # Most of the elements that are in the 'Fetch' tab
         self.data_name: QLineEdit = None

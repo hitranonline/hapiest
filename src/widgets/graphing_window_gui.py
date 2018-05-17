@@ -5,9 +5,10 @@ from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from widgets.gui import GUI
 
-class GraphingWindowGui(GUI):
+class GraphingWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
-        super(GraphingWindowGui, self).__init__()
+        GUI.__init__(self)
+        QtWidgets.QWidget.__init__(self)
 
         self.workers = []
 

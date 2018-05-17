@@ -4,10 +4,11 @@ from PyQt5.QtChart import *
 from utils.log import *
 from widgets.gui import GUI
 
-
-class GraphDisplayWindowGui(GUI):
+class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
-        super(GraphDisplayWindowGui, self).__init__()
+        GUI.__init__(self)
+        QtWidgets.QWidget.__init__(self)
+        
         uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
         self.chart_view = None
