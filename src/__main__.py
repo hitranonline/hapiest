@@ -11,7 +11,6 @@ if srcre.match(os.getcwd()):
 from PyQt5 import QtWidgets, QtCore
 from windows.main_window import *
 from worker.hapi_worker import *
-from utils.console_redirect import *
 from utils.log import *
 from worker.work_request import *
 from worker.hapi_thread import HapiThread
@@ -40,13 +39,7 @@ def main():
 
     window.gui.adjustSize()
 
-
-    TextReceiver.init_console_redirect(window, sys.argv)
-
-
     qt_result = app.exec_()
-
-    TextReceiver.redirect_close()
 
     close = HapiWorker(WorkRequest.END_WORK_PROCESS, {}, callback=None)
     close.safe_exit()

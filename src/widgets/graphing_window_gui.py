@@ -3,11 +3,11 @@ from PyQt5.QtGui import QFont
 from utils.hapi_metadata import *
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
+from widgets.gui import GUI
 
-
-class GraphingWindowGui(QtWidgets.QWidget):
+class GraphingWindowGui(GUI):
     def __init__(self):
-        super(QtWidgets.QWidget, self).__init__()
+        super(GraphingWindowGui, self).__init__()
 
         self.workers = []
 

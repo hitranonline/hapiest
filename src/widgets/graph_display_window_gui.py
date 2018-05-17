@@ -2,9 +2,10 @@ from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from utils.hapiest_util import *
 from PyQt5.QtChart import *
 from utils.log import *
+from widgets.gui import GUI
 
 
-class GraphDisplayWindowGui(QtWidgets.QWidget):
+class GraphDisplayWindowGui(GUI):
     def __init__(self):
         super(GraphDisplayWindowGui, self).__init__()
         uic.loadUi('layouts/graph_display_window.ui', self)

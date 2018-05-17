@@ -7,15 +7,14 @@ from utils.dsl import DSL
 from windows.graphing_window import *
 from utils.log import *
 from widgets.hapi_table_view import HapiTableView
+from widgets.gui import GUI
 
-
-class MainWindowGui(QtWidgets.QMainWindow):
+class MainWindowGui(QMainWindow):
     # Constructor for the gui - essentially just calls the parent constructor
     # and loads the ui layout
-    def __init__(self, window):
+    def __init__(self):
         super(MainWindowGui, self).__init__()
-        self.parent: 'MainWindow' = window
-
+    
         # Most of the elements that are in the 'Fetch' tab
         self.data_name: QLineEdit = None
         self.err_bad_connection: QLabel = None
@@ -27,7 +26,7 @@ class MainWindowGui(QtWidgets.QMainWindow):
         self.molecule_id: QComboBox = None
         self.wn_max: QDoubleSpinBox = None
         self.wn_min: QDoubleSpinBox = None
-
+        
         # Most of the elements that are in the 'Select' tab
         self.select_error_container: QWidget = None
         self.export_button: QPushButton = None

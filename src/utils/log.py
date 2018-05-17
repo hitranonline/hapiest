@@ -1,4 +1,3 @@
-from utils.console_redirect import *
 import sys
 
 

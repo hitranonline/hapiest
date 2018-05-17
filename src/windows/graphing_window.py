@@ -6,19 +6,15 @@ from windows.graph_display_window import *
 from worker.hapi_worker import *
 from utils.hapiest_util import *
 from utils.log import *
+from windows.window import Window
 
-
-class GraphingWindow(QtCore.QObject):
+class GraphingWindow(Window):
     def __init__(self, parent):
-        super(GraphingWindow, self).__init__()
-        self.parent = parent
-        self.children = []
-        self.gui = GraphingWindowGui()
+        super(GraphingWindow, self).__init__(GraphingWindowGui(), parent)
         try:
             self.populate_data_names()
         except Exception as e:
             print(e)
-        self.gui.show()
 
         def f():
             try:
@@ -30,6 +26,9 @@ class GraphingWindow(QtCore.QObject):
         self.gui.graph_rs_button.clicked.connect(self.graph_rs)
         self.gui.graph_as_button.clicked.connect(self.graph_as)
         self.gui.graph_ts_button.clicked.connect(self.graph_ts)
+        
+        self.open()
+
 
     def graph(self):
         self.gui.graph_button.setDisabled(True)
@@ -62,7 +61,7 @@ class GraphingWindow(QtCore.QObject):
             titley="Coefficient"
         )
 
-        self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
+        self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
 
     def graph_as(self):
         self.gui.graph_as_button.setDisabled(True)
@@ -113,7 +112,7 @@ class GraphingWindow(QtCore.QObject):
             AF_wing=AF_wing
         )
 
-        self.children.append(GraphDisplayWindow(WorkRequest.ABSORPTION_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_SPECTRUM, work, self))
 
     def graph_rs(self):
         """
@@ -167,7 +166,7 @@ class GraphingWindow(QtCore.QObject):
             AF_wing=AF_wing
         )
 
-        self.children.append(GraphDisplayWindow(WorkRequest.RADIANCE_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(WorkRequest.RADIANCE_SPECTRUM, work, self))
 
     def graph_ts(self):
         """
@@ -221,7 +220,7 @@ class GraphingWindow(QtCore.QObject):
             AF_wing=AF_wing
         )
 
-        self.children.append(GraphDisplayWindow(WorkRequest.TRANSMITTANCE_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(WorkRequest.TRANSMITTANCE_SPECTRUM, work, self))
 
     def populate_data_names(self):
         try:

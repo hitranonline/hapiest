@@ -12,7 +12,7 @@ class MainWindow:
         # Initially an empty list, until other windows are created
         self.child_windows = []
         # Create a new instance of the GUI container class
-        self.gui: 'MainWindowGui' = MainWindowGui(self)
+        self.gui: 'MainWindowGui' = MainWindowGui()
 
         self.is_open: bool = True
 

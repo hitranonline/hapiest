@@ -52,8 +52,8 @@ class Config():
         Sets default values.
         """
         def set_if_none(name, default_value):
-            if Config[name] == None:
-                Config[name] = default_value
+            if Config.__dict__[name] == None:
+                Config.__dict__[name] = default_value
         
         set_if_none('data_folder', 'data')
         set_if_none('high_dpi', 'false')
