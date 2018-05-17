@@ -8,8 +8,6 @@ from windows.window import Window
 class GraphDisplayWindow(Window):
     done_signal = QtCore.pyqtSignal(object)
 
-    # Data should never be None / null, since if there is no data selected a new
-    # graphing window shouldn't even be opened.
     def __init__(self, ty, work_object, parent):
         """
         Initializes the GUI and sends a work request for the graph to be plotted, and connect signals to the
