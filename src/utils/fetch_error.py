@@ -14,11 +14,23 @@ class FetchErrorKind(Enum):
 
 # A class that contains a FetchErrorKind along with a description for the error
 class FetchError:
+    """
+    A data class that contains an error along with a description of that error.
+
+    """
+
     # Constructor for FetchError
     #
     # errors: a FetchErrorKind object
     # description: a textual description of the error
-    def __init__(self, error, description=''):
+    def __init__(self, error: FetchErrorKind, description=''):
+        """
+        Constructs a FetchError object.
+
+        @param error The type of error encountered
+        @param description A description of what happened
+        
+        """
         self.error = error
         self.description = description
 

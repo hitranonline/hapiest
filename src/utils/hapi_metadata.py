@@ -10,12 +10,19 @@ class HapiMetaData():
     """
     Hapiest Meta Data class - to be paired with the .data and .header files generated
     with each fetch request.
+    
+    TODO: Significantly improve and standardize the '.hmd' format.
+
     """
+
     @staticmethod
     def write(data_name, iso_list):
         """
-        Params: data_name and iso_list.
-        This method creates a .hmd file and populates it with the HITRAN meta data isotopologue list.
+        Writes a '.hmd' file.
+
+        @param data_name the name of the data
+        @param iso_list a list of all of the isotopologues the data set contains
+
         """
         with open(Config.data_folder + "/" + data_name + ".hmd", "w+") as file:
             last_index = len(iso_list) - 1
@@ -25,12 +32,19 @@ class HapiMetaData():
                     file.write(",")
 
     def __init__(self, filename):
-        debug(filename)
+        """
+        Initializes a '.hmd' by reading it from the supplied filename.
+        @param filename the filename to read from
+        
+        TODO: Generate a '.hmd' file if there is not one present.
+
+        """
+        ## The filename
         self.filename = filename
 
-        # A list of the isotopologues that this hmd file has
+        ## A list of the isotopologues that this hmd file has
         self.isos = []
-        # A list of the isos as tuples (M, I)
+        ## A list of the isos as tuples (M, I)
         self.iso_tuples = []
 
         try:

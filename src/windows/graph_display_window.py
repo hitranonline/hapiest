@@ -13,10 +13,10 @@ class GraphDisplayWindow(Window):
         Initializes the GUI and sends a work request for the graph to be plotted, and connect signals to the
         appropriate handler methods.
 
-        Args:
-            ty:             the type of work to be done. May be different for different types of graphs.
-            work_object:    has information about the graph that is to be made.
-            parent:         the parent QObject.
+        @param ty the type of work to be done. May be different for different types of graphs
+        @param work_object has information about the graph that is to be made
+        @param parent the parent QObject
+        
         """
         super(GraphDisplayWindow, self).__init__(GraphDisplayWindowGui(), parent)
         
@@ -32,10 +32,9 @@ class GraphDisplayWindow(Window):
         Plots the graph stored in 'work_result', which may be an error message rather than a result dictionary. If this
         is the case the error is printed to the console. This also emits a 'done' signal.
 
-        Args:
-            work_result:    the result of the HapiWorker; it will either be a string (which indicates an error), or it
+        @param work_result the result of the HapiWorker; it will either be a string (which indicates an error), or it
                             will be a dictionary that contains the x and y coordinates and some information about graph
-                            labels.
+                            labels
         """
         self.done_signal.emit(0)
         if type(work_result.result) != dict:

@@ -11,6 +11,9 @@ DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')
 def get_all_data_names():
     """
     Returns a list of all the different data-names in the data directory.
+
+    @returns A set of all of the data names in the data folders
+
     """
     files = os.listdir(Config.data_folder)
     datas = []
@@ -22,6 +25,10 @@ def get_all_data_names():
     return set(datas)
 
 
-# Used to create a map from named arguments
 def echo(**kwargs):
+    """
+    @param kwargs the keyworded arguments
+    @returns the dictionary kwargs
+
+    """
     return kwargs

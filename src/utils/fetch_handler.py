@@ -25,7 +25,8 @@ class FetchHandler:
                  numin: float, numax: float,
                  parameter_groups: List[str] = (), parameters: List[str] = ()):
         """
-        test.
+        Creates a HapiWorker for fetching data with the given data
+
         """
         self.data_name = data_name
         self.worker = None
