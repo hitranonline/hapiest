@@ -13,8 +13,8 @@ should be followed.
 - Lines should be limited to 120 characters
 - Types should always be specified
 - CamelCase should be used for class names
-- snake__case should be used for variable names
-- SNAKE__CASE should be used for static variables and constants
+- snake_case should be used for variable names
+- SNAKE_CASE should be used for static variables and constants
 - `'Single quotes'` should be preffered over double quotes.
 
 ## Comment Style
