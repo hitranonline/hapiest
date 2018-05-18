@@ -12,9 +12,11 @@ from widgets.gui import GUI
 class MainWindowGui(GUI, QMainWindow):
     # Constructor for the gui - essentially just calls the parent constructor
     # and loads the ui layout
-    def __init__(self):
-        GUI.__init__(self)
+    def __init__(self, parent):
         QMainWindow.__init__(self)
+        GUI.__init__(self)
+
+        self.parent = parent
     
         # Most of the elements that are in the 'Fetch' tab
         self.data_name: QLineEdit = None

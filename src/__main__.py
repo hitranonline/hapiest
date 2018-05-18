@@ -18,6 +18,10 @@ from worker.hapi_thread import HapiThread
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
 
+class App(QtWidgets.QApplication):
+    def __init__(self, *args):
+        QtWidgets.QApplication.__init__(self, *args)
+
 def main():
     if Config.high_dpi == 'true':
         # Enable High DPI display with PyQt5
@@ -33,16 +37,18 @@ def main():
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = App(sys.argv)
 
     window = MainWindow()
-
     window.gui.adjustSize()
+
+    TextReceiver.init(window)
 
     qt_result = app.exec_()
 
+    TextReceiver.redirect_close()
     close = HapiWorker(WorkRequest.END_WORK_PROCESS, {}, callback=None)
-    close.safe_exit()
+    close.safe_exit() 
     WorkRequest.WORKER.process.join()
     WorkRequest.WORKER.process.terminate()
     HapiThread.kill_all()
