@@ -10,6 +10,12 @@ from windows.window import Window
 
 class GraphingWindow(Window):
     def __init__(self, parent):
+		"""
+		Populates Graphing Window with names of data files in users data folder, then initializes 
+		Graphing Window to display options to the GUI corresponging to currently selected graph type 
+		(Radiance, Absorption, or Transmittance Spectrum Graph types).
+		
+		"""
         super(GraphingWindow, self).__init__(GraphingWindowGui(), parent)
         try:
             self.populate_data_names()
@@ -64,6 +70,9 @@ class GraphingWindow(Window):
         self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
 
     def graph_as(self):
+		"""
+		Formats GUI for Absorption Spectrum graphing.
+		"""
         self.gui.graph_as_button.setDisabled(True)
         data_name = self.gui.get_data_name()
         hmd = HapiMetaData(data_name)
@@ -116,7 +125,7 @@ class GraphingWindow(Window):
 
     def graph_rs(self):
         """
-        Radiance spectrum graphing.
+        Formats GUI for Radiance spectrum graphing.
         """
         self.gui.graph_rs_button.setDisabled(True)
         data_name = self.gui.get_data_name()
@@ -170,7 +179,7 @@ class GraphingWindow(Window):
 
     def graph_ts(self):
         """
-        Transmittance spectrum graping.
+        Formats GUI for Transmittance spectrum graping.
         """
         self.gui.graph_ts_button.setDisabled(True)
         data_name = self.gui.get_data_name()
@@ -223,6 +232,9 @@ class GraphingWindow(Window):
         self.add_child_window(GraphDisplayWindow(WorkRequest.TRANSMITTANCE_SPECTRUM, work, self))
 
     def populate_data_names(self):
+		"""
+		Retreive data file names from users data folder for display in the Graphing Window.
+		"""
         try:
             data_names = get_all_data_names()
             for item in data_names:
@@ -232,6 +244,9 @@ class GraphingWindow(Window):
             err_log("Failed to populate data names...")
 
     def done_graphing(self):
+		"""
+		Re-enables buttons for use after graphing is finished.
+		"""
         self.gui.graph_button.setEnabled(True)
         self.gui.graph_ts_button.setEnabled(True)
         self.gui.graph_rs_button.setEnabled(True)

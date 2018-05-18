@@ -10,8 +10,8 @@ class GraphDisplayWindow(Window):
 
     def __init__(self, ty, work_object, parent):
         """
-        Initializes the GUI and sends a work request for the graph to be plotted, and connect signals to the
-        appropriate handler methods.
+        Initializes the GUI and sends a work request for the graph to be plotted, and connect 
+		signals to the appropriate handler methods.
 
         @param ty the type of work to be done. May be different for different types of graphs
         @param work_object has information about the graph that is to be made
@@ -29,8 +29,8 @@ class GraphDisplayWindow(Window):
 
     def plot(self, work_result: WorkResult):
         """
-        Plots the graph stored in 'work_result', which may be an error message rather than a result dictionary. If this
-        is the case the error is printed to the console. This also emits a 'done' signal.
+        Plots the graph stored in 'work_result', which may be an error message rather than a result
+		dictionary. If this is the case the error is printed to the console. This also emits a 'done' signal.
 
         @param work_result the result of the HapiWorker; it will either be a string (which indicates an error), or it
                             will be a dictionary that contains the x and y coordinates and some information about graph

@@ -18,7 +18,9 @@ class MainWindow:
 
     def fetch_done(self, work_result: WorkResult):
         """
-        *Gives user feedback about fetching success or failure.*
+		User feedback for GUI paramter fields of the fetch function in the Main Window.
+
+		@param work_result X
         """
         try:
             debug(1)
@@ -56,27 +58,37 @@ class MainWindow:
             debug(e)
 
     def disable_fetch_button(self):
+		"""
+		Disable fetch button to disallow user to stack data requests.
+		"""
         self.gui.fetch_button.setDisabled(True)
 
     def enable_fetch_button(self):
+		"""
+		Re-enables fetch button to allow user to request data.
+		"""
         self.gui.fetch_button.setEnabled(True)
 
     def open_graph_window(self):
         """
-        Raises an exception when called (?).
+        DESCRIPTION
         """
         raise Exception("Unsupported: graph operation")
 
     def close_window(self, to_close):
         """
         Close all occurences of the window to_close in the windows list.
-        There should only be one but you never know...
+		
+		param to_close Window to be closed
         """
         self.child_windows = filter(
             lambda window: window != to_close, self.child_windows)
         to_close.close()
 
     def close(self):
+		"""
+		Closes window.
+		"""
         for window in self.child_windows:
             if window.is_open:
                 window.close()
@@ -85,23 +97,20 @@ class MainWindow:
 
     def open(self):
         """
-        *Method that takes self.
-        It then, calls the method gui on self. It then proceeds to open the result of the gui method
-        It then implicitly returns the result of the open method.*
+		Opens the Main Window GUI.
         """
         self.gui.open()
 
 
     def text_log(self, text):
         """
-        *Method that get called when the append_text signal is received by the window
-        This is to allow console output.*
+		Sets status_bar_label to text mode to display console output when append_text signal received.
         """
         self.gui.status_bar_label.setText(text)
 
 
     def html_log(self, html):
         """
-        *Method gets called when html formatted text is to be printed to console.*
+		Sets status_bar_label to html mode to display html to console output.
         """
         self.gui.status_bar_label.setText(html)
