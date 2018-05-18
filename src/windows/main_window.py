@@ -18,12 +18,11 @@ class MainWindow:
 
     def fetch_done(self, work_result: WorkResult):
         """
-		User feedback for GUI paramter fields of the fetch function in the Main Window.
+        User feedback for GUI paramter fields of the fetch function in the Main Window.
 
-		@param work_result X
+        @param work_result contains the work result (error or success)
         """
         try:
-            debug(1)
             self.gui.fetch_handler.worker.safe_exit()
             result = work_result.result
             self.enable_fetch_button()
@@ -58,37 +57,42 @@ class MainWindow:
             debug(e)
 
     def disable_fetch_button(self):
-		"""
-		Disable fetch button to disallow user to stack data requests.
-		"""
+        """
+        Disable fetch button to disallow user to stack data requests.
+        
+        """
         self.gui.fetch_button.setDisabled(True)
 
     def enable_fetch_button(self):
-		"""
-		Re-enables fetch button to allow user to request data.
-		"""
+        """
+        Re-enables fetch button to allow user to request data.
+    
+        """
         self.gui.fetch_button.setEnabled(True)
 
     def open_graph_window(self):
         """
-        DESCRIPTION
+        TODO: Implement this method?
+        
         """
         raise Exception("Unsupported: graph operation")
 
     def close_window(self, to_close):
         """
         Close all occurences of the window to_close in the windows list.
-		
-		param to_close Window to be closed
+        
+        @param to_close Window to be closed
+        
         """
         self.child_windows = filter(
             lambda window: window != to_close, self.child_windows)
         to_close.close()
 
     def close(self):
-		"""
-		Closes window.
-		"""
+        """
+        Closes window.
+    
+        """
         for window in self.child_windows:
             if window.is_open:
                 window.close()
@@ -97,20 +101,21 @@ class MainWindow:
 
     def open(self):
         """
-		Opens the Main Window GUI.
+        Opens the Main Window GUI.
+        
         """
         self.gui.open()
 
 
     def text_log(self, text):
         """
-		Sets status_bar_label to text mode to display console output when append_text signal received.
+        Sets status_bar_label to text mode to display console output when append_text signal received.
         """
         self.gui.status_bar_label.setText(text)
 
 
     def html_log(self, html):
         """
-		Sets status_bar_label to html mode to display html to console output.
+        Sets status_bar_label to html mode to display html to console output.
         """
         self.gui.status_bar_label.setText(html)

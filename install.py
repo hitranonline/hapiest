@@ -17,7 +17,7 @@ try:
     import parsy
 
     print('All required packages are already installed!')
-except Error as e:
+except Exception as e:
     print("Missing dependency:\n" + str(e))
 
 finally:
