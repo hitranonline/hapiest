@@ -25,15 +25,16 @@ should be followed.
 
 e.g.
 ```python
-class Test:
+class Example:
     """
+    This class is an example of proper documentation in the context of hapiest.
     There is a blank line below this comment intentionally!
 
     """
 
     ## The static variable
     #  ...
-    #  end
+    #  ...
     static_member = 4
         
     def __init__(self):
@@ -50,12 +51,14 @@ class Test:
         Adds to self.var
 
         @param to_add the amount var should be increased by
-        
+        @returns the new value of var
         @throws Exception thrown then to_add is not an integer
         
         """
         if type(to_add) == int:
             self.var += to_add
+            return self.var
         else:
             raise Exception("Expected a number!")
+
 ```
