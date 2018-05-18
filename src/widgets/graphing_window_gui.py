@@ -7,8 +7,8 @@ from widgets.gui import GUI
 
 class GraphingWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
-        GUI.__init__(self)
         QtWidgets.QWidget.__init__(self)
+        GUI.__init__(self)
 
         self.workers = []
 

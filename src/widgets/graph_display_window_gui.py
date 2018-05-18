@@ -6,8 +6,8 @@ from widgets.gui import GUI
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
-        GUI.__init__(self)
         QtWidgets.QWidget.__init__(self)
+        GUI.__init__(self)
         
         uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
