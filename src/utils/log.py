@@ -116,8 +116,9 @@ def log(arg):
     Prints to the console_output with a fancy lookin log label.
 
     """
-    print_html_to_status_bar('<div style="color: #7878e2">[Log]</div>&nbsp;' + arg)
-    print("[Log] ", arg, file=sys.__stdout__)
+    s = str(arg)
+    print_html_to_status_bar('<div style="color: #7878e2">[Log]</div>&nbsp;' + s)
+    print("[Log] ", s, file=sys.__stdout__)
 
 
 def err_log(dat):
@@ -125,8 +126,9 @@ def err_log(dat):
     Prints to the console_output with a fancy lookin error label.
 
     """
-    print_html_to_status_bar('<div style="color: #e27878">[Error]</div>&nbsp;' + dat)
-    print("[Err] ", dat, file=sys.__stdout__)
+    s = str(arg)
+    print_html_to_status_bar('<div style="color: #e27878">[Error]</div>&nbsp;' + s)
+    print("[Err] ", s, file=sys.__stdout__)
 
 
 def debug_log(dat):
@@ -134,6 +136,7 @@ def debug_log(dat):
     Writes to the status bar and to stdout
 
     """
-    print_html_to_status_bar('<div style="color: #78e278">[Debug]</div>&nbsp;' + dat)
-    print("[Log] ", dat, file=sys.__stdout__)
+    s = str(dat)
+    print_html_to_status_bar('<div style="color: #78e278">[Debug]</div>&nbsp;' + s)
+    print("[Log] ", s, file=sys.__stdout__)
 

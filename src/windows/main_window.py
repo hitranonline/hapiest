@@ -6,15 +6,12 @@ from widgets.main_window_gui import MainWindowGui
 from utils.log import *
 from utils.fetch_error import FetchErrorKind, FetchError
 from worker.work_result import *
+from windows.window import Window
 
-class MainWindow:
+class MainWindow(Window):
     def __init__(self):
-        # Initially an empty list, until other windows are created
-        self.child_windows = []
-        # Create a new instance of the GUI container class
-        self.gui: 'MainWindowGui' = MainWindowGui(self)
+        Window.__init__(self, MainWindowGui(self), None)
 
-        self.is_open: bool = True
 
     def fetch_done(self, work_result: WorkResult):
         """

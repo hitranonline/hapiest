@@ -9,3 +9,4 @@ Config.toml
 docs/html
 docs/latex
 *.pdf
+/venv/
