@@ -16,7 +16,7 @@ class GraphingWindow(Window):
         (Radiance, Absorption, or Transmittance Spectrum Graph types).
         
         """
-        super(GraphingWindow, self).__init__(GraphingWindowGui(), parent)
+        Window.__init__(self, GraphingWindowGui(), parent)
         try:
             self.populate_data_names()
         except Exception as e:

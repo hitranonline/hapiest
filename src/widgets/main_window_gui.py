@@ -66,19 +66,25 @@ class MainWindowGui(GUI, QMainWindow):
         self.param_list = QtWidgets.QListWidget(self)
 
         self.splitter = QtWidgets.QSplitter(self)
-        self.splitter.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum))
+
         self.splitter.addWidget(self.iso_list)
+        self.splitter.setStretchFactor(self.splitter.indexOf(self.iso_list), 1)
+
         self.splitter.addWidget(self.param_group_list)
+        self.splitter.setStretchFactor(self.splitter.indexOf(self.param_group_list), 1)
+        
         self.splitter.addWidget(self.param_list)
+        self.splitter.setStretchFactor(self.splitter.indexOf(self.param_list), 1)
 
-        list_layout = QtWidgets.QGridLayout()
+        list_layout = QtWidgets.QHBoxLayout()
         list_layout.addWidget(self.splitter)
+        list_layout.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
         self.list_container.setLayout(list_layout)
-
+        
         self.status_bar_label = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
         self.init_molecule_list()
-
+        
         self.populate_parameter_lists()
 
         # Connect menu actions to handling functions
@@ -653,6 +659,6 @@ class MainWindowGui(GUI, QMainWindow):
 
     def __open_graph_window(self):
         try:
-            self.parent.child_windows.append(GraphingWindow(self))
+            self.parent.add_child_window(GraphingWindow(self.parent))
         except Exception as e:
             err_log(e)
