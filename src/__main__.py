@@ -4,7 +4,6 @@ import inspect
 import sys
 
 if sys.version < (3, 6):
-    print(sys.version_info[0])
     print('You must have Python 3 installed to use hapiest - current version is ' + str(sys.version))
     sys.exit(0)
 
