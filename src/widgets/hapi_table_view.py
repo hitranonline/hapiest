@@ -1,10 +1,39 @@
-from PyQt5.QtWidgets import QTableWidget, QLineEdit
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
 from worker.hapi_worker import *
 from worker.work_request import *
 from worker.work_result import *
 from utils.lines import *
 from functools import reduce
+
+class HapiTableCell(QLineEdit):
+
+    def __init__(self, table, row, col):
+        self.row = row
+        self.col = col
+        self.table = table
+        QTextEdit.__init__(self)
+        self.editingFinished.connect(self.__editing_finished_handler)
+
+        
+    def __editing_finished_handler(self):
+        """
+        Alters a field in the corresponding hapi table. Each cell in the table is
+        assigned an on edit function that is generataed using this function.
+        """
+        print("hello")
+        t = type(self.table.lines.parameters[self.table.lines.param_order[self.col]][0])
+        value = self.text()
+        line = self.table.lines.get_line(self.row)
+        if t == int:
+            line.update_nth_field(self.col, int(value))
+        elif t == float:
+            line.update_nth_field(self.col, float(value))
+        else:
+            line.update_nth_field(self.col, value)
+
+
 
 class HapiTableView(QTableWidget):
     Row = int
@@ -29,7 +58,7 @@ class HapiTableView(QTableWidget):
         self.last_page = False
         self.current_page = 0
         self.current_page_len = Config.select_page_length
-        self.page_len = Config.select_page_length
+        self.page_len = int(Config.select_page_length)
         self.setRowCount(self.page_len)
 
         if self.table_name != None:
@@ -47,57 +76,63 @@ class HapiTableView(QTableWidget):
         self.items = []
         self.double_validator = QDoubleValidator()
         self.double_validator.setNotation(QDoubleValidator.ScientificNotation)
-        self.int_validator = QIntValidator()
+        self.int_validator = QIntValidator() 
+        self.horizontalHeader().setStretchLastSection(True)
+
+    
+    def keyPressEvent(self, event):
+        key = event.key()
+        if key == Qt.Key_Return or key == Qt.Key_Enter:
+            pass
+
+    def closeEditor(self, editor, hint):
+        print('he')
+        if hint == QAbstractItemDelegate.EditNextItem and self.currentColumn() == 1:
+            hint = QAbstractItemDelegate.EditPreviousItem
+        elif hint == QAbstractItemDelegate.EditPreviousItem and currentColumn() == 0:
+            hint = QAbstractItemDelegate.EditNextItem
+
+        QTableWidget.closeEditor(editor, hint)
+
 
     def display_first_page(self, work_result: WorkResult):
         """
-        *Displays first page of info for edit functionity.*
+        Displays first page of info for edit functionity, sets 'on edit' functions.
         """
         lines: Lines = Lines(**work_result.result)
+        self.lines = lines
         self.setColumnCount(len(lines.param_order))
         self.setHorizontalHeaderLabels(lines.param_order)
         vertical_labels = map(str, range(0, self.page_len))
         self.setVerticalHeaderLabels(vertical_labels)
-
-        def update_field(column, row, line_edit):
-            """
-            *Given a column, row, and a line edit, the method alters a field in the data.*
-            """
-            def f():
-                t = type(self.lines.parameters[self.lines.param_order[column]][0])
-                value = line_edit.text()
-                line = self.lines.get_line(row)
-                if t == int:
-                    line.update_nth_field(column, int(value))
-                elif t == float:
-                    line.update_nth_field(column, float(value))
-                else:
-                    line.update_nth_field(column, value)
-
-            return f
-
-
+        
+       
         self.current_page_len = lines.get_len()
+        col_widths = [0] * nparams
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
             self.items.append([])
-            for column in range(0, len(lines.param_order)):
+            for column in range(0, nparams):
                 item = line.get_nth_field(column)
-                line_edit = QLineEdit()
+                line_edit = HapiTableCell(self, row, column)
                 if type(item) == float:
                     line_edit.setValidator(self.double_validator)
                 elif type(item) == int:
                     line_edit.setValidator(self.int_validator)
 
-                line_edit.editingFinished.connect(update_field(column, row, line_edit))
+                str_value = str(item).strip()
 
                 self.setCellWidget(row, column, line_edit)
                 self.items[row].append(line_edit)
-                line_edit.setText(str(item))
+                line_edit.setText(str_value)
+        
+        self.resizeColumnsToContents()
         self.display_page(work_result)
+
 
     def try_display_page(self, work_result: WorkResult):
         self.display_page(work_result)
+
 
     def display_page(self, work_result: WorkResult):
         if not work_result:
@@ -119,12 +154,19 @@ class HapiTableView(QTableWidget):
         # for i in range(0, self.current_page_len):
         #    item = self.verticalHeaderItem(i)
         #    item.setText(str(page_min + i))
-
+        
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        nparams = lines.param_order
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
-            for column in range(0, len(lines.param_order)):
+            for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
-                self.items[row][column].setText(str(line.get_nth_field(column)))
+                self.items[row][column].setText(str(line.get_nth_field(column)).strip())
+        
+        self.setVisible(False)
+        self.resizeColumnsToContents()
+        self.setVisible(True)
+        
         self.main_window.edit_button.setEnabled(True)
         self.save_button.setEnabled(True)
 

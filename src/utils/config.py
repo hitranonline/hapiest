@@ -1,13 +1,6 @@
 import os.path
 import toml
 
-CONFIG_LOCATION = 'Config.toml'
-DEFAULT_CONFIG = '''[hapi]
-data-folder = 'data'
-high-dpi = 'false'
-select-page-length = 10
-'''
-
 class Config():
     """
     The configuration class is a singleton class that contains static members for each of the possible user
@@ -22,9 +15,17 @@ class Config():
     high_dpi = 'false'
 
     ## The number of rows that tables should be paginated with.
-    select_page_length = 10
+    select_page_length = 1000
 
+    DEFAULT_CONFIG =  """
+[hapi]
+data-folder = '{data_folder}'
+high-dpi = '{high_dpi}'
+select-page-length = '{select_page_length}'
+""".format(data_folder = data_folder, high_dpi = high_dpi, select_page_length = select_page_length)
     
+    CONFIG_LOCATION = 'Config.toml'
+   
     @staticmethod
     def config_init():
         """
@@ -32,17 +33,17 @@ class Config():
     
         """
 
-        if not os.path.isfile(CONFIG_LOCATION):
+        if not os.path.isfile(Config.CONFIG_LOCATION):
             try:
-                fh = open(CONFIG_LOCATION, 'w')
-                fh.write(DEFAULT_CONFIG)
+                fh = open(Config.CONFIG_LOCATION, 'w')
+                fh.write(Config.DEFAULT_CONFIG)
                 fh.close()
             except Exception as e:
                 print(str(e))
             finally:
                 Config.set_defaults()
         else:
-            with open(CONFIG_LOCATION, 'r') as file:
+            with open(Config.CONFIG_LOCATION, 'r') as file:
                 text = file.read()
 
                 Config.load_config(text)
@@ -78,6 +79,7 @@ class Config():
         except Exception as e:
             print('Encountered error while initializing program configuration')
             print(e)
+            print(dict)
 
     # Tries to load a configuration, if it fails
     @staticmethod

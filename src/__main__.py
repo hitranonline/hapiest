@@ -3,7 +3,7 @@ import re
 import inspect
 import sys
 
-if sys.version < (3, 6):
+if sys.version_info < (3, 6):
     print('You must have Python 3 installed to use hapiest - current version is ' + str(sys.version))
     sys.exit(0)
 
