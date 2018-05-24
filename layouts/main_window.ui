@@ -993,10 +993,23 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>912</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar::item {
+    padding: 1px 4px;
+    background: transparent;
+    border-radius: 4px;
+}
+QMenuBar::item:selected {
+    background: #a8a8a8;
+}</string>
+   </property>
    <widget class="QMenu" name="menuGraphing">
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="title">
      <string>Graphing</string>
     </property>
@@ -1027,6 +1040,11 @@ p, li { white-space: pre-wrap; }
   <action name="graph_window_action">
    <property name="text">
     <string>Open Graph Window</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
   </action>
  </widget>
