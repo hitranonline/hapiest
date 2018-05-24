@@ -10,3 +10,6 @@ docs/html
 docs/latex
 *.pdf
 /venv/
+*.spec
+dist/
+build/
