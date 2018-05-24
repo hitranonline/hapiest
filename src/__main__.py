@@ -14,6 +14,7 @@ from worker.hapi_worker import *
 from utils.log import *
 from worker.work_request import *
 from worker.hapi_thread import HapiThread
+from multiprocessing import Process, freeze_support
 
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
@@ -56,6 +57,7 @@ def main():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     try:
         main()
     except Exception as e:
