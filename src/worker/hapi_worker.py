@@ -29,7 +29,6 @@ class HapiWorker(HapiThread):
         self.args: Dict[str, Any] = args
         self.job_id = HapiWorker.job_id
         HapiWorker.job_id += 1
-
         self.started.connect(self.__run)
 
         if self.work_type == WorkRequest.END_WORK_PROCESS:
@@ -45,7 +44,7 @@ class HapiWorker(HapiThread):
             self.done_signal.connect(self.callback)
 
     def safe_exit(self):
-        self.terminate()
+        self.quit()
         while self.isRunning():
             pass
         return

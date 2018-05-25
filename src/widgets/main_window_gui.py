@@ -20,10 +20,6 @@ class MainWindowGui(GUI, QMainWindow):
     
         # Most of the elements that are in the 'Fetch' tab
         self.data_name: QLineEdit = None
-        self.err_bad_connection: QLabel = None
-        self.err_bad_iso_list: QLabel = None
-        self.err_empty_name: QLabel = None
-        self.err_small_range: QLabel = None
         self.fetch_button: QPushButton = None
         self.list_container: QWidget = None
         self.molecule_id: QComboBox = None
@@ -94,12 +90,6 @@ class MainWindowGui(GUI, QMainWindow):
         self.export_button.setToolTip("Export data into desired format.")
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.select_parameter_list.setToolTip("Select the parameters for select() function.")
-
-        # Hide error messages
-        self.err_small_range.hide()
-        self.err_bad_connection.hide()
-        self.err_bad_iso_list.hide()
-        self.err_empty_name.hide()
 
         self.select_all_button.clicked.connect(self.__on_select_all_button_click)
         self.deselect_all_button.clicked.connect(self.__on_deselect_all_button_click)
@@ -608,12 +598,6 @@ class MainWindowGui(GUI, QMainWindow):
         *Handles fetching of data, checks to make sure that certain things are proper such as min values being smaller than max numbers.*
         """
         self.parent.disable_fetch_button()
-        # Hide any error messages for now, if they persist they'll be shown
-        # at the end of the method
-        self.err_small_range.hide()
-        self.err_bad_connection.hide()
-        self.err_bad_iso_list.hide()
-        self.err_empty_name.hide()
         molecule = self.get_selected_molecule()
 
         wn_max = self.get_wn_max()

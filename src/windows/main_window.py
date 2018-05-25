@@ -35,21 +35,20 @@ class MainWindow(Window):
             for err in errs:
                 # This means the wavenumber range was too small (probably), so
                 # we'll tell the user it is too small
+                # TODO: Highlight empty elements / invalid elements
                 if err.error == FetchErrorKind.FailedToRetreiveData:
-                    self.gui.err_small_range.show()
                     err_log('The entered wavenumber range is too small, try increasing it')
                 # Not much to do in regards to user feedback in this case....
                 elif err.error == FetchErrorKind.FailedToOpenThread:
                     err_log('Failed to open thread to make query HITRAN')
                 elif err.error == FetchErrorKind.BadConnection:
-                    self.gui.err_bad_connection.show()
                     err_log(
                         'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
                 elif err.error == FetchErrorKind.BadIsoList:
-                    self.gui.err_bad_iso_list.show()
                     err_log(' Error: You must select at least one isotopologue.')
                 elif err.error == FetchErrorKind.EmptyName:
-                    self.gui.err_empty_name.show()
+                    pass
+
         except Exception as e:
             debug(e)
 

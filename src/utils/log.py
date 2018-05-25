@@ -53,7 +53,7 @@ class TextReceiver(QtCore.QObject):
 
         """
         TextReceiver.TEXT_RECEIVER.running = False
-        TextReceiver.TEXT_THREAD.terminate()
+        TextReceiver.TEXT_THREAD.quit()
 
 
     @staticmethod

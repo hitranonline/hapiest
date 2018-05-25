@@ -25,7 +25,7 @@ class HapiThread(QThread):
         for thread in HapiThread.threads:
             if thread == None or thread.isFinished():
                 continue
-            thread.terminate()
+            thread.quit()
             while thread.isRunning():
                 sleep(0.01)
         print('All QThreads have been terminated')

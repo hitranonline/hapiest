@@ -58,7 +58,6 @@ def main():
     close = HapiWorker(WorkRequest.END_WORK_PROCESS, {}, callback=None)
     close.safe_exit() 
     WorkRequest.WORKER.process.join()
-    WorkRequest.WORKER.process.terminate()
     HapiThread.kill_all()
     sys.exit(0)
 
