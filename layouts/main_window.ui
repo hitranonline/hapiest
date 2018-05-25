@@ -997,10 +997,12 @@ p, li { white-space: pre-wrap; }
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QMenuBar::item {
+    <string notr="true">QMenuBar {
+    background: #d8d8d8;
+}
+QMenuBar::item {
     padding: 1px 4px;
-    background: transparent;
-    border-radius: 4px;
+    background: #e8e8e8;
 }
 QMenuBar::item:selected {
     background: #a8a8a8;

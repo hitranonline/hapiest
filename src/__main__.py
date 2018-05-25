@@ -63,7 +63,7 @@ def main():
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
+    freeze_support()
     try:
         main()
     except Exception as e:
