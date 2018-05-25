@@ -15,13 +15,13 @@ class Config():
     high_dpi = 'false'
 
     ## The number of rows that tables should be paginated with.
-    select_page_length = 1000
+    select_page_length = 100
 
     DEFAULT_CONFIG =  """
 [hapi]
-data-folder = '{data_folder}'
-high-dpi = '{high_dpi}'
-select-page-length = '{select_page_length}'
+data_folder = '{data_folder}'
+high_dpi = '{high_dpi}'
+select_page_length = {select_page_length}
 """.format(data_folder = data_folder, high_dpi = high_dpi, select_page_length = select_page_length)
     
     CONFIG_LOCATION = 'Config.toml'
@@ -39,7 +39,7 @@ select-page-length = '{select_page_length}'
                 fh.write(Config.DEFAULT_CONFIG)
                 fh.close()
             except Exception as e:
-                print(str(e))
+                print("damn: " + str(e))
             finally:
                 Config.set_defaults()
         else:
@@ -60,8 +60,8 @@ select-page-length = '{select_page_length}'
                 Config.__dict__[name] = default_value
         
         set_if_none('data_folder', 'data')
-        set_if_none('high_dpi', 'false')
-        set_if_none('select_page_length', 10)
+        set_if_none('high_dpi', Config.high_dpi)
+        set_if_none('select_page_length', Config.select_page_length)
 
     @staticmethod
     def set_values(dict):
@@ -73,9 +73,9 @@ select-page-length = '{select_page_length}'
         """
         Config.set_defaults()
         try:
-            Config.data_folder = dict['hapi']['data-folder']
-            Config.high_dpi = dict['hapi']['high-dpi']
-            Config.select_page_length = dict['hapi']['select-page-length']
+            Config.data_folder = dict['hapi']['data_folder']
+            Config.high_dpi = dict['hapi']['high_dpi']
+            Config.select_page_length = dict['hapi']['select_page_length']
         except Exception as e:
             print('Encountered error while initializing program configuration')
             print(e)

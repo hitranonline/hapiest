@@ -126,7 +126,7 @@ def err_log(dat):
     Prints to the console_output with a fancy lookin error label.
 
     """
-    s = str(arg)
+    s = str(dat)
     print_html_to_status_bar('<div style="color: #e27878">[Error]</div>&nbsp;' + s)
     print("[Err] ", s, file=sys.__stdout__)
 

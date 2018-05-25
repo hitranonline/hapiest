@@ -363,13 +363,6 @@ class MainWindowGui(GUI, QMainWindow):
                 worker.safe_exit()
                 break
 
-    def show_select_error(self, error_message):
-        """
-        *Shows error to user regarding select function.*
-        """
-        self.clear_select_error()
-        self.select_error_label.setText('<span style="color:#aa0000;">' + error_message + '</span>')
-
     def clear_select_error(self):
         if self.select_error_label != None:
             self.select_error_label.setText("")
@@ -460,11 +453,9 @@ class MainWindowGui(GUI, QMainWindow):
 
         if parsed_expression == None and expression.strip() != '':
             err_log('Invalid select expression.')
-            self.show_select_error('Invalid select expression.')
             return
         if table_name == new_table_name:
             err_log('Cannot have select output table be the same as the input table')
-            self.show_select_error('Cannot have select output table be the same as the input table')
             return
 
         self.run_button.setDisabled(True)
@@ -524,13 +515,12 @@ class MainWindowGui(GUI, QMainWindow):
             elif output_name == self.get_select_table_name():
                 self.run_button.setDisabled(True)
                 err_log('Cannot have select output table be the same as the input table')
-                self.show_select_error('Cannot have select output table be the same as the input table')
             else:
                 self.run_button.setEnabled(True)
                 self.clear_select_error()
 
         except Exception as e:
-            debug(e)
+            debug('fug: ' + str(e))
 
 
     def __on_conditions_finished_editing(self):

@@ -21,6 +21,7 @@ from utils.log import *
 from worker.work_request import *
 from worker.hapi_thread import HapiThread
 from multiprocessing import Process, freeze_support
+import multiprocessing
 
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)

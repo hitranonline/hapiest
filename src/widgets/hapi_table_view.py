@@ -6,8 +6,9 @@ from worker.work_request import *
 from worker.work_result import *
 from utils.lines import *
 from functools import reduce
+import itertools
 
-class HapiTableCell(QLineEdit):
+class HapiLineEdit(QLineEdit):
 
     def __init__(self, table, row, col):
         self.row = row
@@ -15,7 +16,7 @@ class HapiTableCell(QLineEdit):
         self.table = table
         QTextEdit.__init__(self)
         self.editingFinished.connect(self.__editing_finished_handler)
-
+        self.font_metrics = QFontMetrics(self.font())
         
     def __editing_finished_handler(self):
         """
@@ -33,9 +34,24 @@ class HapiTableCell(QLineEdit):
         else:
             line.update_nth_field(self.col, value)
 
+    
+    """def sizeHint(self):
+        super_sizehint = QLineEdit.sizeHint(self)
+        super_sizehint.setWidth(self.font_metrics.width(self.text()))
+        return super_sizehint
+"""
+"""
+class HapiTableDelegate(QStyledItemDelegate):
+    def __init__(self, table):
+        QStyledItemDelegate.__init__(self)
+        self.table = table
 
 
-class HapiTableView(QTableWidget):
+    def createEditor(self, parent, option, index):
+        line_edit = HapiLineEdit(self.table, index.row(), index.col())
+        return line_edit
+"""
+class HapiTableView(QTableView):
     Row = int
     Column = int
     Position = Tuple[Row, Column]
@@ -59,7 +75,6 @@ class HapiTableView(QTableWidget):
         self.current_page = 0
         self.current_page_len = Config.select_page_length
         self.page_len = int(Config.select_page_length)
-        self.setRowCount(self.page_len)
 
         if self.table_name != None:
             self.workers = []
@@ -73,11 +88,11 @@ class HapiTableView(QTableWidget):
             self.back_button.setDisabled(True)
             self.save_button.setDisabled(True)
 
-        self.items = []
+        # self.items = []
         self.double_validator = QDoubleValidator()
         self.double_validator.setNotation(QDoubleValidator.ScientificNotation)
         self.int_validator = QIntValidator() 
-        self.horizontalHeader().setStretchLastSection(True)
+        # self.horizontalHeader().setStretchLastSection(True)
 
     
     def keyPressEvent(self, event):
@@ -101,20 +116,43 @@ class HapiTableView(QTableWidget):
         """
         lines: Lines = Lines(**work_result.result)
         self.lines = lines
-        self.setColumnCount(len(lines.param_order))
-        self.setHorizontalHeaderLabels(lines.param_order)
-        vertical_labels = map(str, range(0, self.page_len))
-        self.setVerticalHeaderLabels(vertical_labels)
+        nparams = len(lines.param_order)
         
+        self.table_model = QStandardItemModel(Config.select_page_length, nparams)
+        # self.delegate = HapiTableDelegate(self)
+        # self.setItemDelegate(self.delegate)
+        self.setModel(self.table_model)
+        self.table_model.setHorizontalHeaderLabels(lines.param_order)
        
+        self.setModel(self.table_model)
+
+        vertical_labels = map(str, range(0, self.page_len))
+        
+        self.table_model.setVerticalHeaderLabels(vertical_labels)
+        
         self.current_page_len = lines.get_len()
-        col_widths = [0] * nparams
+        
+        self.column_formats = []
+        self.column_widths = []
+        new_names = []
+        for column in range(0, nparams):
+            self.column_formats.append(PARAMETER_META[lines.param_order[column]]["default_fmt"])
+            column_width = sum(map(int, itertools.filterfalse(lambda x: not x.isdigit(), ["".join(x) for _, x in itertools.groupby(self.column_formats[column], key=str.isdigit)])))    
+            if column_width == 0:
+                column_width = 16
+            self.setColumnWidth(column, column_width)
+            self.column_widths.append(column_width)
+            new_names.append(("%-" + str(column_width) + "." +  str(column_width + 2) + "s") % lines.param_order[column])
+        print(new_names)
+        self.table_model.setHorizontalHeaderLabels(new_names)
+
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
-            self.items.append([])
+            # self.items.append([])
             for column in range(0, nparams):
                 item = line.get_nth_field(column)
-                line_edit = HapiTableCell(self, row, column)
+                self.setIndexWidget(self.table_model.createIndex(row, column), HapiLineEdit(self, row, column))
+                line_edit = self.indexWidget(self.table_model.createIndex(row, column))
                 if type(item) == float:
                     line_edit.setValidator(self.double_validator)
                 elif type(item) == int:
@@ -122,11 +160,10 @@ class HapiTableView(QTableWidget):
 
                 str_value = str(item).strip()
 
-                self.setCellWidget(row, column, line_edit)
-                self.items[row].append(line_edit)
+                # self.items[row].append(line_edit)
                 line_edit.setText(str_value)
-        
-        self.resizeColumnsToContents()
+                
+        # self.resizeColumnsToContents()
         self.display_page(work_result)
 
 
@@ -150,18 +187,20 @@ class HapiTableView(QTableWidget):
 
         self.last_page = lines.last_page
         page_min = result['page_number'] * result['page_len']
-        self.setVerticalHeaderLabels(map(str, range(page_min, page_min + self.current_page_len)))
+        self.table_model.setVerticalHeaderLabels(map(str, range(page_min, page_min + self.current_page_len)))
         # for i in range(0, self.current_page_len):
         #    item = self.verticalHeaderItem(i)
         #    item.setText(str(page_min + i))
         
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.table_model.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         nparams = lines.param_order
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
             for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
-                self.items[row][column].setText(str(line.get_nth_field(column)).strip())
+                self.indexWidget(self.table_model.createIndex(row, column)).setText((self.column_formats[column] % line.get_nth_field(column)).strip())
+                        # str(line.get_nth_field(column)).strip())
+                # self.items[row][column].setText(str(line.get_nth_field(column)).strip())
         
         self.setVisible(False)
         self.resizeColumnsToContents()

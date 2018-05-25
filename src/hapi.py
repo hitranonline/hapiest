@@ -1742,9 +1742,7 @@ def saveCache():
         try:
             cache2storage(TableName)
         except Exception as e:
-            print(e)
-        finally:
-            print('aa')
+            print('darn: ' + str(e))
 
 # DB backend level, start transaction
 def databaseBegin(db=None):
