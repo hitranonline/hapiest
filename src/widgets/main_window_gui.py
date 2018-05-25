@@ -52,6 +52,11 @@ class MainWindowGui(GUI, QMainWindow):
         self.edit_output_name: QLineEdit = None
         self.edit_table_name: QComboBox = None
 
+        self.iso_list = None
+        self.param_group_list = None 
+        self.param_list = None
+
+
         # Other stuff..
         self.graph_window_action: QAction = None
         self.statusbar: QStatusBar = None
@@ -61,26 +66,6 @@ class MainWindowGui(GUI, QMainWindow):
 
         self.workers = []
 
-        self.iso_list = QtWidgets.QListWidget(self)
-        self.param_group_list = QtWidgets.QListWidget(self)
-        self.param_list = QtWidgets.QListWidget(self)
-
-        self.splitter = QtWidgets.QSplitter(self)
-
-        self.splitter.addWidget(self.iso_list)
-        self.splitter.setStretchFactor(self.splitter.indexOf(self.iso_list), 1)
-
-        self.splitter.addWidget(self.param_group_list)
-        self.splitter.setStretchFactor(self.splitter.indexOf(self.param_group_list), 1)
-        
-        self.splitter.addWidget(self.param_list)
-        self.splitter.setStretchFactor(self.splitter.indexOf(self.param_list), 1)
-
-        list_layout = QtWidgets.QHBoxLayout()
-        list_layout.addWidget(self.splitter)
-        list_layout.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
-        self.list_container.setLayout(list_layout)
-        
         self.status_bar_label = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
         self.init_molecule_list()
