@@ -3,7 +3,7 @@
 to all sorts of spectrographic data without knowledge of python.
 
 # How to Install
-Hapiest currently has no binary packages, but it's python dependencies and the program itself can be downloaded
+Hapiest currently has no binary packages, but the program itself can be downloaded
 with the [install.py](https://github.com/hitranonline/hapiest/blob/master/install.py) script.
 
 *You must have python 3.6 or later to install and use hapiest*.
@@ -17,11 +17,13 @@ wget -O install.py https://raw.githubusercontent.com/hitranonline/hapiest/master
 && rm -rf install.py
 ```
 
+This will download and unzip the latest version of hapiest. You may need to manually install packages using pip.
+
 You may have to replace `python` in the above command with `python3` or `python3.6` depending on your specific
 configuration.
 
 After you install hapiest, you can start it by calling `run` in a command prompt or terminal. If you are on mac you may
-have to edit the `run` file and replace `python` with `python3`.
+have to edit the `run` file and replace `python` with `python3` or `python3.6`.
 
 # References
 If you use data retreived using hapiest or hapi and use it, please use the following citation if you publish it:
