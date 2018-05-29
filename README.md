@@ -25,6 +25,10 @@ configuration.
 After you install hapiest, you can start it by calling `run` in a command prompt or terminal. If you are on mac you may
 have to edit the `run` file and replace `python` with `python3` or `python3.6`.
 
+# Troubleshooting
+*hapiest* is still a very immature piece of software. If you encounter any bugs, you're encouraged to open an issue with
+your bug report.
+
 # References
 If you use data retreived using hapiest or hapi and use it, please use the following citation if you publish it:
 
