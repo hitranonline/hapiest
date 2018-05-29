@@ -23,7 +23,6 @@ class HapiLineEdit(QLineEdit):
         Alters a field in the corresponding hapi table. Each cell in the table is
         assigned an on edit function that is generataed using this function.
         """
-        print("hello")
         t = type(self.table.lines.parameters[self.table.lines.param_order[self.col]][0])
         value = self.text()
         line = self.table.lines.get_line(self.row)
@@ -101,7 +100,6 @@ class HapiTableView(QTableView):
             pass
 
     def closeEditor(self, editor, hint):
-        print('he')
         if hint == QAbstractItemDelegate.EditNextItem and self.currentColumn() == 1:
             hint = QAbstractItemDelegate.EditPreviousItem
         elif hint == QAbstractItemDelegate.EditPreviousItem and currentColumn() == 0:
@@ -142,8 +140,8 @@ class HapiTableView(QTableView):
                 column_width = 16
             self.setColumnWidth(column, column_width)
             self.column_widths.append(column_width)
-            new_names.append(("%-" + str(column_width) + "." +  str(column_width + 2) + "s") % lines.param_order[column])
-        print(new_names)
+            new_names.append(("%-" + str(column_width) + "." +  str(column_width + 1) + "s") % lines.param_order[column])
+        
         self.table_model.setHorizontalHeaderLabels(new_names)
 
         for row in range(0, self.current_page_len):

@@ -351,25 +351,17 @@ class Work:
         WorkFunctions.start_hapi(**{})
 
         while True:
-            print("1")
             work_request = workq.get()
-            print("2")
             if work_request.work_type == WorkRequest.END_WORK_PROCESS:
                 return 0
             else:
-                print("2")
                 result = None
                 try:
-                    print("3")
                     result = work_request.do_work()
-                    print("4")
                 except Exception as e:
-                    print("5")
                     debug('Error executing work request: ', e, type(e), result)
                 finally:
-                    print("6")
                     resultq.put(result)
-                    print("7")
 
     def __init__(self):
         self.process: mp.Process = mp.Process(target=Work.WORK_FUNCTION, args=(WorkRequest.WORKQ, WorkRequest.RESULTQ))
