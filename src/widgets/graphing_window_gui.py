@@ -89,11 +89,12 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
     # Getters
     ##
         
-    def get_broadening_parameters(self):
+    def get_diluent(self):
         """
         @returns a dictionary containing all of the broadening parameters (currently, that is just gamma_air and gamma_self).
         """
-        return self.broadening_parameter.currentText()
+        gamma_air = self.gamma_air.value()
+        return { 'air': gamma_air, 'self': 1.0 - gamma_air }
 
     def get_data_name(self):
         """
