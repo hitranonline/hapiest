@@ -3,8 +3,17 @@ from utils.hapiest_util import *
 from PyQt5.QtChart import *
 from utils.log import *
 from widgets.gui import GUI
+from random import randint
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
+
+    @staticmethod
+    def generate_random_color(r, g, b):
+        """
+        @returns a tuple, containing 3 integers between 0 and 255 which represent the r, g, and b values of a color.
+        """
+        return ((randint(0, 255) + r) / 2, (randint(0, 255) + g) / 2, (randint(0, 255) + b) / 2)
+
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         GUI.__init__(self)
