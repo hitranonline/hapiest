@@ -1,4 +1,6 @@
 import sys
+import threading
+from time import sleep
 
 sources = {
     'hapi': {
@@ -31,7 +33,12 @@ class HapiSourcesTest(Test):
         app = QtWidgets.QApplication(sys.argv)
     
         window = QtWidgets.QMainWindow()
-        
+        def close_window():
+            sleep(0.25)
+            window.deleteLater()
+            
+        t = threading.Thread(target=close_window)
+        t.start()
         items = QtWidgets.QWidget(window)
         layout = QtWidgets.QVBoxLayout()
         for k, v in sources.items():
