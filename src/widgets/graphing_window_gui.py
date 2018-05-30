@@ -24,7 +24,10 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.intensity_threshold_enabled: QCheckBox = None
         self.wn_max: QDoubleSpinBox = None
         self.wn_min: QDoubleSpinBox = None
-        self.broadening_parameter: QComboBox = None
+        # Changed to gamma_air, gamma_self proportion
+        # self.broadening_parameter: QComboBox = None
+        self.gamma_air: QDoubleSpinBox = None
+        self.gamma_self: QLabel = None
         self.data_name: QComboBox = None
         self.graph_button: QPushButton = None
         self.graph_type: QComboBox = None
@@ -65,11 +68,12 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.intensity_threshold_enabled.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.intensity_threshold_enabled, self.intensity_threshold))
         self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
+        self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
+        
         #TOOLTIPS
         self.data_name.setToolTip("Select the name of the data you wish to graph.")
         self.temperature.setToolTip("Select the temperature to graph the data at.")
         self.pressure.setToolTip("Select the pressure to graph the data at.")
-        self.broadening_parameter.setToolTip("Select broadening paramater for data.")
         self.intensity_threshold.setToolTip("Absolute value of minimum intensity.")
         self.wn_min.setToolTip("Select min wavelength for graph.")
         self.wn_max.setToolTip("Select max wavelength for graph.")
@@ -80,38 +84,32 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
         self.adjustSize()
 
-
-    def __handle_checkbox_toggle(self, checkbox, element):
+    
+    ##
+    # Getters
+    ##
+        
+    def get_broadening_parameters(self):
         """
-        *A handler for checkboxes that will either enable or disable the given
-        element, depending on whether the checkbox is checked or not.*
-        """
-        if checkbox.isChecked():
-            element.setEnabled(True)
-        else:
-            element.setDisabled(True)
-
-    def get_broadening_parameter(self):
-        """
-        *Returns broadening_parameter.*
+        @returns a dictionary containing all of the broadening parameters (currently, that is just gamma_air and gamma_self).
         """
         return self.broadening_parameter.currentText()
 
     def get_data_name(self):
         """
-        *Returns name of graphing data.*
+        @returns name of the selected table
         """
         return self.data_name.currentText()
 
     def get_graph_type(self):
         """
-        *Returns graph type.*
+        @returns the type of graph selected
         """
         return self.graph_type.currentText()
 
     def get_intensity_threshold(self):
         """
-        *Returns Intensity threshold for graph.*
+        @returns the intensity threshold input by the user, if there is one. If there was none, he default is returned
         """
         if self.intensity_threshold_enabled.checkState() == QtCore.Qt.Checked:
             return self.intensity_threshold.value()
@@ -120,13 +118,14 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     def get_wn_range(self):
         """
-        *Returns Wave number range.*
+        @returns a tuple containing first the minimum wave number, second the maximum wave number
         """
         return (self.wn_min.value(), self.wn_max.value())
 
     def get_wn_step(self):
         """
-        *Returns wave number step.*
+        @returns the wave number step if it was input by the user, otherwise it returns None and lets hapi decide the 
+                 default value.
         """
         if self.wn_step_enabled.checkState() == QtCore.Qt.Checked:
             return self.wn_step.value()
@@ -135,7 +134,8 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     def get_wn_wing(self):
         """
-        *Returns wave number wing.*
+        @returns the wave number wing if it was input by the user, otherwise it returns None and lets hapi decide the
+                 default value.
         """
         if self.wn_wing_enabled.checkState() == QtCore.Qt.Checked:
             return self.wn_wing.value()
@@ -144,7 +144,8 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     def get_wn_wing_hw(self):
         """
-        *Returns wave number half width.*
+        @returns the wave number half-width if one was input by the user, otherwise it returns None and lets hapi
+                 decide the default value
         """
         if self.wn_wing_hw_enabled.checkState() == QtCore.Qt.Checked:
             return self.wn_wing_hw.value()
@@ -153,85 +154,85 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     def get_temp(self):
         """
-        *Returns temperature for graph.*
+        @returns the temperature parameter
         """
         return self.temperature.value()
 
     def get_pressure(self):
         """
-        *Returns pressure for graph.*
+        @returns the pressure parameter
         """
         return self.pressure.value()
 
     def get_as_instrumental_fn(self):
         """
-        *Returns Absorption spectrum graph's instrumental fn.*
+        @returns Absorption spectrum instrumental fn
         """
         return self.as_instrumental_fn.currentText()
 
     def get_ts_instrumental_fn(self):
         """
-        *Returns the Transmittance spectrum graph's instrumental fn.*
+        @returns the Transmittance spectrum instrumental fn
         """
         return self.ts_instrumental_fn.currentText()
 
     def get_rs_instrumental_fn(self):
         """
-        *Returns the Radiance spectrum instrumental fn.*
+        @returns the Radiance spectrum instrumental fn
         """
         return self.rs_instrumental_fn.currentText()
 
     def get_rs_path_length(self):
         """
-        *Returns the radiance spectrum graph's path length.*
+        @returns the radiance spectrum path length
         """
         return self.rs_path_length.value()
 
     def get_ts_path_length(self):
         """
-        *Returns the transmittance spectrum graph's path length.*
+        @returns the transmittance spectrum path length
         """
         return self.ts_path_length.value()
 
     def get_as_path_length(self):
         """
-        *Returns the absorbtion spectrum graph's path length.*
+        @returns the absorbtion spectrum path length
         """
         return self.as_path_length.value()
 
     def get_as_instrumental_fn_wing(self):
         """
-        *Returns the absorbtion spectrum graph's instrumental fn wing.*
+        @returns the absorbtion spectrum instrumental fn wing
         """
         return self.as_instrumental_fn_wing.value()
 
     def get_as_instrumental_resolution(self):
         """
-        *Returns the absorbtion spectrum graph's resolution.*
+        @returns the absorbtion spectrum resolution
         """
         return self.as_instrumental_resolution.value()
 
     def get_ts_instrumental_fn_wing(self):
         """
-        *Returns the transmittance spectrum graph's fn wing.*
+        @returns the transmittance spectrum fn wing
         """
         return self.ts_instrumental_fn_wing.value()
 
     def get_ts_instrumental_resolution(self):
         """
-        *Returns the Transmittance spectrum graph's resolution.*
+        @returns the Transmittance spectrum resolution
         """
         return self.ts_instrumental_resolution.value()
 
     def get_rs_instrumental_fn_wing(self):
         """
-        *Returns the radiance spectrum graph's instrumental fn wing.*
+        @returns the radiance spectrum instrumental fn wing
         """
         return self.rs_instrumental_fn_wing.value()
 
     def get_rs_instrumental_resolution(self):
         """
-        *Returns the radiance spectrum graph's resolution.*
+        @returns the radiance spectrum resolution
         """
         return self.rs_instrumental_resolution.value()
 
@@ -246,7 +247,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     def remove_worker_by_jid(self, jid: int):
         """
-        *Params : int jid (job id), the method terminates a worker thread based on a given job id.*
+        *Params : int jid (job id), the method terminates a worker thread based on a given job id
         """
         for worker in self.workers:
             if worker.job_id == jid:
@@ -255,10 +256,25 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
     parameters_required_to_graph = ['molec_id', 'local_iso_id', 'nu', 'sw', 'a', 'elower', 'gamma_air', 'delta_air',
                                     'gamma_self', 'n_air', 'gp', 'gpp']
+  
+    ###
+    # Handlers
+    ###
+
+    def __handle_checkbox_toggle(self, checkbox, element):
+        """
+        A handler for checkboxes that will either enable or disable the corresponding element, depending on
+        whether the checkbox is checked or not
+        """
+        if checkbox.isChecked():
+            element.setEnabled(True)
+        else:
+            element.setDisabled(True)
+
 
     def __on_data_name_chagned(self, new_table):
         """
-        *Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.).*
+        *Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
         """
         self.data_name_error.setText('')
         self.set_graph_buttons_enabled(False)
@@ -279,3 +295,6 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
         self.workers.append(worker)
         worker.start()
+
+    def __on_gamma_air_changed(self, new_value: float):
+        self.gamme_self.setText(str(1.0 - new_value))

@@ -72,7 +72,7 @@ class MainWindowGui(GUI, QMainWindow):
         self.graph_window_action.triggered.connect(self.__open_graph_window)
 
         # ~TOOLTIPS~
-            #Fetch tab
+        #Fetch tab
         QToolTip.setFont(QFont('SansSerif', 10))
         self.param_group_list.setToolTip('Specifies "non-standard" parameter to query.')
         self.param_list.setToolTip('Specifies parameters to query.')
@@ -83,7 +83,7 @@ class MainWindowGui(GUI, QMainWindow):
         self.wn_max.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
-            #Select tab
+        #Select tab
         self.back_button.setToolTip("(Edit) Previous page.")
         self.next_button.setToolTip("(Edit) Next page.")
         self.edit_button.setToolTip("Opens interactable data table.")
@@ -160,7 +160,8 @@ class MainWindowGui(GUI, QMainWindow):
     # that HITRAN has to offer.
     def populate_parameter_lists(self):
         # Add all parameter groups to the parameter groups list.
-        for group in sorted(PARAMETER_GROUPS.keys(), key=str.lower):
+        
+        for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if item[0].isalpha()]:
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
                           QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
