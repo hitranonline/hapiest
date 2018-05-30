@@ -124,7 +124,7 @@ class HapiTableView(QTableView):
        
         self.setModel(self.table_model)
 
-        vertical_labels = map(str, range(0, self.page_len))
+        vertical_labels = map(str, range(1, self.page_len + 1))
         
         self.table_model.setVerticalHeaderLabels(vertical_labels)
         
@@ -185,7 +185,7 @@ class HapiTableView(QTableView):
 
         self.last_page = lines.last_page
         page_min = result['page_number'] * result['page_len']
-        self.table_model.setVerticalHeaderLabels(map(str, range(page_min, page_min + self.current_page_len)))
+        self.table_model.setVerticalHeaderLabels(map(str, range(page_min + 1,  1 + page_min + self.current_page_len)))
         # for i in range(0, self.current_page_len):
         #    item = self.verticalHeaderItem(i)
         #    item.setText(str(page_min + i))
