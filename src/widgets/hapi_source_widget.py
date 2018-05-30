@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, uic, QtGui
-from PyQt5.QtGui import *
 from types import *
+from typing import *
 
 class HapiSourceWidget(QtWidgets.QTextEdit):
     def __init__(self, title: str, authors: List[str], year: str, doi: Optional[str]):
@@ -15,8 +15,14 @@ class HapiSourceWidget(QtWidgets.QTextEdit):
         QtWidgets.QTextEdit.__init__(self)
         self.setReadOnly(True)
         self.setAcceptRichText(True)
-        self.setHtml(self.generate_html)
-        self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
+        self.setHtml(self.generate_plain_text())
+        self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+
+    def create_plain_doi_str(self):
+        if self.doi == '':
+            return '';
+        else:
+            return 'DOI: {}'.format(self.doi)
 
     def generate_latex(self) -> str:
         pass
@@ -28,4 +34,4 @@ class HapiSourceWidget(QtWidgets.QTextEdit):
         authors_str = ''
         for author in self.authors:
             authors_str = '{}{}, '.format(authors_str, author)
-        return '{}{} ({}) {}'.format(authors_str, self.title, self.year, self.doi).strip()
+        return '{}{} ({}){}'.format(authors_str, self.title, self.year, self.create_plain_doi_str()).strip()

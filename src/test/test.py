@@ -20,7 +20,11 @@ class Test:
         return True
 
     def run(self) -> Union[bool, Tuple[type, Exception, TracebackType]]:
+        result = None
         try:
-            return self.test()
+            result = self.test()
         except Exception as e:
-            return sys.exc_info()
+            result = sys.exc_info()
+        if result == None:
+            result = self.shouldFail()
+        return result
