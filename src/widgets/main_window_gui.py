@@ -35,7 +35,6 @@ class MainWindowGui(GUI, QMainWindow):
         self.select_error_label: QLabel = None
         self.select_parameter_list: QListWidget = None
         self.table_name: QComboBox = None
-        self.current_table_label: QLabel = None
         self.select_all_button: QPushButton = None
         self.deselect_all_button: QPushButton = None
 
@@ -370,7 +369,6 @@ class MainWindowGui(GUI, QMainWindow):
         layout = QtWidgets.QGridLayout(self.table_container)
         layout.addWidget(self.table)
         self.table_container.setLayout(layout)
-        self.current_table_label.setText(table_name)
 
 
     def __on_select_table_name_selection_changed(self, new_selection):
@@ -472,7 +470,6 @@ class MainWindowGui(GUI, QMainWindow):
             # layout = QtWidgets.QGridLayout(self.table_container)
             # layout.addWidget(self.table)
             # self.table_container.setLayout(layout)
-            # self.current_table_label.setText(new_table_name)
 
             log('Select successfully ran.')
         except Exception as e:
