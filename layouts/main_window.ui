@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>997</width>
+    <width>1000</width>
     <height>598</height>
    </rect>
   </property>
@@ -539,25 +539,6 @@
          </layout>
         </item>
        </layout>
-       <zorder>verticalLayoutWidget</zorder>
-       <zorder>frame_3</zorder>
-       <zorder>horizontalLayoutWidget_3</zorder>
-       <zorder>fetch_button</zorder>
-       <zorder>horizontalLayoutWidget_2</zorder>
-       <zorder>molecule_id</zorder>
-       <zorder>label</zorder>
-       <zorder>data_name</zorder>
-       <zorder>label_3</zorder>
-       <zorder>wn_min</zorder>
-       <zorder>horizontalSpacer</zorder>
-       <zorder>horizontalLayoutWidget_2</zorder>
-       <zorder>horizontalSpacer_3</zorder>
-       <zorder>splitter_5</zorder>
-       <zorder>splitter</zorder>
-       <zorder>splitter_2</zorder>
-       <zorder>verticalLayoutWidget_2</zorder>
-       <zorder>verticalLayoutWidget_3</zorder>
-       <zorder>verticalLayoutWidget_4</zorder>
       </widget>
       <widget class="QWidget" name="select_tab">
        <attribute name="title">
@@ -597,6 +578,11 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Export</string>
           </property>
@@ -604,6 +590,11 @@
         </item>
         <item row="2" column="5">
          <widget class="QPushButton" name="run_button">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Run</string>
           </property>
@@ -624,13 +615,24 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Table</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="table_name"/>
+             <widget class="QComboBox" name="table_name">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -647,6 +649,11 @@
                 <height>20</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Conditions</string>
               </property>
@@ -660,12 +667,22 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
              </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QLabel" name="label_13">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Output</string>
                 </property>
@@ -676,6 +693,11 @@
               </item>
               <item>
                <widget class="QLineEdit" name="output_name">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>tmp</string>
                 </property>
@@ -698,6 +720,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Check All</string>
               </property>
@@ -710,6 +737,11 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Uncheck All</string>
@@ -727,6 +759,11 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Parameters</string>
@@ -1021,7 +1058,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>997</width>
+     <width>1000</width>
      <height>23</height>
     </rect>
    </property>
