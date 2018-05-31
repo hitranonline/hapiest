@@ -293,7 +293,7 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionReset"/>
+    <addaction name="view_fit"/>
    </widget>
    <widget class="QMenu" name="menua">
     <property name="title">
@@ -312,7 +312,7 @@
    <addaction name="menua"/>
    <addaction name="menuViewport"/>
   </widget>
-  <action name="actionReset">
+  <action name="view_fit">
    <property name="text">
     <string>Fit</string>
    </property>
