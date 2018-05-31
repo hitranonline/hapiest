@@ -19,7 +19,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
         
-        uic.loadUi('layouts/graph_display_window.ui', self)
+        uic.loadUi('layouts/graph_display_window_v2.ui', self)
         self.chart = None
         self.chart_view = None
 
