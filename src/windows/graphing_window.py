@@ -35,37 +35,40 @@ class GraphingWindow(Window):
         
         self.open()
 
-
-    def graph(self):
-        self.gui.graph_button.setDisabled(True)
+    
+    def get_standard_parameters(self):
         data_name = self.gui.get_data_name()
         hmd = HapiMetaData(data_name)
 
         Components = hmd.iso_tuples
         SourceTables = data_name
         Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-        GammaL = self.gui.get_broadening_parameter()
+        Diluent = self.gui.get_diluent()
         WavenumberRange = self.gui.get_wn_range()
         WavenumberStep = self.gui.get_wn_step()
         WavenumberWing = self.gui.get_wn_wing()
         WavenumberWingHW = self.gui.get_wn_wing_hw()
         graph_fn = self.gui.get_graph_type()
 
-        work = HapiWorker.echo(
+        return HapiWorker.echo(
             graph_fn=graph_fn,
             Components=Components,
             SourceTables=SourceTables,
             Environment=Environment,
-            GammaL=GammaL,
+            Diluent=Diluent,
             HITRAN_units=False,
             WavenumberRange=WavenumberRange,
             WavenumberStep=WavenumberStep,
             WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW,
-            title="Absorption Coefficient",
-            titlex="Wavenumber",
-            titley="Coefficient"
+            WavenumberWingHW=WavenumberWingHW
         )
+
+
+
+    def graph(self):
+        self.gui.graph_button.setDisabled(True)
+
+        work = HapiWorker.echo(title='Absorption Coefficient', titlex='Wavenumber', titley='Intensity', **self.get_standard_parameters())
 
         self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
 
@@ -74,18 +77,9 @@ class GraphingWindow(Window):
         Formats GUI for Absorption Spectrum graphing.
         """
         self.gui.graph_as_button.setDisabled(True)
-        data_name = self.gui.get_data_name()
-        hmd = HapiMetaData(data_name)
 
-        Components = hmd.iso_tuples
-        SourceTables = data_name
-        Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-        GammaL = self.gui.get_broadening_parameter()
-        WavenumberRange = self.gui.get_wn_range()
-        WavenumberStep = self.gui.get_wn_step()
-        WavenumberWing = self.gui.get_wn_wing()
-        WavenumberWingHW = self.gui.get_wn_wing_hw()
-        graph_fn = self.gui.get_graph_type()
+        standard_params = self.get_standard_parameters()
+
         path_length = self.gui.get_as_path_length()
         instrumental_fn = self.gui.get_as_instrumental_fn()
         AF_wing = self.gui.get_as_instrumental_fn_wing()
@@ -102,23 +96,14 @@ class GraphingWindow(Window):
             return
 
         work = HapiWorker.echo(
-            graph_fn=graph_fn,
-            Components=Components,
-            SourceTables=SourceTables,
-            Environment=Environment,
-            GammaL=GammaL,
-            HITRAN_units=False,
-            WavenumberRange=WavenumberRange,
-            WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW,
             title="Absorption Spectrum",
             titlex="Wavenumber",
             titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
-            AF_wing=AF_wing
+            AF_wing=AF_wing,
+            **standard_params
         )
 
         self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_SPECTRUM, work, self))
@@ -128,18 +113,9 @@ class GraphingWindow(Window):
         Formats GUI for Radiance spectrum graphing.
         """
         self.gui.graph_rs_button.setDisabled(True)
-        data_name = self.gui.get_data_name()
-        hmd = HapiMetaData(data_name)
 
-        Components = hmd.iso_tuples
-        SourceTables = data_name
-        Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-        GammaL = self.gui.get_broadening_parameter()
-        WavenumberRange = self.gui.get_wn_range()
-        WavenumberStep = self.gui.get_wn_step()
-        WavenumberWing = self.gui.get_wn_wing()
-        WavenumberWingHW = self.gui.get_wn_wing_hw()
-        graph_fn = self.gui.get_graph_type()
+        standard_params = self.get_standard_parameters()
+        
         path_length = self.gui.get_rs_path_length()
         instrumental_fn = self.gui.get_rs_instrumental_fn()
         AF_wing = self.gui.get_rs_instrumental_fn_wing()
@@ -156,23 +132,14 @@ class GraphingWindow(Window):
             return
 
         work = HapiWorker.echo(
-            graph_fn=graph_fn,
-            Components=Components,
-            SourceTables=SourceTables,
-            Environment=Environment,
-            GammaL=GammaL,
-            HITRAN_units=False,
-            WavenumberRange=WavenumberRange,
-            WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW,
             title="Radiance Spectrum",
             titlex="Wavenumber",
             titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
-            AF_wing=AF_wing
+            AF_wing=AF_wing,
+            **standard_params
         )
 
         self.add_child_window(GraphDisplayWindow(WorkRequest.RADIANCE_SPECTRUM, work, self))
@@ -182,18 +149,9 @@ class GraphingWindow(Window):
         Formats GUI for Transmittance spectrum graping.
         """
         self.gui.graph_ts_button.setDisabled(True)
-        data_name = self.gui.get_data_name()
-        hmd = HapiMetaData(data_name)
 
-        Components = hmd.iso_tuples
-        SourceTables = data_name
-        Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
-        GammaL = self.gui.get_broadening_parameter()
-        WavenumberRange = self.gui.get_wn_range()
-        WavenumberStep = self.gui.get_wn_step()
-        WavenumberWing = self.gui.get_wn_wing()
-        WavenumberWingHW = self.gui.get_wn_wing_hw()
-        graph_fn = self.gui.get_graph_type()
+        standard_params = self.get_standard_parameters()
+
         path_length = self.gui.get_ts_path_length()
         instrumental_fn = self.gui.get_ts_instrumental_fn()
         AF_wing = self.gui.get_ts_instrumental_fn_wing()
@@ -210,23 +168,14 @@ class GraphingWindow(Window):
             return
 
         work = HapiWorker.echo(
-            graph_fn=graph_fn,
-            Components=Components,
-            SourceTables=SourceTables,
-            Environment=Environment,
-            GammaL=GammaL,
-            HITRAN_units=False,
-            WavenumberRange=WavenumberRange,
-            WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW,
             title="Transmittance Spectrum",
             titlex="Wavenumber",
             titley="Intensity",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
-            AF_wing=AF_wing
+            AF_wing=AF_wing,
+            **standard_params
         )
 
         self.add_child_window(GraphDisplayWindow(WorkRequest.TRANSMITTANCE_SPECTRUM, work, self))
