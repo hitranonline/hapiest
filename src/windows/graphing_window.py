@@ -1,5 +1,6 @@
 from PyQt5 import QtCore
 
+from utils.graph_type import GraphType
 from utils.hapi_metadata import *
 from widgets.graphing_window_gui import GraphingWindowGui
 from windows.graph_display_window import *
@@ -70,7 +71,7 @@ class GraphingWindow(Window):
 
         work = HapiWorker.echo(title='Absorption Coefficient', titlex='Wavenumber', titley='Intensity', **self.get_standard_parameters())
 
-        self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_COEFFICIENT, work, self))
+        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
 
     def graph_as(self):
         """
@@ -106,7 +107,7 @@ class GraphingWindow(Window):
             **standard_params
         )
 
-        self.add_child_window(GraphDisplayWindow(WorkRequest.ABSORPTION_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_SPECTRUM, work, self))
 
     def graph_rs(self):
         """
@@ -142,7 +143,7 @@ class GraphingWindow(Window):
             **standard_params
         )
 
-        self.add_child_window(GraphDisplayWindow(WorkRequest.RADIANCE_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(GraphType.RADIANCE_SPECTRUM, work, self))
 
     def graph_ts(self):
         """
@@ -178,7 +179,7 @@ class GraphingWindow(Window):
             **standard_params
         )
 
-        self.add_child_window(GraphDisplayWindow(WorkRequest.TRANSMITTANCE_SPECTRUM, work, self))
+        self.add_child_window(GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
 
     def populate_data_names(self):
         """

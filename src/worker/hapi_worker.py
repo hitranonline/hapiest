@@ -54,7 +54,7 @@ class HapiWorker(HapiThread):
         WorkRequest.WORKQ.put(work_request)
 
         while True:
-            time.sleep(0.01)
+            time.sleep(0.1)
             try:
                 work_result = WorkRequest.RESULTQ.get_nowait()
                 if work_result.job_id == self.job_id:

@@ -2,10 +2,11 @@ from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from utils.hapiest_util import *
 from PyQt5.QtChart import *
 from utils.log import *
+from utils.graph_type import GraphType
 from widgets.gui import GUI
 from random import randint
 
-class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
+class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
     @staticmethod
     def generate_random_color(r, g, b):
@@ -14,21 +15,29 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         """
         return ((randint(0, 255) + r) / 2, (randint(0, 255) + g) / 2, (randint(0, 255) + b) / 2)
 
-    def __init__(self):
-        QtWidgets.QWidget.__init__(self)
+    def __init__(self, ty: GraphType, window_title: str):
+        QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
         
         uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
         self.chart_view = None
 
-        self.reset.clicked.connect(self.__on_zoom_reset_click)
-        self.set_viewport.clicked.connect(self.__on_set_viewport_pressed)
+        self.view_fit.triggered.connect(self.__on_view_fit_triggered)
+        
+        self.xmax.setKeyboardTracking(False)
+        self.xmin.setKeyboardTracking(False)
+        self.ymax.setKeyboardTracking(False)
+        self.ymin.setKeyboardTracking(False)
 
-        self.xmax.valueChanged.connect(lambda v: self.__on_xmax_changed(v))
-        self.xmin.valueChanged.connect(lambda v: self.__on_xmin_changed(v))
-        self.ymax.valueChanged.connect(lambda v: self.__on_ymax_changed(v))
-        self.ymin.valueChanged.connect(lambda v: self.__on_ymin_changed(v))
+        self.xmax.valueChanged.connect(self.__on_xmax_changed)
+        self.xmin.valueChanged.connect(self.__on_xmin_changed)
+        self.ymax.valueChanged.connect(self.__on_ymax_changed)
+        self.ymin.valueChanged.connect(self.__on_ymin_changed)
+        
+        self.save_as_csv.triggered.connect(self.__on_save_as_csv_triggered)
+        self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
+        self.save_as_txt.triggered.connect(self.__on_save_as_txt_triggered)
 
         self.grabGesture(QtCore.Qt.PanGesture)
         self.grabGesture(QtCore.Qt.PinchGesture)
@@ -41,43 +50,61 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         self.view_ymin = None
         self.view_ymax = None
         self.chart = None
+            
+        self.set_chart_title(window_title)
 
         self.show()
 
-    def eventFilter(self, source, event):
-        self.sceneEvent(event)
-        return QtWidgets.QWidget.eventFilter(self, source, event)
 
     def set_chart_title(self):
-        pass
+        GraphDisplayWindowGui.num_windows += 1
+        self.setWindowTitle(str(GraphDisplayWindowGui.num_windows))
+
 
     def add_graph(self, x, y, title="", xtitle="", ytitle=""):
-        series = QLineSeries()
-        for i in range(0, x.size):
-            series.append(x[i], y[i])
-        self.series = series
-        series.setUseOpenGL(True)
+        if self.char == None:
+            series = QLineSeries()
+            for i in range(0, x.size):
+                series.append(x[i], y[i])
+            self.series = [series]
+            series.setUseOpenGL(True)
 
-        self.chart = QChart()
-        self.chart.addSeries(series)
-        self.chart.setTitle(title)
-        self.setWindowTitle(title)
+            self.chart = QChart()
+            self.chart.addSeries(series)
+            self.chart.setTitle(title)
+            self.setWindowTitle(title)
 
-        if self.axisy:
-            self.chart.removeAxis(self.axisy)
-            self.chart.removeAxis(self.axisx)
+            if self.axisy:
+                self.chart.removeAxis(self.axisy)
+                self.chart.removeAxis(self.axisx)
 
-        self.axisx = QValueAxis()
-        self.axisx.setTickCount(5)
-        self.axisx.setTitleText(xtitle)
-        self.chart.addAxis(self.axisx, QtCore.Qt.AlignBottom)
-        self.series.attachAxis(self.axisx)
+            self.axisx = QValueAxis()
+            self.axisx.setTickCount(5)
+            self.axisx.setTitleText(xtitle)
+            self.chart.addAxis(self.axisx, QtCore.Qt.AlignBottom)
+            self.series[0].attachAxis(self.axisx)
 
-        self.axisy = QValueAxis()
-        self.axisy.setTitleText(ytitle)
-        self.axisy.setTickCount(5)
-        self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
-        self.series.attachAxis(self.axisy)
+            self.axisy = QValueAxis()
+            self.axisy.setTitleText(ytitle)
+            self.axisy.setTickCount(5)
+            self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
+            self.series[0].attachAxis(self.axisy)
+            
+            self.chart.legend().hide()
+            self.chart_view = QChartView(self.chart)
+            self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
+            self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
+
+            layout = QtWidgets.QGridLayout()
+            layout.addWidget(self.chart_view)
+            self.loading_label.setDisabled(True)
+            self.graph_container.setLayout(layout)
+        else:
+            series = QLineSeries()
+            for i in range(0, x.size):
+                series.append(x[i], y[i])
+            self.chart.addSeries(series)
+            self.series.append(series)
 
         if self.view_xmin:
             if self.view_xmin > self.axisx.min():
@@ -101,19 +128,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         else:
             self.view_ymax = self.axisy.max()
 
-        self.chart.legend().hide()
-        self.chart_view = QChartView(self.chart)
-        self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
-        self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
-
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(self.chart_view)
-        self.loading_label.setDisabled(True)
-        self.graph_container.setLayout(layout)
-
-    def __on_zoom_reset_click(self):
+        
+    def __on_view_fit_triggered(self, _checked: bool):
         """
-        *Sets the screen focus to maximum values of y and x.*
+        Sets the screen focus to maximum values of y and x for series in the graph. The xmin / ymin variables
+        are kept track of in such a way where they will always have the most extreme valid values, so using those
+        to define the range works to fit the view
+
         """
         if self.chart:
             self.axisx.setRange(self.view_xmin, self.view_xmax)
@@ -129,6 +150,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         if value < min:
             self.xmax.setValue(value)
             self.xmin.setValue(value - 1)
+        self.__on_viewport_changed()
 
     def __on_xmin_changed(self, value):
         """
@@ -139,6 +161,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         if value > max:
             self.xmin.setValue(value)
             self.xmax.setValue(value + 1)
+        self.__on_viewport_changed()
 
     def __on_ymax_changed(self, value):
         """
@@ -149,6 +172,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         if value < min:
             self.ymax.setValue(min)
             self.ymin.setValue(value)
+        self.__on_viewport_changed()
 
     def __on_ymin_changed(self, value):
         """
@@ -159,8 +183,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         if value > max:
             self.ymin.setValue(max)
             self.ymax.setValue(value)
+        self.__on_viewport_changed()
 
-    def __on_set_viewport_pressed(self):
+    def __on_viewport_changed(self):
         """
         *Handles the changing in a viewport for graphing view .*
         """
@@ -190,27 +215,17 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QWidget):
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
 
-    def sceneEvent(self, event):
-        """
-        *Event handler for graph.*
-        """
-        if event.type() == QtCore.QEvent.Gesture:
-            self.gestureEvent(event)
 
-    def gestureEvent(self, event):
-        """
-        *Event handler for graph, for additonal information see documentation on PyQt QGestureEvent.*
-        """
-        return  # Ignore touch events...
-        gesture = event.gesture(QtCore.Qt.PanGesture)
-        if gesture:
-            delta = gesture.delta()
-            self.chart.scroll(-delta.x(), delta.y())
-            return True
+    def __on_save_as_txt_triggered(self, _checked: bool):
+        pass
+    
+    
+    def __on_save_as_json_triggered(self, _checked: bool):
+        pass
+    
 
-        gesture = event.gesture(QtCore.Qt.PinchGesture)
-        if gesture:
-            if gesture.changeFlags().__iand__(QtWidgets.QPinchGesture):
-                self.chart.zoom(gesture.scaleFactor())
-            return True
-        return False
+    def __on_save_as_csv_triggered(self, _checked: bool):
+        pass
+    
+
+

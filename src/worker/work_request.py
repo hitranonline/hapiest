@@ -173,7 +173,7 @@ class WorkFunctions:
                               'Fetch Failure: Iso list cannot be empty.')
         try:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
-            hmd = HapiMetaData.write(data_name, iso_id_list)
+            hmd = HapiMetaData(data_name, iso_id_list, numin, numax)
         except Exception as e:
             debug('Fetch error: ', e)
             as_str = str(e)
@@ -230,12 +230,17 @@ class WorkFunctions:
         *Attempts to save cached data to local machine.*
         """
         try:
-            #            if output_table == None:
-            #                output_table = source_table
-            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
-            cache2storage(TableName=output_table)
-            hmd = HapiMetaData(source_table)
-            HapiMetaData.write(output_table, list(map(lambda iso: iso.id, hmd.isos)))
+            if source_table == output_table:
+                cache2storage(TableName=source_table)
+                hmd = HapiMetaData(source_table)
+                hmd.initialize_from_hapi_table(source_table)
+                hmd.save()
+            else:
+                select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
+                cache2storage(TableName=output_table)
+                hmd = HapiMetaData(output_table)
+                # Restore original table.
+                storage2cache(TableName=source_table)
         except Exception as e:
             debug(e)
             return e
@@ -273,8 +278,7 @@ class WorkFunctions:
         try:
             select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
                    Conditions=Conditions, Output=Output, File=File)
-            hmd = HapiMetaData(TableName)
-            new_table_hmd = HapiMetaData.write(DestinationTableName, list(map(lambda iso: iso.id, hmd.isos)))
+            hmd = HapiMetaData(DestinationTableName)
             WorkFunctions.table_write_to_disk(source_table=TableName, output_table=DestinationTableName)
 
             return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
@@ -360,6 +364,7 @@ class Work:
                     result = work_request.do_work()
                 except Exception as e:
                     debug('Error executing work request: ', e, type(e), result)
+                    result = WorkResult(e, False)
                 finally:
                     resultq.put(result)
 
