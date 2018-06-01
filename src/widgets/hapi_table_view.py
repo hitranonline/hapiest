@@ -5,6 +5,7 @@ from worker.hapi_worker import *
 from worker.work_request import *
 from worker.work_result import *
 from utils.lines import *
+from utils.fetch_handler import FetchHandler
 from functools import reduce
 import itertools
 
@@ -244,11 +245,6 @@ class HapiTableView(QTableView):
         if self.last_page:
             self.last_page = False
 
-        self.next_button.setDisabled(True)
-        self.back_button.setDisabled(True)
-        self.save_button.setDisabled(True)
-
-
         self.lines.commit_changes()
         self.current_page -= 1
 
@@ -257,10 +253,18 @@ class HapiTableView(QTableView):
         self.workers.append(worker)
         worker.start()
 
+
     def save_table(self):
         """
         *Saves table information to local machine.*
         """
+        self.main_window.edit_button.setDisabled(True)
+        self.main_window.edit_table_name.setDisabled(True)
+        self.main_window.edit_output_name.setDisabled(True)
+        self.main_window.next_button.setDisabled(True)
+        self.main_window.back_button.setDisabled(True)
+
+
         self.lines.commit_changes()
 
         self.back_button.setDisabled(True)
@@ -274,6 +278,7 @@ class HapiTableView(QTableView):
         self.workers.append(worker)
         worker.start()
 
+
     def done_saving(self, work_result: WorkResult):
         """
         *handles user feedback for saving of edit tab data.*
@@ -284,7 +289,19 @@ class HapiTableView(QTableView):
             err_log("Error saving to disk...")
             return
         self.remove_worker_by_jid(work_result.job_id)
+        self.main_window.edit_button.setEnabled(True)
+        self.main_window.edit_table_name.setEnabled(True)
+        self.main_window.edit_output_name.setEnabled(True)
+        self.main_window.next_button.setEnabled(True)
+        self.main_window.back_button.setEnabled(True)
+        table_lists = FetchHandler.get_all_data_names() 
+        self.main_window.populate_table_lists(table_lists)
+        index = table_lists.index(self.main_window.get_edit_output_name())
+        if index != -1:
+            self.main_window.edit_table_name.setCurrentIndex(index)
+
 
     def close_table(self):
         if self.table_name:
             self.save_table()
+

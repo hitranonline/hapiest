@@ -1,10 +1,9 @@
-import csv
-
 from utils.config import Config
 from utils.isotopologue import *
 from utils.log import *
-
-
+import toml
+from typing import *
+from utils.isotopologue import *
 
 class HapiMetaData():
     """
@@ -15,23 +14,27 @@ class HapiMetaData():
 
     """
 
-    @staticmethod
-    def write(data_name, iso_list):
-        """
-        Writes a '.hmd' file.
+    HMD_FILEDS = ['numin', 'numax', 'table_name', 'isos']
 
-        @param data_name the name of the data
-        @param iso_list a list of all of the isotopologues the data set contains
+    def __init__(self, table_name: str, iso_id_list: List[GlobalIsotopologueId] = None, numin: float = None, 
+                 numax: float = None):
+        self.table_name = table_name
+        if iso_id_list == None:
+            if not self.initialize_from_file(table_name):
+                self.initialize_from_hapi_table(table_name)
+                self.save()
+            else:
+                print('Failed to initialize HMD file from file and hapi cache - if you see this please file a bug report.')
+        else:
+            self.isos = iso_id_list
+            self.numin = numin
+            self.numax = numax
+            self.save()
 
-        """
-        with open(Config.data_folder + "/" + data_name + ".hmd", "w+") as file:
-            last_index = len(iso_list) - 1
-            for i in range(0, last_index + 1):
-                file.write(str(iso_list[i]))
-                if i != last_index:
-                    file.write(",")
+    def populate_iso_tuples(self):
+        self.iso_tuples = list(map(lambda glbl_id: Isotopologue.from_global_id(glbl_id).iso_tuple(), self.isos))
 
-    def __init__(self, filename):
+    def initialize_from_file(self, table_name: str):
         """
         Initializes a '.hmd' by reading it from the supplied filename.
         @param filename the filename to read from
@@ -39,21 +42,61 @@ class HapiMetaData():
         TODO: Generate a '.hmd' file if there is not one present.
 
         """
-        ## The filename
-        self.filename = filename
-
-        ## A list of the isotopologues that this hmd file has
-        self.isos = []
-        ## A list of the isos as tuples (M, I)
-        self.iso_tuples = []
-
         try:
-            with open(Config.data_folder + "/" + self.filename + ".hmd") as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    for item in row:
-                        self.isos.append(Isotopologue.from_global_id(int(item)))
+            with open(Config.data_folder + "/" + self.table_name + ".hmd", 'r') as file:
+                text = file.read()
+                initialize_from_toml_dict(toml.loads(dict))
+                return True
         except Exception as e:
-            debug('Error initializing HapiMetaData object - ', str(e))
-        for item in self.isos:
-            self.iso_tuples.append((item.molecule_id, item.iso_id))
+            print('No HMD file found for table \'{}\''.format(self.table_name))
+            return False
+
+    def initialize_from_hapi_table(self, table_name):
+        if table_name in LOCAL_TABLE_CACHE:
+            data = LOCAL_TABLE_CACHE[table_name]['data']
+            molec_ids = data['molec_id']
+            local_ids = data['local_iso_id']
+            nrows = LOCAL_TABLE_CACHE[table_name]['header']['number_of_rows']
+            iso_tuples = {}
+            for i in range(0, nrows):
+                tup = (molec_ids[i], local_ids[i])
+                if tup not in iso_tuples:
+                    iso_tuples[tup] = None
+            
+            self.table_name = table_name
+            self.iso_tuples = iso_tuples
+            self.isos = list(map(lambda tup: Isotopologue.FROM_MOL_ID_ISO_ID[tup].id, iso_tuples))
+            self.numin = data['nu'][0] 
+            self.numax = data['nu'][nrows - 1]
+        else:
+            print('Failed to initialize from LOCAL_TABLE_CACHE')
+   
+    def initialize_from_toml_dict(self, dict):
+        """
+        Initializes all of the values in this HapiMetaData object from a dictonary that was read from a toml formatted
+        file.
+        """
+        for field in HapiMetaData.HMD_FILEDS:
+            self.__dict__[field] = dict[field]
+
+
+    def as_dict(self):
+        dict = {}
+        for field in HapiMetaData.HMD_FILEDS:
+            dict[field] = self.__dict__[field]
+        return dict
+
+
+    def save(self):
+        try:
+            with open(Config.data_folder + "/" + self.table_name + ".hmd", "w") as file:
+                file.write(toml.dumps(self.as_dict()))
+        except Exception as e:
+            print('Encountered exeption in HapiMetaData.write: {}'.format(str(e)))
+
+    def save_as(self, new_table_name):
+        try:
+            with open(Config.data_folder + "/" + new_table_name + ".hmd", "w") as file:
+                file.write(toml.dumps(self.as_dict()))
+        except Exception as e:
+            print('Encountered exeption in HapiMetaData.write: {}'.format(str(e)))

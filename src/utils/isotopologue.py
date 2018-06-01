@@ -258,5 +258,7 @@ class Isotopologue():
 
         Isotopologue.FROM_MOL_ID_ISO_ID[(molecule_id, isotopologue_id)] = self
 
+    def iso_tuple(self):
+        return (self.molecule_id, self.iso_id)
 
 Isotopologue.populate()

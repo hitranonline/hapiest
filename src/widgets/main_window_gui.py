@@ -155,6 +155,7 @@ class MainWindowGui(GUI, QMainWindow):
         self.edit_table_name.clear()
         self.edit_table_name.addItems(data_names)
 
+
     # Populates the parameter lists with all parameters / parameter groups
     # that HITRAN has to offer.
     def populate_parameter_lists(self):
@@ -262,6 +263,7 @@ class MainWindowGui(GUI, QMainWindow):
 
         return selected_groups
 
+
     def get_data_name(self):
         """
         *Returns data name for fetch tab.*
@@ -282,11 +284,13 @@ class MainWindowGui(GUI, QMainWindow):
         """
         return self.wn_min.value()
 
+
     def get_select_table_name(self):
         """
         *Returns the select table name.*
         """
         return self.table_name.currentText()
+
 
     def get_select_expression(self):
         """
@@ -294,11 +298,13 @@ class MainWindowGui(GUI, QMainWindow):
         """
         return self.select_expression.toPlainText()
 
+
     def get_output_table_name(self):
         """
         *Returns the destination table name the user entered for select function.*
         """
         return self.output_name.text()
+
 
     def get_select_parameters(self):
         """
@@ -313,11 +319,13 @@ class MainWindowGui(GUI, QMainWindow):
 
         return selected
 
+
     def get_edit_table_name(self):
         """
         *Returns the name of the table entered by user for edit tab.*
         """
         return self.edit_table_name.currentText()
+
 
     def get_edit_output_name(self):
         """
@@ -338,6 +346,7 @@ class MainWindowGui(GUI, QMainWindow):
                 worker.safe_exit()
                 break
 
+
     def clear_select_error(self):
         if self.select_error_label != None:
             self.select_error_label.setText("")
@@ -350,9 +359,11 @@ class MainWindowGui(GUI, QMainWindow):
         for i in range(0, self.select_parameter_list.count()):
             self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
 
+
     def __on_deselect_all_button_click(self):
         for i in range(0, self.select_parameter_list.count()):
             self.select_parameter_list.item(i).setCheckState(QtCore.Qt.Unchecked)
+
 
     def __on_edit_button_click(self):
         """
@@ -384,6 +395,7 @@ class MainWindowGui(GUI, QMainWindow):
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
         worker.start()
         self.workers.append(worker)
+
 
     def __on_select_table_name_complete(self, work_result):
         """
@@ -479,15 +491,12 @@ class MainWindowGui(GUI, QMainWindow):
 
     def __on_output_name_change(self):
         """
-        *When the output name changes, if it is empty, display a warning and disable the install.py button - otherwise enable it.*
         """
         try:
             output_name = self.output_name.text()
             if output_name.strip() == '':
                 self.run_button.setDisabled(True)
-            elif output_name == self.get_select_table_name():
-                self.run_button.setDisabled(True)
-                err_log('Cannot have select output table be the same as the input table')
+                err_log('Select output table cannot be empty')
             else:
                 self.run_button.setEnabled(True)
                 self.clear_select_error()
