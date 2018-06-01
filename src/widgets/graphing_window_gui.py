@@ -69,7 +69,8 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
             lambda: self.__handle_checkbox_toggle(self.intensity_threshold_enabled, self.intensity_threshold))
         self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
         self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
-        
+        self.gamma_air.setValue(0.0)
+        self.__on_gamma_air_changed(0.0)
         #TOOLTIPS
         self.data_name.setToolTip("Select the name of the data you wish to graph.")
         self.temperature.setToolTip("Select the temperature to graph the data at.")
@@ -298,4 +299,4 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         worker.start()
 
     def __on_gamma_air_changed(self, new_value: float):
-        self.gamme_self.setText(str(1.0 - new_value))
+        self.gamma_self.setText(str(1.0 - new_value))

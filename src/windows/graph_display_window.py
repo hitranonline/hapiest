@@ -27,8 +27,8 @@ class GraphDisplayWindow(Window):
     next_graph_window_id = 1
     @staticmethod
     def window_id():
-        r = next_graph_window_id
-        next_graph_window_id += 1
+        r = GraphDisplayWindow.next_graph_window_id
+        GraphDisplayWindow.next_graph_window_id += 1
         return r
 
 
@@ -47,7 +47,7 @@ class GraphDisplayWindow(Window):
         gui = GraphDisplayWindowGui(graph_ty, work_object['title'] + ' - ' + str(self.window_id))
         super(GraphDisplayWindow, self).__init__(gui, parent)
 
-        GraphDisplayWindow.graph_window[graph_ty][self.window_id] = self
+        GraphDisplayWindow.graph_windows[graph_ty][self.window_id] = self
 
         self.worker = HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object, self.plot)
         self.worker.start()

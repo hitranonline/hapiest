@@ -41,7 +41,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.grabGesture(QtCore.Qt.PanGesture)
         self.grabGesture(QtCore.Qt.PinchGesture)
-        self.installEventFilter(self)
 
         self.axisy = None
         self.axisx = None
@@ -56,13 +55,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.show()
 
 
-    def set_chart_title(self):
-        GraphDisplayWindowGui.num_windows += 1
-        self.setWindowTitle(str(GraphDisplayWindowGui.num_windows))
+    def set_chart_title(self, title):
+        self.setWindowTitle(str(title))
 
 
     def add_graph(self, x, y, title="", xtitle="", ytitle=""):
-        if self.char == None:
+        if self.chart == None:
             series = QLineSeries()
             for i in range(0, x.size):
                 series.append(x[i], y[i])

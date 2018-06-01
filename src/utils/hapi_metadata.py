@@ -23,8 +23,6 @@ class HapiMetaData():
             if not self.initialize_from_file(table_name):
                 self.initialize_from_hapi_table(table_name)
                 self.save()
-            else:
-                print('Failed to initialize HMD file from file and hapi cache - if you see this please file a bug report.')
         else:
             self.isos = iso_id_list
             self.numin = numin
@@ -45,9 +43,10 @@ class HapiMetaData():
         try:
             with open(Config.data_folder + "/" + self.table_name + ".hmd", 'r') as file:
                 text = file.read()
-                initialize_from_toml_dict(toml.loads(dict))
+                self.initialize_from_toml_dict(toml.loads(text))
                 return True
         except Exception as e:
+            print('Encoutnered error: {}'.format(str(e)))
             print('No HMD file found for table \'{}\''.format(self.table_name))
             return False
 
@@ -70,17 +69,20 @@ class HapiMetaData():
             self.numax = data['nu'][nrows - 1]
         else:
             print('Failed to initialize from LOCAL_TABLE_CACHE')
-   
+
     def initialize_from_toml_dict(self, dict):
         """
         Initializes all of the values in this HapiMetaData object from a dictonary that was read from a toml formatted
         file.
         """
+        print(self.__dict__)
         for field in HapiMetaData.HMD_FILEDS:
             self.__dict__[field] = dict[field]
+        self.populate_iso_tuples()
 
 
     def as_dict(self):
+        print(self.__dict__)
         dict = {}
         for field in HapiMetaData.HMD_FILEDS:
             dict[field] = self.__dict__[field]

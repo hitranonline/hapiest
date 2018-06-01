@@ -7,6 +7,8 @@ from utils.log import *
 from utils.config import Config
 from utils.hapi_metadata import HapiMetaData
 from utils.hapiest_util import echo
+import sys
+import traceback
 
 class WorkFunctions:
     @staticmethod
@@ -58,31 +60,28 @@ class WorkFunctions:
     @staticmethod
     def try_graph_absorption_coefficient(
             graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
         """
         *Generates coordinates for absorption coeffecient graph.*
         """
-        try:
-            x, y = WorkFunctions.graph_type_map[graph_fn](
-                Components=Components,
-                SourceTables=SourceTables,
-                Environment=Environment,
-                GammaL=GammaL,
-                HITRAN_units=False,
-                WavenumberRange=WavenumberRange,
-                WavenumberStep=WavenumberStep,
-                WavenumberWing=WavenumberWing,
-                WavenumberWingHW=WavenumberWingHW)
-            return {'x': x, 'y': y, 'title': title, 'titlex': titlex, 'titley': titley}
-        except Exception as e:
-            return e
+        x, y = WorkFunctions.graph_type_map[graph_fn](
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
+            Diluent=Diluent,
+            HITRAN_units=False,
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW)
+        return {'x': x, 'y': y, 'title': title, 'titlex': titlex, 'titley': titley}
 
     @staticmethod
     def try_graph_absorption_spectrum(
             graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
@@ -93,7 +92,7 @@ class WorkFunctions:
             Components=Components,
             SourceTables=SourceTables,
             Environment=Environment,
-            GammaL=GammaL,
+            Diluent=Diluent,
             HITRAN_units=False,
             WavenumberRange=WavenumberRange,
             WavenumberStep=WavenumberStep,
@@ -107,58 +106,52 @@ class WorkFunctions:
     @staticmethod
     def try_graph_radiance_spectrum(
             graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
         """
         *Generates coordinates for radiance spectrum graph.*
         """
-        try:
-            wn, ac = WorkFunctions.graph_type_map[graph_fn](
-                Components=Components,
-                SourceTables=SourceTables,
-                Environment=Environment,
-                GammaL=GammaL,
-                HITRAN_units=False,
-                WavenumberRange=WavenumberRange,
-                WavenumberStep=WavenumberStep,
-                WavenumberWing=WavenumberWing,
-                WavenumberWingHW=WavenumberWingHW)
-            Environment['l'] = path_length
-            x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
-            rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-            return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
-        except Exception as e:
-            return e
+        wn, ac = WorkFunctions.graph_type_map[graph_fn](
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
+            Diluent=Diluent,
+            HITRAN_units=False,
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW)
+        Environment['l'] = path_length
+        x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
+        rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
+        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
 
     @staticmethod
     def try_graph_transmittance_spectrum(
             graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], GammaL: str, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
             Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[Dict[str, Any], Exception]:
         """
         *Generates coordinates for transmittance spectrum graph.*
         """
-        try:
-            wn, ac = WorkFunctions.graph_type_map[graph_fn](
-                Components=Components,
-                SourceTables=SourceTables,
-                Environment=Environment,
-                GammaL=GammaL,
-                HITRAN_units=False,
-                WavenumberRange=WavenumberRange,
-                WavenumberStep=WavenumberStep,
-                WavenumberWing=WavenumberWing,
-                WavenumberWingHW=WavenumberWingHW)
-            Environment = {'l': path_length}
-            x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
-            rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-            return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
-        except Exception as e:
-            return e
+        wn, ac = WorkFunctions.graph_type_map[graph_fn](
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
+            Diluent=Diluent,
+            HITRAN_units=False,
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW)
+        Environment = {'l': path_length}
+        x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
+        rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
+        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
 
 
     @staticmethod
@@ -229,21 +222,17 @@ class WorkFunctions:
         """
         *Attempts to save cached data to local machine.*
         """
-        try:
-            if source_table == output_table:
-                cache2storage(TableName=source_table)
-                hmd = HapiMetaData(source_table)
-                hmd.initialize_from_hapi_table(source_table)
-                hmd.save()
-            else:
-                select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
-                cache2storage(TableName=output_table)
-                hmd = HapiMetaData(output_table)
-                # Restore original table.
-                storage2cache(TableName=source_table)
-        except Exception as e:
-            debug(e)
-            return e
+        if source_table == output_table:
+            cache2storage(TableName=source_table)
+            hmd = HapiMetaData(source_table)
+            hmd.initialize_from_hapi_table(source_table)
+            hmd.save()
+        else:
+            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
+            cache2storage(TableName=output_table)
+            hmd = HapiMetaData(output_table)
+            # Restore original table.
+            storage2cache(TableName=source_table)
         return True
 
     @staticmethod
@@ -275,16 +264,12 @@ class WorkFunctions:
         """
         *Attempts to call the select() method from hapi.*
         """
-        try:
-            select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
-                   Conditions=Conditions, Output=Output, File=File)
-            hmd = HapiMetaData(DestinationTableName)
-            WorkFunctions.table_write_to_disk(source_table=TableName, output_table=DestinationTableName)
+        select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
+              Conditions=Conditions, Output=Output, File=File)
+        hmd = HapiMetaData(DestinationTableName)
+        WorkFunctions.table_write_to_disk(source_table=TableName, output_table=DestinationTableName)
 
-            return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
-        except Exception as e:
-            debug('Error calling select ', e)
-            return False
+        return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
 
 class WorkRequest:
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
@@ -353,6 +338,9 @@ class Work:
         }
 
         WorkFunctions.start_hapi(**{})
+        def print_tb(tb, exc_value):
+            print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n')
+
 
         while True:
             work_request = workq.get()
@@ -363,6 +351,8 @@ class Work:
                 try:
                     result = work_request.do_work()
                 except Exception as e:
+                    exc_ty, exc_val, exc_tb = sys.exc_info()
+                    print_tb(exc_tb, exc_val)
                     debug('Error executing work request: ', e, type(e), result)
                     result = WorkResult(e, False)
                 finally:
