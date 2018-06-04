@@ -20,14 +20,14 @@ sources = {
 
 from test.test import Test
 from PyQt5 import QtGui, QtWidgets, QtCore
-from widgets.hapi_source_widget import HapiSourceWidget
+from widgets.molecule_info_widget import MoleculeInfoWidget
 
-class HapiSourcesTest(Test):
+class MoleculeInfoTest(Test):
     def __init__(self):
         Test.__init__(self)
 
     def name(self) -> str:
-        return 'hapi sources test'
+        return 'molecule view test'
     
     def test(self) -> bool:
         app = QtWidgets.QApplication(sys.argv)

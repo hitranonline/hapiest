@@ -3,11 +3,11 @@ from types import TracebackType
 import traceback
 import sys
 import os
-from ..utils import *
-from .test import Test
-from .fail_test import FailTest
-from .throw_test import ThrowTest
-from .hapi_sources_test import HapiSourcesTest
+from utils import *
+from test.test import Test
+from test.fail_test import FailTest
+from test.throw_test import ThrowTest
+from test.hapi_sources_test import HapiSourcesTest
 
 tests: List[Test] = [Test(), FailTest(), ThrowTest(), HapiSourcesTest()]
 

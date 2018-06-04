@@ -1,5 +1,5 @@
 from typing import *
-from .test import Test
+from test.test import Test
 
 class ThrowTest(Test):
     def __init__(self):

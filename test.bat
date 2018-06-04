@@ -1,1 +1,1 @@
-python3 -m src.test
+python3 src test
