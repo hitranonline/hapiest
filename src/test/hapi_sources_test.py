@@ -35,13 +35,13 @@ class HapiSourcesTest(Test):
         window = QtWidgets.QMainWindow()
         def close_window():
             sleep(0.25)
-            # window.deleteLater()
+            window.deleteLater()
             
         t = threading.Thread(target=close_window)
         t.start()
         items = QtWidgets.QWidget(window)
         layout = QtWidgets.QVBoxLayout()
-        for k, v in sources.items():
+        for _k, v in sources.items():
             layout.addWidget(HapiSourceWidget(v['title'], v['authors'], v['year'], v['doi']))
         items.setLayout(layout)
         window.setCentralWidget(items) 

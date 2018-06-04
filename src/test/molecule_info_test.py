@@ -39,12 +39,8 @@ class MoleculeInfoTest(Test):
             
         t = threading.Thread(target=close_window)
         t.start()
-        items = QtWidgets.QWidget(window)
-        layout = QtWidgets.QVBoxLayout()
-        for k, v in sources.items():
-            layout.addWidget(HapiSourceWidget(v['title'], v['authors'], v['year'], v['doi']))
-        items.setLayout(layout)
-        window.setCentralWidget(items) 
+        widget = MoleculeInfoWidget('test_molecule')
+        window.setCentralWidget(widget) 
         window.show()
         qt_result = app.exec_()
         return qt_result == 0

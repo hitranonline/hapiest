@@ -1,0 +1,52 @@
+{
+  "__class__": "Molecule",
+  "stoichiometric_formula": "CCl2F2",
+  "inchikey": "PXBRQCKWGAHEHS-UHFFFAOYSA-N",
+  "ordinary_formula_html": "CCl<sub>2</sub>F<sub>2</sub>",
+  "short_alias": "CFC-12",
+  "inchi": "InChI=1S/CCl2F2/c2-1(3,4)5",
+  "csid": 6151,
+  "hitranonline_id": null,
+  "molecid_str": "CCl2F2",
+  "common_name": "CFC-12",
+  "ordinary_formula": "CCl2F2",
+  "id": 54,
+  "molid": "6151",
+  "categories": [
+      "Chlorofluorocarbons"
+  ],
+  "aliases": [
+    {
+      "alias": "CFC-12",
+      "type": "name"
+    },
+    {
+      "alias": "CCl2F2",
+      "type": "formula"
+    },
+    {
+      "alias": "75-71-8",
+      "type": "cas"
+    },
+    {
+      "alias": "Dichlorodifluoromethane",
+      "type": "name"
+    },
+    {
+      "alias": "6151",
+      "type": "csid"
+    },
+    {
+      "alias": "Freon-12",
+      "type": "acronym"
+    },
+    {
+      "alias": "InChI=1S/CCl2F2/c2-1(3,4)5",
+      "type": "inchi"
+    },
+    {
+      "alias": "PXBRQCKWGAHEHS-UHFFFAOYSA-N",
+      "type": "inchikey"
+    }
+  ]
+}

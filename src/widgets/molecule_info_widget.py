@@ -1,7 +1,7 @@
-from PyQt5.QtCore.Qt import *
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import json
-import utils.log
+from utils.log import *
 
 class MoleculeInfoWidget(QScrollArea):
 
@@ -14,35 +14,46 @@ class MoleculeInfoWidget(QScrollArea):
             field_name = text.lower()
             label = QLabel('<b>{}:</b>'.format(text))
             value = QLabel()
-        
-            label.setTextFormat(TextFormat.RichText)
-            value.setTextFormat(TextFormat.RichText)
+            value.setTextInteractionFlags(Qt.TextSelectableByMouse); 
+            label.setTextFormat(Qt.RichText)
+            value.setTextFormat(Qt.RichText)
             
             self.__dict__[field_name + "_label"] = label
             self.__dict__[field_name] = value
 
         self.name = QLabel()
         self.img = QWidget()
+        self.img.setMinimumWidth(256)
+        self.img.setMinimumHeight(256)
         
-        map(create_field, MoleculeInfoWidget.FIELDS)
+        # Have to call list because map is lazy
+        list(map(create_field, MoleculeInfoWidget.FIELDS))
 
         self.aliases.setWordWrap(True)
         self.categories.setWordWrap(True)
 
-        self.form_layout = QtWidgets.QFormLayout()
-        self.form_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.FieldsStayAtSizeHint)
+        self.form_layout = QFormLayout()
+        self.form_layout.setFieldGrowthPolicy(QFormLayout.FieldsStayAtSizeHint)
         
-        map(lambda x: self.form_layout.addRow(self.__dict__[x.lower() + '_label'], self.__dict__[x.lower()]), MoleculeInfoWidget.FIELDS)
+        list(map(lambda x: self.form_layout.addRow(self.__dict__[x.lower() + '_label'], self.__dict__[x.lower()]), MoleculeInfoWidget.FIELDS))
 
-        self.hlayout = QtWidgets.QHBoxLayout()
+        self.hlayout = QHBoxLayout()
         self.hlayout.addWidget(self.img)
         self.hlayout.addWidget(self.name)
 
-        self.vlayout = QtWidgets.QVBoxLayout()
-        self.vlayout.addWidget(self.hlayout)
-        self.vlayout.addWidget(self.form_layout)
-        self.setWidget(self.vlayout)
-
+        self.vlayout = QVBoxLayout()
+        self.vlayout.addLayout(self.hlayout)
+        self.vlayout.addLayout(self.form_layout)
+        
+        self.container = QWidget()
+        self.container.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
+        self.vlayout.setSizeConstraint(QLayout.SetMinimumSize)
+        self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
+        self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
+        self.container.setLayout(self.vlayout)
+        self.setWidget(self.container)
+        
         if json_file_name == None:
             pass
         else:
@@ -52,7 +63,7 @@ class MoleculeInfoWidget(QScrollArea):
                     text = file.read()
                     self.data = json.loads(text)
             except Exception as e:
-                log('No such molecule \'{}\''.format(json_file_name)) 
+                log('No such molecule \'{}\' with error {}'.format(json_file_name, str(e))) 
             if self.data != None:
                 self.restructure_aliases()
                 try:
@@ -65,21 +76,27 @@ class MoleculeInfoWidget(QScrollArea):
                     
                     alias_text = ''
                     for ty, alias in self.data['aliases'].items():
-                        alias_text = '{}<br>{}: {}'.format(alias_text, str(ty), str(alias))
+                        alias_text = '{}<br><b>{}</b>: <i>{}</i>'.format(alias_text, str(ty), str(alias))
                     self.aliases.setText(alias_text)
 
                     categories_text = ''
                     for categorie in self.data['categories']:
                         categories_text = '{}<br>{}'.format(categories_text, str(categorie))
                     self.categories.setText(categories_text)
-
+                    
                 except Exception as e:
                     err_log('Encountered error \'{}\' - likely a malformed molecule json file'.format(str(e)))
-
+                
+                self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+                self.setMinimumWidth(self.container.geometry().width())
+                self.setWidgetResizable(True)
+                self.widget().adjustSize()
+                self.adjustSize()
+         
     def restructure_aliases(self):
         if 'aliases' in self.data:
             reformatted = {}
-            for item in self.data['aliases'].items():
+            for item in self.data['aliases']:
                 reformatted[item['type']] = item['alias']
             self.data['aliases'] = reformatted
  
