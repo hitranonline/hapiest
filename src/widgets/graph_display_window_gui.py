@@ -7,6 +7,8 @@ from utils.graph_type import GraphType
 from widgets.gui import GUI
 from random import randint
 from typing import *
+import re
+import json
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
@@ -216,28 +218,57 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.axisy.setRange(ymin, ymax)
 
     def get_file_save_name(self, extension, filter) -> Union[str, None]:
-        filename = QtGui.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
-        if filename.isEmpty():
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
+        if filename[0] == "":
             return None
         else:
-            return str(filename)
+            return str(filename[0])
 
     def __on_save_as_txt_triggered(self, _checked: bool):
-        pass
-        #filename = self.get_file_save_name(".txt", "Text files (*.txt)", 
-        
-        # try:
-        #    with open(filename, "w") as file:
+        filename = self.get_file_save_name(".txt", "Text files (*.txt)")
 
-        #except Exception as e:
-        #    print("Encountered error {} while saving to file".format(str(e)))
+        if filename == None:
+            return
+        
+        try:
+            txt_regex = '\\\.txt\\Z'
+            for i in range(0, len(self.series)):
+                ith_filename = txt_regex.sub('{}.txt'.replace(i), filename)
+                with open(ith_filename, "w") as file:
+                    for point in self.series[i].pointsVector():
+                        file.write('{:<16.8f}{:.8f}'.format(point.x(), point.y()))
+                        
+        except Exception as e:
+            print("Encountered error {} while saving to file".format(str(e)))
     
     def __on_save_as_json_triggered(self, _checked: bool):
-        pass
-    
+        filename = self.get_file_save_name(".json", "Javascript object notation files (*.json)")
+        if filename == None:
+            return
+        
+        series_lists = list(map(lambda series: list(map(lambda point: [point.x(), point.y()], series.pointsVector())), self.series)) 
+        try:
+            with open(filename, 'w') as file:
+                file.write(json.dumps({'plots': series_lists}, indent=4))
+        except Exception as e:
+            print("Encountered error {} while saving to file".format(str(e)))
 
     def __on_save_as_csv_triggered(self, _checked: bool):
-        pass
-    
+        filename = self.get_file_save_name(".csv", "Comma separated value files (*.csv)")
+        
+        if filename == None:
+            return 
+        
+        try:
+            txt_regex = '\\\.txt\\Z'
+            for i in range(0, len(self.series)):
+                ith_filename = txt_regex.sub('{}.csv'.replace(i), filename)
+                with open(ith_filename, "w") as file:
+                    for point in self.series[i].pointsVector():
+                        file.write('{:<16.8f},{:.8f}'.format(point.x(), point.y()))
+                        
+        except Exception as e:
+            print("Encountered error {} while saving to file".format(str(e)))
+       
 
 

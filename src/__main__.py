@@ -31,7 +31,7 @@ class App(QtWidgets.QApplication):
         QtWidgets.QApplication.__init__(self, *args)
 
 def main():
-    if sys.argv[1] == 'test':
+    if len(sys.argv) > 1 and sys.argv[1] == 'test':
         import test
         return
 

@@ -61,6 +61,7 @@ class GraphDisplayWindow(Window):
         Overrides Window.close implementation, removes self from GraphDisplayWindow.graph_windows
         """
         GraphDisplayWindow.graph_window[graph_ty].pop(self.window_id, None)
+        Window.close(self)
 
     def plot(self, work_result: WorkResult):
         """
