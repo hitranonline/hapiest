@@ -86,9 +86,9 @@ class GraphingWindow(Window):
         AF_wing = self.gui.get_as_instrumental_fn_wing()
         Resolution = self.gui.get_as_instrumental_resolution()
 
-        if WavenumberStep == None:
-            WavenumberStep = Resolution / 2
-        elif WavenumberStep <= Resolution:
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
             self.data_name_error.setText(
@@ -122,9 +122,9 @@ class GraphingWindow(Window):
         AF_wing = self.gui.get_rs_instrumental_fn_wing()
         Resolution = self.gui.get_rs_instrumental_resolution()
 
-        if WavenumberStep == None:
-            WavenumberStep = Resolution / 2
-        elif WavenumberStep <= Resolution:
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
             self.data_name_error.setText(
@@ -158,9 +158,9 @@ class GraphingWindow(Window):
         AF_wing = self.gui.get_ts_instrumental_fn_wing()
         Resolution = self.gui.get_ts_instrumental_resolution()
 
-        if WavenumberStep == None:
-            WavenumberStep = Resolution / 2
-        elif WavenumberStep >= Resolution:
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
             self.gui.graph_as_button.setEnabled(True)
             self.data_name_error.setText(

@@ -231,8 +231,6 @@ class WorkFunctions:
             select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
             cache2storage(TableName=output_table)
             hmd = HapiMetaData(output_table)
-            # Restore original table.
-            storage2cache(TableName=source_table)
         return True
 
     @staticmethod
@@ -350,6 +348,7 @@ class Work:
                 result = None
                 try:
                     result = work_request.do_work()
+                    print("Result: {}".format(str(format)))
                 except Exception as e:
                     exc_ty, exc_val, exc_tb = sys.exc_info()
                     print_tb(exc_tb, exc_val)

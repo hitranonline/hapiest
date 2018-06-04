@@ -1,10 +1,12 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
+
 from utils.hapiest_util import *
 from PyQt5.QtChart import *
 from utils.log import *
 from utils.graph_type import GraphType
 from widgets.gui import GUI
 from random import randint
+from typing import *
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
@@ -88,7 +90,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
             self.series[0].attachAxis(self.axisy)
             
-            self.chart.legend().hide()
+            self.chart.legend()
             self.chart_view = QChartView(self.chart)
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -213,10 +215,22 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
 
+    def get_file_save_name(self, extension, filter) -> Union[str, None]:
+        filename = QtGui.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
+        if filename.isEmpty():
+            return None
+        else:
+            return str(filename)
 
     def __on_save_as_txt_triggered(self, _checked: bool):
         pass
-    
+        #filename = self.get_file_save_name(".txt", "Text files (*.txt)", 
+        
+        # try:
+        #    with open(filename, "w") as file:
+
+        #except Exception as e:
+        #    print("Encountered error {} while saving to file".format(str(e)))
     
     def __on_save_as_json_triggered(self, _checked: bool):
         pass

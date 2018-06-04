@@ -263,37 +263,35 @@ class HapiTableView(QTableView):
         self.main_window.edit_output_name.setDisabled(True)
         self.main_window.next_button.setDisabled(True)
         self.main_window.back_button.setDisabled(True)
-
-
-        self.lines.commit_changes()
-
-        self.back_button.setDisabled(True)
-        self.next_button.setDisabled(True)
-
         self.save_button.setDisabled(True)
 
+        self.lines.commit_changes()
+        print("Hey")
         worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
                             {'source_table': self.table_name, 'output_table': self.main_window.get_edit_output_name()},
                             self.done_saving)
         self.workers.append(worker)
         worker.start()
-
+        print("Wow")
 
     def done_saving(self, work_result: WorkResult):
         """
         *handles user feedback for saving of edit tab data.*
         """
+        print("Done saving!!!!")
         result = work_result.result
         self.save_button.setEnabled(True)
         if result != True:
             err_log("Error saving to disk...")
             return
         self.remove_worker_by_jid(work_result.job_id)
+ 
         self.main_window.edit_button.setEnabled(True)
         self.main_window.edit_table_name.setEnabled(True)
         self.main_window.edit_output_name.setEnabled(True)
         self.main_window.next_button.setEnabled(True)
         self.main_window.back_button.setEnabled(True)
+        
         table_lists = FetchHandler.get_all_data_names() 
         self.main_window.populate_table_lists(table_lists)
         index = table_lists.index(self.main_window.get_edit_output_name())
@@ -303,5 +301,5 @@ class HapiTableView(QTableView):
 
     def close_table(self):
         if self.table_name:
-            self.save_table()
+            self.next_page()
 
