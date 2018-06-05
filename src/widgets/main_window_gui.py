@@ -51,6 +51,12 @@ class MainWindowGui(GUI, QMainWindow):
         self.param_group_list = None 
         self.param_list = None
 
+        # Elements in 'Molecules' tab
+        molecule_container: QVBoxLayout = None
+        molecules_popout_button: QPushButton = None
+        molecules_view_button: QPushButton = None
+        selected_molecules: QComboBox = None
+        molecule_info = None
 
         # Other stuff..
         self.graph_window_action: QAction = None
@@ -192,7 +198,7 @@ class MainWindowGui(GUI, QMainWindow):
             molecule = Isotopologue.from_molecule_id(molecule_id)
 
             self.molecule_id.addItem(molecule.molecule_name)
-
+            self.selected_molecule.addItem(molecule.molecule_name)
             # completer = QCompleter(map(lambda x: Isotopologue.from_molecule_id(x).molecule_name, Isotopologue.molecules.keys()))
             # self.molecule_id.setCompleter(completer)
             # self.molecule_id.setEditable(True)
@@ -354,6 +360,18 @@ class MainWindowGui(GUI, QMainWindow):
     ###########################################################################
     #  Event Handlers
     ###########################################################################
+    
+    def __on_molecules_view_button_click(self):
+        if self.molecule_info == None:
+            pass
+            # self.molecule_info = MoleculeInfoWidget(...)
+            # self.molecule_info = 
+            # self.molecule_container.addWidget(
+
+
+    def __on_molecules_popout_button(self):
+        pass
+
 
     def __on_select_all_button_click(self):
         for i in range(0, self.select_parameter_list.count()):
