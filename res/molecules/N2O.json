@@ -1,0 +1,43 @@
+{
+  "stoichiometric_formula": "N2O", 
+  "inchikey": "GQPLMRYTRLFLPF-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Nitrous oxide", 
+  "common_name": "Nitrous Oxide", 
+  "csid": 923, 
+  "ordinary_formula_html": "N<sub>2</sub>O", 
+  "molecid_str": "N2O", 
+  "inchi": "InChI=1S/N2O/c1-2-3", 
+  "ordinary_formula": "N2O", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "10024-97-2", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Nitrous oxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "923", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "NitrousOxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "Nitrous Oxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "InChI=1S/N2O/c1-2-3", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "GQPLMRYTRLFLPF-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

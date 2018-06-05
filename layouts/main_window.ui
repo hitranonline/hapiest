@@ -1019,14 +1019,20 @@
            <enum>QLayout::SetMaximumSize</enum>
           </property>
           <item>
-           <widget class="QComboBox" name="selected_molecule"/>
+           <widget class="QComboBox" name="molecules_current_molecule"/>
           </item>
           <item>
-           <widget class="QPushButton" name="molecules_view_button">
-            <property name="text">
-             <string>View</string>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QPushButton" name="molecules_popout_button">
@@ -1038,14 +1044,11 @@
          </layout>
         </item>
         <item>
-         <widget class="QWidget" name="molecule_container" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <layout class="QVBoxLayout" name="molecule_container">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
           </property>
-         </widget>
+         </layout>
         </item>
        </layout>
       </widget>

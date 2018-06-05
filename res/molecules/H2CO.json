@@ -1,0 +1,41 @@
+{
+  "stoichiometric_formula": "CH2O", 
+  "inchikey": "WSFSSNUMVMOOMR-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Formaldehyde", 
+  "common_name": "Formaldehyde", 
+  "csid": 692, 
+  "ordinary_formula_html": "H<sub>2</sub>CO", 
+  "molecid_str": "H2CO", 
+  "inchi": "InChI=1S/CH2O/c1-2/h1H2", 
+  "ordinary_formula": "H2CO", 
+  "categories": [
+    "Alcohols, ethers and other oxygenated hydrocarbons"
+  ], 
+  "aliases": [
+    {
+      "alias": "50-00-0", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Formaldehyde, monomer", 
+      "type": "name"
+    }, 
+    {
+      "alias": "692", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "Formaldehyde", 
+      "type": "name"
+    }, 
+    {
+      "alias": "InChI=1S/CH2O/c1-2/h1H2", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "WSFSSNUMVMOOMR-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

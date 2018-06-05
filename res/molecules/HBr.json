@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "BrH", 
+  "inchikey": "CPELXLSAUQHCOX-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Hydrogen bromide", 
+  "common_name": "Hydrogen bromide", 
+  "csid": 255, 
+  "ordinary_formula_html": "HBr", 
+  "molecid_str": "HBr", 
+  "inchi": "InChI=1S/BrH/h1H", 
+  "ordinary_formula": "HBr", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "10035-10-6", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Hydrogen bromide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "255", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/BrH/h1H", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "CPELXLSAUQHCOX-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

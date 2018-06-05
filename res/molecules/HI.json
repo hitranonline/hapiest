@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "HI", 
+  "inchikey": "XMBWDFGMSWQBCA-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Hydrogen iodide", 
+  "common_name": "Hydrogen iodide", 
+  "csid": 23224, 
+  "ordinary_formula_html": "HI", 
+  "molecid_str": "HI", 
+  "inchi": "InChI=1S/HI/h1H", 
+  "ordinary_formula": "HI", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "10034-85-2", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Hydrogen iodide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "23224", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/HI/h1H", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "XMBWDFGMSWQBCA-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

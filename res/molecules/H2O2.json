@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "H2O2", 
+  "inchikey": "MHAJPDPJQMAIIY-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Hydrogen peroxide", 
+  "common_name": "Hydrogen peroxide", 
+  "csid": 763, 
+  "ordinary_formula_html": "H<sub>2</sub>O<sub>2</sub>", 
+  "molecid_str": "H2O2", 
+  "inchi": "InChI=1S/H2O2/c1-2/h1-2H", 
+  "ordinary_formula": "H2O2", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "7722-84-1", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Hydrogen peroxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "763", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/H2O2/c1-2/h1-2H", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "MHAJPDPJQMAIIY-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

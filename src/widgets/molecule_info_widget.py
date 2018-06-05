@@ -1,14 +1,16 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import json
+from widgets.gui import GUI
 from utils.log import *
 
-class MoleculeInfoWidget(QScrollArea):
+class MoleculeInfoWidget(QScrollArea, GUI):
 
     FIELDS = ['Formula', 'InChi', 'InChiKey', 'HITRANonline_ID', 'Categories', 'Aliases']
 
     def __init__(self, json_file_name = None, parent = None):
         QScrollArea.__init__(self, parent)
+        GUI.__init__(self)
         
         def create_field(text):
             field_name = text.lower()
@@ -21,11 +23,13 @@ class MoleculeInfoWidget(QScrollArea):
             self.__dict__[field_name + "_label"] = label
             self.__dict__[field_name] = value
 
+        self.setObjectName('MoleculeInfoWidget')
+        
         self.name = QLabel()
         self.img = QWidget()
         self.img.setMinimumWidth(256)
         self.img.setMinimumHeight(256)
-        
+
         # Have to call list because map is lazy
         list(map(create_field, MoleculeInfoWidget.FIELDS))
 
@@ -54,9 +58,10 @@ class MoleculeInfoWidget(QScrollArea):
         self.container.setLayout(self.vlayout)
         self.setWidget(self.container)
         
-        if json_file_name == None:
-            pass
-        else:
+        if json_file_name != None:
+            self.img.setAttribute(Qt.WA_StyledBackground)
+            self.img.setStyleSheet('border-image: url("res/img/molecules/{}.png") 0 0 0 0 stretch stretch;'.format(json_file_name))
+            self.img.show()
             self.data = None
             try:
                 with open('res/molecules/{}.json'.format(json_file_name), 'r') as file:

@@ -1,0 +1,43 @@
+{
+  "stoichiometric_formula": "NO2", 
+  "inchikey": "JCXJVPUVTGWSNB-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Nitrogen dioxide", 
+  "common_name": "Nitrogen Dioxide", 
+  "csid": 2297499, 
+  "ordinary_formula_html": "NO<sub>2</sub>", 
+  "molecid_str": "NO2", 
+  "inchi": "InChI=1S/NO2/c2-1-3", 
+  "ordinary_formula": "NO2", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "10102-44-0", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Nitrogen dioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "2297499", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "NitrogenDioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "Nitrogen Dioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "InChI=1S/NO2/c2-1-3", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "JCXJVPUVTGWSNB-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

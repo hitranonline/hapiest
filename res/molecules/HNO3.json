@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "HNO3", 
+  "inchikey": "GRYLNZFGIOXLOG-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Nitric acid", 
+  "common_name": "Nitric acid", 
+  "csid": 919, 
+  "ordinary_formula_html": "HNO<sub>3</sub>", 
+  "molecid_str": "HNO3", 
+  "inchi": "InChI=1S/HNO3/c2-1(3)4/h(H,2,3,4)", 
+  "ordinary_formula": "HNO3", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "7697-37-3", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Nitric acid", 
+      "type": "name"
+    }, 
+    {
+      "alias": "919", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/HNO3/c2-1(3)4/h(H,2,3,4)", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "GRYLNZFGIOXLOG-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

@@ -7,6 +7,8 @@ from utils.dsl import DSL
 from windows.graphing_window import *
 from utils.log import *
 from widgets.hapi_table_view import HapiTableView
+from widgets.molecule_info_widget import MoleculeInfoWidget
+from windows.molecule_info_window import MoleculeInfoWindow
 from widgets.gui import GUI
 
 class MainWindowGui(GUI, QMainWindow):
@@ -52,11 +54,10 @@ class MainWindowGui(GUI, QMainWindow):
         self.param_list = None
 
         # Elements in 'Molecules' tab
-        molecule_container: QVBoxLayout = None
-        molecules_popout_button: QPushButton = None
-        molecules_view_button: QPushButton = None
-        selected_molecules: QComboBox = None
-        molecule_info = None
+        self.molecule_container: QVBoxLayout = None
+        self.molecules_popout_button: QPushButton = None
+        self.selected_molecules: QComboBox = None
+        self.molecule_info = None
 
         # Other stuff..
         self.graph_window_action: QAction = None
@@ -71,6 +72,9 @@ class MainWindowGui(GUI, QMainWindow):
         self.statusbar.addWidget(self.status_bar_label)
         self.init_molecule_list()
         
+        # Initially display a molecule
+        self.__on_molecules_current_index_changed(0)
+
         self.populate_parameter_lists()
 
         # Connect menu actions to handling functions
@@ -128,6 +132,9 @@ class MainWindowGui(GUI, QMainWindow):
         self.table_name.currentTextChanged.connect(self.__on_select_table_name_selection_changed)
 
         self.edit_button.clicked.connect(self.__on_edit_button_click)
+
+        self.molecules_current_molecule.currentIndexChanged.connect(self.__on_molecules_current_index_changed)
+        self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
 
         # A regular expression that all valid data-names match (strips out characters that arent safe for paths in
         # windows / unix operating systems)
@@ -198,7 +205,7 @@ class MainWindowGui(GUI, QMainWindow):
             molecule = Isotopologue.from_molecule_id(molecule_id)
 
             self.molecule_id.addItem(molecule.molecule_name)
-            self.selected_molecule.addItem(molecule.molecule_name)
+            self.molecules_current_molecule.addItem(molecule.molecule_name)
             # completer = QCompleter(map(lambda x: Isotopologue.from_molecule_id(x).molecule_name, Isotopologue.molecules.keys()))
             # self.molecule_id.setCompleter(completer)
             # self.molecule_id.setEditable(True)
@@ -361,16 +368,16 @@ class MainWindowGui(GUI, QMainWindow):
     #  Event Handlers
     ###########################################################################
     
-    def __on_molecules_view_button_click(self):
-        if self.molecule_info == None:
-            pass
-            # self.molecule_info = MoleculeInfoWidget(...)
-            # self.molecule_info = 
-            # self.molecule_container.addWidget(
-
+    def __on_molecules_current_index_changed(self, _index):
+        if self.molecule_info != None:
+            self.molecule_container.removeWidget(self.molecule_info)
+        self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText())
+        self.molecule_container.addWidget(self.molecule_info)
 
     def __on_molecules_popout_button(self):
-        pass
+        new_window = MoleculeInfoWindow(self.parent, self.molecules_current_molecule.currentText())
+        new_window.gui.show()
+        self.parent.add_child_window(new_window)
 
 
     def __on_select_all_button_click(self):

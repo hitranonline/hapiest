@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "ClH", 
+  "inchikey": "VEXZGXHMUGYJMC-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Hydrogen chloride", 
+  "common_name": "Hydrogen chloride", 
+  "csid": 307, 
+  "ordinary_formula_html": "HCl", 
+  "molecid_str": "HCl", 
+  "inchi": "InChI=1S/ClH/h1H", 
+  "ordinary_formula": "HCl", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "7647-01-0", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Hydrogen chloride", 
+      "type": "name"
+    }, 
+    {
+      "alias": "307", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/ClH/h1H", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "VEXZGXHMUGYJMC-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

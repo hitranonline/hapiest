@@ -1,0 +1,45 @@
+{
+  "stoichiometric_formula": "O2S", 
+  "inchikey": "RAHZWNYVWXNFOC-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Sulfur dioxide", 
+  "common_name": "Sulfur Dioxide", 
+  "csid": 1087, 
+  "ordinary_formula_html": "SO<sub>2</sub>", 
+  "molecid_str": "SO2", 
+  "inchi": "InChI=1S/O2S/c1-3-2", 
+  "ordinary_formula": "SO2", 
+  "categories": [
+    "Sulfur-containing species"
+  ], 
+  "aliases": [
+    {
+      "alias": "7446-09-5", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Sulfur dioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "1087", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "SulfurDioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "Sulfur Dioxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "InChI=1S/O2S/c1-3-2", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "RAHZWNYVWXNFOC-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

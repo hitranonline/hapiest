@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "CO", 
+  "inchikey": "UGFAIRIUMAVXCW-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Carbon monoxide", 
+  "common_name": "Carbon monoxide", 
+  "csid": 275, 
+  "ordinary_formula_html": "CO", 
+  "molecid_str": "CO", 
+  "inchi": "InChI=1S/CO/c1-2", 
+  "ordinary_formula": "CO", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "630-08-0", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Carbon monoxide", 
+      "type": "name"
+    }, 
+    {
+      "alias": "275", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/CO/c1-2", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "UGFAIRIUMAVXCW-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

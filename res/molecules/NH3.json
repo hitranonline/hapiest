@@ -1,0 +1,35 @@
+{
+  "stoichiometric_formula": "H3N", 
+  "inchikey": "QGZKDVFQNNGYKY-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Ammonia anhydrous", 
+  "common_name": "Ammonia anhydrous", 
+  "csid": 217, 
+  "ordinary_formula_html": "NH<sub>3</sub>", 
+  "molecid_str": "NH3", 
+  "inchi": "InChI=1S/H3N/h1H3", 
+  "ordinary_formula": "NH3", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "7664-41-7", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Ammonia anhydrous", 
+      "type": "name"
+    }, 
+    {
+      "alias": "217", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "InChI=1S/H3N/h1H3", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "QGZKDVFQNNGYKY-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}

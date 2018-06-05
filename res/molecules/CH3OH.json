@@ -1,0 +1,39 @@
+{
+  "stoichiometric_formula": "CH4O", 
+  "inchikey": "OKKJLVBELUTLKV-UHFFFAOYSA-N", 
+  "hitranonline_id": null, 
+  "short_alias": "Methanol", 
+  "common_name": "Methanol", 
+  "csid": 864, 
+  "ordinary_formula_html": "CH<sub>3</sub>OH", 
+  "molecid_str": "CH3OH", 
+  "inchi": "InChI=1S/CH4O/c1-2/h2H,1H3", 
+  "ordinary_formula": "CH3OH", 
+  "categories": [], 
+  "aliases": [
+    {
+      "alias": "67-56-1", 
+      "type": "cas"
+    }, 
+    {
+      "alias": "Methyl alcohol", 
+      "type": "name"
+    }, 
+    {
+      "alias": "864", 
+      "type": "csid"
+    }, 
+    {
+      "alias": "Methanol", 
+      "type": "name"
+    }, 
+    {
+      "alias": "InChI=1S/CH4O/c1-2/h2H,1H3", 
+      "type": "inchi"
+    }, 
+    {
+      "alias": "OKKJLVBELUTLKV-UHFFFAOYSA-N", 
+      "type": "inchikey"
+    }
+  ]
+}
