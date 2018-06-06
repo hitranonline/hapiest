@@ -4,6 +4,7 @@ from utils.hapi_metadata import *
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from widgets.gui import GUI
+from windows.graph_display_window import GraphDisplayWindow
 
 class GraphingWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
@@ -14,6 +15,8 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
 
         self.data_name_error: QLabel = None
         self.data_name: QComboBox = None
+        self.use_existing_window: QCheckBox = None
+        self.selected_window: QComboBox = None
         self.wn_step: QDoubleSpinBox = None
         self.wn_step_enabled: QCheckBox = None
         self.wn_wing: QDoubleSpinBox = None
@@ -67,10 +70,18 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
             lambda: self.__handle_checkbox_toggle(self.wn_wing_hw_enabled, self.wn_wing_hw))
         self.intensity_threshold_enabled.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.intensity_threshold_enabled, self.intensity_threshold))
+        self.use_existing_window.toggled.connect(
+            lambda: self.__handle_checkbox_toggle(self.use_existing_window,self.selected_window))
+        
         self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
         self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
+        
+        # Set initial values automatically for gamma_air and gamma_self
         self.gamma_air.setValue(0.0)
         self.__on_gamma_air_changed(0.0)
+        
+        self.update_existing_window_items()
+
         #TOOLTIPS
         self.data_name.setToolTip("Select the name of the data you wish to graph.")
         self.temperature.setToolTip("Select the temperature to graph the data at.")
@@ -259,6 +270,19 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
     parameters_required_to_graph = ['molec_id', 'local_iso_id', 'nu', 'sw', 'a', 'elower', 'gamma_air', 'delta_air',
                                     'gamma_self', 'n_air', 'gp', 'gpp']
   
+    
+    def update_existing_window_items(self):
+        print("Updating: {}".format(GraphDisplayWindow.graph_windows))
+        if len(GraphDisplayWindow.graph_windows) == 0:
+            self.use_existing_window.setDisabled(True)
+            self.selected_window.setDisabled(True)
+            return
+        self.selected_window.clear()
+        list(map(lambda x: self.selected_window.addItem(x, None),
+                 list(GraphDisplayWindow.graph_windows.keys())))
+        self.use_existing_window.setEnabled(True)
+        self.use_existing_window.setEnabled(True)
+
     ###
     # Handlers
     ###

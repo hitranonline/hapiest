@@ -8,6 +8,7 @@ from worker.hapi_worker import *
 from utils.hapiest_util import *
 from utils.log import *
 from windows.window import Window
+from windows.graph_display_window import GraphDisplayWindow
 
 class GraphingWindow(Window):
     def __init__(self, parent):
@@ -42,7 +43,7 @@ class GraphingWindow(Window):
         hmd = HapiMetaData(data_name)
 
         Components = hmd.iso_tuples
-        SourceTables = data_name
+        SourceTables = [data_name]
         Environment = {'p': self.gui.get_pressure(), 'T': self.gui.get_temp()}
         Diluent = self.gui.get_diluent()
         WavenumberRange = self.gui.get_wn_range()
@@ -69,9 +70,16 @@ class GraphingWindow(Window):
     def graph(self):
         self.gui.graph_button.setDisabled(True)
 
-        work = HapiWorker.echo(title='Absorption Coefficient', titlex='Wavenumber', titley='Intensity', **self.get_standard_parameters())
+        work = HapiWorker.echo(title='Absorption Coefficient', titlex='Wavenumber (1/cm)', titley='Absorption Coefficient', **self.get_standard_parameters())
+
+        if self.gui.use_existing_window.isChecked():
+            selected_window = self.gui.selected_window.currentText()
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.ABSORPTION_COEFFICIENT, work)
+                return
 
         self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
+        self.gui.update_existing_window_items()
 
     def graph_as(self):
         """

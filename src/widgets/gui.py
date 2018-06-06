@@ -13,3 +13,7 @@ class GUI:
 
     def closeEvent(self, event):
         self.on_close_fn()
+        event.accept()
+
+    def reject():
+        self.on_close_fn()

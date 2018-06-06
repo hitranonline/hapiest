@@ -63,12 +63,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.setWindowTitle(str(title))
 
 
-    def add_graph(self, x, y, title="", xtitle="", ytitle=""):
+    def add_graph(self, x, y, title="", xtitle="", ytitle="", name=""):
         if self.chart == None:
             series = QLineSeries()
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.series = [series]
+            series.setName(name + ' - [{}, {}]'.format(x[0], x[len(x) - 1]))
             series.setUseOpenGL(True)
 
             self.chart = QChart()
@@ -103,30 +104,36 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
+            series.setName(name + ' - [{}, {}]'.format(x[0], x[len(x) - 1]))
+            series.setUseOpenGL(True)
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.chart.addSeries(series)
+            series.attachAxis(self.axisy)
+            series.attachAxis(self.axisx)
             self.series.append(series)
 
         if self.view_xmin:
-            if self.view_xmin > self.axisx.min():
-                self.view_xmin = self.axisx.min()
+            if self.view_xmin > x[0]:
+                self.view_xmin = x[0]
         else:
             self.view_xmin = self.axisx.min()
         if self.view_ymin:
-            if self.view_ymin > self.axisy.min():
-                self.view_ymin = self.axisy.min()
+            ymin = min(y)
+            if self.view_ymin > ymin:
+                self.view_ymin = ymin
         else:
             self.view_ymin = self.axisy.min()
 
         if self.view_xmax:
-            if self.view_xmax < self.axisx.max():
-                self.view_xmax = self.axixs.max()
+            if self.view_xmax < x[len(x) - 1]:
+                self.view_xmax = x[len(x) - 1]
         else:
             self.view_xmax = self.axisx.max()
         if self.view_ymax:
-            if self.view_ymax < self.axisy.max():
-                self.view_ymax = self.axisy.max()
+            ymax = max(y)
+            if self.view_ymax < ymax:
+                self.view_ymax = ymax
         else:
             self.view_ymax = self.axisy.max()
 

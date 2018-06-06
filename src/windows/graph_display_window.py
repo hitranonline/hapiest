@@ -17,12 +17,16 @@ class GraphDisplayWindow(Window):
         GraphType.ABSORPTION_SPECTRUM:      WorkRequest.ABSORPTION_SPECTRUM
     }
 
-    graph_windows = {
-       GraphType.ABSORPTION_COEFFICIENT:    {},
-       GraphType.TRANSMITTANCE_SPECTRUM:    {},
-       GraphType.RADIANCE_SPECTRUM:         {},
-       GraphType.ABSORPTION_SPECTRUM:       {}  
-    }
+    # TODO: add a 'graph type' option in the graphing window.
+    # graph_windows = {
+    #    GraphType.ABSORPTION_COEFFICIENT:    {},
+    #    GraphType.TRANSMITTANCE_SPECTRUM:    {},
+    #    GraphType.RADIANCE_SPECTRUM:         {},
+    #    GraphType.ABSORPTION_SPECTRUM:       {}  
+    # }
+    # For now, just put anything anywhere
+    # Maps strings to graph_display_windows
+    graph_windows = {}
 
     next_graph_window_id = 1
     @staticmethod
@@ -47,20 +51,31 @@ class GraphDisplayWindow(Window):
         gui = GraphDisplayWindowGui(graph_ty, work_object['title'] + ' - ' + str(self.window_id))
         super(GraphDisplayWindow, self).__init__(gui, parent)
 
-        GraphDisplayWindow.graph_windows[graph_ty][self.window_id] = self
+        # GraphDisplayWindow.graph_windows[graph_ty][self.window_id] = self
+        
+        GraphDisplayWindow.graph_windows[str(self.window_id)] = self
 
-        self.worker = HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object, self.plot)
-        self.worker.start()
+        self.workers = { '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object, lambda x: [self.plot(x), self.workers.pop('0')]) }
+        self.workers['0'].start()
+        self.cur_work_id = 1
         self.done_signal.connect(lambda: parent.done_graphing())
         self.gui.setWindowTitle(work_object['title'])
         self.open()
 
+    def add_worker(self, graph_ty, work_object):
+        id = str(self.cur_work_id)
+        self.cur_work_id += 1
+        worker = HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object, lambda x: [self.plot(x), self.workers.pop(id)])
+        self.workers[id] = worker
+        worker.start()
     
     def close(self):
         """
         Overrides Window.close implementation, removes self from GraphDisplayWindow.graph_windows
         """
-        GraphDisplayWindow.graph_window[graph_ty].pop(self.window_id, None)
+        # GraphDisplayWindow.graph_windows[graph_ty].pop(str(self.window_id), None)
+        GraphDisplayWindow.graph_windows.pop(str(self.window_id), None)
+        self.parent.gui.update_existing_window_items()
         Window.close(self)
 
     def plot(self, work_result: WorkResult):
@@ -83,7 +98,7 @@ class GraphDisplayWindow(Window):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
-            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'])
+            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'], result['name'])
         except Exception as e:
             err_log(e)
 

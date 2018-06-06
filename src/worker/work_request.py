@@ -58,29 +58,41 @@ class WorkFunctions:
             return newx, newy
 
     @staticmethod
-    def try_graph_absorption_coefficient(
-            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+    def graph_absorption_coefficient(
+            graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             **kwargs) -> Union[Dict[str, Any], Exception]:
         """
         *Generates coordinates for absorption coeffecient graph.*
         """
-        x, y = WorkFunctions.graph_type_map[graph_fn](
-            Components=Components,
-            SourceTables=SourceTables,
-            Environment=Environment,
-            Diluent=Diluent,
-            HITRAN_units=False,
-            WavenumberRange=WavenumberRange,
-            WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing,
-            WavenumberWingHW=WavenumberWingHW)
-        return {'x': x, 'y': y, 'title': title, 'titlex': titlex, 'titley': titley}
+        # absorptionCoefficient_Doppler functions do not use Diluent
+        if WorkFunctions.graph_type_map[graph_fn] == WorkFunctions.graph_type_map["Galatry"]:
+            x, y = WorkFunctions.graph_type_map[graph_fn](
+                Components=Components,
+                SourceTables=SourceTables,
+                Environment=Environment,
+                HITRAN_units=False,
+                WavenumberRange=WavenumberRange,
+                WavenumberStep=WavenumberStep,
+                WavenumberWing=WavenumberWing,
+                WavenumberWingHW=WavenumberWingHW) 
+        else:
+            x, y = WorkFunctions.graph_type_map[graph_fn](
+                Components=Components,
+                SourceTables=SourceTables,
+                Environment=Environment,
+                Diluent=Diluent,
+                HITRAN_units=False,
+                WavenumberRange=WavenumberRange,
+                WavenumberStep=WavenumberStep,
+                WavenumberWing=WavenumberWing,
+                WavenumberWingHW=WavenumberWingHW)
+        return {'x': x, 'y': y, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
 
     @staticmethod
-    def try_graph_absorption_spectrum(
-            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+    def graph_absorption_spectrum(
+            graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
@@ -101,11 +113,11 @@ class WorkFunctions:
         Environment = {'l': path_length}
         x, y = absorptionSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
 
     @staticmethod
-    def try_graph_radiance_spectrum(
-            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+    def graph_radiance_spectrum(
+            graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
@@ -126,11 +138,11 @@ class WorkFunctions:
         Environment['l'] = path_length
         x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
 
     @staticmethod
-    def try_graph_transmittance_spectrum(
-            graph_fn: Callable, Components: List[Tuple[int, int]], SourceTables: List[str],
+    def graph_transmittance_spectrum(
+            graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
@@ -151,11 +163,11 @@ class WorkFunctions:
         Environment = {'l': path_length}
         x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'titlex': titlex, 'titley': titley}
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
 
 
     @staticmethod
-    def try_fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
+    def fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
                   parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
         Dict[str, List[str]], 'FetchError']:
         """
@@ -257,7 +269,7 @@ class WorkFunctions:
 
     # def select(TableName,DestinationTableName=QUERY_BUFFER,ParameterNames=None,Conditions=None,Output=True,File=None):
     @staticmethod
-    def try_select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
+    def select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
                    Conditions: List[Any] = None, Output: bool = False, File=None, **kwargs):
         """
         *Attempts to call the select() method from hapi.*
@@ -322,17 +334,17 @@ class Work:
         """
         WorkRequest.WORK_FUNCTIONS = {
             WorkRequest.START_HAPI: WorkFunctions.start_hapi,
-            WorkRequest.FETCH: WorkFunctions.try_fetch,
-            WorkRequest.ABSORPTION_COEFFICIENT: WorkFunctions.try_graph_absorption_coefficient,
+            WorkRequest.FETCH: WorkFunctions.fetch,
+            WorkRequest.ABSORPTION_COEFFICIENT: WorkFunctions.graph_absorption_coefficient,
             WorkRequest.TABLE_GET_LINES_PAGE: WorkFunctions.table_get_lines_page,
             WorkRequest.TABLE_COMMIT_LINES_PAGE: WorkFunctions.table_commit_lines_page,
             WorkRequest.TABLE_WRITE_TO_DISK: WorkFunctions.table_write_to_disk,
             WorkRequest.TABLE_NAMES: WorkFunctions.table_names,
             WorkRequest.TABLE_META_DATA: WorkFunctions.table_meta_data,
-            WorkRequest.SELECT: WorkFunctions.try_select,
-            WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.try_graph_absorption_spectrum,
-            WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.try_graph_transmittance_spectrum,
-            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.try_graph_radiance_spectrum
+            WorkRequest.SELECT: WorkFunctions.select,
+            WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.graph_absorption_spectrum,
+            WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.graph_transmittance_spectrum,
+            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum
         }
 
         WorkFunctions.start_hapi(**{})

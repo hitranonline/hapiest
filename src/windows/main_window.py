@@ -73,28 +73,6 @@ class MainWindow(Window):
         """
         raise Exception("Unsupported: graph operation")
 
-    def close_window(self, to_close):
-        """
-        Close all occurences of the window to_close in the windows list.
-        
-        @param to_close Window to be closed
-        
-        """
-        self.child_windows = filter(
-            lambda window: window != to_close, self.child_windows)
-        to_close.close()
-
-    def close(self):
-        """
-        Closes window.
-    
-        """
-        for window in self.child_windows:
-            if window.is_open:
-                window.close()
-
-        self.gui.close()
-
     def open(self):
         """
         Opens the Main Window GUI.
