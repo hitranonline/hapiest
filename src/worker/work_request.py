@@ -66,6 +66,8 @@ class WorkFunctions:
         """
         *Generates coordinates for absorption coeffecient graph.*
         """
+        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                   'Diluent': Diluent }
         # absorptionCoefficient_Doppler functions do not use Diluent
         if WorkFunctions.graph_type_map[graph_fn] == WorkFunctions.graph_type_map["Galatry"]:
             x, y = WorkFunctions.graph_type_map[graph_fn](
@@ -88,7 +90,8 @@ class WorkFunctions:
                 WavenumberStep=WavenumberStep,
                 WavenumberWing=WavenumberWing,
                 WavenumberWingHW=WavenumberWingHW)
-        return {'x': x, 'y': y, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
+        return { 'x': x, 'y': y, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley,
+                 'args': kwargs }
 
     @staticmethod
     def graph_absorption_spectrum(
@@ -100,6 +103,8 @@ class WorkFunctions:
         """
         *Generates coordinates for absorption spectrum graph.*
         """
+        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                   'Diluent': Diluent }
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -110,10 +115,11 @@ class WorkFunctions:
             WavenumberStep=WavenumberStep,
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW)
-        Environment = {'l': path_length}
+        Environment = { 'l': path_length }
         x, y = absorptionSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
+        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                 'titley': titley, 'args': kwargs }
 
     @staticmethod
     def graph_radiance_spectrum(
@@ -125,6 +131,8 @@ class WorkFunctions:
         """
         *Generates coordinates for radiance spectrum graph.*
         """
+        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                   'Diluent': Diluent }
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -138,7 +146,8 @@ class WorkFunctions:
         Environment['l'] = path_length
         x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
+        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                 'titley': titley, 'args': kwargs }
 
     @staticmethod
     def graph_transmittance_spectrum(
@@ -150,6 +159,8 @@ class WorkFunctions:
         """
         *Generates coordinates for transmittance spectrum graph.*
         """
+        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                   'Diluent': Diluent }
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -163,7 +174,8 @@ class WorkFunctions:
         Environment = {'l': path_length}
         x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley}
+        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                 'titley': titley, 'args': kwargs }
 
 
     @staticmethod
@@ -360,7 +372,6 @@ class Work:
                 result = None
                 try:
                     result = work_request.do_work()
-                    print("Result: {}".format(str(format)))
                 except Exception as e:
                     exc_ty, exc_val, exc_tb = sys.exc_info()
                     print_tb(exc_tb, exc_val)

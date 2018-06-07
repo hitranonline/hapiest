@@ -63,19 +63,23 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.setWindowTitle(str(title))
 
 
-    def add_graph(self, x, y, title="", xtitle="", ytitle="", name=""):
+    def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         if self.chart == None:
             series = QLineSeries()
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.series = [series]
-            series.setName(name + ' - [{}, {}]'.format(x[0], x[len(x) - 1]))
+            series.setName( name + ' -<br>Function: {},<br>T: {} K, P: {} atm<br>γ-air: {}, γ-self: {}'.format(
+                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
+                args['Diluent']['air'], args['Diluent']['self']))
+
             series.setUseOpenGL(True)
 
             self.chart = QChart()
             self.chart.addSeries(series)
             self.chart.setTitle(title)
             self.setWindowTitle(title)
+            # self.chart.legend().setAlignment(QtCore.Qt.AlignRight)
 
             if self.axisy:
                 self.chart.removeAxis(self.axisy)
@@ -104,7 +108,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
-            series.setName(name + ' - [{}, {}]'.format(x[0], x[len(x) - 1]))
+            series.setName( name + ' -<br>Function={},<br>T={}, P={}<br>γ-air: {}, γ-self: {}'.format(
+                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
+                args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
             for i in range(0, x.size):
                 series.append(x[i], y[i])
@@ -136,7 +142,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 self.view_ymax = ymax
         else:
             self.view_ymax = self.axisy.max()
-
+        self.__on_view_fit_triggered(True)
         
     def __on_view_fit_triggered(self, _checked: bool):
         """
@@ -159,7 +165,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if value < min:
             self.xmax.setValue(value)
             self.xmin.setValue(value - 1)
-        self.__on_viewport_changed()
+        self.__on_viewport_changed(True)
 
     def __on_xmin_changed(self, value):
         """

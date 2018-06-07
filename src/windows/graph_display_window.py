@@ -98,7 +98,7 @@ class GraphDisplayWindow(Window):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
-            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'], result['name'])
+            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'], result['name'], result['args'])
         except Exception as e:
             err_log(e)
 

@@ -272,12 +272,12 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
   
     
     def update_existing_window_items(self):
-        print("Updating: {}".format(GraphDisplayWindow.graph_windows))
+        self.selected_window.clear()
         if len(GraphDisplayWindow.graph_windows) == 0:
             self.use_existing_window.setDisabled(True)
             self.selected_window.setDisabled(True)
+            self.use_existing_window.setChecked(False)
             return
-        self.selected_window.clear()
         list(map(lambda x: self.selected_window.addItem(x, None),
                  list(GraphDisplayWindow.graph_windows.keys())))
         self.use_existing_window.setEnabled(True)
