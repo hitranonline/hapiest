@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\begin{document}
+
+%%\comment{POSTER}
+
+\begin{center}
+\section{HITRAN Application Programming Interface and Efficient Spectroscopic Tools (HAPIEST)}
+\textbf{
+    \underline{J. Karns,$^a$} \underline{W. Matt,$^a$} \underline{R. V. Kochanov,$^b$}  \underline{I.~E. Gordon,$^b$}
+    \underline{L.~S.~Rothman}, \underline{$^b$, Y.~Tan, $^b$}, R.~Hashemi,$^{b,c}$ S.~Kanbur, $^a$  B. Tenbergen,$^a$
+}
+\end{center}
+
+\begin{center}
+$^a$\textit{State University of New York at Oswego, Oswego, NY, USA}
+$^b$\textit{Atomic and Molecular Physics, Harvard-Smithsonian Center for Astrophysics, Cambridge, MA, USA}
+$^c$\textit{ University of Lethbridge, Alberta, Canada}
+\end{center}
+
+Current high-resolution spectroscopic data have become more and more complex and extensive. In order to make a
+connection between the spectroscopic data in different formats and a spectra observed in different applications, one
+needs a reliable and flexible tool, which is easy to use and deploy.  
+
+The HITRAN Application Programing Interface and Efficient Spectroscopic Tools (HAPIEST) is the joint project which
+started in the fall of 2017 as a collaboration between the HITRAN team and the State University of New York (Oswego).
+The purpose of HAPIEST is to simplify experiences using the HITRAN Application Programing Interface (HAPI,
+\href{http://hitran.org/hapi}{http://hitran.org/hapi}) \footnote{Kochanov RV, Gordon IE, Rothman LS, Wcislo P, Hill C,
+Wilzewski JS. HITRAN Application Programming Interface (HAPI): A comprehensive approach to working with spectroscopic
+data. J Quant Spectrosc Radiat Transf 2016;177:15–30. doi:10.1016/j.jqsrt.2016.03.005.} to work efficiently with the
+HITRAN database HITRAN\footnote{Gordon IE, Rothman LS, Hill C, Kochanov RV, Tan Y, Bernath PF, et al. J. Quant.
+Spectrosc. Radiat. Transf. 203, 3-69 (2017).}.  HAPIEST provides cross-platform graphical interactive tools giving
+access to the basic features of HAPI such as data fetching and selection, as well as generating and plotting of the
+spectral functions (absorption coefficients, transmittance, absorption, and radiance spectra). 
+
+HAPIEST provides interactive access to most of the controls which are involved in the spectral filtering and
+simulation, and is distributed both as binary and source code. The recent version of the source code can be found on
+Github (\href{https://github.com/hapiest-team/hapiest}{https://github.com/hapiest-team/hapiest}). The HAPI library, on
+which the HAPIEST is based, is a free open-source Python module (library) which provides a set of tools for working
+with the structured spectroscopic data from different sources. The principal aim of HAPI is facilitating
+physically-sound interpretation of observations and more realistic models for a wide variety of applications such as
+astrophysics, planetary science, climate simulations, remote sensing, theoretical spectroscopy, and data mining. Having
+such a tool is important in particular to prevent possible errors in radiative transfer calculations caused by misuse
+of spectroscopic tools and databases. The description of the first version of HAPI and its features can be found in the
+dedicated paper\footnote{Kochanov RV, Gordon IE, Rothman LS, Wcislo P, Hill C, Wilzewski JS. J. Quant. Spectrosc.
+Radiat. Transf. 177, 15-30 (2016).} and in the official web page (\href{http://hitran.org/hapi}{http://hitran.org/hapi}).
+
+% If you want to include a figure add next three lines and supply figure in .eps format
+
+%\begin{center}
+%\includegraphics[height=5.5cm]{Fig.eps}
+%\end{center}
+
+% The next line is optional but much appreciated for indexing names (format is {Last name then initials}
+\index{author}{Karns J.} \index{author}{Matt W. N.} \index{author}{Kochanov R. V.} \index{author}{Gordon I. E.}
+\index{author}{Tan Y.} \index{author}{Hashemi R.}\index{author}{Rothman L. S.} \index{author}{Tenbergen B.}
+\index{author}{Kanbur S.}
+
+\end{document}
