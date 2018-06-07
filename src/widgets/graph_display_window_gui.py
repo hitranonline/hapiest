@@ -22,7 +22,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
     def __init__(self, ty: GraphType, window_title: str):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
-        
+
+        self.graph_ty = ty
+
         uic.loadUi('layouts/graph_display_window_v2.ui', self)
         self.chart = None
         self.chart_view = None

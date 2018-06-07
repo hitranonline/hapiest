@@ -59,7 +59,7 @@ class GraphDisplayWindow(Window):
         self.workers['0'].start()
         self.cur_work_id = 1
         self.done_signal.connect(lambda: parent.done_graphing())
-        self.gui.setWindowTitle(work_object['title'])
+        self.gui.setWindowTitle(work_object['title'] + ' - ' + str(self.window_id))
         self.open()
 
     def add_worker(self, graph_ty, work_object):

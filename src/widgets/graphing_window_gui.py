@@ -5,6 +5,8 @@ from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from widgets.gui import GUI
 from windows.graph_display_window import GraphDisplayWindow
+import windows
+import builtins
 
 class GraphingWindowGui(GUI, QtWidgets.QWidget):
     def __init__(self):
@@ -33,7 +35,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.gamma_self: QLabel = None
         self.data_name: QComboBox = None
         self.graph_button: QPushButton = None
-        self.graph_type: QComboBox = None
+        self.line_profile: QComboBox = None
         self.output_file_format: QLineEdit = None
         self.output_filename: QLineEdit = None
         self.pressure: QDoubleSpinBox = None
@@ -42,21 +44,18 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         # Absorption spectrum tab elements
         self.as_path_length: QDoubleSpinBox = None
         self.as_instrumental_fn: QComboBox = None
-        self.graph_as_button: QPushButton = None
         self.as_instrumental_fn_wing: QDoubleSpinBox = None
         self.as_instrumental_resolution: QDoubleSpinBox = None
 
         # Transmittance spectrum tab elements
         self.ts_path_length: QDoubleSpinBox = None
         self.ts_instrumental_fn: QComboBox = None
-        self.graph_ts_button: QPushButton = None
         self.ts_instrumental_fn_wing: QDoubleSpinBox = None
         self.ts_instrumental_resolution: QDoubleSpinBox = None
 
         # Radiance spectrum tab elements
         self.rs_path_length: QDoubleSpinBox = None
         self.rs_instrumental_fn: QComboBox = None
-        self.graph_rs_button: QPushButton = None
         self.rs_instrumental_resolution: QDoubleSpinBox = None
         self.rs_instrumental_fn_wing: QDoubleSpinBox = None
 
@@ -73,6 +72,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.use_existing_window.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.use_existing_window,self.selected_window))
         
+        self.graph_type.currentTextChanged.connect(self.__on_graph_type_changed)
         self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
         self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
         
@@ -81,6 +81,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.__on_gamma_air_changed(0.0)
         
         self.update_existing_window_items()
+        self.populate_graph_types()
 
         #TOOLTIPS
         self.data_name.setToolTip("Select the name of the data you wish to graph.")
@@ -113,6 +114,9 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         @returns name of the selected table
         """
         return self.data_name.currentText()
+
+    def get_line_profile(self):
+        return self.line_profile.currentText()
 
     def get_graph_type(self):
         """
@@ -253,15 +257,13 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         """
         Enables all graph buttons.
         """
-        self.graph_as_button.setEnabled(enabled)
-        self.graph_rs_button.setEnabled(enabled)
-        self.graph_ts_button.setEnabled(enabled)
         self.graph_button.setEnabled(enabled)
 
+    ##
+    #   Utility Functions
+    ###
+
     def remove_worker_by_jid(self, jid: int):
-        """
-        *Params : int jid (job id), the method terminates a worker thread based on a given job id
-        """
         for worker in self.workers:
             if worker.job_id == jid:
                 worker.safe_exit()
@@ -273,19 +275,63 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
     
     def update_existing_window_items(self):
         self.selected_window.clear()
-        if len(GraphDisplayWindow.graph_windows) == 0:
+        graph_ty_str = self.get_graph_type()
+        print(1)
+        if graph_ty_str == '':
+            fitting_graph_windows = []
+        else:
+            graph_ty = windows.graphing_window.GraphingWindow.str_to_graph_ty[graph_ty_str]
+            print(1)
+            # Graph windows of the appropriate type
+            fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty == graph_ty, GraphDisplayWindow.graph_windows.values()))
+            print(1)
+        if len(fitting_graph_windows) == 0:
+            print(2)
             self.use_existing_window.setDisabled(True)
             self.selected_window.setDisabled(True)
             self.use_existing_window.setChecked(False)
             return
-        list(map(lambda x: self.selected_window.addItem(x, None),
-                 list(GraphDisplayWindow.graph_windows.keys())))
+
+        print(1)
+        list(map(lambda x: self.selected_window.addItem(str(x.window_id), None), fitting_graph_windows))
         self.use_existing_window.setEnabled(True)
         self.use_existing_window.setEnabled(True)
 
+    def populate_graph_types(self):
+        self.graph_type.addItem(windows.graphing_window.GraphingWindow.ABSORPTION_SPECTRUM_STRING)
+        self.graph_type.addItem(windows.graphing_window.GraphingWindow.RADIANCE_SPECTRUM_STRING)
+        self.graph_type.addItem(windows.graphing_window.GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING)
+        self.graph_type.addItem(windows.graphing_window.GraphingWindow.ABSORPTION_COEFFICIENT_STRING)
+    
+    
     ###
-    # Handlers
-    ###
+    #   Handlers
+    ####
+
+    def __on_graph_type_changed(self, graph_type):
+        self.update_existing_window_items()
+        
+        if graph_type == windows.graphing_window.GraphingWindow.ABSORPTION_COEFFICIENT_STRING:
+            self.spectrum_tabs.setDisabled(True) 
+        elif graph_type == windows.graphing_window.GraphingWindow.ABSORPTION_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.absorbtion.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.absorbtion)
+            self.transmittance.setDisabled(True)
+            self.radiance.setDisabled(True)
+        elif graph_type == windows.graphing_window.GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.transmittance.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.transmittance)
+            self.absorbtion.setDisabled(True)
+            self.radiance.setDisabled(True) 
+        elif graph_type == windows.graphing_window.GraphingWindow.RADIANCE_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.radiance.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.radiance)
+            self.absorbtion.setDisabled(True)
+            self.transmittance.setDisabled(True)
+    
 
     def __handle_checkbox_toggle(self, checkbox, element):
         """
