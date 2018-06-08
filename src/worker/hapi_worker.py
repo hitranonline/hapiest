@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtWidgets
-from utils.fetch_handler import *
 from utils.log import *
 from worker.hapi_thread import HapiThread
 from worker.work_request import *

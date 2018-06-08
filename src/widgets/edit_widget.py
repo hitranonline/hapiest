@@ -8,7 +8,8 @@ class EditWidget(QWidget):
     def __init__(self, parent):
         QWidget.__init__(self)
         self.parent = parent
-
+        
+        self.table: HapiTableView = None
         self.back_button: QToolButton = None
         self.next_button: QToolButton = None
         self.edit_button: QPushButton = None

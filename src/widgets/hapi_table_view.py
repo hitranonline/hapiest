@@ -5,9 +5,9 @@ from worker.hapi_worker import *
 from worker.work_request import *
 from worker.work_result import *
 from utils.lines import *
-from utils.fetch_handler import FetchHandler
 from functools import reduce
 import itertools
+from utils.hapiest_util import *
 
 class HapiLineEdit(QLineEdit):
 
@@ -292,8 +292,8 @@ class HapiTableView(QTableView):
         self.edit_widget.next_button.setEnabled(True)
         self.edit_widget.back_button.setEnabled(True)
         
-        table_lists = FetchHandler.get_all_data_names() 
-        self.edit_widget.populate_table_lists(table_lists)
+        table_lists = get_all_data_names() 
+        self.edit_widget.parent.populate_table_lists(table_lists)
         index = table_lists.index(self.edit_widget.get_output_name())
         if index != -1:
             self.edit_widget.table_name.setCurrentIndex(index)

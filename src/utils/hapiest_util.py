@@ -22,7 +22,7 @@ def get_all_data_names():
         if match == None:
             continue
         datas.append(match.groupdict()['data_handle'])
-    return set(datas)
+    return list(set(datas))
 
 
 def echo(**kwargs):
