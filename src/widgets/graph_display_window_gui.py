@@ -246,12 +246,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return
         
         try:
-            txt_regex = '\\\.txt\\Z'
             for i in range(0, len(self.series)):
-                ith_filename = txt_regex.sub('{}.txt'.replace(i), filename)
+                ith_filename = '{}_{}.txt'.format(filename, i)
                 with open(ith_filename, "w") as file:
                     for point in self.series[i].pointsVector():
-                        file.write('{:<16.8f}{:.8f}'.format(point.x(), point.y()))
+                        file.write('{:<16.8f}{:.8f}\n'.format(point.x(), point.y()))
                         
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
@@ -260,11 +259,15 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         filename = self.get_file_save_name(".json", "Javascript object notation files (*.json)")
         if filename == None:
             return
-        
-        series_lists = list(map(lambda series: list(map(lambda point: [point.x(), point.y()], series.pointsVector())), self.series)) 
+        def filter_series_name(s):
+            return s.replace('<br>', ' ').replace('γ', 'gamma')
+        dict = {}
+        series_lists = list(map(lambda series: dict.update({
+            filter_series_name(series.name()): 
+                list(map(lambda point: [point.x(), point.y()], series.pointsVector())) }), self.series)) 
         try:
             with open(filename, 'w') as file:
-                file.write(json.dumps({'plots': series_lists}, indent=4))
+                file.write(json.dumps(dict, indent=4))
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 

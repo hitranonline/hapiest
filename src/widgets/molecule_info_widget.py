@@ -28,7 +28,9 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         self.name = QLabel()
         self.img = QWidget()
         self.img.setMinimumWidth(256)
+        self.img.setMaximumWidth(256)
         self.img.setMinimumHeight(256)
+        self.img.setMaximumHeight(256)
 
         # Have to call list because map is lazy
         list(map(create_field, MoleculeInfoWidget.FIELDS))
