@@ -232,10 +232,10 @@
           </font>
          </property>
          <property name="suffix">
-          <string>cm-1</string>
+          <string>(1/cm)</string>
          </property>
          <property name="decimals">
-          <number>8</number>
+          <number>4</number>
          </property>
          <property name="maximum">
           <double>1000000000.000000000000000</double>
@@ -253,10 +253,10 @@
           </font>
          </property>
          <property name="suffix">
-          <string>cm-1</string>
+          <string>(1/cm)</string>
          </property>
          <property name="decimals">
-          <number>8</number>
+          <number>4</number>
          </property>
          <property name="maximum">
           <double>1000000000.000000000000000</double>
@@ -372,13 +372,13 @@
               </font>
              </property>
              <property name="suffix">
-              <string>cm-1</string>
+              <string>(1/cm)</string>
              </property>
              <property name="decimals">
-              <number>8</number>
+              <number>4</number>
              </property>
              <property name="minimum">
-              <double>0.000001000000000</double>
+              <double>0.000000000000000</double>
              </property>
              <property name="maximum">
               <double>1000000000.000000000000000</double>
@@ -467,13 +467,13 @@
               </font>
              </property>
              <property name="suffix">
-              <string>cm-1</string>
+              <string>(1/cm)</string>
              </property>
              <property name="decimals">
-              <number>8</number>
+              <number>4</number>
              </property>
              <property name="minimum">
-              <double>0.000001000000000</double>
+              <double>0.000000000000000</double>
              </property>
              <property name="maximum">
               <double>1000000000.000000000000000</double>
@@ -552,10 +552,10 @@
               </font>
              </property>
              <property name="decimals">
-              <number>8</number>
+              <number>4</number>
              </property>
              <property name="minimum">
-              <double>0.000001000000000</double>
+              <double>0.000000000000000</double>
              </property>
              <property name="maximum">
               <double>1000000000.000000000000000</double>
@@ -644,10 +644,10 @@
               </font>
              </property>
              <property name="decimals">
-              <number>8</number>
+              <number>4</number>
              </property>
              <property name="minimum">
-              <double>0.000001000000000</double>
+              <double>0.000000000000000</double>
              </property>
              <property name="maximum">
               <double>1000000000.000000000000000</double>
@@ -731,7 +731,7 @@
             </font>
            </property>
            <property name="placeholderText">
-            <string>File not created if blank</string>
+            <string>Not implemented</string>
            </property>
           </widget>
          </item>
@@ -848,10 +848,10 @@
              <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="as_instrumental_resolution">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>100000000000000000.000000000000000</double>
@@ -871,10 +871,10 @@
              <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="as_instrumental_fn_wing">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>99999999999999991433150857216.000000000000000</double>
@@ -887,7 +887,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_26">
                <property name="text">
-                <string>Environment</string>
+                <string>Path Length</string>
                </property>
               </widget>
              </item>
@@ -911,7 +911,7 @@
                   <string>cm</string>
                  </property>
                  <property name="decimals">
-                  <number>8</number>
+                  <number>4</number>
                  </property>
                  <property name="maximum">
                   <double>1000000000.000000000000000</double>
@@ -997,10 +997,10 @@
              <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="ts_instrumental_resolution">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>100000000000000000.000000000000000</double>
@@ -1020,10 +1020,10 @@
              <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="ts_instrumental_fn_wing">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>99999999999999991433150857216.000000000000000</double>
@@ -1036,7 +1036,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_28">
                <property name="text">
-                <string>Environment</string>
+                <string>Path Length</string>
                </property>
               </widget>
              </item>
@@ -1060,7 +1060,7 @@
                   <string>cm</string>
                  </property>
                  <property name="decimals">
-                  <number>8</number>
+                  <number>4</number>
                  </property>
                  <property name="maximum">
                   <double>10000000.000000000000000</double>
@@ -1146,10 +1146,10 @@
              <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="rs_instrumental_resolution">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>100000000000000000.000000000000000</double>
@@ -1169,10 +1169,10 @@
              <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="rs_instrumental_fn_wing">
                <property name="decimals">
-                <number>8</number>
+                <number>4</number>
                </property>
                <property name="minimum">
-                <double>0.000001000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>99999999999999991433150857216.000000000000000</double>
@@ -1185,7 +1185,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_30">
                <property name="text">
-                <string>Environment</string>
+                <string>Path Length</string>
                </property>
               </widget>
              </item>
@@ -1209,7 +1209,7 @@
                   <string>cm</string>
                  </property>
                  <property name="decimals">
-                  <number>8</number>
+                  <number>4</number>
                  </property>
                  <property name="maximum">
                   <double>10000000.000000000000000</double>
@@ -1386,7 +1386,7 @@
        <item>
         <widget class="QComboBox" name="data_name">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1467,7 +1467,7 @@
             <string>K</string>
            </property>
            <property name="decimals">
-            <number>8</number>
+            <number>4</number>
            </property>
            <property name="maximum">
             <double>10000000.000000000000000</double>
@@ -1525,7 +1525,7 @@
             <string>atm</string>
            </property>
            <property name="decimals">
-            <number>8</number>
+            <number>4</number>
            </property>
            <property name="maximum">
             <double>1000000000.000000000000000</double>
@@ -1573,7 +1573,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Gamma Air</string>
+            <string>Air</string>
            </property>
           </widget>
          </item>
@@ -1624,7 +1624,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Gamma Self</string>
+            <string>Self</string>
            </property>
           </widget>
          </item>
@@ -1661,6 +1661,15 @@
           <font>
            <pointsize>9</pointsize>
           </font>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.010000000000000</double>
          </property>
         </widget>
        </item>
@@ -1702,7 +1711,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Broadening Parameter:</string>
+          <string>Mixing Ratio</string>
          </property>
         </widget>
        </item>
