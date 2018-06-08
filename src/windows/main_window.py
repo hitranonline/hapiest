@@ -13,59 +13,6 @@ class MainWindow(Window):
         Window.__init__(self, MainWindowGui(self), None)
 
 
-    def fetch_done(self, work_result: WorkResult):
-        """
-        User feedback for GUI paramter fields of the fetch function in the Main Window.
-
-        @param work_result contains the work result (error or success)
-        """
-        try:
-            self.gui.fetch_handler.worker.safe_exit()
-            result = work_result.result
-            self.enable_fetch_button()
-            if result != None and 'all_tables' in result:
-                log("Successfully finished fetch.")
-                self.gui.populate_table_lists(result['all_tables'])
-                return
-            log("Failed to fetch...")
-            if isinstance(result, List):
-                errs = result
-            else:
-                errs = [result]
-            for err in errs:
-                # This means the wavenumber range was too small (probably), so
-                # we'll tell the user it is too small
-                # TODO: Highlight empty elements / invalid elements
-                if err.error == FetchErrorKind.FailedToRetreiveData:
-                    err_log('The entered wavenumber range is too small, try increasing it')
-                # Not much to do in regards to user feedback in this case....
-                elif err.error == FetchErrorKind.FailedToOpenThread:
-                    err_log('Failed to open thread to make query HITRAN')
-                elif err.error == FetchErrorKind.BadConnection:
-                    err_log(
-                        'Error: Failed to connect to HITRAN. Check your internet connection and try again.')
-                elif err.error == FetchErrorKind.BadIsoList:
-                    err_log(' Error: You must select at least one isotopologue.')
-                elif err.error == FetchErrorKind.EmptyName:
-                    pass
-
-        except Exception as e:
-            debug(e)
-
-    def disable_fetch_button(self):
-        """
-        Disable fetch button to disallow user to stack data requests.
-        
-        """
-        self.gui.fetch_button.setDisabled(True)
-
-    def enable_fetch_button(self):
-        """
-        Re-enables fetch button to allow user to request data.
-    
-        """
-        self.gui.fetch_button.setEnabled(True)
-
     def open_graph_window(self):
         """
         TODO: Implement this method?

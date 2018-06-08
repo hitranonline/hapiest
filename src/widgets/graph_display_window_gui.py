@@ -278,15 +278,21 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return 
         
         try:
-            txt_regex = '\\\.txt\\Z'
+            point_vectors = []
             for i in range(0, len(self.series)):
-                ith_filename = txt_regex.sub('{}.csv'.replace(i), filename)
-                with open(ith_filename, "w") as file:
-                    for point in self.series[i].pointsVector():
-                        file.write('{:<16.8f},{:.8f}'.format(point.x(), point.y()))
+                point_vectors.append(self.series[i].pointsVector())
+            max_len = max(map(len, point_vectors))
+            with open(filename, "w") as file:
+                for point_index in range(0, max_len):
+                    s = ''
+                    for i in range(0, len(self.series)):
+                        if point_index >= len(point_vectors[i]):
+                            s = '{} {:14s}, {:14s},'.format(s, '', '')
+                        else:
+                            point = point_vectors[i][point_index]
+                            s = '{} {:14s}, {:14s},'.format(s, str(point.x()), str(point.y()))
+                    
+                    file.write('{}\n'.format(s))
                         
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
-       
-
-

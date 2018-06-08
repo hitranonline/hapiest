@@ -21,7 +21,7 @@ class Window(QtCore.QObject):
     #    return False
 
     def open(self):
-        if not self.is_open:
+        if not self.is_open and self.parent:
             self.gui.show()
             self.is_open = True
 

@@ -122,7 +122,7 @@ class Isotopologue():
                     return html
                 print(_iso)
                 print('Error parsing isotopologue to html ' + iso)
-                return '<div style="color: red">Error parsing</div>'
+                return iso
 
             # Start index of our next substring (lob off the part of the string we're using now)
             start = match.end()

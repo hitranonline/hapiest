@@ -61,11 +61,11 @@ class HapiTableView(QTableView):
 
         self.table_name = table_name
 
-        self.main_window = parent
+        self.edit_widget = parent
 
         self.next_button = parent.next_button
         self.back_button = parent.back_button
-        self.save_button = parent.edit_save_button
+        self.save_button = parent.save_button
 
         self.next_button.clicked.connect(self.next_page)
         self.back_button.clicked.connect(self.back_page)
@@ -205,7 +205,7 @@ class HapiTableView(QTableView):
         self.resizeColumnsToContents()
         self.setVisible(True)
         
-        self.main_window.edit_button.setEnabled(True)
+        self.edit_widget.edit_button.setEnabled(True)
         self.save_button.setEnabled(True)
 
     def remove_worker_by_jid(self, jid: int):
@@ -258,17 +258,17 @@ class HapiTableView(QTableView):
         """
         *Saves table information to local machine.*
         """
-        self.main_window.edit_button.setDisabled(True)
-        self.main_window.edit_table_name.setDisabled(True)
-        self.main_window.edit_output_name.setDisabled(True)
-        self.main_window.next_button.setDisabled(True)
-        self.main_window.back_button.setDisabled(True)
+        self.edit_widget.edit_button.setDisabled(True)
+        self.edit_widget.table_name.setDisabled(True)
+        self.edit_widget.output_name.setDisabled(True)
+        self.edit_widget.next_button.setDisabled(True)
+        self.edit_widget.back_button.setDisabled(True)
         self.save_button.setDisabled(True)
 
         self.lines.commit_changes()
         print("Hey")
         worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
-                            {'source_table': self.table_name, 'output_table': self.main_window.get_edit_output_name()},
+                            {'source_table': self.table_name, 'output_table': self.edit_widget.get_output_name()},
                             self.done_saving)
         self.workers.append(worker)
         worker.start()
@@ -286,17 +286,17 @@ class HapiTableView(QTableView):
             return
         self.remove_worker_by_jid(work_result.job_id)
  
-        self.main_window.edit_button.setEnabled(True)
-        self.main_window.edit_table_name.setEnabled(True)
-        self.main_window.edit_output_name.setEnabled(True)
-        self.main_window.next_button.setEnabled(True)
-        self.main_window.back_button.setEnabled(True)
+        self.edit_widget.edit_button.setEnabled(True)
+        self.edit_widget.table_name.setEnabled(True)
+        self.edit_widget.output_name.setEnabled(True)
+        self.edit_widget.next_button.setEnabled(True)
+        self.edit_widget.back_button.setEnabled(True)
         
         table_lists = FetchHandler.get_all_data_names() 
-        self.main_window.populate_table_lists(table_lists)
-        index = table_lists.index(self.main_window.get_edit_output_name())
+        self.edit_widget.populate_table_lists(table_lists)
+        index = table_lists.index(self.edit_widget.get_output_name())
         if index != -1:
-            self.main_window.edit_table_name.setCurrentIndex(index)
+            self.edit_widget.table_name.setCurrentIndex(index)
 
 
     def close_table(self):

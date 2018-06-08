@@ -5,11 +5,26 @@ from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from widgets.gui import GUI
 from windows.graph_display_window import GraphDisplayWindow
-import windows
+from utils.graph_type import GraphType
+import windows.window
 import builtins
 
-class GraphingWindowGui(GUI, QtWidgets.QWidget):
-    def __init__(self):
+class GraphingWidget(GUI, QtWidgets.QWidget):
+
+    ABSORPTION_COEFFICIENT_STRING: str  = "Absorption Coefficient"
+    ABSORPTION_SPECTRUM_STRING: str     = "Absorption Spectrum"
+    TRANSMITTANCE_SPECTRUM_STRING: str  = "Transmittance Spectrum"
+    RADIANCE_SPECTRUM_STRING: str       = "Radiance Spectrum"
+
+    str_to_graph_ty = {
+        ABSORPTION_COEFFICIENT_STRING:  GraphType.ABSORPTION_COEFFICIENT,
+        ABSORPTION_SPECTRUM_STRING:     GraphType.ABSORPTION_SPECTRUM,
+        TRANSMITTANCE_SPECTRUM_STRING:  GraphType.TRANSMITTANCE_SPECTRUM,
+        RADIANCE_SPECTRUM_STRING:       GraphType.RADIANCE_SPECTRUM
+    }
+
+    
+    def __init__(self, parent):
         QtWidgets.QWidget.__init__(self)
         GUI.__init__(self)
 
@@ -72,6 +87,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.use_existing_window.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.use_existing_window,self.selected_window))
         
+        self.graph_button.clicked.connect(self.graph)
         self.graph_type.currentTextChanged.connect(self.__on_graph_type_changed)
         self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
         self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
@@ -82,6 +98,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         
         self.update_existing_window_items()
         self.populate_graph_types()
+        self.populate_data_names()
 
         #TOOLTIPS
         self.data_name.setToolTip("Select the name of the data you wish to graph.")
@@ -96,7 +113,191 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.wn_wing_hw.setToolTip("Set relative value of the line wing in halfwidths")
 
         self.adjustSize()
+    
+    def get_standard_parameters(self):
+        data_name = self.get_data_name()
+        hmd = HapiMetaData(data_name)
 
+        Components = hmd.iso_tuples
+        SourceTables = [data_name]
+        Environment = {'p': self.get_pressure(), 'T': self.get_temp()}
+        Diluent = self.get_diluent()
+        WavenumberRange = self.get_wn_range()
+        WavenumberStep = self.get_wn_step()
+        WavenumberWing = self.get_wn_wing()
+        WavenumberWingHW = self.get_wn_wing_hw()
+        graph_fn = self.get_line_profile()
+
+        return HapiWorker.echo(
+            graph_fn=graph_fn,
+            Components=Components,
+            SourceTables=SourceTables,
+            Environment=Environment,
+            Diluent=Diluent,
+            HITRAN_units=False,
+            WavenumberRange=WavenumberRange,
+            WavenumberStep=WavenumberStep,
+            WavenumberWing=WavenumberWing,
+            WavenumberWingHW=WavenumberWingHW
+        )
+
+
+    
+    def graph(self):
+        standard_params = self.get_standard_parameters()
+        self.graph_button.setDisabled(True)
+        graph_type = self.graph_type.currentText()
+        if graph_type == GraphingWindow.ABSORPTION_COEFFICIENT_STRING:
+            self.graph_abs_coef(standard_params)
+        elif graph_type == GraphingWindow.ABSORPTION_SPECTRUM_STRING:
+            self.graph_as(standard_params)
+        elif graph_type == GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING:
+            self.graph_ts(standard_params)
+        else:
+            # Radiance spectrum
+            self.graph_rs(standard_params)
+
+    def graph_abs_coef(self, standard_parameters):
+        work = HapiWorker.echo( title=GraphingWindow.ABSORPTION_COEFFICIENT_STRING, 
+                                titlex="Wavenumber (cm<sup>-1</sup>)",
+                                titley='Absorption Coefficient cm<sup>-1</sup>', **standard_parameters)
+
+        if self.use_existing_window.isChecked():
+            selected_window = self.selected_window.currentText()
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.ABSORPTION_COEFFICIENT, work)
+                return
+
+        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
+        self.update_existing_window_items()
+
+    def graph_as(self, standard_params):
+        """
+        Formats GUI for Absorption Spectrum graphing.
+        """
+        path_length = self.get_as_path_length()
+        instrumental_fn = self.get_as_instrumental_fn()
+        AF_wing = self.get_as_instrumental_fn_wing()
+        Resolution = self.get_as_instrumental_resolution()
+
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
+            err_log('Wavenumber Step must be less than Instrumental Resolution')
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
+            return
+
+        work = HapiWorker.echo(
+            title=GraphingWindow.ABSORPTION_SPECTRUM_STRING,
+            titlex="Wavenumber (cm<sup>-1</sup>)",
+            titley="Intensity",
+            path_length=path_length,
+            instrumental_fn=instrumental_fn,
+            Resolution=Resolution,
+            AF_wing=AF_wing,
+            **standard_params
+        )
+        if self.use_existing_window.isChecked():
+            selected_window = self.selected_window.currentText()
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.ABSORPTION_SPECTRUM, work)
+                return
+
+        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_SPECTRUM, work, self))
+        self.update_existing_window_items()
+
+    def graph_rs(self, standard_params):
+        """
+        Formats GUI for Radiance spectrum graphing.
+        """
+        
+        path_length = self.get_rs_path_length()
+        instrumental_fn = self.get_rs_instrumental_fn()
+        AF_wing = self.get_rs_instrumental_fn_wing()
+        Resolution = self.get_rs_instrumental_resolution()
+
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
+            err_log('Wavenumber Step must be less than Instrumental Resolution')
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
+            return
+
+        work = HapiWorker.echo(
+            title=GraphingWindow.RADIANCE_SPECTRUM_STRING,
+            titlex="Wavenumber (cm<sup>-1</sup>)",
+            titley="Intensity",
+            path_length=path_length,
+            instrumental_fn=instrumental_fn,
+            Resolution=Resolution,
+            AF_wing=AF_wing,
+            **standard_params
+        )
+        if self.use_existing_window.isChecked():
+            selected_window = self.selected_window.currentText()
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.RADIANCE_SPECTRUM, work)
+                return
+
+        self.add_child_window(GraphDisplayWindow(GraphType.RADIANCE_SPECTRUM, work, self))
+        self.update_existing_window_items()
+
+    def graph_ts(self, standard_params):
+        """
+        Formats GUI for Transmittance spectrum graping.
+        """
+
+        path_length = self.get_ts_path_length()
+        instrumental_fn = self.get_ts_instrumental_fn()
+        AF_wing = self.get_ts_instrumental_fn_wing()
+        Resolution = self.get_ts_instrumental_resolution()
+
+        if standard_params['WavenumberStep'] == None:
+            standard_params['WavenumberStep'] = Resolution / 2
+        elif standard_params['WavenumberStep'] <= Resolution:
+            err_log('Wavenumber Step must be less than Instrumental Resolution')
+            self.data_name_error.setText(
+                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
+            self.done_graphing()
+            return
+
+        work = HapiWorker.echo(
+            title=GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING,
+            titlex="Wavenumber (cm<sup>-1</sup>)",
+            titley="Intensity",
+            path_length=path_length,
+            instrumental_fn=instrumental_fn,
+            Resolution=Resolution,
+            AF_wing=AF_wing,
+            **standard_params
+        )
+        if self.use_existing_window.isChecked():
+            selected_window = self.selected_window.currentText()
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.TRANSMITTANCE_SPECTRUM, work)
+                return
+
+        self.add_child_window(GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
+        self.update_existing_window_items()
+
+    def populate_data_names(self):
+        """
+        Retreive data file names from users data folder for display in the Graphing Window.
+        """
+        try:
+            list(map(lambda name: self.data_name.addItem(name), get_all_data_names()))
+        except Exception as e:
+            err_log("Failed to populate data names, encountered error \'{}\'".format(str(e)))
+
+    def done_graphing(self):
+        """
+        Re-enables buttons for use after graphing is finished.
+        """
+        self.graph_button.setEnabled(True)
     
     ##
     # Getters
@@ -280,7 +481,7 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         if graph_ty_str == '':
             fitting_graph_windows = []
         else:
-            graph_ty = windows.graphing_window.GraphingWindow.str_to_graph_ty[graph_ty_str]
+            graph_ty = GraphingWidget.str_to_graph_ty[graph_ty_str]
             print(1)
             # Graph windows of the appropriate type
             fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty == graph_ty, GraphDisplayWindow.graph_windows.values()))
@@ -298,10 +499,10 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         self.use_existing_window.setEnabled(True)
 
     def populate_graph_types(self):
-        self.graph_type.addItem(windows.graphing_window.GraphingWindow.ABSORPTION_SPECTRUM_STRING)
-        self.graph_type.addItem(windows.graphing_window.GraphingWindow.RADIANCE_SPECTRUM_STRING)
-        self.graph_type.addItem(windows.graphing_window.GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING)
-        self.graph_type.addItem(windows.graphing_window.GraphingWindow.ABSORPTION_COEFFICIENT_STRING)
+        self.graph_type.addItem(GraphingWidget.ABSORPTION_SPECTRUM_STRING)
+        self.graph_type.addItem(GraphingWidget.RADIANCE_SPECTRUM_STRING)
+        self.graph_type.addItem(GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING)
+        self.graph_type.addItem(GraphingWidget.ABSORPTION_COEFFICIENT_STRING)
     
     
     ###
@@ -311,21 +512,21 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
     def __on_graph_type_changed(self, graph_type):
         self.update_existing_window_items()
         
-        if graph_type == windows.graphing_window.GraphingWindow.ABSORPTION_COEFFICIENT_STRING:
+        if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
             self.spectrum_tabs.setDisabled(True) 
-        elif graph_type == windows.graphing_window.GraphingWindow.ABSORPTION_SPECTRUM_STRING:
+        elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
             self.spectrum_tabs.setEnabled(True)
             self.absorbtion.setEnabled(True)
             self.spectrum_tabs.setCurrentWidget(self.absorbtion)
             self.transmittance.setDisabled(True)
             self.radiance.setDisabled(True)
-        elif graph_type == windows.graphing_window.GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING:
+        elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
             self.spectrum_tabs.setEnabled(True)
             self.transmittance.setEnabled(True)
             self.spectrum_tabs.setCurrentWidget(self.transmittance)
             self.absorbtion.setDisabled(True)
             self.radiance.setDisabled(True) 
-        elif graph_type == windows.graphing_window.GraphingWindow.RADIANCE_SPECTRUM_STRING:
+        elif graph_type == GraphingWidget.RADIANCE_SPECTRUM_STRING:
             self.spectrum_tabs.setEnabled(True)
             self.radiance.setEnabled(True)
             self.spectrum_tabs.setCurrentWidget(self.radiance)
@@ -348,7 +549,6 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
         """
         *Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
         """
-        self.data_name_error.setText('')
         self.set_graph_buttons_enabled(False)
 
         def callback(work_result):
@@ -357,10 +557,9 @@ class GraphingWindowGui(GUI, QtWidgets.QWidget):
             if 'parameters' not in result:
                 self.set_graph_buttons_enabled(True)
                 return
-            for param in GraphingWindowGui.parameters_required_to_graph:
+            for param in GraphingWidget.parameters_required_to_graph:
                 if param not in result['parameters']:
-                    self.data_name_error.setText(
-                        '<span style="color:#aa0000;">' + 'Table does not have the required parameters!' + '</span>')
+                    err_log('Table does not contain required parameters.')
                     return
             self.set_graph_buttons_enabled(True)
 
