@@ -22,7 +22,7 @@ class WorkFunctions:
             del LOCAL_TABLE_CACHE['sampletab']
             print('Done initializing hapi db...')
         except Exception as e:
-            print('Error initializing hapi db...')
+            print('Error initializing hapi db...' + str(e))
             return False
         return True
 
