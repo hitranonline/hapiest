@@ -306,6 +306,9 @@
      <addaction name="save_as_csv"/>
      <addaction name="save_as_txt"/>
      <addaction name="save_as_json"/>
+     <addaction name="separator"/>
+     <addaction name="save_as_png"/>
+     <addaction name="save_as_jpg"/>
     </widget>
     <addaction name="menuSave_as"/>
    </widget>
@@ -330,6 +333,16 @@
   <action name="save_as_json">
    <property name="text">
     <string>JSON (*.json)</string>
+   </property>
+  </action>
+  <action name="save_as_png">
+   <property name="text">
+    <string>Save as PNG</string>
+   </property>
+  </action>
+  <action name="save_as_jpg">
+   <property name="text">
+    <string>Save as JPEG</string>
    </property>
   </action>
  </widget>

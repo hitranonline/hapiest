@@ -34,7 +34,12 @@ class HapiLineEdit(QLineEdit):
         else:
             line.update_nth_field(self.col, value)
 
-    
+    def keyPressEvent(self, event):
+        key = event.key()
+        if key == Qt.Key_Return or key == Qt.Key_Enter:
+            self.clearFocus()
+            self.table.keyPressEvent(event)
+   
     """def sizeHint(self):
         super_sizehint = QLineEdit.sizeHint(self)
         super_sizehint.setWidth(self.font_metrics.width(self.text()))
@@ -94,12 +99,26 @@ class HapiTableView(QTableView):
         self.int_validator = QIntValidator() 
         # self.horizontalHeader().setStretchLastSection(True)
 
-    
+    def current_row(self):
+        return self.currentIndex().row()
+    def current_column(self):
+        return self.currentIndex().column()
+
     def keyPressEvent(self, event):
         key = event.key()
         if key == Qt.Key_Return or key == Qt.Key_Enter:
-            pass
-
+            current_row = self.current_row()
+            if current_row < self.page_len:
+                self.setCurrentIndex(self.currentIndex().sibling(current_row + 1, self.current_column()))
+        elif key == Qt.Key_Tab:
+            current_column = self.current_column()
+            if current_column < self.nparams:
+                self.setCurrentIndex(self.currentIndex().sibling(self.current_row(), current_column + 1))
+        else:
+            QTableView.keyPressEvent(self, event)
+        
+        self.widgets[self.current_row()][self.current_column()].setFocus(Qt.TabFocusReason)
+    
     def closeEditor(self, editor, hint):
         if hint == QAbstractItemDelegate.EditNextItem and self.currentColumn() == 1:
             hint = QAbstractItemDelegate.EditPreviousItem
@@ -116,7 +135,8 @@ class HapiTableView(QTableView):
         lines: Lines = Lines(**work_result.result)
         self.lines = lines
         nparams = len(lines.param_order)
-        
+        self.nparams = nparams
+
         self.table_model = QStandardItemModel(Config.select_page_length, nparams)
         # self.delegate = HapiTableDelegate(self)
         # self.setItemDelegate(self.delegate)
@@ -144,14 +164,15 @@ class HapiTableView(QTableView):
             new_names.append(("%-" + str(column_width) + "." +  str(column_width + 1) + "s") % lines.param_order[column])
         
         self.table_model.setHorizontalHeaderLabels(new_names)
-
+        self.widgets = [[0] * self.nparams] * self.page_len
         for row in range(0, self.current_page_len):
             line = lines.get_line(row)
             # self.items.append([])
             for column in range(0, nparams):
                 item = line.get_nth_field(column)
-                self.setIndexWidget(self.table_model.createIndex(row, column), HapiLineEdit(self, row, column))
-                line_edit = self.indexWidget(self.table_model.createIndex(row, column))
+                self.widgets[row][column] = HapiLineEdit(self, row, column)
+                self.setIndexWidget(self.table_model.createIndex(row, column), self.widgets[row][column])
+                line_edit = self.widgets[row][column]
                 if type(item) == float:
                     line_edit.setValidator(self.double_validator)
                 elif type(item) == int:
@@ -197,7 +218,7 @@ class HapiTableView(QTableView):
             line = lines.get_line(row)
             for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
-                self.indexWidget(self.table_model.createIndex(row, column)).setText((self.column_formats[column] % line.get_nth_field(column)).strip())
+                self.widgets[row][column].setText((self.column_formats[column] % line.get_nth_field(column)).strip())
                         # str(line.get_nth_field(column)).strip())
                 # self.items[row][column].setText(str(line.get_nth_field(column)).strip())
         

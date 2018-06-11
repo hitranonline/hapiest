@@ -2,6 +2,8 @@ from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 
 from utils.hapiest_util import *
 from PyQt5.QtChart import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from utils.log import *
 from utils.graph_type import GraphType
 from widgets.gui import GUI
@@ -44,6 +46,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.save_as_csv.triggered.connect(self.__on_save_as_csv_triggered)
         self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
         self.save_as_txt.triggered.connect(self.__on_save_as_txt_triggered)
+        self.save_as_png.triggered.connect(self.__on_save_as_png_triggered)
 
         self.grabGesture(QtCore.Qt.PanGesture)
         self.grabGesture(QtCore.Qt.PinchGesture)
@@ -238,8 +241,23 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return None
         else:
             return str(filename[0])
+    
+    def __on_save_as_png_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+        
+        filename = self.get_file_save_name('.png', 'PNG files (*.png, *.PNG)')
+        
+        chart_view = QChartView(self.chart)
+        painter = QPainter()
+        pixmap = chart_view.render(painter)
+
+        pixmap.save(filename, 'PNG')
 
     def __on_save_as_txt_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+
         filename = self.get_file_save_name(".txt", "Text files (*.txt)")
 
         if filename == None:
@@ -256,6 +274,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             print("Encountered error {} while saving to file".format(str(e)))
     
     def __on_save_as_json_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+
         filename = self.get_file_save_name(".json", "Javascript object notation files (*.json)")
         if filename == None:
             return
@@ -272,6 +293,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             print("Encountered error {} while saving to file".format(str(e)))
 
     def __on_save_as_csv_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+
         filename = self.get_file_save_name(".csv", "Comma separated value files (*.csv)")
         
         if filename == None:

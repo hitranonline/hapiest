@@ -27,6 +27,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def __init__(self, parent):
         QtWidgets.QWidget.__init__(self)
         GUI.__init__(self)
+        
+        self.parent = parent
 
         self.workers = []
 
@@ -147,18 +149,18 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         standard_params = self.get_standard_parameters()
         self.graph_button.setDisabled(True)
         graph_type = self.graph_type.currentText()
-        if graph_type == GraphingWindow.ABSORPTION_COEFFICIENT_STRING:
+        if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
             self.graph_abs_coef(standard_params)
-        elif graph_type == GraphingWindow.ABSORPTION_SPECTRUM_STRING:
+        elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
             self.graph_as(standard_params)
-        elif graph_type == GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING:
+        elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
             self.graph_ts(standard_params)
         else:
             # Radiance spectrum
             self.graph_rs(standard_params)
 
     def graph_abs_coef(self, standard_parameters):
-        work = HapiWorker.echo( title=GraphingWindow.ABSORPTION_COEFFICIENT_STRING, 
+        work = HapiWorker.echo( title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING, 
                                 titlex="Wavenumber (cm<sup>-1</sup>)",
                                 titley='Absorption Coefficient cm<sup>-1</sup>', **standard_parameters)
 
@@ -168,7 +170,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.ABSORPTION_COEFFICIENT, work)
                 return
 
-        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
+        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
         self.update_existing_window_items()
 
     def graph_as(self, standard_params):
@@ -190,7 +192,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             return
 
         work = HapiWorker.echo(
-            title=GraphingWindow.ABSORPTION_SPECTRUM_STRING,
+            title=GraphingWidget.ABSORPTION_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
             titley="Intensity",
             path_length=path_length,
@@ -205,7 +207,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.ABSORPTION_SPECTRUM, work)
                 return
 
-        self.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_SPECTRUM, work, self))
+        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.ABSORPTION_SPECTRUM, work, self))
         self.update_existing_window_items()
 
     def graph_rs(self, standard_params):
@@ -228,7 +230,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             return
 
         work = HapiWorker.echo(
-            title=GraphingWindow.RADIANCE_SPECTRUM_STRING,
+            title=GraphingWidget.RADIANCE_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
             titley="Intensity",
             path_length=path_length,
@@ -243,7 +245,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.RADIANCE_SPECTRUM, work)
                 return
 
-        self.add_child_window(GraphDisplayWindow(GraphType.RADIANCE_SPECTRUM, work, self))
+        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.RADIANCE_SPECTRUM, work, self))
         self.update_existing_window_items()
 
     def graph_ts(self, standard_params):
@@ -266,7 +268,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             return
 
         work = HapiWorker.echo(
-            title=GraphingWindow.TRANSMITTANCE_SPECTRUM_STRING,
+            title=GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
             titley="Intensity",
             path_length=path_length,
@@ -281,7 +283,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.TRANSMITTANCE_SPECTRUM, work)
                 return
 
-        self.add_child_window(GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
+        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
         self.update_existing_window_items()
 
     def populate_data_names(self):

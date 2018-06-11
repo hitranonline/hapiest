@@ -75,7 +75,7 @@ class GraphDisplayWindow(Window):
         """
         # GraphDisplayWindow.graph_windows[graph_ty].pop(str(self.window_id), None)
         GraphDisplayWindow.graph_windows.pop(str(self.window_id), None)
-        self.parent.gui.update_existing_window_items()
+        self.parent.update_existing_window_items()
         Window.close(self)
 
     def plot(self, work_result: WorkResult):
