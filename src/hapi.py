@@ -1763,7 +1763,6 @@ def storage2cache(TableName,cast=True,ext=None):
                             else:
                                 raise Exception('PARSE ERROR: unknown format of the par value (%s)'%line[start:end])
                 else:
-                    print('start={}, end={}, line=<{}>'.format(start, end, line[start:end])) 
                     return dtype(line[start:end])
             #cfunc.__doc__ = 'converter {} {}'.format(qnt, fmt) # doesn't work in earlier versions of Python
             converters.append(cfunc)
