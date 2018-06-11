@@ -335,7 +335,7 @@ class FetchWidget(QWidget):
         """
         *Returns data name for fetch tab.*
         """
-        return str(self.data_name.text())
+        return str(self.data_name.text()).strip()
 
 
     def get_wn_max(self):
