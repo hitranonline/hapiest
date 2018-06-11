@@ -186,23 +186,25 @@ class WorkFunctions:
         *Method handles verification of user input for fetch function.*
         """
         if len(iso_id_list) == 0:
-            return FetchError(FetchErrorKind.BadIsoList,
-                              'Fetch Failure: Iso list cannot be empty.')
+            return [FetchError(FetchErrorKind.BadIsoList,
+                              'Fetch Failure: Iso list cannot be empty.')]
         try:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
             hmd = HapiMetaData(data_name, iso_id_list, numin, numax)
         except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback)
             debug('Fetch error: ', e)
             as_str = str(e)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
-                return FetchError(
+                return [FetchError(
                     FetchErrorKind.BadConnection,
-                    'Bad connection: Failed to connect to send request. Check your connection.')
+                    'Bad connection: Failed to connect to send request. Check your connection.')]
             else:
-                return FetchError(
+                return [FetchError(
                     FetchErrorKind.FailedToRetreiveData,
-                    'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
+                    'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')]
         return { 'all_tables': list(tableList()) }
 
     @staticmethod

@@ -1745,7 +1745,6 @@ def storage2cache(TableName,cast=True,ext=None):
             aux = fmt[fmt.index('%')+1:-1]
             if '.' in aux:
                 aux = aux[:aux.index('.')]
-            print('Aux = \'{}\''.format(aux))
             size = int(aux)
             end = start + size
             def cfunc(line, dtype=dtype, start=start, end=end):
