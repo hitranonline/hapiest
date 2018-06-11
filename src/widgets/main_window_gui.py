@@ -23,7 +23,9 @@ class MainWindowGui(GUI, QMainWindow):
 
         self.parent = parent
         self.workers = []
-
+        
+        self.about: QTextEdit = None
+    
         # Containers
         self.select_container: QVBoxLayout = None
         self.fetch_container: QVBoxLayout = None
@@ -46,6 +48,8 @@ class MainWindowGui(GUI, QMainWindow):
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
         
+        self.about.setText(open('res/html/description.html', 'r').read())
+
         self.fetch_widget = FetchWidget(self)
         self.fetch_container.addWidget(self.fetch_widget)
 

@@ -317,14 +317,9 @@
     <string>Fit</string>
    </property>
   </action>
-  <action name="actionExcel_Spreadsheet">
-   <property name="text">
-    <string>Excel Spreadsheet</string>
-   </property>
-  </action>
   <action name="save_as_csv">
    <property name="text">
-    <string>Excel Spreadsheet (*.csv)</string>
+    <string>Comma Separated Values (*.csv)</string>
    </property>
   </action>
   <action name="save_as_txt">
