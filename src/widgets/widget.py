@@ -1,2 +1,0 @@
-
-class GraphDisplayWindowGui(QtWidgets.QWidget):

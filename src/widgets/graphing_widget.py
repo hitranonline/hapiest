@@ -120,7 +120,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
         Components = hmd.iso_tuples
         SourceTables = [data_name]
-        Environment = {'p': self.get_pressure(), 'T': self.get_temp()}
+        Environment = { 'p': self.get_pressure(), 'T': self.get_temp() }
         Diluent = self.get_diluent()
         WavenumberRange = self.get_wn_range()
         WavenumberStep = self.get_wn_step()
@@ -477,23 +477,20 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def update_existing_window_items(self):
         self.selected_window.clear()
         graph_ty_str = self.get_graph_type()
-        print(1)
         if graph_ty_str == '':
             fitting_graph_windows = []
         else:
             graph_ty = GraphingWidget.str_to_graph_ty[graph_ty_str]
-            print(1)
-            # Graph windows of the appropriate type
-            fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty == graph_ty, GraphDisplayWindow.graph_windows.values()))
-            print(1)
+            
+            fitting_graph_windows = list(builtins.filter(lambda window:
+                window.graph_ty == graph_ty, GraphDisplayWindow.graph_windows.values()))
+        
         if len(fitting_graph_windows) == 0:
-            print(2)
             self.use_existing_window.setDisabled(True)
             self.selected_window.setDisabled(True)
             self.use_existing_window.setChecked(False)
             return
 
-        print(1)
         list(map(lambda x: self.selected_window.addItem(str(x.window_id), None), fitting_graph_windows))
         self.use_existing_window.setEnabled(True)
         self.use_existing_window.setEnabled(True)
