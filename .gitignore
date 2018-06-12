@@ -13,3 +13,5 @@ docs/latex
 *.spec
 dist/
 build/
+*.log
+*.gz
