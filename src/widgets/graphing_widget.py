@@ -553,6 +553,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         def callback(work_result):
             self.remove_worker_by_jid(work_result.job_id)
             result = work_result.result
+            if result == None:
+                return
             if 'parameters' not in result:
                 self.set_graph_buttons_enabled(True)
                 return

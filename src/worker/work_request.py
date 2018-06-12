@@ -264,6 +264,8 @@ class WorkFunctions:
         """
         *Initilizes meta data file.*
         """
+        if table_name == None or table_name == '':
+            return None
         table = LOCAL_TABLE_CACHE[table_name]['data']
         header = LOCAL_TABLE_CACHE[table_name]['header']
         parameters = list(table.keys())
