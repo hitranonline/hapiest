@@ -123,5 +123,5 @@ class MainWindowGui(GUI, QMainWindow):
         self.edit_widget.table_name.addItems(data_names)
         self.select_widget.table_name.clear()
         self.select_widget.table_name.addItems(data_names)
-        
-
+        self.graphing_widget.data_name.clear()        
+        self.graphing_widget.data_name.addItems(data_names)
