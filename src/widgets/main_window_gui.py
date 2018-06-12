@@ -59,12 +59,13 @@ class MainWindowGui(GUI, QMainWindow):
         self.edit_widget = EditWidget(self)
         self.edit_container.addWidget(self.edit_widget)
         
+        self.graphing_widget = GraphingWidget(self)
+        self.graphing_container.setWidget(self.graphing_widget)
+         
         self.populate_table_lists()
         self.populate_molecule_list()
         self.populate_molecule_list()
-
-        self.graphing_widget = GraphingWidget(self)
-        self.graphing_container.setWidget(self.graphing_widget)
+       
         # Initially display a molecule in the molecule widget
         self.__on_molecules_current_index_changed(0)
         self.molecules_current_molecule.currentIndexChanged.connect(self.__on_molecules_current_index_changed)
