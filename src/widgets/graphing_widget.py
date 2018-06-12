@@ -567,4 +567,4 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         worker.start()
 
     def __on_gamma_air_changed(self, new_value: float):
-        self.gamma_self.setText(str(1.0 - new_value))
+        self.gamma_self.setText('{:8.4f}'.format(1.0 - new_value))
