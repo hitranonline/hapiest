@@ -2,13 +2,16 @@
 *hapiest* is a GUI that works with the HITRAN API, enabling access
 to all sorts of spectrographic data without knowledge of python.
 
-# How to Install
+# Download
+Windows x86 Executable [Download](#)
+
+There are no Mac OSX or Linux executables, please make an issue in this repository to request one.
+
+# How to Manually Install
 Hapiest currently has no binary packages, but the program itself can be downloaded
 with the [install.py](https://github.com/hitranonline/hapiest/blob/master/install.py) script.
 
 *You must have python 3.6 or later to install and use hapiest*.
-
-For windows, mac, or linux, download [install.py](https://raw.githubusercontent.com/hitranonline/hapiest/master/install.py) and run it in the directory you want the hapiest folder to be created.
 
 For mac and linux you can run the following in the terminal, and on windows in the command line:
 ```bash

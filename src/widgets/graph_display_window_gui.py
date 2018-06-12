@@ -74,7 +74,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.series = [series]
-            series.setName( name + ' -<br>Function: {},<br>T: {} K, P: {} atm<br>γ-air: {}, γ-self: {}'.format(
+            series.setName( name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
 
@@ -83,7 +83,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.chart = QChart()
             self.chart.addSeries(series)
             self.chart.setTitle(title)
-            self.setWindowTitle(title)
             # self.chart.legend().setAlignment(QtCore.Qt.AlignRight)
 
             if self.axisy:
@@ -113,7 +112,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
-            series.setName( name + ' -<br>Function={},<br>T={}, P={}<br>γ-air: {}, γ-self: {}'.format(
+            series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={L.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
@@ -248,9 +247,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         
         filename = self.get_file_save_name('.png', 'PNG files (*.png, *.PNG)')
         
-        chart_view = QChartView(self.chart)
+        geometry = self.chart_view.geometry()
+        pixmap = QPixmap(16 * geometry.width(), 16 * geometry.height())
         painter = QPainter()
-        pixmap = chart_view.render(painter)
+        
+        painter.begin(pixmap)
+        self.chart_view.render(painter)
+        painter.end()
 
         pixmap.save(filename, 'PNG')
 
