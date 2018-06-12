@@ -27,7 +27,7 @@ hapi_api_key = '{hapi_api_key}'
         data_folder = data_folder,
         high_dpi = high_dpi,
         select_page_length = select_page_length,
-        hapi_api_key = '')
+        hapi_api_key = 'default')
     
     CONFIG_LOCATION = 'Config.toml'
    
