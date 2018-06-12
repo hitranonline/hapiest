@@ -114,7 +114,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
-            series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={L.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+            series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
