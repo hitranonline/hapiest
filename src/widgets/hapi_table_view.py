@@ -287,19 +287,16 @@ class HapiTableView(QTableView):
         self.save_button.setDisabled(True)
 
         self.lines.commit_changes()
-        print("Hey")
         worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
                             {'source_table': self.table_name, 'output_table': self.edit_widget.get_output_name()},
                             self.done_saving)
         self.workers.append(worker)
         worker.start()
-        print("Wow")
 
     def done_saving(self, work_result: WorkResult):
         """
         *handles user feedback for saving of edit tab data.*
         """
-        print("Done saving!!!!")
         result = work_result.result
         self.save_button.setEnabled(True)
         if result != True:
