@@ -83,7 +83,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.chart = QChart()
             self.chart.addSeries(series)
             self.chart.setTitle(title)
-            self.setWindowTitle(title)
             # self.chart.legend().setAlignment(QtCore.Qt.AlignRight)
 
             if self.axisy:
