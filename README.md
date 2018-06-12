@@ -3,7 +3,7 @@
 to all sorts of spectrographic data without knowledge of python.
 
 # Download
-Windows x86 Executable [Download](#)
+Windows x86 Executable [Download](https://github.com/hitranonline/hapiest/releases/tag/v0.1-alpha)
 
 There are no Mac OSX or Linux executables, please make an issue in this repository to request one.
 
