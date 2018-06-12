@@ -1,15 +1,16 @@
 from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
-
-from utils.hapiest_util import *
+from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
 from widgets.gui import GUI
 from random import randint
 from typing import *
-import re
+import os
 import json
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
@@ -47,7 +48,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
         self.save_as_txt.triggered.connect(self.__on_save_as_txt_triggered)
         self.save_as_png.triggered.connect(self.__on_save_as_png_triggered)
-
+        self.save_as_jpg.triggered.connect(self.__on_save_as_jpg_triggered)
+        # self.save_as_other_img.triggered.connect(self.__on_save_as_other_img_triggered)
         self.grabGesture(QtCore.Qt.PanGesture)
         self.grabGesture(QtCore.Qt.PinchGesture)
 
@@ -241,21 +243,73 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         else:
             return str(filename[0])
     
+    def __on_save_as_other_img_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+
+        filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG);; Windows Bitmap (*.bmp *.BMP);; Joint Photographic Experts Group (*.jpeg *.JPEG *.jpg *.JPG);; Portable Pixmap (*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap (*.xpm *.XPM)')
+        
+        if filename == None:
+            return
+        
+        _filename, file_extension = os.path.splitext(filename)
+        extension = file_extension.upper()
+
+        gl_widget = self.chart_view.findChild(QOpenGLWidget)
+
+        # geometry = self.chart_view.geometry()
+        pixmap = self.chart_view.grab()
+        painter = QPainter(pixmap)
+        point = gl_widget.mapToGlobal(QPoint()) - self.chart_view.mapToGlobal(QPoint())
+        painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
+        painter.drawImage(point, gl_widget.grabFramebuffer())
+        painter.end()
+        
+        pixmap.save(filename, extension)
+        
+
     def __on_save_as_png_triggered(self, _checked: bool):
         if self.chart == None:
             return
         
-        filename = self.get_file_save_name('.png', 'PNG files (*.png, *.PNG)')
-        
-        geometry = self.chart_view.geometry()
-        pixmap = QPixmap(16 * geometry.width(), 16 * geometry.height())
-        painter = QPainter()
-        
-        painter.begin(pixmap)
-        self.chart_view.render(painter)
-        painter.end()
+        if filename == None:
+            return
 
+        filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG)')
+       
+        gl_widget = self.chart_view.findChild(QOpenGLWidget)
+
+        # geometry = self.chart_view.geometry()
+        pixmap = self.chart_view.grab()
+        painter = QPainter(pixmap)
+        point = gl_widget.mapToGlobal(QPoint()) - self.chart_view.mapToGlobal(QPoint())
+        painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
+        painter.drawImage(point, gl_widget.grabFramebuffer())
+        painter.end()
+        
         pixmap.save(filename, 'PNG')
+
+
+    def __on_save_as_jpg_triggered(self, _checked: bool):
+        if self.chart == None:
+            return
+        
+        filename = self.get_file_save_name('.jpg', 'JPEG files (*.jpg *.JPG *.jpeg *.JPEG)')
+        
+        if filename == None:
+            return
+
+        gl_widget = self.chart_view.findChild(QOpenGLWidget)
+
+        # geometry = self.chart_view.geometry()
+        pixmap = self.chart_view.grab()
+        painter = QPainter(pixmap)
+        point = gl_widget.mapToGlobal(QPoint()) - self.chart_view.mapToGlobal(QPoint())
+        painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
+        painter.drawImage(point, gl_widget.grabFramebuffer())
+        painter.end()
+        
+        pixmap.save(filename, 'JPG')
 
     def __on_save_as_txt_triggered(self, _checked: bool):
         if self.chart == None:

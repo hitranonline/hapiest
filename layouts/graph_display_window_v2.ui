@@ -303,10 +303,12 @@
      <property name="title">
       <string>Save as&amp;</string>
      </property>
+     <addaction name="actionHuman_Readable"/>
      <addaction name="save_as_csv"/>
      <addaction name="save_as_txt"/>
      <addaction name="save_as_json"/>
      <addaction name="separator"/>
+     <addaction name="action_b_Image_b"/>
      <addaction name="save_as_png"/>
      <addaction name="save_as_jpg"/>
     </widget>
@@ -337,12 +339,47 @@
   </action>
   <action name="save_as_png">
    <property name="text">
-    <string>Save as PNG</string>
+    <string>Portable Network Graphics (*.png)</string>
    </property>
   </action>
   <action name="save_as_jpg">
    <property name="text">
-    <string>Save as JPEG</string>
+    <string>Joint Photographic Experts Group (*.jpeg)</string>
+   </property>
+  </action>
+  <action name="save_as_other_img">
+   <property name="text">
+    <string>Other image format (*.bmp, *.xbm, *.xpm, *.ppm)</string>
+   </property>
+  </action>
+  <action name="action_b_Image_b">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Image</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+     <underline>true</underline>
+    </font>
+   </property>
+  </action>
+  <action name="actionHuman_Readable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Human Readable</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+     <underline>true</underline>
+    </font>
    </property>
   </action>
  </widget>
