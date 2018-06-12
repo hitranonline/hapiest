@@ -104,7 +104,7 @@
            </font>
           </property>
           <property name="decimals">
-           <number>8</number>
+           <number>4</number>
           </property>
           <property name="maximum">
            <double>9007199254740992.000000000000000</double>
@@ -137,7 +137,7 @@
            </font>
           </property>
           <property name="decimals">
-           <number>8</number>
+           <number>4</number>
           </property>
           <property name="maximum">
            <double>9007199254740992.000000000000000</double>
@@ -215,7 +215,7 @@
            </font>
           </property>
           <property name="decimals">
-           <number>8</number>
+           <number>4</number>
           </property>
           <property name="maximum">
            <double>9007199254740992.000000000000000</double>
@@ -248,7 +248,7 @@
            </font>
           </property>
           <property name="decimals">
-           <number>8</number>
+           <number>4</number>
           </property>
           <property name="maximum">
            <double>9007199254740992.000000000000000</double>
