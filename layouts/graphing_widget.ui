@@ -1646,7 +1646,7 @@
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="gamma_air">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
