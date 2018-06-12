@@ -28,7 +28,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.graph_ty = ty
 
-        uic.loadUi('layouts/graph_display_window_v2.ui', self)
+        uic.loadUi('layouts/graph_display_window.ui', self)
         self.chart = None
         self.chart_view = None
 
