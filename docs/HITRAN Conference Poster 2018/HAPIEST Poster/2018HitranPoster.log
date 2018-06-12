@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.2.7)  11 JUN 2018 12:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.2.7)  12 JUN 2018 11:16
 entering extended mode
 **./2018HitranPoster.tex
 (2018HitranPoster.tex
@@ -358,15 +358,6 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 67.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 72.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 10000) in paragraph at lines 65--73
-
- []
-
 <OswegoLogo.jpg, id=1, 3764.0625pt x 2619.7875pt>
 File: OswegoLogo.jpg Graphic file (type jpg)
  <use OswegoLogo.jpg>
@@ -394,94 +385,93 @@ Package pdftex.def Info: TomskLogo.png used on input line 80.
 <hapiest.png, id=6, 301.125pt x 301.125pt>
 File: hapiest.png Graphic file (type png)
  <use hapiest.png>
-Package pdftex.def Info: hapiest.png used on input line 81.
+Package pdftex.def Info: hapiest.png used on input line 87.
 (pdftex.def)             Requested size: 284.52756pt x 284.55542pt.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <35.83> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 99.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <29.86> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 108.
 
-<MainWindow_Fetch.png, id=7, 489.027pt x 336.0555pt>
+Overfull \hbox (19.91754pt too wide) in paragraph at lines 87--88
+[][] 
+ []
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <35.83> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 104.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <29.86> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 113.
+<MainWindow_Fetch.png, id=7, 485.4135pt x 322.20375pt>
 File: MainWindow_Fetch.png Graphic file (type png)
 
 <use MainWindow_Fetch.png>
-Package pdftex.def Info: MainWindow_Fetch.png used on input line 111.
-(pdftex.def)             Requested size: 733.53868pt x 504.082pt.
+Package pdftex.def Info: MainWindow_Fetch.png used on input line 116.
+(pdftex.def)             Requested size: 728.11845pt x 483.30443pt.
 
-<MainWindow_Edit2.png, id=8, 1024.42725pt x 401.0985pt>
-File: MainWindow_Edit2.png Graphic file (type png)
+<MainWindow_Edit.png, id=8, 1023.825pt x 386.6445pt>
+File: MainWindow_Edit.png Graphic file (type png)
+ <use MainWindow_Edit.png>
+Package pdftex.def Info: MainWindow_Edit.png used on input line 126.
+(pdftex.def)             Requested size: 1023.8225pt x 386.64355pt.
 
-<use MainWindow_Edit2.png>
-Package pdftex.def Info: MainWindow_Edit2.png used on input line 121.
-(pdftex.def)             Requested size: 1024.42476pt x 401.0975pt.
-
-Overfull \hbox (2.10956pt too wide) in paragraph at lines 121--122
+Overfull \hbox (1.5073pt too wide) in paragraph at lines 126--127
  [] 
  []
 
-<MainWindow_Molecules.png, id=9, 489.027pt x 336.0555pt>
+<MainWindow_Molecules.png, id=9, 485.4135pt x 390.86024pt>
 File: MainWindow_Molecules.png Graphic file (type png)
 
 <use MainWindow_Molecules.png>
-Package pdftex.def Info: MainWindow_Molecules.png used on input line 128.
-(pdftex.def)             Requested size: 733.53868pt x 504.082pt.
+Package pdftex.def Info: MainWindow_Molecules.png used on input line 133.
+(pdftex.def)             Requested size: 728.11845pt x 586.28893pt.
 
 <GraphingWindow.png, id=10, 531.78674pt x 367.97475pt>
 File: GraphingWindow.png Graphic file (type png)
 
 <use GraphingWindow.png>
-Package pdftex.def Info: GraphingWindow.png used on input line 135.
+Package pdftex.def Info: GraphingWindow.png used on input line 140.
 (pdftex.def)             Requested size: 797.67816pt x 551.96077pt.
+ <GraphSelect.png, id=11, 477.58424pt x 387.24675pt>
+File: GraphSelect.png Graphic file (type png)
 
-<GraphDisplayWindow.png, id=11, 527.571pt x 381.8265pt>
-File: GraphDisplayWindow.png Graphic file (type png)
+<use GraphSelect.png>
+Package pdftex.def Info: GraphSelect.png used on input line 147.
+(pdftex.def)             Requested size: 716.3746pt x 580.86868pt.
+ <GraphDemo.png, id=12, 714.2685pt x 387.24675pt>
+File: GraphDemo.png Graphic file (type png)
 
-<use GraphDisplayWindow.png>
-Package pdftex.def Info: GraphDisplayWindow.png used on input line 142.
-(pdftex.def)             Requested size: 791.35457pt x 572.73834pt.
+<use GraphDemo.png>
+Package pdftex.def Info: GraphDemo.png used on input line 150.
+(pdftex.def)             Requested size: 857.11792pt x 464.69376pt.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 162.
 
-<GraphDisplayWindow_ZoomDemo.png, id=12, 800.9925pt x 381.8265pt>
-File: GraphDisplayWindow_ZoomDemo.png Graphic file (type png)
-
-<use GraphDisplayWindow_ZoomDemo.png>
-Package pdftex.def Info: GraphDisplayWindow_ZoomDemo.png used on input line 145
-.
-(pdftex.def)             Requested size: 961.1862pt x 458.1895pt.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 157.
-
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\omsptm.fd"
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\omsptm.fd"
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <24.88> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 157.
- [1
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 162.
+
+[1
 
 
 Non-PDF special ignored!
 Non-PDF special ignored!{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <.
 /OswegoLogo.jpg> <./HitranLogo.png> <./LethbridgeLogo.png> <./TomskLogo.png> <.
-/hapiest.png> <./MainWindow_Fetch.png> <./MainWindow_Edit2.png> <./MainWindow_M
-olecules.png> <./GraphingWindow.png> <./GraphDisplayWindow.png> <./GraphDisplay
-Window_ZoomDemo.png>] (2018HitranPoster.aux) ) 
+/hapiest.png> <./MainWindow_Fetch.png> <./MainWindow_Edit.png> <./MainWindow_Mo
+lecules.png> <./GraphingWindow.png> <./GraphSelect.png> <./GraphDemo.png>]
+(2018HitranPoster.aux) ) 
 Here is how much of TeX's memory you used:
- 4861 strings out of 493333
- 72409 string characters out of 3139147
+ 4826 strings out of 493333
+ 71781 string characters out of 3139147
  159461 words of memory out of 3000000
- 8297 multiletter control sequences out of 15000+200000
- 30145 words of font info for 78 fonts, out of 3000000 for 9000
+ 8267 multiletter control sequences out of 15000+200000
+ 29630 words of font info for 76 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,6n,38p,685b,295s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files/MiKTeX 2.9/font
-s/enc/dvips/base/8r.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
-s/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
-y10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Pro
-gram Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX
- 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
-urw/times/utmri8a.pfb>
-Output written on 2018HitranPoster.pdf (1 page, 755827 bytes).
+ 39i,8n,38p,685b,303s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/base/8r.en
+c}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fo
+nts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/tim
+es/utmri8a.pfb>
+Output written on 2018HitranPoster.pdf (1 page, 760783 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
+ 42 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  56 words of extra memory for PDF output out of 10000 (max. 10000000)
 
