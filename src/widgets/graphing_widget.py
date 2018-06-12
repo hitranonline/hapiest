@@ -77,7 +77,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.rs_instrumental_fn_wing: QDoubleSpinBox = None
 
 
-        uic.loadUi('layouts/graphing_window.ui', self)
+        uic.loadUi('layouts/graphing_widget.ui', self)
         self.wn_step_enabled.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.wn_step_enabled, self.wn_step))
         self.wn_wing_enabled.toggled.connect(
