@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 import json
 from widgets.gui import GUI
 from utils.log import *
+from utils.isotopologue import Isotopologue
 
 class MoleculeInfoWidget(QScrollArea, GUI):
 
@@ -45,11 +46,11 @@ class MoleculeInfoWidget(QScrollArea, GUI):
 
         self.hlayout = QHBoxLayout()
         self.hlayout.addWidget(self.img)
-        self.hlayout.addWidget(self.name)
-
+        
         self.vlayout = QVBoxLayout()
-        self.vlayout.addLayout(self.hlayout)
+        self.vlayout.addWidget(self.name)
         self.vlayout.addLayout(self.form_layout)
+        self.hlayout.addLayout(self.vlayout)
         
         self.container = QWidget()
         self.container.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
@@ -57,7 +58,7 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         self.vlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.container.setLayout(self.vlayout)
+        self.container.setLayout(self.hlayout)
         self.setWidget(self.container)
         
         if json_file_name != None:
@@ -74,10 +75,12 @@ class MoleculeInfoWidget(QScrollArea, GUI):
             if self.data != None:
                 self.restructure_aliases()
                 try:
-                    self.name.setText(self.data['short_alias'])
+                    self.name.setText('<span style="font-size: 16pt"><i><b>{}</b></i></span>'.format(self.data['short_alias']))
                     self.formula.setText(self.data['ordinary_formula_html'])
                     if 'hitranonline_id' in self.data and self.data['hitranonline_id'] != None:
                         self.hitranonline_id.setText(str(self.data['hitranonline_id']))
+                    else:
+                        self.hitranonline_id.setText(str(Isotopologue.from_molecule_name(self.data['ordinary_formula']).id))
                     self.inchi.setText(self.data['inchi'])
                     self.inchikey.setText(self.data['aliases']['inchikey'])
                     
