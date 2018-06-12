@@ -3,10 +3,17 @@ from types import *
 from typing import *
 
 class HapiSourceWidget(QtWidgets.QTextEdit):
-    def __init__(self, title: str, authors: List[str], year: str, doi: Optional[str]):
+    def __init__(self,title: str, authors: List[str], year: str, doi: Optional[str],
+            journal: Optional[str] = None, volume: Optional[str] = None, page_start: Optional[int] = None,
+            page_end: Optional[int] = None, **kwargs):
         self.title = title
         self.authors = authors
         self.year = year
+        self.journal = journal
+        self.volume = volume
+        self.page_start = page_start
+        self.page_end = page_end
+
         if doi == None:
             self.doi = ''
         else:
@@ -32,6 +39,20 @@ class HapiSourceWidget(QtWidgets.QTextEdit):
     
     def generate_plain_text(self) -> str:
         authors_str = ''
-        for author in self.authors:
-            authors_str = '{}{}, '.format(authors_str, author)
-        return '{}{} ({}){}'.format(authors_str, self.title, self.year, self.create_plain_doi_str()).strip()
+        l = len(self.authors) - 1
+        for i in range(0, l): # author in self.authors:
+            authors_str = '{}{}, '.format(authors_str, self.authors[i])
+        authors_str = '{}{}.'.format(authors_str, self.authors[l])
+        
+        journal_str = ''
+        if self.journal != None:
+            journal_str += self.journal
+            if self.volume != None:
+                journal_str += ' {},'.format(self.volume)
+            if self.page_start != None:
+                if self.page_end == None:
+                    journal_str += ' {}'.format(self.page_start)
+                else:
+                    journal_str += ' {}-{}'.format(self.page_start, self.page_end)
+
+        return '{} {}. {} ({}). {}'.format(authors_str, self.title, journal_str, self.year, self.create_plain_doi_str()).strip()

@@ -7,6 +7,10 @@ sources = {
         'authors': ['R.V. Kochanov', 'I.E. Gordon', 'L.S. Rothman', 'P. Wcislo', 'C. Hill','J.S. Wilzewski'],
         'title': 'HITRAN Application Programming Interface (HAPI): A comprehensive approach to working with spectroscopic data',
         'year': '2016',
+        'journal': 'J. Quant. Spectrosc. Radiat. Transfer',
+        'volume': 177,
+        'page_start': 15,
+        'page_end': 30,
         'doi': '10.1016/j.jqsrt.2016.03.005'
     },
     'hapiest': {
@@ -34,15 +38,17 @@ class HapiSourcesTest(Test):
     
         window = QtWidgets.QMainWindow()
         def close_window():
-            sleep(0.25)
-            window.deleteLater()
-            
+            # uncomment this to auto-close
+            # sleep(0.25)
+            #window.deleteLater()
+            pass
+
         t = threading.Thread(target=close_window)
         t.start()
         items = QtWidgets.QWidget(window)
         layout = QtWidgets.QVBoxLayout()
         for _k, v in sources.items():
-            layout.addWidget(HapiSourceWidget(v['title'], v['authors'], v['year'], v['doi']))
+            layout.addWidget(HapiSourceWidget(**v))
         items.setLayout(layout)
         window.setCentralWidget(items) 
         window.show()
