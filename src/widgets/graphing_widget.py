@@ -546,7 +546,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def __on_data_name_chagned(self, new_table):
         """
-        *Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
+        Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
         """
         self.set_graph_buttons_enabled(False)
 
@@ -562,6 +562,9 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 if param not in result['parameters']:
                     err_log('Table does not contain required parameters.')
                     return
+            self.wn_min.setValue(result['wn_min'])
+            self.wn_max.setValue(result['wn_max'])
+
             self.set_graph_buttons_enabled(True)
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)

@@ -272,8 +272,10 @@ class WorkFunctions:
         table = LOCAL_TABLE_CACHE[table_name]['data']
         header = LOCAL_TABLE_CACHE[table_name]['header']
         parameters = list(table.keys())
+        wn_min = min(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
+        wn_max = max(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
         length = header['number_of_rows']
-        return echo(length=length, header=header, parameters=parameters)
+        return echo(length=length, header=header, parameters=parameters, wn_min=wn_min, wn_max=wn_max)
 
     @staticmethod
     def table_names(**kwargs):
