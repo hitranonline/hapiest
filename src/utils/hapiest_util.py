@@ -24,6 +24,25 @@ def get_all_data_names():
         datas.append(match.groupdict()['data_handle'])
     return list(set(datas))
 
+# Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
+JSON_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.json\\Z')
+
+
+
+def get_all_json_molecule_names():
+    """
+    @returns a list of all the molecules that have JSON corresponding to them.
+    """
+    files = os.listdir('res/molecules/')
+    datas = []
+    for f in files:
+        match = JSON_FILE_REGEX.match(f)
+        if match == None:
+            continue
+        datas.append(match.groupdict()['data_handle'])
+    return list(set(datas))
+
+
 
 def echo(**kwargs):
     """

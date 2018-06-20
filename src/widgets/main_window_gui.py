@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 
+from utils.hapiest_util import *
 from utils.dsl import DSL
 from widgets.graphing_widget import *
 from utils.log import *
@@ -64,14 +65,12 @@ class MainWindowGui(GUI, QMainWindow):
          
         self.populate_table_lists()
         self.populate_molecule_list()
-        self.populate_molecule_list()
        
         # Initially display a molecule in the molecule widget
         self.__on_molecules_current_index_changed(0)
         self.molecules_current_molecule.currentIndexChanged.connect(self.__on_molecules_current_index_changed)
         self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
 
-        self.populate_molecule_list()
 
         self.workers = []
 
@@ -112,7 +111,7 @@ class MainWindowGui(GUI, QMainWindow):
             if molecule_id >= 1000:
                 continue
             molecule = Isotopologue.from_molecule_id(molecule_id)
-            self.molecules_current_molecule.addItem(molecule.molecule_name)
+        self.molecules_current_molecule.addItems(list(set(get_all_json_molecule_names())))
  
     def populate_table_lists(self, data_names=None):
         """
