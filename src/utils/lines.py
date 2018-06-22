@@ -2,100 +2,105 @@ from typing import *
 import time
 
 from utils.log import *
+from utils.config import *
 from worker.hapi_worker import HapiWorker
 from worker.work_result import WorkResult
 from worker.work_request import WorkRequest
 
 
 class Lines:
-    def __init__(self, table_name: str, parameters: Dict[str, List[Union[int, float]]], page_number: int, page_len: int,
-                 last_page: int, **kwargs):
-        self.last_page = last_page
-        self.table_name = table_name
-        self.page_number: int = page_number
-        self.page_len: int = page_len
-        self.parameters: Dict[str, List[Union[int, float]]] = parameters
-        self.param_order = []
+    """
+    An interface for interacting with HITRAN line-by-line data. The data must be in the following
+    form:
+
+    ```
+    table = {
+        'header' : {
+            'order' : ('column1','column2','column3'),
+            'format' : {
+                'column1' : '%10d',
+                'column2' : '%20f',
+                'column3' : '%30s' 
+            },
+            'default' : {
+                'column1' : 0,
+                'column2' : 0.0,
+                'column3' : ''
+            },
+            'number_of_rows' : 3,
+            'size_in_bytes' : None,
+            'table_name' : 'sampletab',
+            'table_type' : 'strict'
+        },
+        'data' : {
+            'column1' : [1,2,3],
+            'column2' : [10.5,11.5,12.5],
+            'column3' : ['one','two','three']
+        }
+    }
+    ```
+
+    This is the schema hapi version < 2.0 uses already.
+
+    """
+
+    def __init__(self, table: Dict[str, Any]):
+        self.table = table
+        self.data = table['data']
+        self.table_len = len(self.data['nu'])
+        self.page_len: int = Config.select_page_length
+        self.last_page = int(self.table_len / self.page_len)
+        self.last_page_len = self.page_len
+        if self.last_page * self.page_len != self.table_len:
+            self.last_page_len = self.table_len - self.last_page * self.page_len
+            self.last_page += 1
+        
+        self.page_number = 1
+        self.param_order = table['header']['order']
 
         self.workers: List['HapiWorker'] = []
 
-        for (param_name, param_list) in parameters.items():
-            self.entries: int = len(param_list)
-            self.param_order.append(param_name)
         self.param_order = tuple(self.param_order)
 
     def get_len(self):
         """
-        *Returns the length of the current page of data for the edit functionality.*
         """
-        for (k, v) in self.parameters.items():
-            return len(v)
+        if self.page_number == self.last_page:
+            return self.last_page_len
+        else:
+            return self.page_len
 
+    # Line number is base 0!
     def get_line(self, line_number: int) -> Optional['Line']:
         """
-        *Params: (self) and integer line nmber, returns a line object.*
         """
-        if self.entries <= line_number:
-            return None
         line = []
+        
+        # index of the `line_number`th field of page 
+        index = line_number + ((self.page_number - 1) * self.page_number)
         for param in self.param_order:
-            line.append(self.parameters[param][line_number])
+            line.append(self.data[param][line_number + index])
 
         l = Line(line_number, line, self)
         return l
+    
 
-    def update_line_field(self, line: 'Line', field_index: int):
-        """
-        *Updates line field.*
-        """
-        self.parameters[self.param_order[field_index]][line.line_number] = line.line[field_index]
-
-    def commit_changes(self):
-        """
-        *Saves any changes to lines to local machine, puts feedback into console..*
-        """
-        start_index = self.page_len * self.page_number
-        args = HapiWorker.echo(
-            table_name=self.table_name,
-            start_index=start_index,
-            data=self.parameters
-        )
-        worker = HapiWorker(WorkRequest.TABLE_COMMIT_LINES_PAGE, args, self.commit_done)
-        self.workers.append(worker)
-        worker.start()
-        log("Committing lines {0} - {1} to table {2}.".format(start_index, start_index + self.page_len,
-                                                              self.table_name))
-
-    def commit_done(self, work_result: 'WorkResult'):
-        """
-        *Handles feedback to the user about the success or failure of saving data.*
-        """
-        if not work_result:
-            err_log("Failed to commit to table {0}.".format(self.table_name))
-            return
-        log("Successfully committed to table {0}.".format(self.table_name))
-
-        for worker in self.workers:
-            if worker.job_id == work_result.job_id:
-                worker.safe_exit()
-                self.workers.remove(worker)
-                break
+    def set_page(self, page_number):
+        self.page_number = page_number
 
 class Line:
-    def __init__(self, line_number: int, line: List[Union[int, float]], lines: 'Lines'):
-        self.line_number = line_number
+    def __init__(self, line_index: int, line: List[Union[int, float, str]], lines: 'Lines'):
+        self.line_index = line_index
         self.line = line
         self.lines = lines
+        self.data = lines.data
+        self.param_order = lines.table['header']['order']
 
-    def update_nth_field(self, field_index: int, new_value: Union[int, float]):
+    def update_nth_field(self, field_index: int, new_value: Union[int, float, str]):
         """
         *Given params: (self), int field_index, and a new values : [int,float], updates a field for the Line class.*
         """
-        self.line[field_index] = new_value
-        self.lines.update_line_field(self, field_index)
+        self.data[self.param_order[field_index]][self.line_index] = new_value
 
     def get_nth_field(self, field_index: int) -> Union[int, float]:
-        """
-        *Returns a line given a field_index.*
-        """
-        return self.line[field_index]
+        return self.data[self.param_order[field_index]][self.line_index]
