@@ -32,16 +32,10 @@ class MainWindow(Window):
         """
         Sets status_bar_label to text mode to display console output when append_text signal received.
         """
-        try:
-            self.gui.status_bar_label.setText(text)
-        except Exception as e:
-            print("Got: a" + str(e))
+        self.gui.status_bar_label.setText(text)
 
     def html_log(self, html):
         """
         Sets status_bar_label to html mode to display html to console output.
         """
-        try:
-            self.gui.status_bar_label.setText(html)
-        except Exception as e:
-            print("Got: b" + str(e))
+        self.gui.status_bar_label.setText(html)

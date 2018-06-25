@@ -22,7 +22,7 @@ def print_tb(tb):
 for test in tests:
     print(name_fmt.format(test.name()))
     result: Union[bool, Tuple[type, Exception, TracebackType]] = test.run()
-    if test.shouldFail():
+    if test.should_fail():
         if result == False:
             print(result_fmt.format('', 'Ok!'))
         elif t == True:
@@ -31,7 +31,7 @@ for test in tests:
             exc_type, exc_value, exc_traceback = result
             print(result_fmt.format('', 'Failed with exception:'))
             print_tb(exc_traceback)
-    elif test.shouldThrow():
+    elif test.should_throw():
         if result == True:
             print(result_fmt.format('', 'Failed (should throw)'))
         elif result == False:
