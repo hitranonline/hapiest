@@ -4,6 +4,7 @@ from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from utils.band import Bands, Band
 from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
@@ -15,12 +16,6 @@ import json
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
-    @staticmethod
-    def generate_random_color(r, g, b):
-        """
-        @returns a tuple, containing 3 integers between 0 and 255 which represent the r, g, and b values of a color.
-        """
-        return ((randint(0, 255) + r) / 2, (randint(0, 255) + g) / 2, (randint(0, 255) + b) / 2)
 
     def __init__(self, ty: GraphType, window_title: str):
         QtWidgets.QMainWindow.__init__(self)
