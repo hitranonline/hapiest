@@ -79,13 +79,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         if self.chart == None:
             series = QLineSeries()
-            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff/2, 0xff/2, 0xff/2)
+            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff * 3 / 4, 0xff * 3 / 4, 0xff * 3 / 4)
             color = QColor(r, g, b)
             pen = QPen()
             pen.setColor(color)
             pen.setWidth(4)
             pen.setCosmetic(False)
-            series.setPen(pen)
             series.setPen(pen)
             for i in range(0, x.size):
                 series.append(x[i], y[i])
@@ -128,7 +127,15 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
-            series.pen().setWidth(5)
+            
+            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff * 3 / 4, 0xff * 3 / 4, 0xff * 3 / 4)
+            color = QColor(r, g, b)
+            pen = QPen()
+            pen.setColor(color)
+            pen.setWidth(4)
+            pen.setCosmetic(False)
+            series.setPen(pen)
+            
             series.clicked.connect(lambda point: self.__on_point_clicked(series, point))
             series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
@@ -256,6 +263,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
     def __on_point_clicked(self, series, point):
         if self.chart == None:
             return
+        
+        all_points = series.pointsVector()
+        
+        xstep = all_points[1].x() - all_points[0].x()
+        xstep5 = 5 * xstep
 
         if self.highlighted_point != None:
             self.chart.removeSeries(self.highlighted_point)
@@ -272,6 +284,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         
         min_dist = 1000000
         for point in series.pointsVector():
+            if abs(x - point.x()) > xstep5:
+                continue
             d = dist(x, y, point.x(), point.y())
             if d < min_dist:
                 min_dist = d
@@ -284,7 +298,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.chart.addSeries(self.highlighted_point)
         self.highlighted_point.brush().setColor(color)
         self.highlighted_point.pen().setColor(color)
-        self.highlighted_point.pen().setWidth(4)
+        self.highlighted_point.pen().setWidth(8)
         self.highlighted_point.attachAxis(self.axisx)
         self.highlighted_point.attachAxis(self.axisy)
 
