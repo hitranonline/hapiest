@@ -11,12 +11,22 @@ from utils.graph_type import GraphType
 from widgets.gui import GUI
 from random import randint
 from typing import *
+
 import os
 import json
+import math
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
+    @staticmethod
+    def generate_random_color(r, g, b):
+        """
+        @returns    a tuple, containing 3 integers between 0 and 255 which represent the r, g,
+                    and b values of a color.
+        """
+        return ((randint(0, 255) + r) / 2, (randint(0, 255) + g) / 2, (randint(0, 255) + b) / 2)
 
+ 
     def __init__(self, ty: GraphType, window_title: str):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
@@ -55,7 +65,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.view_ymin = None
         self.view_ymax = None
         self.chart = None
-            
+        self.highlighted_point = None
+
         self.set_chart_title(window_title)
 
         self.show()
@@ -68,6 +79,14 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         if self.chart == None:
             series = QLineSeries()
+            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff/2, 0xff/2, 0xff/2)
+            color = QColor(r, g, b)
+            pen = QPen()
+            pen.setColor(color)
+            pen.setWidth(4)
+            pen.setCosmetic(False)
+            series.setPen(pen)
+            series.setPen(pen)
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.series = [series]
@@ -76,7 +95,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
-
+            series.clicked.connect(lambda point: self.__on_point_clicked(series, point))
             self.chart = QChart()
             self.chart.addSeries(series)
             self.chart.setTitle(title)
@@ -109,6 +128,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.setLayout(layout)
         else:
             series = QLineSeries()
+            series.pen().setWidth(5)
+            series.clicked.connect(lambda point: self.__on_point_clicked(series, point))
             series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
@@ -230,6 +251,43 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
+
+    
+    def __on_point_clicked(self, series, point):
+        if self.chart == None:
+            return
+
+        if self.highlighted_point != None:
+            self.chart.removeSeries(self.highlighted_point)
+
+        print("{} {}".format(point.x(), point.y()))
+        x, y = (point.x(), point.y())
+
+        def dist(x1: int, y1: int, x2: int, y2: int):
+            a = (x1 - x2)
+            a *= a
+            b = (y1 - y2)
+            b *= b
+            return math.sqrt(a + b)
+        
+        min_dist = 1000000
+        for point in series.pointsVector():
+            d = dist(x, y, point.x(), point.y())
+            if d < min_dist:
+                min_dist = d
+                x2, y2 = (point.x(), point.y())
+    
+        self.highlighted_point = QScatterSeries()
+        self.highlighted_point.append(x2, y2)
+        self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x2, y2))
+        color = QColor(0, 0, 0)
+        self.chart.addSeries(self.highlighted_point)
+        self.highlighted_point.brush().setColor(color)
+        self.highlighted_point.pen().setColor(color)
+        self.highlighted_point.pen().setWidth(4)
+        self.highlighted_point.attachAxis(self.axisx)
+        self.highlighted_point.attachAxis(self.axisy)
+
 
     def get_file_save_name(self, extension, filter) -> Union[str, None]:
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)

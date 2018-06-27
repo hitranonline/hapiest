@@ -186,8 +186,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             standard_params['WavenumberStep'] = Resolution / 2
         elif standard_params['WavenumberStep'] <= Resolution:
             err_log('Wavenumber Step must be less than Instrumental Resolution')
-            self.data_name_error.setText(
-                '<span style="color:#aa0000;">' + 'Wavenumber Step must be less than the Instrumental Resolution' + '</span>')
             self.done_graphing()
             return
 
