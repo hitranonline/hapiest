@@ -1,47 +1,25 @@
-%\title{LaTeX Portrait Poster Template}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% a0poster Portrait Poster
-% LaTeX Template
-% Version 1.0 (22/06/13)
-%
-% The a0poster class was created by:
-% Gerlinde Kettl and Matthias Weiser (tex@kettl.de)
-% 
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
-
 \documentclass[a0,landscape]{a0poster}
 
-\usepackage{multicol} % This is so we can have multiple columns of text side-by-side
-\columnsep=100pt % This is the amount of white space between the columns in the poster
-\columnseprule=3pt % This is the thickness of the black line between the columns in the poster
+\usepackage{multicol}
+\columnsep=100pt
+\columnseprule=3pt
 
-\usepackage[svgnames]{xcolor} % Specify colors by their 'svgnames', for a full list of all colors available see here: http://www.latextemplates.com/svgnames-colors
-
-\usepackage{times} % Use the times font
-%\usepackage{palatino} % Uncomment to use the Palatino font
-
-\usepackage{graphicx} % Required for including images
-\graphicspath{{figures/}} % Location of the graphics files
-\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
-\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
-\usepackage{wrapfig} % Allows wrapping text around tables and figures
+\usepackage[svgnames]{xcolor}
+\usepackage{times}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{amsfonts, amsmath, amsthm, amssymb}
+\usepackage{wrapfig}
 \usepackage{indentfirst}
 
+%This removes whitespace around titles and sections
 \usepackage[compact]{titlesec}
 \titlespacing{\section}{0pt}{0pt}{10pt}
 \titlespacing{\subsection}{0pt}{*0}{*0}
 \titlespacing{\subsubsection}{0pt}{*0}{*0}
 
+%This removes whitespace around paragraphs
 \setlength{\parskip}{10pt}
 \setlength{\parsep}{0pt}
 \setlength{\headsep}{0pt}
@@ -51,15 +29,6 @@
 \setlength{\partopsep}{0pt}
 
 \begin{document}
-
-%----------------------------------------------------------------------------------------
-%	POSTER HEADER 
-%----------------------------------------------------------------------------------------
-
-% The header is divided into two boxes:
-% The first is 75% wide and houses the title, subtitle, names, university/organization and contact information
-% The second is 25% wide and houses a logo for your university/organization or a photo of you
-% The widths of these boxes can be easily edited to accommodate your content as you see fit
 
 \begin{minipage}[b]{0.78\linewidth}
 \VeryHuge \color{NavyBlue} \textbf{HITRAN Application Programming Interface and Efficient Spectroscopic Tools (HAPIEST)}\\[0.1cm]% Title
@@ -90,23 +59,15 @@ yourself and follow the development here.
 
 \end{minipage}
 
-%\vspace{1cm} % A bit of extra whitespace between the header and poster content
+\begin{multicols}{3}
 
-%----------------------------------------------------------------------------------------
-
-\begin{multicols}{3} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
-
-%----------------------------------------------------------------------------------------
-%	INTRODUCTION
-%----------------------------------------------------------------------------------------
+% INTRODUCTION
 
 \color{Black}
 \section*{\underline{Introduction}}
 The goal of HAPIEST is to simplify the use of the HITRAN Application Programming Interface (HAPI) for all users. Currently, HAPI requires some knowledge of Python and use of the command line. HAPIEST should retain as much of the funtionality HAPI as is possible in a simple GUI, while making it easier to access and use for the user. HAPIEST currently allows users the capability to fetch/download and locally store data from the HITRAN database, edit local data, and also to generate and plot spectral functions. In it's current form, HAPIEST is split up into 3 windows, one window for data management and editing, and two windows for graphing/graph display.
 
-%----------------------------------------------------------------------------------------
-%	WINDOWS
-%----------------------------------------------------------------------------------------
+% WINDOWS
 
 \section*{\underline{Data Management}}
 
@@ -115,11 +76,7 @@ The Fetch tab allows the user to download data from HITRAN onto their local disk
 \begin{center}
 \includegraphics[scale = 1.5]{MainWindow_Fetch.png}
 \end{center}
-%\subsection*{Select Tab}
-%Select-
-%\begin{center}
-%\includegraphics[scale = 1.5]{MainWindow_Select.png}
-%\end{center}
+
 \subsection*{Edit Tab}
 The Edit tab allows users to view and edit local data that they have downloaded using HAPI/HAPIEST.
 \begin{center}
@@ -127,6 +84,7 @@ The Edit tab allows users to view and edit local data that they have downloaded 
 \end{center}
 \vfill\null
 \columnbreak
+
 \subsection*{Molecule Tab}
 The Molecule tab provides users with information about available molecules (currently does not support isotopologues) including and image of the chemical makeup, and unique identifiers to aid further inquiry.
 \begin{center}
@@ -141,6 +99,7 @@ In the Graphing tab, the user is given a list of parameter fields that they may 
 \end{center}
 \vfill\null
 \columnbreak
+
 \subsection*{Displaying Graphs}
 The graph produced in the Graphing tab is displayed in a new window. This window provides the user tools to view and save graphs to local disk. Current functionality allows the user to zoom in on graphs, and will soon provide additional analysis tools and the ability to download graphs in popular image formats. 
 \begin{center}
@@ -149,9 +108,8 @@ The graph produced in the Graphing tab is displayed in a new window. This window
 \begin{center}
 \includegraphics[scale = 1.2]{GraphDemo.png}
 \end{center}
-%----------------------------------------------------------------------------------------
-%	CONCLUSIONS
-%----------------------------------------------------------------------------------------
+
+% CONCLUSIONS
 
 \section*{\underline{Summary}}
 HAPIEST is an application built to provide a wider audience with the basic functionality of HAPI, including data fetching and selecting, generation of graphs of the spectral functions, all while maintaining ease of use and cross-platform capabilities.
@@ -164,16 +122,6 @@ HAPIEST is an application built to provide a wider audience with the basic funct
 \item Update visual elements
 \item Auto-Generate list of data sources
 \end{itemize}
-
-%----------------------------------------------------------------------------------------
-%	REFERENCES
-%----------------------------------------------------------------------------------------
-
-%\nocite{*} % Print all references regardless of whether they were cited in the poster or not
-%\bibliographystyle{plain} % Plain referencing style
-%\bibliography{sample} % Use the example bibliography file sample.bib
-
-%----------------------------------------------------------------------------------------
 
 \end{multicols}
 \end{document}
