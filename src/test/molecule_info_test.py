@@ -39,7 +39,7 @@ class MoleculeInfoTest(Test):
             
         t = threading.Thread(target=close_window)
         t.start()
-        widget = MoleculeInfoWidget('test_molecule')
+        widget = MoleculeInfoWidget('CO2')
         window.setCentralWidget(widget) 
         window.show()
         qt_result = app.exec_()

@@ -44,7 +44,7 @@ hapi_api_key = '{hapi_api_key}'
                 fh.write(Config.DEFAULT_CONFIG)
                 fh.close()
             except Exception as e:
-                print("damn: " + str(e))
+                print("Encountered error while attempting to read configuration file: " + str(e))
             finally:
                 Config.set_defaults()
         else:

@@ -209,48 +209,31 @@ class WorkFunctions:
                     FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')]
         return { 'all_tables': list(tableList()) }
+   
 
     @staticmethod
-    def table_get_lines_page(table_name: str, page_len: int, page_number: int) -> Union[bool, Dict[str, Any]]:
-        """
-        Reads the page_number'th page from table table_name, with page length page_len.
-        """
-        start_index = page_len * page_number
-        end_index = start_index + page_len
-        result: Dict[str, List[Union[int, float]]] = {}
-        table = LOCAL_TABLE_CACHE[table_name]['data']
-        last_page = False
-        for (param, param_data) in table.items():
-            if len(param_data) <= end_index + page_len:
-                last_page = True
-            break
-        for (param, param_data) in table.items():
-            if len(param_data) < end_index:
-                end_index = len(param_data)
-                last_page = True
-            result[param] = param_data[start_index:end_index]
+    def get_table(table_name: str) -> Optional[Dict[str, Any]]:
+        if table_name in LOCAL_TABLE_CACHE:
+            return LOCAL_TABLE_CACHE[table_name]
+        else:
+            return None
 
-        return echo(table_name=table_name, parameters=result, page_number=page_number, page_len=page_len,
-                    last_page=last_page)
-
+    
     @staticmethod
-    def table_commit_lines_page(table_name: str, start_index: int, data: Dict[str, List[Union[int, float]]]) -> bool:
+    def save_table(table: Dict[str, Any], name: str, **kwargs):
         """
-        Caches data from edit tab to local machine.
+        Saves the modified table in the local table cache and on disk.
         """
-        table = LOCAL_TABLE_CACHE[table_name]['data']
-        for (parameter, param_data) in data.items():
-            param = table[parameter]
-            for i in range(start_index, start_index + len(param_data)):
-                param[i] = param_data[i - start_index]
-
-        return True
-
-    @staticmethod
-    def table_write_to_disk(source_table: str, output_table: str = None, **kwargs):
+        try:
+            if name in LOCAL_TABLE_CACHE:
+                del LOCAL_TABLE_CACHE[name]
+            LOCAL_TABLE_CACHE[name] = table
+            cache2storage(TableName=name)
+            return True
+        except:
+            return False
         """
-        Attempts to save cached data to local machine.
-        """
+        # old version
         if source_table == output_table:
             cache2storage(TableName=source_table)
             hmd = HapiMetaData(source_table)
@@ -261,6 +244,7 @@ class WorkFunctions:
             cache2storage(TableName=output_table)
             hmd = HapiMetaData(output_table)
         return True
+        """
 
     @staticmethod
     def table_meta_data(table_name: str):
@@ -298,7 +282,7 @@ class WorkFunctions:
         select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
               Conditions=Conditions, Output=Output, File=File)
         hmd = HapiMetaData(DestinationTableName)
-        WorkFunctions.table_write_to_disk(source_table=TableName, output_table=DestinationTableName)
+        WorkFunctions.save_table(LOCAL_TABLE_CACHE[TableName], table_name=DestinationTableName)
 
         return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
 
@@ -315,14 +299,13 @@ class WorkRequest:
     FETCH: WorkType = 2
     ABSORPTION_COEFFICIENT: WorkType = 3
     TABLE_META_DATA: WorkType = 4
-    TABLE_GET_LINES_PAGE: WorkType = 5
-    TABLE_COMMIT_LINES_PAGE: WorkType = 6
-    TABLE_WRITE_TO_DISK: WorkType = 7
-    TABLE_NAMES: WorkType = 8
-    SELECT: WorkType = 9
-    TRANSMITTANCE_SPECTRUM: WorkType = 10
-    RADIANCE_SPECTRUM: WorkType = 11
-    ABSORPTION_SPECTRUM: WorkType = 12
+    GET_TABLE: WorkType = 5
+    SAVE_TABLE: WorkType = 6
+    TABLE_NAMES: WorkType = 7
+    SELECT: WorkType = 8
+    TRANSMITTANCE_SPECTRUM: WorkType = 9
+    RADIANCE_SPECTRUM: WorkType = 10
+    ABSORPTION_SPECTRUM: WorkType = 11
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -357,9 +340,8 @@ class Work:
             WorkRequest.START_HAPI: WorkFunctions.start_hapi,
             WorkRequest.FETCH: WorkFunctions.fetch,
             WorkRequest.ABSORPTION_COEFFICIENT: WorkFunctions.graph_absorption_coefficient,
-            WorkRequest.TABLE_GET_LINES_PAGE: WorkFunctions.table_get_lines_page,
-            WorkRequest.TABLE_COMMIT_LINES_PAGE: WorkFunctions.table_commit_lines_page,
-            WorkRequest.TABLE_WRITE_TO_DISK: WorkFunctions.table_write_to_disk,
+            WorkRequest.GET_TABLE: WorkFunctions.get_table,
+            WorkRequest.SAVE_TABLE: WorkFunctions.save_table,
             WorkRequest.TABLE_NAMES: WorkFunctions.table_names,
             WorkRequest.TABLE_META_DATA: WorkFunctions.table_meta_data,
             WorkRequest.SELECT: WorkFunctions.select,

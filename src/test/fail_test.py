@@ -8,10 +8,10 @@ class FailTest(Test):
     def name(self) -> str:
         return 'fail test'
     
-    def shouldThrow(self) -> bool:
+    def should_throw(self) -> bool:
         return False
 
-    def shouldFail(self) -> bool:
+    def should_fail(self) -> bool:
         return True
 
     def test(self) -> bool:

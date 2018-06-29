@@ -10,10 +10,10 @@ class Test:
     def name(self) -> str:
         return 'base test'
     
-    def shouldThrow(self) -> bool:
+    def should_throw(self) -> bool:
         return False
 
-    def shouldFail(self) -> bool:
+    def should_fail(self) -> bool:
         return False
 
     def test(self) -> bool:

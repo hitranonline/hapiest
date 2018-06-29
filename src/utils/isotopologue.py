@@ -120,7 +120,6 @@ class Isotopologue():
                 if iso == '+':
                     html += iso
                     return html
-                print(_iso)
                 print('Error parsing isotopologue to html ' + iso)
                 return iso
 

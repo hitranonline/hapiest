@@ -24,7 +24,7 @@ class HapiLineEdit(QLineEdit):
         Alters a field in the corresponding hapi table. Each cell in the table is
         assigned an on edit function that is generataed using this function.
         """
-        t = type(self.table.lines.parameters[self.table.lines.param_order[self.col]][0])
+        t = type(self.table.data[self.table.lines.param_order[self.col]][0])
         value = self.text()
         line = self.table.lines.get_line(self.row)
         if t == int:
@@ -39,7 +39,9 @@ class HapiLineEdit(QLineEdit):
         if key == Qt.Key_Return or key == Qt.Key_Enter:
             self.clearFocus()
             self.table.keyPressEvent(event)
-   
+        else:
+            QLineEdit.keyPressEvent(self, event)
+
     """def sizeHint(self):
         super_sizehint = QLineEdit.sizeHint(self)
         super_sizehint.setWidth(self.font_metrics.width(self.text()))
@@ -65,6 +67,7 @@ class HapiTableView(QTableView):
         super(HapiTableView, self).__init__()
 
         self.table_name = table_name
+        self.table = None
 
         self.edit_widget = parent
 
@@ -77,15 +80,15 @@ class HapiTableView(QTableView):
         self.save_button.clicked.connect(self.save_table)
 
         self.last_page = False
-        self.current_page = 0
+        self.current_page = 1
         self.current_page_len = Config.select_page_length
         self.page_len = int(Config.select_page_length)
 
         if self.table_name != None:
             self.workers = []
-            args = HapiWorker.echo(table_name=table_name, page_len=self.page_len, page_number=self.current_page)
+            args = HapiWorker.echo(table_name=table_name)
 
-            self.start_worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.display_first_page)
+            self.start_worker = HapiWorker(WorkRequest.GET_TABLE, args, self.display_first_page)
             self.start_worker.start()
         else:
             self.workers = []
@@ -132,7 +135,9 @@ class HapiTableView(QTableView):
         """
         Displays first page of info for edit functionity, sets 'on edit' functions.
         """
-        lines: Lines = Lines(**work_result.result)
+        self.table = work_result.result
+        self.data = self.table['data']
+        lines: Lines = Lines(self.table)
         self.lines = lines
         nparams = len(lines.param_order)
         self.nparams = nparams
@@ -164,9 +169,9 @@ class HapiTableView(QTableView):
             new_names.append(("%-" + str(column_width) + "." +  str(column_width + 1) + "s") % lines.param_order[column])
         
         self.table_model.setHorizontalHeaderLabels(new_names)
-        self.widgets = [[0] * self.nparams] * self.page_len
+        self.widgets = [[0] * self.nparams] * self.current_page_len
         for row in range(0, self.current_page_len):
-            line = lines.get_line(row)
+            line = self.lines.get_line(row)
             # self.items.append([])
             for column in range(0, nparams):
                 item = line.get_nth_field(column)
@@ -184,38 +189,30 @@ class HapiTableView(QTableView):
                 line_edit.setText(str_value)
                 
         # self.resizeColumnsToContents()
-        self.display_page(work_result)
+        self.display_page(1)
 
 
-    def try_display_page(self, work_result: WorkResult):
-        self.display_page(work_result)
+    def display_page(self, page_number: int):
+        if page_number < 1:
+            page_number = 1
+        elif page_number > self.lines.last_page:
+            page_number = self.lines.last_page
+        self.current_page = page_number
 
-
-    def display_page(self, work_result: WorkResult):
-        if not work_result:
-            self.last_page = True
-            return
+        self.lines.set_page(self.current_page)
 
         self.next_button.setEnabled(True)
         self.back_button.setEnabled(True)
-
-
-        result = work_result.result
-        self.last_page = result['last_page']
-        lines: Lines = Lines(**result)
-        self.lines = lines
-
-        self.last_page = lines.last_page
-        page_min = result['page_number'] * result['page_len']
+        page_min = (self.current_page - 1) * self.lines.get_len()
         self.table_model.setVerticalHeaderLabels(map(str, range(page_min + 1,  1 + page_min + self.current_page_len)))
         # for i in range(0, self.current_page_len):
         #    item = self.verticalHeaderItem(i)
         #    item.setText(str(page_min + i))
         
         # self.table_model.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        nparams = lines.param_order
+        nparams = self.lines.param_order
         for row in range(0, self.current_page_len):
-            line = lines.get_line(row)
+            line = self.lines.get_line(row)
             for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
                 self.widgets[row][column].setText((self.column_formats[column] % line.get_nth_field(column)).strip())
@@ -242,38 +239,19 @@ class HapiTableView(QTableView):
         """
         *Advance the page by one.*
         """
-        if self.last_page:
-            return
-
         self.next_button.setDisabled(True)
         self.back_button.setDisabled(True)
         self.save_button.setDisabled(True)
-
-        self.lines.commit_changes()
-        self.current_page += 1
-        args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.try_display_page)
-        self.workers.append(worker)
-        worker.start()
-
+        self.display_page(self.current_page + 1)
 
     def back_page(self):
         """
         *Displays previous page, or nothing if already on first page.*
         """
-        if self.current_page == 0:
-            return
-        if self.last_page:
-            self.last_page = False
-
-        self.lines.commit_changes()
-        self.current_page -= 1
-
-        args = HapiWorker.echo(table_name=self.table_name, page_len=self.page_len, page_number=self.current_page)
-        worker = HapiWorker(WorkRequest.TABLE_GET_LINES_PAGE, args, self.try_display_page)
-        self.workers.append(worker)
-        worker.start()
-
+        self.next_button.setDisabled(True)
+        self.back_button.setDisabled(True)
+        self.save_button.setDisabled(True)
+        self.display_page(self.current_page - 1)
 
     def save_table(self):
         """
@@ -286,16 +264,15 @@ class HapiTableView(QTableView):
         self.edit_widget.back_button.setDisabled(True)
         self.save_button.setDisabled(True)
 
-        self.lines.commit_changes()
-        worker = HapiWorker(WorkRequest.TABLE_WRITE_TO_DISK,
-                            {'source_table': self.table_name, 'output_table': self.edit_widget.get_output_name()},
+        worker = HapiWorker(WorkRequest.SAVE_TABLE,
+                            {'table': self.table, 'name': self.edit_widget.get_output_name()},
                             self.done_saving)
         self.workers.append(worker)
         worker.start()
 
     def done_saving(self, work_result: WorkResult):
         """
-        *handles user feedback for saving of edit tab data.*
+        Handles user feedback for saving of edit tab data.
         """
         result = work_result.result
         self.save_button.setEnabled(True)

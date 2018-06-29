@@ -6,12 +6,12 @@ class ThrowTest(Test):
         Test.__init__(self)
 
     def name(self) -> str:
-        return 'base test'
+        return 'throw test'
     
-    def shouldThrow(self) -> bool:
+    def should_throw(self) -> bool:
         return True
 
-    def shouldFail(self) -> bool:
+    def should_fail(self) -> bool:
         return False
 
     def test(self) -> bool:
