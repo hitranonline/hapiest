@@ -9,6 +9,7 @@ from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
 from widgets.gui import GUI
+from widgets.hapi_chart_view import HapiChartView
 from random import randint
 from typing import *
 
@@ -66,7 +67,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.view_ymax = None
         self.chart = None
         self.highlighted_point = None
-
+        self.series = []
         self.set_chart_title(window_title)
 
         self.show()
@@ -94,7 +95,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
-            series.clicked.connect(lambda point: self.__on_point_clicked(series, point))
             self.chart = QChart()
             self.chart.addSeries(series)
             self.chart.setTitle(title)
@@ -117,7 +117,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.series[0].attachAxis(self.axisy)
             
             self.chart.legend()
-            self.chart_view = QChartView(self.chart)
+            self.chart_view = HapiChartView(self)
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
@@ -136,7 +136,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             pen.setCosmetic(False)
             series.setPen(pen)
             
-            series.clicked.connect(lambda point: self.__on_point_clicked(series, point))
             series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
@@ -260,40 +259,56 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.axisy.setRange(ymin, ymax)
 
     
-    def __on_point_clicked(self, series, point):
+    def on_point_clicked(self):
         if self.chart == None:
             return
         
-        all_points = series.pointsVector()
-        
-        xstep = all_points[1].x() - all_points[0].x()
-        xstep5 = 5 * xstep
-
         if self.highlighted_point != None:
             self.chart.removeSeries(self.highlighted_point)
 
-        print("{} {}".format(point.x(), point.y()))
-        x, y = (point.x(), point.y())
+        global_coord = QCursor.pos()
+        widget_coord = self.chart_view.mapFromGlobal(global_coord)
+        scene_coord = self.chart_view.mapToScene(widget_coord)
+        chart_item_coord = self.chart.mapFromScene(scene_coord)
+        point = self.chart.mapToValue(chart_item_coord)
+        px, py = (point.x(), point.y())
 
-        def dist(x1: int, y1: int, x2: int, y2: int):
-            a = (x1 - x2)
+        def dist(p1, p2):
+            x1, y1 = (p1.x(), p1.y())
+            x2, y2 = (p2.x(), p2.y())
+            a = x1 - x2
             a *= a
-            b = (y1 - y2)
+            b = y1 - y2
             b *= b
             return math.sqrt(a + b)
-        
-        min_dist = 1000000
-        for point in series.pointsVector():
-            if abs(x - point.x()) > xstep5:
+
+        x, y = None, None
+        min_dist = 100000
+        for series in self.series:
+            points = series.pointsVector()
+            if len(points) <= 1 or px < points[0].x() or px > points[len(points) - 1].x():
                 continue
-            d = dist(x, y, point.x(), point.y())
-            if d < min_dist:
-                min_dist = d
-                x2, y2 = (point.x(), point.y())
-    
+            dx = points[1].x() - points[0].x()
+            index = int((px - points[0].x()) // dx)
+            np = points[index]
+            distance = dist(point, np)
+            if distance < min_dist:
+                x, y = (np.x(), np.y())
+                min_dist = distance
+            if index + 1 >= len(points):
+                continue
+            np = points[index + 1]
+            distance = dist(point, np)
+            if distance < min_dist:
+                x, y = (np.x(), np.y())
+                min_dist = distance
+
+        if x == None:
+            return
+  
         self.highlighted_point = QScatterSeries()
-        self.highlighted_point.append(x2, y2)
-        self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x2, y2))
+        self.highlighted_point.append(x, y)
+        self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x, y))
         color = QColor(0, 0, 0)
         self.chart.addSeries(self.highlighted_point)
         self.highlighted_point.brush().setColor(color)
