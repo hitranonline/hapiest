@@ -15,3 +15,6 @@ dist/
 build/
 *.log
 *.gz
+*.toc
+*.synctex
+*.aux
