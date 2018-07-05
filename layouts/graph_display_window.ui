@@ -15,6 +15,18 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>1</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
+     <number>1</number>
+    </property>
     <item>
      <layout class="QVBoxLayout" name="container">
       <item>
@@ -25,260 +37,42 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <widget class="QLabel" name="loading_label">
-         <property name="geometry">
-          <rect>
-           <x>280</x>
-           <y>180</y>
-           <width>221</width>
-           <height>51</height>
-          </rect>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Calculating...</string>
+         <property name="rightMargin">
+          <number>0</number>
          </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
-         <property name="wordWrap">
-          <bool>true</bool>
+         <property name="spacing">
+          <number>0</number>
          </property>
-        </widget>
+         <item row="0" column="0">
+          <widget class="QLabel" name="loading_label">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Calculating...</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetNoConstraint</enum>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetNoConstraint</enum>
-        </property>
-        <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>10</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="x_lbl">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="xmin">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="decimals">
-           <number>4</number>
-          </property>
-          <property name="maximum">
-           <double>9007199254740992.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>to</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="xmax">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="decimals">
-           <number>4</number>
-          </property>
-          <property name="maximum">
-           <double>9007199254740992.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>100.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>10</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetNoConstraint</enum>
-        </property>
-        <item>
-         <spacer name="horizontalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>10</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="y_lbl">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Y</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="ymin">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="decimals">
-           <number>4</number>
-          </property>
-          <property name="maximum">
-           <double>9007199254740992.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_6">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>to</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="ymax">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="decimals">
-           <number>4</number>
-          </property>
-          <property name="maximum">
-           <double>9007199254740992.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>100.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>10</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
       </item>
      </layout>
     </item>
@@ -298,6 +92,7 @@
      <string>View</string>
     </property>
     <addaction name="view_fit"/>
+    <addaction name="exact_fit"/>
    </widget>
    <widget class="QMenu" name="menua">
     <property name="title">
@@ -384,6 +179,11 @@
      <bold>true</bold>
      <underline>true</underline>
     </font>
+   </property>
+  </action>
+  <action name="exact_fit">
+   <property name="text">
+    <string>Exact</string>
    </property>
   </action>
  </widget>

@@ -9,6 +9,7 @@ from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
 from widgets.gui import GUI
+from widgets.view_selector import ViewSelector
 from widgets.hapi_chart_view import HapiChartView
 from random import randint
 from typing import *
@@ -39,17 +40,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.chart_view = None
 
         self.view_fit.triggered.connect(self.__on_view_fit_triggered)
-        
-        self.xmax.setKeyboardTracking(False)
-        self.xmin.setKeyboardTracking(False)
-        self.ymax.setKeyboardTracking(False)
-        self.ymin.setKeyboardTracking(False)
+        self.exact_fit.triggered.connect(self.__on_exact_fit_triggered)
 
-        self.xmax.valueChanged.connect(self.__on_xmax_changed)
-        self.xmin.valueChanged.connect(self.__on_xmin_changed)
-        self.ymax.valueChanged.connect(self.__on_ymax_changed)
-        self.ymin.valueChanged.connect(self.__on_ymin_changed)
-        
         self.save_as_csv.triggered.connect(self.__on_save_as_csv_triggered)
         self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
         self.save_as_txt.triggered.connect(self.__on_save_as_txt_triggered)
@@ -75,6 +67,22 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
     def set_chart_title(self, title):
         self.setWindowTitle(str(title))
+
+    
+    def set_viewport(self, xmin, xmax, ymin, ymax):
+        if xmin > xmax:
+            t = xmin
+            xmin = xmax
+            xmax = t
+        if ymin > ymax:
+            t = ymin
+            ymin = ymax
+            ymax = t
+
+        self.xmin, self.xmax = (xmin, xmax)
+        self.ymin, self.ymax = (ymin, ymax)
+        self.axisx.setRange(xmin, xmax)
+        self.axisy.setRange(ymin, ymax)
 
 
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
@@ -121,10 +129,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
-            layout = QtWidgets.QGridLayout()
-            layout.addWidget(self.chart_view)
             self.loading_label.setDisabled(True)
-            self.graph_container.setLayout(layout)
+            self.graph_container.layout().addWidget(self.chart_view)
+            self.graph_container.layout().removeWidget(self.loading_label)
         else:
             series = QLineSeries()
             
@@ -183,82 +190,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.axisx.setRange(self.view_xmin, self.view_xmax)
             self.axisy.setRange(self.view_ymin, self.view_ymax)
 
-    def __on_xmax_changed(self, value):
-        """
-        *Params: self, value. Checks to make sure that the values are proper. If the value passed in is
-        smaller than the already established x min value, then the x min value is set to be the value -1 and the x max is set to be value passed into the method
-        """
-        return
-        min = self.xmin.value()
-        if value < min:
-            self.xmax.setValue(value)
-            self.xmin.setValue(value - 1)
-        self.__on_viewport_changed(True)
 
-    def __on_xmin_changed(self, value):
-        """
-        *If the value of the number passed in is larger than the currently established max value for x, then the min value is set to be the value passed in , and the max is set to be the value passed into the method + 1.*
-        """
-        return
-        max = self.xmax.value()
-        if value > max:
-            self.xmin.setValue(value)
-            self.xmax.setValue(value + 1)
-        self.__on_viewport_changed()
+    def __on_exact_fit_triggered(self):
+        self.view_fit_widget = ViewSelector(self)
 
-    def __on_ymax_changed(self, value):
-        """
-        *Sets the value for y max, if the value passed in is smaller than the current y min, then the y max is set to y min, and y min is set to the value passed into the method .*
-        """
-        return
-        min = self.ymin.value()
-        if value < min:
-            self.ymax.setValue(min)
-            self.ymin.setValue(value)
-        self.__on_viewport_changed()
 
-    def __on_ymin_changed(self, value):
-        """
-        *Sets the value for y min, if the value passed in is larger than current y max, then the value of y min is set to be the value of y max, and the y max value is set as the value passed into the method.*
-        """
-        return
-        max = self.ymax.value()
-        if value > max:
-            self.ymin.setValue(max)
-            self.ymax.setValue(value)
-        self.__on_viewport_changed()
-
-    def __on_viewport_changed(self):
-        """
-        *Handles the changing in a viewport for graphing view .*
-        """
-        if self.chart == None:
-            return
-
-        xmin = self.xmin.value()
-        xmax = self.xmax.value()
-        ymin = self.ymin.value()
-        ymax = self.ymax.value()
-
-        if xmin == xmax or ymin == ymax:
-            return
-        if xmin > xmax:
-            t = xmin
-            xmin = xmax
-            xmax = t
-            self.xmin.setValue(xmin)
-            self.xmax.setValue(xmax)
-        if ymin > ymax:
-            t = ymin
-            ymin = ymax
-            ymax = t
-            self.ymin.setValue(ymin)
-            self.xmin.setValue(ymax)
-
-        self.axisx.setRange(xmin, xmax)
-        self.axisy.setRange(ymin, ymax)
-
-    
     def on_point_clicked(self):
         if self.chart == None:
             return
