@@ -16,3 +16,5 @@ build/
 *.log
 *.gz
 *.toc
+*.synctex
+*.aux
