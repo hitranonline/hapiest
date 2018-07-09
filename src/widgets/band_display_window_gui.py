@@ -1,5 +1,5 @@
 from widgets.graph_display_window_gui import GraphDisplayWindowGui
-from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
+from PyQt5 import QtGui, QtWidgets, uic, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
@@ -35,7 +35,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
     def add_bands(self, bands: Bands):
         if self.chart == None:
             self.chart = QChart()
-            self.chart.setTitle(title)
+            self.chart.setTitle("Table '{}' Bands".format(bands.table_name))
             self.band_series = {}
             self.legend = BandLegend()
             self.container.addWidget(self.legend)
@@ -46,7 +46,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             for band in bands.bands:
                 cur_series = QLineSeries()
                 cur_series.setColor(color)
-                for i in range(0, x.size):
+                for i in range(0, len(band.x)):
                     cur_series.append(band.x[i], band.y[i])
          
                 series.append(cur_series)
@@ -67,12 +67,12 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             self.axisx = QValueAxis()
             self.axisx.setTickCount(5)
-            self.axisx.setTitleText(xtitle)
+            self.axisx.setTitleText("Wavenumber (cm<sup>-1</sup>)")
             self.chart.addAxis(self.axisx, QtCore.Qt.AlignBottom)
             self.series[0].attachAxis(self.axisx)
 
             self.axisy = QValueAxis()
-            self.axisy.setTitleText(ytitle)
+            self.axisy.setTitleText("Intensity")
             self.axisy.setTickCount(5)
             self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
             self.series[0].attachAxis(self.axisy)
@@ -92,7 +92,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             for band in bands.bands:
                 cur_series = QLineSeries()
                 cur_series.setColor(color)
-                for i in range(0, x.size):
+                for i in range(0, len(band.x)):
                     cur_series.append(band.x[i], band.y[i])
                 
                 series.attachAxis(self.axisy)
@@ -108,7 +108,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             self.band_series[bands.table_name] = series
             self.chart.addSeries(series)
         for band in bands.bands:
-            if self.view_xmin
+            if self.view_xmin:
                 if self.view_xmin > band.x[0]:
                     self.view_xmin = band.x[0]
             else:
@@ -120,13 +120,13 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             else:
                 self.view_ymin = self.axisy.min()
             if self.view_xmax:
-                xmax = band.x[len(x) - 1]
+                xmax = band.x[len(band.x) - 1]
                 if self.view_xmax < xmax:
                     self.view_xmax = xmax
                 else:
-                self.view_xmax = self.axisx.max()
+                    self.view_xmax = self.axisx.max()
             if self.view_ymax:
-                ymax = band.y[len(y) - 1]
+                ymax = band.y[len(band.y) - 1]
                 if self.view_ymax < ymax:
                     self.view_ymax = ymax
             else:

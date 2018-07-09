@@ -46,7 +46,7 @@ hapi_api_key = '{hapi_api_key}'
             except Exception as e:
                 print("Encountered error while attempting to read configuration file: " + str(e))
             finally:
-                Config.set_defaults()
+                Config.set_defaults(Config.__dict__)
         else:
             with open(Config.CONFIG_LOCATION, 'r') as file:
                 text = file.read()
