@@ -29,7 +29,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
 
     def __init__(self):
-        GraphDisplayWindowGui.__init__(self)
+        GraphDisplayWindowGui.__init__(self, GraphType.BANDS, "Bands")
 
 
     def add_bands(self, bands: Bands):
@@ -50,16 +50,17 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                     cur_series.append(band.x[i], band.y[i])
          
                 series.append(cur_series)
-                series.hovered.connect(lambda point, state:
+                cur_series.hovered.connect(lambda point, state:
                         self.__on_series_hover(series, point, state))
-                self.chart.addSeries(series)
+                self.chart.addSeries(cur_series)
+                cur_series.setName(band.band_id)
+                cur_series.setUseOpenGL(True)
 
             self.legend.add_item(series, bands.table_name, r, g, b)
             self.band_series[bands.table_name] = series
-            series.setName(bands.table_name)
-            series.setUseOpenGL(True)
 
             self.chart.legend().setVisible(False)
+            self.series = series
 
             if self.axisy:
                 self.chart.removeAxis(self.axisy)
@@ -81,10 +82,10 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
-            layout = QtWidgets.QGridLayout()
-            layout.addWidget(self.chart_view)
             self.loading_label.setDisabled(True)
-            self.graph_container.setLayout(layout)
+            self.graph_container.layout().addWidget(self.chart_view)
+            self.graph_container.layout().addWidget(self.legend)
+            self.graph_container.layout().removeWidget(self.loading_label)
         else:
             series = []
             r, g, b = BandDisplayWindowGui.generate_random_color(0x66, 0x66, 0x66)
@@ -102,36 +103,41 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 series.hovered.connect(lambda point, state:
                         self.__on_series_hover(series, point, state))
                 self.chart.addSeries(series)
+                cur_series.setUseOpenGL(True)
+                cur_series.setName(band.band_id)
 
+            self.series = series
             self.band_series[bands.table_name] = series
             self.legend.add_item(series, bands.table_name, r, g, b)
             self.band_series[bands.table_name] = series
             self.chart.addSeries(series)
+
+        for series in self.series:
+            series.attachAxis(self.axisx)
+            series.attachAxis(self.axisy)
+
         for band in bands.bands:
-            if self.view_xmin:
-                if self.view_xmin > band.x[0]:
-                    self.view_xmin = band.x[0]
+            if self.view_xmin != None:
+                self.view_xmin = min(min(band.x), self.view_xmin)
             else:
-                self.view_xmin = self.axisx.min()
-            if self.view_ymin:
-                ymin = band.y[0]
-                if self.view_ymin > ymin:
-                    self.view_ymin = ymin
+                self.view_xmin = min(band.x)
+
+            if self.view_ymin != None:
+                self.view_ymin = min(min(band.y), self.view_ymin)
             else:
-                self.view_ymin = self.axisy.min()
-            if self.view_xmax:
-                xmax = band.x[len(band.x) - 1]
-                if self.view_xmax < xmax:
-                    self.view_xmax = xmax
-                else:
-                    self.view_xmax = self.axisx.max()
-            if self.view_ymax:
-                ymax = band.y[len(band.y) - 1]
-                if self.view_ymax < ymax:
-                    self.view_ymax = ymax
+                self.view_ymin = min(band.y)
+
+            if self.view_xmax != None:
+                self.view_xmax = max(max(band.x), self.view_xmax)
             else:
-                self.view_ymax = self.axisy.max()
-            self.__on_view_fit_triggered(True)
+                self.view_xmax = max(band.x)
+
+            if self.view_ymax != None:
+                self.view_ymax = max(max(band.y), self.view_ymax)
+            else:
+                self.view_ymax = max(band.y)
+
+        self.on_view_fit_triggered(True)
 
 
     def __no_series_hover(self, series, point: QPointF, state: bool):
