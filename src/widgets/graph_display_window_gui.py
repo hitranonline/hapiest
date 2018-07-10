@@ -41,6 +41,15 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.view_fit.triggered.connect(self.__on_view_fit_triggered)
         self.exact_fit.triggered.connect(self.__on_exact_fit_triggered)
+        
+        self.y_log10.triggered.connect(self.__on_y_log10_triggered)
+        self.y_ln.triggered.connect(self.__on_y_ln_triggered)
+        self.y_linear.triggered.connect(self.__on_y_linear_triggered)
+        
+        self.x_log10.triggered.connect(self.__on_x_log10_triggered)
+        self.x_ln.triggered.connect(self.__on_x_ln_triggered)
+        self.x_linear.triggered.connect(self.__on_x_linear_triggered)
+        
 
         self.save_as_csv.triggered.connect(self.__on_save_as_csv_triggered)
         self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
@@ -395,3 +404,17 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                         
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
+
+    def __on_y_log10_triggered(self):
+        pass
+    def __on_y_ln_triggered(self):
+        pass
+    def __on_y_linear_triggered(self):
+        pass
+    def __on_x_log10_triggered(self):
+        pass
+    def __on_x_ln_triggered(self):
+        pass
+    def __on_x_linear_triggered(self):
+        pass
+
