@@ -35,7 +35,7 @@ class MoleculeInfoTest(Test):
         window = QtWidgets.QMainWindow()
         def close_window():
             sleep(0.25)
-            # window.deleteLater()
+            window.deleteLater()
             
         t = threading.Thread(target=close_window)
         t.start()

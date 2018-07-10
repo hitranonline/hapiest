@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
+from PyQt5 import QtGui, QtWidgets, uic, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
@@ -187,8 +187,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         else:
             self.view_ymax = self.axisy.max()
         self.__on_view_fit_triggered(True)
-        
-    def __on_view_fit_triggered(self, _checked: bool):
+
+
+    def on_view_fit_triggered(self, _checked: bool = False):
+        self.__on_view_fit_triggered(_checked)
+
+
+    def __on_view_fit_triggered(self, _checked: bool = False):
         """
         Sets the screen focus to maximum values of y and x for series in the graph. The xmin / ymin variables
         are kept track of in such a way where they will always have the most extreme valid values, so using those
@@ -298,12 +303,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
     def __on_save_as_png_triggered(self, _checked: bool):
         if self.chart == None:
             return
-        
+
+        filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG)')
+
         if filename == None:
             return
 
-        filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG)')
-       
         gl_widget = self.chart_view.findChild(QOpenGLWidget)
 
         # geometry = self.chart_view.geometry()

@@ -25,7 +25,7 @@ class LegendItem(QWidget):
 
         self.color_indicator = QWidget()
         self.color_indicator.setGeometry(0, 0, 24, 24)
-        self.color_indicator.setStyleSheet('background-color: #{:x}{:x}{:x}'.format(r, g, b))
+        self.color_indicator.setStyleSheet('background-color: #{:x}{:x}{:x}'.format(int(r), int(g), int(b)))
 
         self.layout = QHBoxLayout()
         self.label = QLabel(name)
@@ -41,12 +41,16 @@ class LegendItem(QWidget):
 
 
     def eventFilter(self, obj, event):
+        print(event)
         if event.type() == QEvent.HoverEnter:
             for series in self.all_series:
                 series.pen().setWidth(4)
+            return True
         elif event.type() == QEvent.HoverLeave:
             for series in self.all_series:
                 series.pen().setWidth(1)
+            return True
+        return False
 
 
     def set_on_hover(self, on_hover_fn):
@@ -58,11 +62,10 @@ class BandLegend(QWidget):
 
     def __init__(self):
         QWidget.__init__(self)
-        self.layout = FlowLayout()
+        layout = FlowLayout()
         self.setLayout(layout)
 
-
     def add_item(self, all_series, name, r, g, b):
-        self.layout.addItem(all_series, name, r, g, b)
+        self.layout().addWidget(LegendItem(all_series, name, r, g, b))
 
 

@@ -39,8 +39,8 @@ class HapiSourcesTest(Test):
         window = QtWidgets.QMainWindow()
         def close_window():
             # uncomment this to auto-close
-            # sleep(0.25)
-            #window.deleteLater()
+            sleep(0.25)
+            window.deleteLater()
             pass
 
         t = threading.Thread(target=close_window)
