@@ -9,8 +9,16 @@ from test.fail_test import FailTest
 from test.throw_test import ThrowTest
 from test.hapi_sources_test import HapiSourcesTest
 from test.molecule_info_test import MoleculeInfoTest
+from test.band_display_test import BandDisplayTest
 
-tests: List[Test] = [Test(), FailTest(), ThrowTest(), HapiSourcesTest(), MoleculeInfoTest()]
+tests: List[Test] = [
+    Test(),
+    FailTest(),
+    ThrowTest(),
+    HapiSourcesTest(),
+    MoleculeInfoTest(),
+    BandDisplayTest()
+]
 
 result_fmt = '\n{:36s} {:36s}'
 name_fmt = '{:36s} '
@@ -20,12 +28,13 @@ def print_tb(tb):
     print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n')
 
 for test in tests:
+    print('_' * 60)
     print(name_fmt.format(test.name()))
     result: Union[bool, Tuple[type, Exception, TracebackType]] = test.run()
     if test.should_fail():
         if result == False:
             print(result_fmt.format('', 'Ok!'))
-        elif t == True:
+        elif result == True:
             print(result_fmt.format('', 'Failed'))
         else:
             exc_type, exc_value, exc_traceback = result
