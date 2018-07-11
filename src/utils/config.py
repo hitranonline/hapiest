@@ -8,7 +8,12 @@ class Config():
     configurable settings.
 
     """
-    
+    ## The number of values to display along the x axis in graphs
+    axisx_ticks = 5
+
+    ## The number of values to display along the y axis in graphs
+    axisy_ticks = 5
+
     ## The folder where data is stored
     data_folder = 'data'
 
@@ -19,15 +24,19 @@ class Config():
     select_page_length = 100
 
     DEFAULT_CONFIG =  """[hapiest]
-data_folder = '{data_folder}'
-high_dpi = '{high_dpi}'
-select_page_length = {select_page_length}
-hapi_api_key = '{hapi_api_key}'
+data_folder         = '{data_folder}'
+high_dpi            = '{high_dpi}'
+select_page_length  = {select_page_length}
+hapi_api_key        = '{hapi_api_key}'
+axisx_ticks         = {axisx_ticks}
+axisy_ticks         = {axisy_ticks}
 """.format(
-        data_folder = data_folder,
-        high_dpi = high_dpi,
-        select_page_length = select_page_length,
-        hapi_api_key = 'default')
+        data_folder         = data_folder,
+        high_dpi            = high_dpi,
+        select_page_length  = select_page_length,
+        hapi_api_key        = 'no key needed until hapiest migrates to hapi v2',
+        axisx_ticks         = axisx_ticks,
+        axisy_ticks         = axisy_ticks)
     
     CONFIG_LOCATION = 'Config.toml'
    

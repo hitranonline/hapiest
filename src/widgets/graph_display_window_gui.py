@@ -4,7 +4,7 @@ from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from utils.band import Bands, Band
+from utils.colors import Colors
 from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
@@ -13,43 +13,42 @@ from widgets.view_selector import ViewSelector
 from widgets.hapi_chart_view import HapiChartView
 from random import randint
 from typing import *
+from utils.config import Config
 
 import os
 import json
 import math
 
+
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
-    @staticmethod
-    def generate_random_color(r, g, b):
-        """
-        @returns    a tuple, containing 3 integers between 0 and 255 which represent the r, g,
-                    and b values of a color.
-        """
-        return ((randint(0, 255) + r) / 2, (randint(0, 255) + g) / 2, (randint(0, 255) + b) / 2)
-
- 
     def __init__(self, ty: GraphType, window_title: str):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
 
         self.graph_ty = ty
 
+        self.colors = Colors()
+
+        self.xmin: float = None
+        self.xmax: float = None
+        self.ymin: float = None
+        self.ymax: float = None
+
         uic.loadUi('layouts/graph_display_window.ui', self)
-        self.chart = None
-        self.chart_view = None
+        self.chart: QChart = None
+        self.chart_view: HapiChartView = None
 
         self.view_fit.triggered.connect(self.__on_view_fit_triggered)
         self.exact_fit.triggered.connect(self.__on_exact_fit_triggered)
-        
+
         self.y_log10.triggered.connect(self.__on_y_log10_triggered)
         self.y_ln.triggered.connect(self.__on_y_ln_triggered)
         self.y_linear.triggered.connect(self.__on_y_linear_triggered)
-        
+
         self.x_log10.triggered.connect(self.__on_x_log10_triggered)
         self.x_ln.triggered.connect(self.__on_x_ln_triggered)
         self.x_linear.triggered.connect(self.__on_x_linear_triggered)
-        
 
         self.save_as_csv.triggered.connect(self.__on_save_as_csv_triggered)
         self.save_as_json.triggered.connect(self.__on_save_as_json_triggered)
@@ -73,12 +72,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.show()
 
+    def all_series(self):
+        return self.series
 
     def set_chart_title(self, title):
         self.setWindowTitle(str(title))
 
-    
-    def set_viewport(self, xmin, xmax, ymin, ymax):
+    def set_viewport(self, xmin: float, xmax: float, ymin: float, ymax: float):
         if xmin > xmax:
             t = xmin
             xmin = xmax
@@ -93,12 +93,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.axisx.setRange(xmin, xmax)
         self.axisy.setRange(ymin, ymax)
 
-
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
-        if self.chart == None:
+        if self.chart is None:
             series = QLineSeries()
-            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff * 3 / 4, 0xff * 3 / 4, 0xff * 3 / 4)
-            color = QColor(r, g, b)
+            color_rgb: int = self.colors.next()
+            color = QColor(color_rgb)
             pen = QPen()
             pen.setColor(color)
             pen.setWidth(4)
@@ -107,9 +106,10 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             for i in range(0, x.size):
                 series.append(x[i], y[i])
             self.series = [series]
-            series.setName( name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
-                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
-                args['Diluent']['air'], args['Diluent']['self']))
+            series.setName(
+                name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+                    args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
+                    args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
             self.chart = QChart()
@@ -132,7 +132,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.axisy.setTickCount(5)
             self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
             self.series[0].attachAxis(self.axisy)
-            
+
             self.chart.legend()
             self.chart_view = HapiChartView(self)
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
@@ -143,16 +143,16 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.layout().removeWidget(self.loading_label)
         else:
             series = QLineSeries()
-            
-            r, g, b = GraphDisplayWindowGui.generate_random_color(0xff * 3 / 4, 0xff * 3 / 4, 0xff * 3 / 4)
-            color = QColor(r, g, b)
+
+            color_rgb: int = self.colors.next()
+            color = QColor(color_rgb)
             pen = QPen()
             pen.setColor(color)
             pen.setWidth(4)
             pen.setCosmetic(False)
             series.setPen(pen)
-            
-            series.setName( name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+
+            series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
@@ -188,10 +188,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.view_ymax = self.axisy.max()
         self.__on_view_fit_triggered(True)
 
-
     def on_view_fit_triggered(self, _checked: bool = False):
         self.__on_view_fit_triggered(_checked)
-
 
     def __on_view_fit_triggered(self, _checked: bool = False):
         """
@@ -204,15 +202,13 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.axisx.setRange(self.view_xmin, self.view_xmax)
             self.axisy.setRange(self.view_ymin, self.view_ymax)
 
-
     def __on_exact_fit_triggered(self):
         self.view_fit_widget = ViewSelector(self)
-
 
     def on_point_clicked(self):
         if self.chart == None:
             return
-        
+
         if self.highlighted_point != None:
             self.chart.removeSeries(self.highlighted_point)
 
@@ -255,7 +251,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         if x == None:
             return
-  
+
         self.highlighted_point = QScatterSeries()
         self.highlighted_point.append(x, y)
         self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x, y))
@@ -267,23 +263,23 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.highlighted_point.attachAxis(self.axisx)
         self.highlighted_point.attachAxis(self.axisy)
 
-
     def get_file_save_name(self, extension, filter) -> Union[str, None]:
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
         if filename[0] == "":
             return None
         else:
             return str(filename[0])
-    
+
     def __on_save_as_other_img_triggered(self, _checked: bool):
         if self.chart == None:
             return
 
-        filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG);; Windows Bitmap (*.bmp *.BMP);; Joint Photographic Experts Group (*.jpeg *.JPEG *.jpg *.JPG);; Portable Pixmap (*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap (*.xpm *.XPM)')
-        
+        filename = self.get_file_save_name('.png',
+                                           'Portable Network Graphics (*.png *.PNG);; Windows Bitmap (*.bmp *.BMP);; Joint Photographic Experts Group (*.jpeg *.JPEG *.jpg *.JPG);; Portable Pixmap (*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap (*.xpm *.XPM)')
+
         if filename == None:
             return
-        
+
         _filename, file_extension = os.path.splitext(filename)
         extension = file_extension.upper()
 
@@ -296,9 +292,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
         painter.drawImage(point, gl_widget.grabFramebuffer())
         painter.end()
-        
+
         pixmap.save(filename, extension)
-        
 
     def __on_save_as_png_triggered(self, _checked: bool):
         if self.chart == None:
@@ -318,16 +313,15 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
         painter.drawImage(point, gl_widget.grabFramebuffer())
         painter.end()
-        
-        pixmap.save(filename, 'PNG')
 
+        pixmap.save(filename, 'PNG')
 
     def __on_save_as_jpg_triggered(self, _checked: bool):
         if self.chart == None:
             return
-        
+
         filename = self.get_file_save_name('.jpg', 'JPEG files (*.jpg *.JPG *.jpeg *.JPEG)')
-        
+
         if filename == None:
             return
 
@@ -340,7 +334,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
         painter.drawImage(point, gl_widget.grabFramebuffer())
         painter.end()
-        
+
         pixmap.save(filename, 'JPG')
 
     def __on_save_as_txt_triggered(self, _checked: bool):
@@ -351,17 +345,17 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         if filename == None:
             return
-        
+
         try:
             for i in range(0, len(self.series)):
                 ith_filename = '{}_{}.txt'.format(filename, i)
                 with open(ith_filename, "w") as file:
                     for point in self.series[i].pointsVector():
                         file.write('{:<16.8f}{:.8f}\n'.format(point.x(), point.y()))
-                        
+
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
-    
+
     def __on_save_as_json_triggered(self, _checked: bool):
         if self.chart == None:
             return
@@ -369,12 +363,14 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         filename = self.get_file_save_name(".json", "Javascript object notation files (*.json)")
         if filename == None:
             return
+
         def filter_series_name(s):
             return s.replace('<br>', ' ').replace('γ', 'gamma')
+
         dict = {}
         series_lists = list(map(lambda series: dict.update({
-            filter_series_name(series.name()): 
-                list(map(lambda point: [point.x(), point.y()], series.pointsVector())) }), self.series)) 
+            filter_series_name(series.name()):
+                list(map(lambda point: [point.x(), point.y()], series.pointsVector()))}), self.series))
         try:
             with open(filename, 'w') as file:
                 file.write(json.dumps(dict, indent=4))
@@ -386,10 +382,10 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return
 
         filename = self.get_file_save_name(".csv", "Comma separated value files (*.csv)")
-        
+
         if filename == None:
-            return 
-        
+            return
+
         try:
             point_vectors = []
             for i in range(0, len(self.series)):
@@ -404,22 +400,107 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                         else:
                             point = point_vectors[i][point_index]
                             s = '{} {:14s}, {:14s},'.format(s, str(point.x()), str(point.y()))
-                    
+
                     file.write('{}\n'.format(s))
-                        
+
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 
-    def __on_y_log10_triggered(self):
-        pass
-    def __on_y_ln_triggered(self):
-        pass
-    def __on_y_linear_triggered(self):
-        pass
-    def __on_x_log10_triggered(self):
-        pass
-    def __on_x_ln_triggered(self):
-        pass
-    def __on_x_linear_triggered(self):
-        pass
+    def swap_axis(self, old_axis: QAbstractAxis, new_axis: QAbstractAxis, alignment):
+        self.chart.addAxis(new_axis, alignment)
 
+        for series in self.all_series():
+            series.detachAxis(old_axis)
+            self.chart.removeSeries(series)
+            self.chart.addSeries(series)
+            series.attachAxis(new_axis)
+
+        self.chart.removeAxis(old_axis)
+
+    def __on_y_log10_triggered(self, _checked: bool = False):
+        if self.axisy is None:
+            return
+        new_axisy = QLogValueAxis()
+        new_axisy.setTitleText(self.axisy.titleText())
+        new_axisy.setBase(10)
+        new_axisy.setLabelFormat(self.axisy.labelFormat())
+
+        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
+        self.axisy = new_axisy
+
+        self.__on_view_fit_triggered()
+
+    def __on_y_ln_triggered(self, _checked: bool = False):
+        if self.axisy == None:
+            return
+
+        new_axisy = QLogValueAxis()
+        new_axisy.setTitleText(self.axisy.titleText())
+        new_axisy.setBase(math.e)
+        new_axisy.setLabelFormat(self.axisy.labelFormat())
+
+        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
+
+        self.axisy = new_axisy
+
+        self.__on_view_fit_triggered()
+
+    def __on_y_linear_triggered(self, _checked: bool = False):
+        if self.axisy == None:
+            return
+
+        new_axisy = QValueAxis()
+        new_axisy.setTitleText(self.axisy.titleText())
+        new_axisy.setTickCount(Config.axisy_ticks)
+        new_axisy.setLabelFormat(self.axisy.labelFormat())
+
+        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
+
+        self.axisy = new_axisy
+
+        self.__on_view_fit_triggered()
+
+    def __on_x_log10_triggered(self, _checked: bool = False):
+        if self.axisx == None:
+            return
+
+        new_axisx = QLogValueAxis()
+        new_axisx.setTitleText(self.axisx.titleText())
+        new_axisx.setBase(10.0)
+        new_axisx.setLabelFormat(self.axisx.labelFormat())
+
+        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
+
+        self.axisx = new_axisx
+
+        self.__on_view_fit_triggered()
+
+    def __on_x_ln_triggered(self, _checked: bool = False):
+        if self.axisx == None:
+            return
+
+        new_axisx = QLogValueAxis()
+        new_axisx.setTitleText(self.axisx.titleText())
+        new_axisx.setBase(math.e)
+        new_axisx.setLabelFormat(self.axisx.labelFormat())
+
+        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
+
+        self.axisx = new_axisx
+
+        self.__on_view_fit_triggered()
+
+    def __on_x_linear_triggered(self, _checked: bool = False):
+        if self.axisx == None:
+            return
+
+        new_axisx = QValueAxis()
+        new_axisx.setTitleText(self.axisx.titleText())
+        new_axisx.setTickCount(Config.axisx_ticks)
+        new_axisx.setLabelFormat(self.axisx.labelFormat())
+
+        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
+
+        self.axisx = new_axisx
+
+        self.__on_view_fit_triggered()

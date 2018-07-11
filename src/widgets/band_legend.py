@@ -18,14 +18,14 @@ import json
 class LegendItem(QWidget):
 
 
-    def __init__(self, all_series, name, r, g, b):
+    def __init__(self, all_series, name, color):
         QWidget.__init__(self)
 
         self.all_series = all_series
 
         self.color_indicator = QWidget()
         self.color_indicator.setGeometry(0, 0, 24, 24)
-        self.color_indicator.setStyleSheet('background-color: #{:x}{:x}{:x}'.format(int(r), int(g), int(b)))
+        self.color_indicator.setStyleSheet('background-color: #{:x}'.format(color))
 
         self.layout = QHBoxLayout()
         self.label = QLabel(name)
@@ -62,10 +62,10 @@ class BandLegend(QWidget):
 
     def __init__(self):
         QWidget.__init__(self)
-        layout = FlowLayout()
+        layout = QHBoxLayout() #FlowLayout()
         self.setLayout(layout)
 
-    def add_item(self, all_series, name, r, g, b):
-        self.layout().addWidget(LegendItem(all_series, name, r, g, b))
+    def add_item(self, all_series, name, color):
+        self.layout().addWidget(LegendItem(all_series, name, color))
 
 
