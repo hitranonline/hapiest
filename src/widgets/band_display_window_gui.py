@@ -40,7 +40,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.hovered.connect(lambda point, state:
                         self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
-                cur_series.setUseOpenGL(False)
+                cur_series.setUseOpenGL(True)
 
 
             self.chart = QChart()
@@ -89,7 +89,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.hovered.connect(lambda point, state:
                         self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
-                cur_series.setUseOpenGL(False)
+                cur_series.setUseOpenGL(True)
 
 
             list(map(self.chart.addSeries, series))
