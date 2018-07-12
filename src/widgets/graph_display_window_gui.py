@@ -103,7 +103,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             pen.setWidth(4)
             pen.setCosmetic(False)
             series.setPen(pen)
-            for i in range(0, x.size):
+            for i in range(0, len(x)):
                 series.append(x[i], y[i])
             self.series = [series]
             series.setName(
@@ -156,7 +156,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
-            for i in range(0, x.size):
+            for i in range(0, len(x)):
                 series.append(x[i], y[i])
             self.chart.addSeries(series)
             series.attachAxis(self.axisy)

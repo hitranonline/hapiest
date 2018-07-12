@@ -9,6 +9,7 @@ from test.fail_test import FailTest
 from test.throw_test import ThrowTest
 from test.hapi_sources_test import HapiSourcesTest
 from test.molecule_info_test import MoleculeInfoTest
+from test.graph_display_test import GraphDisplayTest
 from test.band_display_test import BandDisplayTest
 
 tests: List[Test] = [
@@ -17,6 +18,7 @@ tests: List[Test] = [
     ThrowTest(),
     HapiSourcesTest(),
     MoleculeInfoTest(),
+    GraphDisplayTest(),
     BandDisplayTest()
 ]
 
