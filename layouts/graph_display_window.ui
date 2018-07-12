@@ -113,8 +113,32 @@
     </widget>
     <addaction name="menuSave_as"/>
    </widget>
+   <widget class="QMenu" name="menuScale">
+    <property name="title">
+     <string>Scale</string>
+    </property>
+    <widget class="QMenu" name="menuX_Axis">
+     <property name="title">
+      <string>X Axis</string>
+     </property>
+     <addaction name="x_log10"/>
+     <addaction name="x_ln"/>
+     <addaction name="x_linear"/>
+    </widget>
+    <widget class="QMenu" name="menuY_Axis">
+     <property name="title">
+      <string>Y Axis</string>
+     </property>
+     <addaction name="y_log10"/>
+     <addaction name="y_ln"/>
+     <addaction name="y_linear"/>
+    </widget>
+    <addaction name="menuX_Axis"/>
+    <addaction name="menuY_Axis"/>
+   </widget>
    <addaction name="menua"/>
    <addaction name="menuViewport"/>
+   <addaction name="menuScale"/>
   </widget>
   <action name="view_fit">
    <property name="text">
@@ -184,6 +208,36 @@
   <action name="exact_fit">
    <property name="text">
     <string>Exact</string>
+   </property>
+  </action>
+  <action name="x_log10">
+   <property name="text">
+    <string>Log10</string>
+   </property>
+  </action>
+  <action name="x_ln">
+   <property name="text">
+    <string>Ln</string>
+   </property>
+  </action>
+  <action name="x_linear">
+   <property name="text">
+    <string>Linear</string>
+   </property>
+  </action>
+  <action name="y_log10">
+   <property name="text">
+    <string>Log 10</string>
+   </property>
+  </action>
+  <action name="y_ln">
+   <property name="text">
+    <string>Ln</string>
+   </property>
+  </action>
+  <action name="y_linear">
+   <property name="text">
+    <string>Linear</string>
    </property>
   </action>
  </widget>
