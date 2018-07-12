@@ -30,8 +30,7 @@ class MoleculeInfoTest(Test):
         return 'molecule view test'
     
     def test(self) -> bool:
-        app = QtWidgets.QApplication(sys.argv)
-    
+        app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
         def close_window():
             sleep(0.25)
@@ -42,5 +41,4 @@ class MoleculeInfoTest(Test):
         widget = MoleculeInfoWidget('CO2')
         window.setCentralWidget(widget) 
         window.show()
-        qt_result = app.exec_()
-        return qt_result == 0
+        return app.exec_() == 0

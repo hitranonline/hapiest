@@ -20,7 +20,7 @@ class GraphDisplayTest(Test):
         return 'graph display test'
 
     def test(self) -> bool:
-        app = QtWidgets.QApplication(sys.argv)
+        app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
 
         def close_window():
@@ -50,5 +50,4 @@ class GraphDisplayTest(Test):
         widget.add_graph(x, y, '2', 'x', 'y', 'oof2', args)
         window.setCentralWidget(widget)
         window.show()
-        qt_result = app.exec_()
-        return qt_result == 0
+        return app.exec_() == 0

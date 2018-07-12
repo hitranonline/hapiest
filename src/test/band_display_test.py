@@ -20,7 +20,7 @@ class BandDisplayTest(Test):
         return 'band display test'
 
     def test(self) -> bool:
-        app = QtWidgets.QApplication(sys.argv)
+        app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
 
         def close_window():
@@ -54,5 +54,4 @@ class BandDisplayTest(Test):
         widget.add_bands(bands2)
         window.setCentralWidget(widget)
         window.show()
-        qt_result = app.exec_()
-        return qt_result == 0
+        return app.exec_() == 0

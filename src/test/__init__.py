@@ -1,5 +1,8 @@
+import multiprocessing
+from multiprocessing import Process
 from typing import *
 from types import TracebackType
+from threading import *
 import traceback
 import sys
 import os
@@ -26,37 +29,40 @@ result_fmt = '\n{:36s} {:36s}'
 name_fmt = '{:36s} '
 print('{}{}'.format(name_fmt, name_fmt).format('Test Name', 'Test Result'))
 
-def print_tb(tb):
-    print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n')
+from PyQt5 import QtWidgets
 
+q = multiprocessing.Queue()
 for test in tests:
     print('_' * 60)
     print(name_fmt.format(test.name()))
-    result: Union[bool, Tuple[type, Exception, TracebackType]] = test.run()
+    p = Process(target=test.run, args=(q,))
+    p.start()
+    p.join()
+    result: Union[bool, Tuple[type, Exception, TracebackType]] = q.get()
     if test.should_fail():
         if result == False:
             print(result_fmt.format('', 'Ok!'))
         elif result == True:
             print(result_fmt.format('', 'Failed'))
         else:
-            exc_type, exc_value, exc_traceback = result
+            traceback = result
             print(result_fmt.format('', 'Failed with exception:'))
-            print_tb(exc_traceback)
+            print(traceback)
     elif test.should_throw():
         if result == True:
             print(result_fmt.format('', 'Failed (should throw)'))
         elif result == False:
             print(result_fmt.format('', 'Failed (should throw)'))
         else:
-            exc_type, exc_value, exc_traceback = result
-            print(result_fmt.format('', 'Ok, threw:'))
-            print_tb(exc_traceback)
+            traceback = result
+            print(result_fmt.format('', 'Failed with exception:'))
+            print(traceback)
     else:
         if result == True:
             print(result_fmt.format('', 'Ok!'))
         elif result == False:
             print(result_fmt.format('', 'Failed'))
         else:
-            exc_type, exc_value, exc_traceback = result
+            traceback = result
             print(result_fmt.format('', 'Failed with exception:'))
-            print_tb(exc_traceback)
+            print(traceback)
