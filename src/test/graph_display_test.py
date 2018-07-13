@@ -25,7 +25,7 @@ class GraphDisplayTest(Test):
 
         def close_window():
             sleep(0.25)
-            # window.deleteLater()
+            window.deleteLater()
 
         step = 0.1
 

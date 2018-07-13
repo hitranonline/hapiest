@@ -40,10 +40,10 @@ class BandDisplayTest(Test):
             return Band(x, y, "{}, {}".format(freq, amp))
 
         bands1 = Bands()
-        for i in range(0, 100):
+        for i in range(0, 10):
             bands1.add_band(random_band())
         bands2 = Bands()
-        for i in range(0, 20):
+        for i in range(0, 10):
             bands2.add_band(random_band())
 
         t = threading.Thread(target=close_window)

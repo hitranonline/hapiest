@@ -10,7 +10,7 @@ class Bands:
 
     def __init__(self, bands: List[Band] = [], table_name: str = ''):
         self.table_name = table_name
-        self.bands = bands
+        self.bands = bands.copy()
 
     def add_band(self, band: Band):
         self.bands.append(band)

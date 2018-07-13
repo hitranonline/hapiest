@@ -25,14 +25,19 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         return functools.reduce(list.__add__, self.band_series.values(), [])
 
     def add_bands(self, bands: Bands):
-        if self.chart == None:
+        color = QColor(self.colors.next())
 
+        pen = QPen()
+        pen.setColor(color)
+        pen.setWidth(2)
+        pen.setCosmetic(False)
+
+        if self.chart == None:
             series = []
-            color = QColor(self.colors.next())
 
             for band in bands.bands:
                 cur_series = QLineSeries()
-                cur_series.setColor(color)
+
                 for i in range(0, len(band.x)):
                     cur_series.append(band.x[i], band.y[i])
          
@@ -72,16 +77,14 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
             self.loading_label.setDisabled(True)
-            self.graph_container.layout().addWidget(self.chart_view)
-            self.graph_container.layout().addWidget(self.legend)
             self.graph_container.layout().removeWidget(self.loading_label)
+            self.graph_container.layout().addWidget(self.chart_view)
+            self.container.addWidget(self.legend)
         else:
             series = []
-            color = QColor(self.colors.next())
 
             for band in bands.bands:
                 cur_series = QLineSeries()
-                cur_series.setColor(color)
                 for i in range(0, len(band.x)):
                     cur_series.append(band.x[i], band.y[i])
 
@@ -101,6 +104,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
 
         for s in series:
+            s.setPen(pen)
             s.attachAxis(self.axisx)
             s.attachAxis(self.axisy)
 
@@ -128,7 +132,10 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
 
     def __on_series_hover(self, series, point: QPointF, state: bool):
-        if state:
-            series.pen().setWidth(4)
-        else:
-            series.pen().setWidth(1)
+        pass
+        #if state:
+            #series.pen().setWidth(6)
+            #series.setPen(series.pen())
+        #else:
+            #series.pen().setWidth(3)
+            #series.setPen(series.pen())

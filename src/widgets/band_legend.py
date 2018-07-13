@@ -15,43 +15,63 @@ import os
 import json
 
 
-class LegendItem(QWidget):
+class LegendItem(QFrame):
 
 
-    def __init__(self, all_series, name, color):
-        QWidget.__init__(self)
+    def __init__(self, series, name, color):
+        QFrame.__init__(self)
 
-        self.all_series = all_series
+        self.setStyleSheet("""
+        LegendItem {{
+            border: 1px solid #{:x};
+        }}
+        """.format(color))
+
+        self.series = series
 
         self.color_indicator = QWidget()
-        self.color_indicator.setGeometry(0, 0, 24, 24)
-        self.color_indicator.setStyleSheet('background-color: #{:x}'.format(color))
+        self.color_indicator.setFixedSize(24, 24)
+        self.color_indicator.setStyleSheet("""
+        QWidget {{
+            background-color: #{:x};
+            border: 2px solid black;
+        }}
+        """.format(color))
 
         self.layout = QHBoxLayout()
         self.label = QLabel(name)
         self.label.setWordWrap(True)
 
-        self.layout.addWidget(self.label)
         self.layout.addWidget(self.color_indicator)
+        self.layout.addWidget(self.label)
+
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(4, 4, 4, 4)
+
+        self.setLayout(self.layout)
         
         self.on_hover_fn = lambda: ()
 
         self.installEventFilter(self)
         self.setMouseTracking(True)
 
-
     def eventFilter(self, obj, event):
-        print(event)
-        if event.type() == QEvent.HoverEnter:
-            for series in self.all_series:
-                series.pen().setWidth(4)
+        if event.type() == QEvent.Enter:
+            print('hey')
+            pen = QPen()
+            pen.setColor(self.series[0].pen().color())
+            pen.setWidth(6)
+            pen.setCosmetic(False)
+            list(map(lambda series: series.setPen(pen), self.series))
             return True
-        elif event.type() == QEvent.HoverLeave:
-            for series in self.all_series:
-                series.pen().setWidth(1)
+        elif event.type() == QEvent.Leave:
+            pen = QPen()
+            pen.setColor(self.series[0].pen().color())
+            pen.setWidth(3)
+            pen.setCosmetic(False)
+            list(map(lambda series: series.setPen(pen), self.series))
             return True
         return False
-
 
     def set_on_hover(self, on_hover_fn):
         self.on_hover_fn = on_hover_fn
@@ -65,7 +85,7 @@ class BandLegend(QWidget):
         layout = QHBoxLayout() #FlowLayout()
         self.setLayout(layout)
 
-    def add_item(self, all_series, name, color):
-        self.layout().addWidget(LegendItem(all_series, name, color))
+    def add_item(self, series, name, color):
+        self.layout().addWidget(LegendItem(series, name, color))
 
 
