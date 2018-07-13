@@ -6,6 +6,15 @@
 \usepackage{amsfonts, amsmath, amsthm, amssymb}
 %\usepackage{wrapfig}
 \usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\urlstyle{same}
 
 \begin{document}
 \title{HAPIEST User Manual} 
@@ -25,8 +34,7 @@ HITRAN Application Programming Interface and Efficient Spectroscopic Tools (HAPI
 The goal of HAPIEST is to simplify the use of the HITRAN Application Programming Interface (HAPI) for all users. Currently, HAPI requires some knowledge of Python and use of the command line. HAPIEST should retain as much of the funtionality HAPI as is possible in a simple GUI, while making it easier to access and use for the user. HAPIEST currently allows users the capability to fetch/download and locally store data from the HITRAN database, edit local data, and also to generate and plot spectral functions. In it's current form, HAPIEST is split up into 3 windows, one window for data management and editing, and two windows for graphing/graph display.
 
 \subsection{Installation}
-HAPIEST is available to follow and download on our GitHub for the latest 'version'. A distribution is also available on GitHub for Windows, and will be coming to Linux and Mac.
-https://github.com/hitranonline/hapiest
+HAPIEST is available to follow and download on our \href{https://github.com/hitranonline/hapiest}{GitHub} for the latest pre-release version. A 'display' distribution is also available on \href{https://github.com/hitranonline/hapiest/releases}{GitHub} for Windows, and will be coming to Linux and Mac.
 
 \section{Main Window}
 The Main Window provides the functionality of HAPI and is split into several tabs each focusing on a different feature/function. 
