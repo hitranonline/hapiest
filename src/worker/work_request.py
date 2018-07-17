@@ -1,14 +1,19 @@
 from typing import *
 import multiprocessing as mp
-from worker.work_result import WorkResult
-from hapi import *
-from utils.fetch_error import FetchErrorKind, FetchError
-from utils.log import *
-from utils.config import Config
-from utils.hapi_metadata import HapiMetaData
-from utils.hapiest_util import echo
 import sys
 import traceback
+
+from hapi import *
+
+from worker.work_result import WorkResult
+
+from utils.log import *
+from utils.config import Config
+from utils.band import Band, Bands
+from utils.hapiest_util import echo
+from utils.hapi_metadata import HapiMetaData
+from utils.fetch_error import FetchErrorKind, FetchError
+
 
 class WorkFunctions:
     @staticmethod
@@ -45,6 +50,53 @@ class WorkFunctions:
     }
 
     @staticmethod
+    def graph_bands(TableName: str, **kwargs) -> Bands:
+        """
+        The following set of local functions were supplied by R.V. Kochanov, modified / refactored by Joshua Karns
+        @returns the bands for the table!
+        """
+
+        def make_band_index():
+            """
+            Create the band index.
+            Band index is a dictionary of the format:
+                DICT[BAND] = IDS,
+                where BAND = (global_upper_quanta,global_lower_quanta)   (i.e. a tuple consisting from two parameters)
+                IDS = indexes of the lines in LOCAL_TABLE_HASH corresponding to the BAND
+            """
+            data = LOCAL_TABLE_CACHE[TableName]['data']
+            band2index = {}
+
+            def process_band(params):
+                """
+                params should be a 3-tuple that contains (global_upper_quanta, global_lower_quanta, index)
+                """
+                band2index.setdefault((params[0], params[1]), []).append(params[2])
+
+            quanta_with_index = zip(data['global_upper_quanta'], data['global_lower_quanta'], range(0, len(data['global_lower_quanta'])))
+            list(map(process_band, quanta_with_index))
+
+            return band2index
+
+        def get_parameters(ids, params = ('nu', 'sw')):
+            """
+            Get line parameters as a columns from the LOCAL_TABLE_HASH
+            using the ID numbers. Parameter names are specified in PARS.
+            """
+            data = LOCAL_TABLE_CACHE[TableName]['data']
+            return zip(*list(map(lambda id: list(map(lambda par: data[par][id], params)), ids)))
+
+        band2index = make_band_index()
+
+        def get_band(band) -> Band:
+            ids = band2index[band]
+            nu, sw = get_parameters(ids)
+            return Band(nu, sw, str(band))
+
+        return Bands(list(map(get_band, band2index.keys())), TableName)
+
+
+    @staticmethod
     def convolve_spectrum(x, y, instrumental_fn: str, Resolution: float, AF_wing: float):
         """
         Applies an instrumental function to (x, y) coordinates if one was selected.
@@ -65,7 +117,7 @@ class WorkFunctions:
             graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
             Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
-            **kwargs) -> Union[Dict[str, Any], Exception]:
+            **kwargs) -> Union[Bands, Exception]:
         """
         Generates coordinates for absorption coeffecient graph.
         """
@@ -93,8 +145,9 @@ class WorkFunctions:
                 WavenumberStep=WavenumberStep,
                 WavenumberWing=WavenumberWing,
                 WavenumberWingHW=WavenumberWingHW)
-        return { 'x': x, 'y': y, 'title': title, 'name': SourceTables[0], 'titlex': titlex, 'titley': titley,
-                 'args': kwargs }
+        result = Bands([Band(x, y, "Absorption Coef." + title)], "Absorption Coef. " + title)
+        result.use_scatter_plot = False
+        return result
 
     @staticmethod
     def graph_absorption_spectrum(
@@ -259,7 +312,6 @@ class WorkFunctions:
 
         return echo(table_names=table_names)
 
-    # def select(TableName,DestinationTableName=QUERY_BUFFER,ParameterNames=None,Conditions=None,Output=True,File=None):
     @staticmethod
     def select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
                    Conditions: List[Any] = None, Output: bool = False, File=None, **kwargs):
@@ -293,6 +345,7 @@ class WorkRequest:
     TRANSMITTANCE_SPECTRUM: WorkType = 9
     RADIANCE_SPECTRUM: WorkType = 10
     ABSORPTION_SPECTRUM: WorkType = 11
+    BANDS: WorkType = 12
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -334,7 +387,9 @@ class Work:
             WorkRequest.SELECT: WorkFunctions.select,
             WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.graph_absorption_spectrum,
             WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.graph_transmittance_spectrum,
-            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum
+            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum,
+            WorkRequest.BANDS: WorkFunctions.graph_bands
+
         }
 
         WorkFunctions.start_hapi(**{})

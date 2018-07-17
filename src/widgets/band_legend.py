@@ -18,9 +18,10 @@ import json
 class LegendItem(QFrame):
 
 
-    def __init__(self, series, name, color):
+    def __init__(self, series, name, color, chart):
         QFrame.__init__(self)
 
+        self.chart = chart
         self.series = series
 
         self.color_indicator = QWidget()
@@ -46,22 +47,21 @@ class LegendItem(QFrame):
         self.installEventFilter(self)
         self.setMouseTracking(True)
 
-
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Enter:
             pen = QPen()
             pen.setColor(self.series[0].pen().color())
             pen.setWidth(6)
             pen.setCosmetic(False)
-            list(map(lambda series: (series.setPen(pen), series.setVisible(False), series.setVisible(True)), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setWidth(20.0), series.setVisible(False), series.setVisible(True)), self.series))
             return True
         elif event.type() == QEvent.Leave:
             pen = QPen()
-            print('a' + str(self.series[0].series))
             pen.setColor(self.series[0].pen().color())
             pen.setWidth(3)
             pen.setCosmetic(False)
-            list(map(lambda series: (series.setPen(pen), series.setVisible(False), series.setVisible(True)), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setWidth(10.0), series.setVisible(False), series.setVisible(True)), self.series))
+            self.chart.update()
             return True
         return False
 
@@ -72,12 +72,13 @@ class LegendItem(QFrame):
 class BandLegend(QWidget):
 
 
-    def __init__(self):
+    def __init__(self, chart: QChart):
         QWidget.__init__(self)
         layout = QHBoxLayout() # FlowLayout()
         self.setLayout(layout)
+        self.chart = chart
 
     def add_item(self, series, name, color):
-        self.layout().addWidget(LegendItem(series, name, color))
+        self.layout().addWidget(LegendItem(series, name, color, self.chart))
 
 

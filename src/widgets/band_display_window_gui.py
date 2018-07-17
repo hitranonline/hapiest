@@ -1,3 +1,6 @@
+from itertools import cycle
+
+from utils.colors import Colors
 from utils.hapi_series import HapiSeries
 from widgets.graph_display_window_gui import GraphDisplayWindowGui
 from PyQt5 import QtGui, QtWidgets, uic, QtCore
@@ -45,7 +48,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             self.chart = QChart()
             self.band_series = {}
-            self.legend = BandLegend()
+            self.legend = BandLegend(self.chart)
 
             self.chart.legend().setVisible(False)
 
@@ -93,13 +96,19 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         else:
             self.band_series[bands.table_name] = series
 
-        pen = QPen()
-        pen.setColor(color)
-        pen.setWidth(3)
-        pen.setCosmetic(False)
-        list(map(lambda series: series.setPen(pen), series))
+        list(map(lambda args: args[0].setColor(QColor(args[1])), zip(series, cycle(Colors.colors))))
 
-        for s in series:
+        patterns = [Qt.DiagCrossPattern, Qt.Dense6Pattern, Qt.Dense5Pattern, Qt.Dense4Pattern, Qt.Dense3Pattern, Qt.Dense2Pattern,
+                    Qt.Dense1Pattern, Qt.SolidPattern, Qt.CrossPattern]
+
+        brush = QBrush()
+
+        for s, pattern in zip(series, cycle(patterns)):
+            s.setWidth(15)
+            new_brush = QBrush(brush)
+            new_brush.setStyle(pattern)
+            new_brush.setColor(s.color())
+            s.setBrush(new_brush)
             s.attachAxis(self.axisx)
             s.attachAxis(self.axisy)
 

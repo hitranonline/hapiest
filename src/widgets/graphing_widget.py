@@ -15,12 +15,14 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     ABSORPTION_SPECTRUM_STRING: str     = "Absorption Spectrum"
     TRANSMITTANCE_SPECTRUM_STRING: str  = "Transmittance Spectrum"
     RADIANCE_SPECTRUM_STRING: str       = "Radiance Spectrum"
+    BANDS_STRING: str                   = "Bands"
 
     str_to_graph_ty = {
         ABSORPTION_COEFFICIENT_STRING:  GraphType.ABSORPTION_COEFFICIENT,
         ABSORPTION_SPECTRUM_STRING:     GraphType.ABSORPTION_SPECTRUM,
         TRANSMITTANCE_SPECTRUM_STRING:  GraphType.TRANSMITTANCE_SPECTRUM,
-        RADIANCE_SPECTRUM_STRING:       GraphType.RADIANCE_SPECTRUM
+        RADIANCE_SPECTRUM_STRING:       GraphType.RADIANCE_SPECTRUM,
+        BANDS_STRING:                   GraphType.BANDS
     }
 
     
@@ -31,6 +33,17 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.parent = parent
 
         self.workers = []
+
+        self.line_profile_layout: QLayout = None
+        self.wn_layout: QLayout = None
+        self.wn_cfg_layout: QLayout = None
+        self.plot_title_layout: QLayout = None
+        self.graph_button_layout: QLayout = None
+        self.window_layout: QLayout = None
+        self.data_name_layout: QLayout = None
+        self.env_layout: QLayout = None
+        self.mixing_ratio_layout: QLayout = None
+        self.graph_type_layout: QLayout = None
 
         self.data_name_error: QLabel = None
         self.data_name: QComboBox = None
@@ -155,9 +168,11 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             self.graph_as(standard_params)
         elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
             self.graph_ts(standard_params)
-        else:
+        elif graph_type == GraphingWidget.RADIANCE_SPECTRUM_STRING:
             # Radiance spectrum
             self.graph_rs(standard_params)
+        elif graph_type == GraphingWidget.BANDS_STRING:
+            self.graph_bands(standard_params)
 
     def graph_abs_coef(self, standard_parameters):
         work = HapiWorker.echo( title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING, 
@@ -174,9 +189,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_as(self, standard_params):
-        """
-        Formats GUI for Absorption Spectrum graphing.
-        """
         path_length = self.get_as_path_length()
         instrumental_fn = self.get_as_instrumental_fn()
         AF_wing = self.get_as_instrumental_fn_wing()
@@ -209,10 +221,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_rs(self, standard_params):
-        """
-        Formats GUI for Radiance spectrum graphing.
-        """
-        
         path_length = self.get_rs_path_length()
         instrumental_fn = self.get_rs_instrumental_fn()
         AF_wing = self.get_rs_instrumental_fn_wing()
@@ -247,10 +255,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_ts(self, standard_params):
-        """
-        Formats GUI for Transmittance spectrum graping.
-        """
-
         path_length = self.get_ts_path_length()
         instrumental_fn = self.get_ts_instrumental_fn()
         AF_wing = self.get_ts_instrumental_fn_wing()
@@ -282,6 +286,16 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 return
 
         self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
+        self.update_existing_window_items()
+
+    def graph_bands(self, standard_params):
+        work = HapiWorker.echo(TableName=self.get_data_name(), title="Bands")
+        if self.use_existing_window.isChecked():
+            selected_window = self.selected_window.currentText()
+            if self.selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.BANDS)
+                return
+        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.BANDS, work, self))
         self.update_existing_window_items()
 
     def populate_data_names(self):
@@ -500,15 +514,26 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.graph_type.addItem(GraphingWidget.RADIANCE_SPECTRUM_STRING)
         self.graph_type.addItem(GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING)
         self.graph_type.addItem(GraphingWidget.ABSORPTION_COEFFICIENT_STRING)
-    
-    
+        self.graph_type.addItem(GraphingWidget.BANDS_STRING)
+
     ###
     #   Handlers
     ####
 
     def __on_graph_type_changed(self, graph_type):
         self.update_existing_window_items()
-        
+
+        self.line_profile_layout.setEnabled(True)
+        self.wn_layout.setEnabled(True)
+        self.wn_cfg_layout.setEnabled(True)
+        self.plot_title_layout.setEnabled(True)
+        self.graph_button_layout.setEnabled(True)
+        self.window_layout.setEnabled(True)
+        self.data_name_layout.setEnabled(True)
+        self.env_layout.setEnabled(True)
+        self.mixing_ratio_layout.setEnabled(True)
+        self.graph_type_layout.setEnabled(True)
+
         if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
             self.spectrum_tabs.setDisabled(True) 
         elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
@@ -529,7 +554,15 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             self.spectrum_tabs.setCurrentWidget(self.radiance)
             self.absorbtion.setDisabled(True)
             self.transmittance.setDisabled(True)
-    
+        elif graph_type == GraphingWidget.BANDS_STRING:
+            self.line_profile_layout.setEnabled(False)
+            self.wn_layout.setEnabled(False)
+            self.line_profile_layout.setEnabled(False)
+            self.wn_layout.setEnabled(False)
+            self.wn_cfg_layout.setEnabled(False)
+            self.env_layout.setEnabled(False)
+            self.mixing_ratio_layout.setEnabled(False)
+
 
     def __handle_checkbox_toggle(self, checkbox, element):
         """

@@ -87,10 +87,10 @@ class TextReceiver(QtCore.QObject):
 
     def run(self):
         """
-	Until the thread should close, read things from the queue and emit the appropriate signal to display them in	
-	the GUI.
+    Until the thread should close, read things from the queue and emit the appropriate signal to display them in
+    the GUI.
 
-	"""
+    """
         while self.running:
             (ty, text) = self.queue.get()
             if ty == 0:

@@ -102,7 +102,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         if self.chart is None:
-            series = HapiSeries(x, y)
+            series = HapiSeries(x, y, False)
             color_rgb: int = self.colors.next()
             color = QColor(color_rgb)
             pen = QPen()
@@ -148,7 +148,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.layout().addWidget(self.chart_view)
             self.graph_container.layout().removeWidget(self.loading_label)
         else:
-            series = HapiSeries(x, y)
+            series = HapiSeries(x, y, False)
 
             color_rgb: int = self.colors.next()
             color = QColor(color_rgb)
@@ -257,7 +257,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if x == None:
             return
 
-        self.highlighted_point = QScatterSeries()
+        self.highlighted_point = HapiSeries()
         self.highlighted_point.append(x, y)
         self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x, y))
         color = QColor(0, 0, 0)
