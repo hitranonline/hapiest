@@ -23,7 +23,7 @@ class Test:
 
     def run(self, q: multiprocessing.Queue):
         def gen_tb(exc_type, exc_value, exc_traceback):
-            return '\n'.join([''] + traceback.format_tb(exc_traceback) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n'
+            return '\n'.join([''] + traceback.format_tb(exc_traceback) + [repr(exc_value)]).replace('\n', '\n    |   ') + '\n'
 
         result = None
         try:

@@ -1,3 +1,4 @@
+from utils.hapi_series import HapiSeries
 from widgets.graph_display_window_gui import GraphDisplayWindowGui
 from PyQt5 import QtGui, QtWidgets, uic, QtCore
 from PyQt5.QtCore import *
@@ -10,53 +11,43 @@ from utils.log import *
 from utils.graph_type import GraphType
 from typing import *
 
-
 import functools
 from random import randint
 
+from widgets.hapi_chart_view import HapiChartView
+
 
 class BandDisplayWindowGui(GraphDisplayWindowGui):
-
 
     def __init__(self):
         GraphDisplayWindowGui.__init__(self, GraphType.BANDS, "Bands")
 
     def all_series(self):
-        return functools.reduce(list.__add__, self.band_series.values(), [])
+        if self.highlighted_point is None:
+            start = []
+        else:
+            start = [self.highlighted_point]
+        return list(functools.reduce(list.__add__, self.band_series.values(), start))
 
     def add_bands(self, bands: Bands):
-        color = QColor(self.colors.next())
-
-        pen = QPen()
-        pen.setColor(color)
-        pen.setWidth(2)
-        pen.setCosmetic(False)
-
         if self.chart == None:
             series = []
+            color = QColor(self.colors.next())
 
             for band in bands.bands:
-                cur_series = QLineSeries()
+                cur_series = HapiSeries(band.x, band.y)
 
-                for i in range(0, len(band.x)):
-                    cur_series.append(band.x[i], band.y[i])
-         
                 series.append(cur_series)
                 cur_series.hovered.connect(lambda point, state:
-                        self.__on_series_hover(cur_series, point, state))
+                                           self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
-
 
             self.chart = QChart()
             self.band_series = {}
             self.legend = BandLegend()
-            list(map(self.chart.addSeries, series))
-            self.chart.setTitle("Table '{}' Bands".format(bands.table_name))
 
-            self.legend.add_item(series, bands.table_name, color.rgb())
             self.chart.legend().setVisible(False)
-            self.band_series[bands.table_name] = series
 
             if self.axisy:
                 self.chart.removeAxis(self.axisy)
@@ -72,39 +63,43 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             self.axisy.setTickCount(5)
             self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
 
-            self.chart_view = QChartView(self.chart)
+            self.chart_view = HapiChartView(self)
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
 
             self.loading_label.setDisabled(True)
-            self.graph_container.layout().removeWidget(self.loading_label)
             self.graph_container.layout().addWidget(self.chart_view)
-            self.container.addWidget(self.legend)
+            self.graph_container.layout().addWidget(self.legend)
+            self.graph_container.layout().removeWidget(self.loading_label)
         else:
             series = []
+            color = QColor(self.colors.next())
 
             for band in bands.bands:
-                cur_series = QLineSeries()
-                for i in range(0, len(band.x)):
-                    cur_series.append(band.x[i], band.y[i])
+                cur_series = HapiSeries(band.x, band.y)
 
                 series.append(cur_series)
                 cur_series.hovered.connect(lambda point, state:
-                        self.__on_series_hover(cur_series, point, state))
+                                           self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
 
+        list(map(lambda s: s.add_to_chart(self.chart), series))
+        self.chart.setTitle("Table '{}' Bands".format(bands.table_name))
 
-            list(map(self.chart.addSeries, series))
-            self.chart.setTitle("Table '{}' Bands".format(bands.table_name))
-
-            self.legend.add_item(series, bands.table_name, color.rgb())
-            self.chart.legend().setVisible(False)
+        self.legend.add_item(series, bands.table_name, color.rgb())
+        if bands.table_name in self.band_series:
+            self.band_series[bands.table_name] += series
+        else:
             self.band_series[bands.table_name] = series
 
+        pen = QPen()
+        pen.setColor(color)
+        pen.setWidth(3)
+        pen.setCosmetic(False)
+        list(map(lambda series: series.setPen(pen), series))
 
         for s in series:
-            s.setPen(pen)
             s.attachAxis(self.axisx)
             s.attachAxis(self.axisy)
 
@@ -130,12 +125,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 self.view_ymax = max(band.y)
         self.on_view_fit_triggered(True)
 
-
     def __on_series_hover(self, series, point: QPointF, state: bool):
-        pass
-        #if state:
-            #series.pen().setWidth(6)
-            #series.setPen(series.pen())
-        #else:
-            #series.pen().setWidth(3)
-            #series.setPen(series.pen())
+        if state:
+            series.pen().setWidth(6)
+        else:
+            series.pen().setWidth(3)

@@ -8,7 +8,7 @@ class Band:
 
 class Bands:
 
-    def __init__(self, bands: List[Band] = [], table_name: str = ''):
+    def __init__(self, bands: List[Band], table_name: str = ''):
         self.table_name = table_name
         self.bands = bands.copy()
 

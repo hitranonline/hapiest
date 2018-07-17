@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from utils.colors import Colors
+from utils.hapi_series import HapiSeries
 from utils.hapiest_util import *
 from utils.log import *
 from utils.graph_type import GraphType
@@ -70,10 +71,16 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.series = []
         self.set_chart_title(window_title)
 
+        self.axisx_type = "linear"
+        self.axisy_type = "linear"
+
         self.show()
 
     def all_series(self):
-        return self.series
+        if self.highlighted_point is None:
+            return self.series
+        else:
+            return self.series + [self.highlighted_point]
 
     def set_chart_title(self, title):
         self.setWindowTitle(str(title))
@@ -95,7 +102,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
     def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         if self.chart is None:
-            series = QLineSeries()
+            series = HapiSeries(x, y)
             color_rgb: int = self.colors.next()
             color = QColor(color_rgb)
             pen = QPen()
@@ -103,8 +110,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             pen.setWidth(4)
             pen.setCosmetic(False)
             series.setPen(pen)
-            for i in range(0, len(x)):
-                series.append(x[i], y[i])
+
             self.series = [series]
             series.setName(
                 name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
@@ -113,7 +119,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
             series.setUseOpenGL(True)
             self.chart = QChart()
-            self.chart.addSeries(series)
+            series.add_to_chart(self.chart)
             self.chart.setTitle(title)
             # self.chart.legend().setAlignment(QtCore.Qt.AlignRight)
 
@@ -142,7 +148,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             self.graph_container.layout().addWidget(self.chart_view)
             self.graph_container.layout().removeWidget(self.loading_label)
         else:
-            series = QLineSeries()
+            series = HapiSeries(x, y)
 
             color_rgb: int = self.colors.next()
             color = QColor(color_rgb)
@@ -156,9 +162,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                 args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
-            for i in range(0, len(x)):
-                series.append(x[i], y[i])
-            self.chart.addSeries(series)
+
+            series.add_to_chart(self.chart)
             series.attachAxis(self.axisy)
             series.attachAxis(self.axisx)
             self.series.append(series)
@@ -256,7 +261,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.highlighted_point.append(x, y)
         self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x, y))
         color = QColor(0, 0, 0)
-        self.chart.addSeries(self.highlighted_point)
+        self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)
         self.highlighted_point.pen().setColor(color)
         self.highlighted_point.pen().setWidth(8)
@@ -406,27 +411,61 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 
-    def swap_axis(self, old_axis: QAbstractAxis, new_axis: QAbstractAxis, alignment):
-        self.chart.addAxis(new_axis, alignment)
+    def make_axis(self):
+        if self.axisx_type == "linear":
+            axisx = QValueAxis()
+            axisx.setTitleText(self.axisx.titleText())
+            axisx.setTickCount(Config.axisx_ticks)
+        elif self.axisx_type == "ln":
+            axisx = QLogValueAxis()
+            axisx.setBase(math.e)
+            axisx.setTitleText(self.axisx.titleText())
+        else:
+            axisx = QLogValueAxis()
+            axisx.setBase(10.0)
+            axisx.setTitleText(self.axisx.titleText())
 
-        for series in self.all_series():
-            series.detachAxis(old_axis)
-            self.chart.removeSeries(series)
-            self.chart.addSeries(series)
-            series.attachAxis(new_axis)
+        if self.axisy_type == "linear":
+            axisy = QValueAxis()
+            axisy.setTitleText(self.axisy.titleText())
+            axisx.setTickCount(Config.axisy_ticks)
+        elif self.axisy_type == "ln":
+            axisy = QLogValueAxis()
+            axisy.setBase(math.e)
+            axisy.setTitleText(self.axisy.titleText())
+        else:
+            axisy = QLogValueAxis()
+            axisy.setBase(10.0)
+            axisy.setTitleText(self.axisy.titleText())
 
-        self.chart.removeAxis(old_axis)
+        axisy.setLabelFormat(self.axisy.labelFormat())
+        axisx.setLabelFormat(self.axisx.labelFormat())
+        return axisx, axisy
+
+    def swap_axis(self):
+        new_xaxis, new_yaxis = self.make_axis()
+
+        self.chart.removeAxis(self.axisx)
+        self.chart.removeAxis(self.axisy)
+
+        self.axisy = new_yaxis
+        self.axisx = new_xaxis
+
+        self.chart.addAxis(self.axisx, Qt.AlignBottom)
+        self.chart.addAxis(self.axisy, Qt.AlignLeft)
+
+        all_series = self.all_series()
+
+        list(map(lambda s: s.attachAxis(new_yaxis), all_series))
+
+        list(map(lambda s: s.attachAxis(new_xaxis), all_series))
 
     def __on_y_log10_triggered(self, _checked: bool = False):
         if self.axisy is None:
             return
-        new_axisy = QLogValueAxis()
-        new_axisy.setTitleText(self.axisy.titleText())
-        new_axisy.setBase(10)
-        new_axisy.setLabelFormat(self.axisy.labelFormat())
 
-        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
-        self.axisy = new_axisy
+        self.axisy_type = "log10"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()
 
@@ -434,14 +473,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if self.axisy == None:
             return
 
-        new_axisy = QLogValueAxis()
-        new_axisy.setTitleText(self.axisy.titleText())
-        new_axisy.setBase(math.e)
-        new_axisy.setLabelFormat(self.axisy.labelFormat())
-
-        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
-
-        self.axisy = new_axisy
+        self.axisy_type = "ln"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()
 
@@ -449,14 +482,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if self.axisy == None:
             return
 
-        new_axisy = QValueAxis()
-        new_axisy.setTitleText(self.axisy.titleText())
-        new_axisy.setTickCount(Config.axisy_ticks)
-        new_axisy.setLabelFormat(self.axisy.labelFormat())
-
-        self.swap_axis(self.axisy, new_axisy, Qt.AlignLeft)
-
-        self.axisy = new_axisy
+        self.axisy_type = "linear"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()
 
@@ -464,14 +491,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if self.axisx == None:
             return
 
-        new_axisx = QLogValueAxis()
-        new_axisx.setTitleText(self.axisx.titleText())
-        new_axisx.setBase(10.0)
-        new_axisx.setLabelFormat(self.axisx.labelFormat())
-
-        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
-
-        self.axisx = new_axisx
+        self.axisx_type = "log10"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()
 
@@ -479,14 +500,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if self.axisx == None:
             return
 
-        new_axisx = QLogValueAxis()
-        new_axisx.setTitleText(self.axisx.titleText())
-        new_axisx.setBase(math.e)
-        new_axisx.setLabelFormat(self.axisx.labelFormat())
-
-        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
-
-        self.axisx = new_axisx
+        self.axisx_type = "ln"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()
 
@@ -494,13 +509,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if self.axisx == None:
             return
 
-        new_axisx = QValueAxis()
-        new_axisx.setTitleText(self.axisx.titleText())
-        new_axisx.setTickCount(Config.axisx_ticks)
-        new_axisx.setLabelFormat(self.axisx.labelFormat())
-
-        self.swap_axis(self.axisx, new_axisx, Qt.AlignBottom)
-
-        self.axisx = new_axisx
+        self.axisx_type = "linear"
+        self.swap_axis()
 
         self.__on_view_fit_triggered()

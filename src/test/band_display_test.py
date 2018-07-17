@@ -29,20 +29,19 @@ class BandDisplayTest(Test):
 
         step = 0.1
 
-        random.seed(0xCAFEBABE)
         x = list(map(lambda x: float(x) * step, range(0, int(100.0 / step))))
         def random_band():
-            freq = float(random.randint(1, 10)) / 300
-            amp = float(random.randint(1, 40))
+            freq = float(random.randint(1, 10)) / 100
+            amp = float(random.randint(1, 100))
             y = [0.0] * len(x)
             for i in range(0, int(100.0 / step)):
-                y[i] = amp * math.sin(freq * x[i])
+                y[i] = abs(amp * math.sin(freq * x[i]))
             return Band(x, y, "{}, {}".format(freq, amp))
 
-        bands1 = Bands()
+        bands1 = Bands([], "of")
         for i in range(0, 10):
             bands1.add_band(random_band())
-        bands2 = Bands()
+        bands2 = Bands([], "aw")
         for i in range(0, 10):
             bands2.add_band(random_band())
 

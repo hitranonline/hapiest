@@ -21,12 +21,6 @@ class LegendItem(QFrame):
     def __init__(self, series, name, color):
         QFrame.__init__(self)
 
-        self.setStyleSheet("""
-        LegendItem {{
-            border: 1px solid #{:x};
-        }}
-        """.format(color))
-
         self.series = series
 
         self.color_indicator = QWidget()
@@ -34,42 +28,40 @@ class LegendItem(QFrame):
         self.color_indicator.setStyleSheet("""
         QWidget {{
             background-color: #{:x};
-            border: 2px solid black;
-        }}
-        """.format(color))
+            border: 1px solid black;
+        }}""".format(color))
 
         self.layout = QHBoxLayout()
-        self.label = QLabel(name)
+        self.label = QLabel('table: {}'.format(name))
         self.label.setWordWrap(True)
+        self.setLayout(self.layout)
 
         self.layout.addWidget(self.color_indicator)
         self.layout.addWidget(self.label)
+        self.setStyleSheet("LegendItem {{ border: 2px solid #{:x}; }}".format(color))
+        #"LegendItem { border: 2px solid #{:x}; }".format(color))
 
-        self.layout.setSpacing(0)
-        self.layout.setContentsMargins(4, 4, 4, 4)
-
-        self.setLayout(self.layout)
-        
         self.on_hover_fn = lambda: ()
 
         self.installEventFilter(self)
         self.setMouseTracking(True)
 
+
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Enter:
-            print('hey')
             pen = QPen()
             pen.setColor(self.series[0].pen().color())
             pen.setWidth(6)
             pen.setCosmetic(False)
-            list(map(lambda series: series.setPen(pen), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setVisible(False), series.setVisible(True)), self.series))
             return True
         elif event.type() == QEvent.Leave:
             pen = QPen()
+            print('a' + str(self.series[0].series))
             pen.setColor(self.series[0].pen().color())
             pen.setWidth(3)
             pen.setCosmetic(False)
-            list(map(lambda series: series.setPen(pen), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setVisible(False), series.setVisible(True)), self.series))
             return True
         return False
 
@@ -82,7 +74,7 @@ class BandLegend(QWidget):
 
     def __init__(self):
         QWidget.__init__(self)
-        layout = QHBoxLayout() #FlowLayout()
+        layout = QHBoxLayout() # FlowLayout()
         self.setLayout(layout)
 
     def add_item(self, series, name, color):
