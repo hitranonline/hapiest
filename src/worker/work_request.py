@@ -189,8 +189,8 @@ class WorkFunctions:
         Method handles verification of user input for fetch function.
         """
         if len(iso_id_list) == 0:
-            return [FetchError(FetchErrorKind.BadIsoList,
-                              'Fetch Failure: Iso list cannot be empty.')]
+            return FetchError(FetchErrorKind.BadIsoList,
+                              'Fetch Failure: Iso list cannot be empty.')
         try:
             fetch_by_ids(data_name, iso_id_list, numin, numax, parameter_groups, parameters)
             hmd = HapiMetaData(data_name, iso_id_list, numin, numax)
@@ -201,13 +201,13 @@ class WorkFunctions:
             as_str = str(e)
             # Determine whether the issue is an internet issue or something else
             if 'connect' in as_str:
-                return [FetchError(
+                return FetchError(
                     FetchErrorKind.BadConnection,
-                    'Bad connection: Failed to connect to send request. Check your connection.')]
+                    'Bad connection: Failed to connect to send request. Check your connection.')
             else:
-                return [FetchError(
+                return FetchError(
                     FetchErrorKind.FailedToRetreiveData,
-                    'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')]
+                    'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
         return { 'all_tables': list(tableList()) }
    
 
@@ -232,19 +232,6 @@ class WorkFunctions:
             return True
         except:
             return False
-        """
-        # old version
-        if source_table == output_table:
-            cache2storage(TableName=source_table)
-            hmd = HapiMetaData(source_table)
-            hmd.initialize_from_hapi_table(source_table)
-            hmd.save()
-        else:
-            select(DestinationTableName=output_table, TableName=source_table, Conditions=None, ParameterNames=None)
-            cache2storage(TableName=output_table)
-            hmd = HapiMetaData(output_table)
-        return True
-        """
 
     @staticmethod
     def table_meta_data(table_name: str):
