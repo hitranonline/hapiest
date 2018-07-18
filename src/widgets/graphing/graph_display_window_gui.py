@@ -1,20 +1,18 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore
+from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 
-from utils.colors import Colors
-from utils.hapi_series import HapiSeries
+from utils.graphics.colors import Colors
+from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
 from utils.log import *
-from utils.graph_type import GraphType
+from utils.graphing.graph_type import GraphType
 from widgets.gui import GUI
-from widgets.view_selector import ViewSelector
-from widgets.hapi_chart_view import HapiChartView
-from random import randint
+from widgets.graphing.view_selector import ViewSelector
+from widgets.graphing.hapi_chart_view import HapiChartView
 from typing import *
-from utils.config import Config
+from utils.metadata.config import Config
 
 import os
 import json
@@ -128,15 +126,17 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 self.chart.removeAxis(self.axisx)
 
             self.axisx = QValueAxis()
-            self.axisx.setTickCount(5)
+            self.axisx.setTickCount(Config.axisx_ticks)
             self.axisx.setTitleText(xtitle)
             self.chart.addAxis(self.axisx, QtCore.Qt.AlignBottom)
+            self.axisx.setLabelFormat(Config.axisx_label_format)
             self.series[0].attachAxis(self.axisx)
 
             self.axisy = QValueAxis()
             self.axisy.setTitleText(ytitle)
-            self.axisy.setTickCount(5)
+            self.axisy.setTickCount(Config.axisy_ticks)
             self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
+            self.axisy.setLabelFormat(Config.axisy_label_format)
             self.series[0].attachAxis(self.axisy)
 
             self.chart.legend()
@@ -416,30 +416,34 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             axisx = QValueAxis()
             axisx.setTitleText(self.axisx.titleText())
             axisx.setTickCount(Config.axisx_ticks)
+            axisx.setLabelFormat(Config.axisx_label_format)
         elif self.axisx_type == "ln":
             axisx = QLogValueAxis()
             axisx.setBase(math.e)
             axisx.setTitleText(self.axisx.titleText())
+            axisx.setLabelFormat(Config.axisx_log_label_format)
         else:
             axisx = QLogValueAxis()
             axisx.setBase(10.0)
             axisx.setTitleText(self.axisx.titleText())
+            axisx.setLabelFormat(Config.axisx_log_label_format)
 
         if self.axisy_type == "linear":
             axisy = QValueAxis()
             axisy.setTitleText(self.axisy.titleText())
-            axisx.setTickCount(Config.axisy_ticks)
+            axisy.setTickCount(Config.axisy_ticks)
+            axisy.setLabelFormat(Config.axisy_label_format)
         elif self.axisy_type == "ln":
             axisy = QLogValueAxis()
             axisy.setBase(math.e)
             axisy.setTitleText(self.axisy.titleText())
+            axisy.setLabelFormat(Config.axisy_log_label_format)
         else:
             axisy = QLogValueAxis()
             axisy.setBase(10.0)
             axisy.setTitleText(self.axisy.titleText())
+            axisy.setLabelFormat(Config.axisy_log_label_format)
 
-        axisy.setLabelFormat(self.axisy.labelFormat())
-        axisx.setLabelFormat(self.axisx.labelFormat())
         return axisx, axisy
 
     def swap_axis(self):

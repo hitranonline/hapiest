@@ -1,11 +1,7 @@
 from typing import *
-import time
 
-from utils.log import *
-from utils.config import *
+from utils.metadata.config import *
 from worker.hapi_worker import HapiWorker
-from worker.work_result import WorkResult
-from worker.work_request import WorkRequest
 
 
 class Lines:

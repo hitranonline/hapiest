@@ -23,20 +23,37 @@ class Config():
     ## The number of rows that tables should be paginated with.
     select_page_length = 100
 
+    axisx_label_format = '%f'
+
+    axisx_log_label_format = '%.3E'
+
+    axisy_label_format = '%f'
+
+    axisy_log_label_format = '%.3E'
+
     DEFAULT_CONFIG =  """[hapiest]
 data_folder         = '{data_folder}'
 high_dpi            = '{high_dpi}'
 select_page_length  = {select_page_length}
 hapi_api_key        = '{hapi_api_key}'
 axisx_ticks         = {axisx_ticks}
+axisx_labal_format  = {axisx_label_format}
+axisx_log_label_format = {axisx_log_label_format}
 axisy_ticks         = {axisy_ticks}
+axisy_label_format  = {axisy_label_format}
+axisy_log_label_format = {axisy_log_label_format}
 """.format(
         data_folder         = data_folder,
         high_dpi            = high_dpi,
         select_page_length  = select_page_length,
         hapi_api_key        = 'no key needed until hapiest migrates to hapi v2',
         axisx_ticks         = axisx_ticks,
-        axisy_ticks         = axisy_ticks)
+        axisy_ticks         = axisy_ticks,
+        axisx_label_format  = axisx_label_format,
+        axisy_label_format  = axisy_label_format,
+        axisx_log_label_format = axisx_log_label_format,
+        axisy_log_label_format = axisy_log_label_format,
+    )
     
     CONFIG_LOCATION = 'Config.toml'
    
@@ -54,28 +71,11 @@ axisy_ticks         = {axisy_ticks}
                 fh.close()
             except Exception as e:
                 print("Encountered error while attempting to read configuration file: " + str(e))
-            finally:
-                Config.set_defaults(Config.__dict__)
         else:
             with open(Config.CONFIG_LOCATION, 'r') as file:
                 text = file.read()
 
                 Config.load_config(text)
-
-
-    @staticmethod
-    def set_defaults(dict):
-        """
-        Sets default values.
-        
-        """
-        def set_if_none(name, default_value):
-            if name not in dict['hapiest']:
-                dict['hapiest'][name] = default_value
-        set_if_none('hapi_api_key', '') 
-        set_if_none('data_folder', 'data')
-        set_if_none('high_dpi', Config.high_dpi)
-        set_if_none('select_page_length', Config.select_page_length)
 
     @staticmethod
     def set_values(dict):
@@ -85,7 +85,6 @@ axisy_ticks         = {axisy_ticks}
         @param dict The parsed toml key-value dictionary
         
         """
-        Config.set_defaults(dict)
         Config.data_folder = dict['hapiest']['data_folder']
         Config.high_dpi = dict['hapiest']['high_dpi']
         Config.select_page_length = dict['hapiest']['select_page_length']
@@ -110,11 +109,7 @@ axisy_ticks         = {axisy_ticks}
             parsed = toml.loads(config_text)
             Config.set_values(parsed)
         except Exception as e:
-            print('Encountered error while parsing Config.toml, setting default config options')
             print(e)
-            dict = { 'hapiest': {} }
-            Config.set_defaults(dict)
-            Config.set_values(dict)
 
 # Statically loads the configuration!
 Config.config_init()

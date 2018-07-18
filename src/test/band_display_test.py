@@ -1,16 +1,12 @@
 import math
-import sys
-import threading
-from time import sleep
-import sys
 import threading
 from time import sleep
 import random
 
 from test.test import Test
-from PyQt5 import QtGui, QtWidgets, QtCore
-from widgets.band_display_window_gui import BandDisplayWindowGui
-from utils.band import Band, Bands
+from PyQt5 import QtWidgets
+from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
+from utils.graphing.band import Band, Bands
 
 class BandDisplayTest(Test):
     def __init__(self):

@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import *
 import re
 import os
-from utils.config import *
+from utils.metadata.config import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
 DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')

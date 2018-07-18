@@ -1,6 +1,5 @@
 from typing import *
 import multiprocessing as mp
-import sys
 import traceback
 
 from hapi import *
@@ -8,10 +7,10 @@ from hapi import *
 from worker.work_result import WorkResult
 
 from utils.log import *
-from utils.config import Config
-from utils.band import Band, Bands
+from utils.metadata.config import Config
+from utils.graphing.band import Band, Bands
 from utils.hapiest_util import echo
-from utils.hapi_metadata import HapiMetaData
+from utils.metadata.hapi_metadata import HapiMetaData
 from utils.fetch_error import FetchErrorKind, FetchError
 
 
