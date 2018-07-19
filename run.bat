@@ -1,3 +1,3 @@
 @echo on
-python src/__main__.py
+python3 src/__main__.py
 @echo off

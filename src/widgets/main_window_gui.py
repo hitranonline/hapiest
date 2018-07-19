@@ -1,3 +1,6 @@
+from PyQt5.QtWidgets import QMainWindow, QTextEdit, QVBoxLayout, QPushButton, QComboBox, QWidget, QScrollArea, QAction, \
+    QStatusBar
+
 from widgets.graphing.graphing_widget import *
 from widgets.molecule_info_widget import MoleculeInfoWidget
 from windows.molecule_info_window import MoleculeInfoWindow

@@ -38,6 +38,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             for band in bands.bands:
                 cur_series = HapiSeries(band.x, band.y)
+                cur_series.setName(band.band_id)
 
                 series.append(cur_series)
                 cur_series.hovered.connect(lambda point, state:

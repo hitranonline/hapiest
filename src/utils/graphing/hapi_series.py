@@ -11,7 +11,7 @@ class HapiSeries:
             return QScatterSeries()
         return QLineSeries()
 
-    def __init__(self, x = (), y = (), use_scatter_plot = True):
+    def __init__(self, x = (), y = (), use_scatter_plot = True, name = ""):
         if len(x) != 0:
             self.use_scatter_plot = use_scatter_plot
             self.series = self.create_series()
@@ -24,6 +24,8 @@ class HapiSeries:
                 self.append(x[i], y[i])
         else:
             self.series = self.create_series()
+
+        self.series.setName(title)
 
         self.series.setUseOpenGL(True)
 

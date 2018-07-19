@@ -1,30 +1,76 @@
+from typing import List
+
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QFrame, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QCheckBox
 
+from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
 
 
 class LegendItem(QFrame):
 
+    SELECTED_WIDTH = 8
+    NORMAL_WIDTH = 3
 
-    def __init__(self, series, name, color, chart):
+
+    def __init__(self, bands: List[HapiSeries], name, chart):
         QFrame.__init__(self)
 
         self.chart = chart
-        self.series = series
+        self.bands = bands
 
-        self.color_indicator = QWidget()
-        self.color_indicator.setFixedSize(24, 24)
-        self.color_indicator.setStyleSheet("""
-        QWidget {{
-            background-color: #{:x};
-            border: 1px solid black;
-        }}""".format(color))
+        self.band_layouts = []
 
-        self.layout = QHBoxLayout()
+        for band in self.bands:
+            color_indicator = QWidget()
+            color_indicator.setFixedSize(24, 24)
+            color_indicator.setStyleSheet("""
+            QWidget {{
+                background-color: #{:x};
+                border: 1px solid black;
+            }}
+            """.format(band.color()))
+
+            toggle = QCheckBox()
+            toggle.toggled.connect(lambda checked: band.setVisible(not checked))
+
+            label = QLabel(band.series.name())
+
+            layout = QHBoxLayout()
+
+            layout.addWidget(toggle)
+            layout.addWidget(color_indicator)
+            layout.addWidget(label)
+
+            self.band_layouts.append({
+                'label': label,
+                'layout': layout,
+                'toggle': toggle,
+                'color_indicator': color_indicator
+            })
+
+        self.toggle_all_layout = QHBoxLayout()
+        self.toggle_all = QCheckBox()
+
+        def on_toggle_all_toggled(checked: bool):
+            for band_layout in self.band_layouts:
+                band_layout['toggle'].setChecked(checked)
+
         self.label = QLabel('table: {}'.format(name))
         self.label.setWordWrap(True)
+        self.toggle_all_layout.addWidget(self.toggle_all)
+        self.toggle_all_layout.addWidget(self.label)
+        self.toggle_all_layout.toggled.connect(on_toggle_all_toggled)
+
+        self.layout = QVBoxLayout()
+
+        self.layout.addLayout(self.toggle_all_layout)
+
+        for band_item in self.band_layouts:
+            self.layout.addLayout(band_item['layout'])
+
         self.setLayout(self.layout)
 
         self.layout.addWidget(self.color_indicator)
@@ -34,23 +80,23 @@ class LegendItem(QFrame):
 
         self.on_hover_fn = lambda: ()
 
-        self.installEventFilter(self)
-        self.setMouseTracking(True)
+        # self.installEventFilter(self)
+        #self.setMouseTracking(True)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Enter:
             pen = QPen()
-            pen.setColor(self.series[0].pen().color())
+            pen.setColor(self.bands[0].pen().color())
             pen.setWidth(6)
             pen.setCosmetic(False)
-            list(map(lambda series: (series.setPen(pen), series.setWidth(20.0), series.setVisible(False), series.setVisible(True)), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setWidth(20.0), series.setVisible(False), series.setVisible(True)), self.bands))
             return True
         elif event.type() == QEvent.Leave:
             pen = QPen()
             pen.setColor(self.series[0].pen().color())
             pen.setWidth(3)
             pen.setCosmetic(False)
-            list(map(lambda series: (series.setPen(pen), series.setWidth(10.0), series.setVisible(False), series.setVisible(True)), self.series))
+            list(map(lambda series: (series.setPen(pen), series.setWidth(10.0), series.setVisible(False), series.setVisible(True)), self.bands))
             self.chart.update()
             return True
         return False
@@ -68,7 +114,7 @@ class BandLegend(QWidget):
         self.setLayout(layout)
         self.chart = chart
 
-    def add_item(self, series, name, color):
-        self.layout().addWidget(LegendItem(series, name, color, self.chart))
+    def add_item(self, bands, name):
+        self.layout().addWidget(LegendItem(bands, name, self.chart))
 
 
