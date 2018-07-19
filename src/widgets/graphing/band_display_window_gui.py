@@ -103,18 +103,12 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         else:
             self.band_series[bands.table_name] = series
 
-
-        patterns = [Qt.DiagCrossPattern, Qt.Dense6Pattern, Qt.Dense5Pattern, Qt.Dense4Pattern, Qt.Dense3Pattern, Qt.Dense2Pattern,
-                    Qt.Dense1Pattern, Qt.SolidPattern, Qt.CrossPattern]
-
         brush = QBrush()
 
-        for s, pattern in zip(series, cycle(patterns)):
+        for s in series:
             s.setWidth(4)
             new_brush = QBrush(brush)
-            new_brush.setStyle(pattern)
             new_brush.setColor(s.color())
-            print('uhh' + str(s.color().rgb()))
             s.setBrush(new_brush)
             s.attachAxis(self.axisx)
             s.attachAxis(self.axisy)

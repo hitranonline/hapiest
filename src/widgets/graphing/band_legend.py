@@ -38,8 +38,6 @@ class LegendItem(QFrame):
             }}
             """.format(band.color().rgb()))
 
-            print(band.color().rgb())
-
             toggle = QCheckBox()
             toggle.toggled.connect(band_hide_function_gen(band))
 
