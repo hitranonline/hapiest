@@ -18,6 +18,7 @@ class HapiChartView(QChartView):
     def mouseReleaseEvent(self, event):
         if not self.mouse_moved and event.button() == Qt.LeftButton:
             self.graph_display_window_gui.on_point_clicked()
+            return
         else:
             self.mouse_moved = False
             QChartView.mouseReleaseEvent(self, event)

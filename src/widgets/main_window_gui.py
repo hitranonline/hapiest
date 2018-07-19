@@ -1,12 +1,4 @@
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import *
-
-from utils.hapiest_util import *
-from utils.dsl import DSL
-from widgets.graphing_widget import *
-from utils.log import *
-from widgets.hapi_table_view import HapiTableView
+from widgets.graphing.graphing_widget import *
 from widgets.molecule_info_widget import MoleculeInfoWidget
 from windows.molecule_info_window import MoleculeInfoWindow
 from widgets.gui import GUI

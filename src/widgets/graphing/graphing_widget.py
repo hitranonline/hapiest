@@ -1,12 +1,10 @@
-from PyQt5 import QtWidgets, QtCore, uic, QtGui
-from PyQt5.QtGui import QFont
-from utils.hapi_metadata import *
+from PyQt5 import QtWidgets, uic
+from utils.metadata.hapi_metadata import *
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from widgets.gui import GUI
 from windows.graph_display_window import GraphDisplayWindow
-from utils.graph_type import GraphType
-import windows.window
+from utils.graphing.graph_type import GraphType
 import builtins
 
 class GraphingWidget(GUI, QtWidgets.QWidget):

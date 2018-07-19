@@ -1,18 +1,8 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 
-from utils.band import Bands, Band
 from utils.hapiest_util import *
-from utils.log import *
-from utils.graph_type import GraphType
-from widgets.flow_layout import FlowLayout
-from random import randint
-from typing import *
-import os
-import json
 
 
 class LegendItem(QFrame):

@@ -1,23 +1,22 @@
 from itertools import cycle
 
-from utils.colors import Colors
-from utils.hapi_series import HapiSeries
-from widgets.graph_display_window_gui import GraphDisplayWindowGui
-from PyQt5 import QtGui, QtWidgets, uic, QtCore
+from utils.graphics.colors import Colors
+from utils.metadata.config import Config
+from utils.graphing.hapi_series import HapiSeries
+from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
+from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 
-from widgets.band_legend import BandLegend
-from utils.band import Bands, Band
+from widgets.graphing.band_legend import BandLegend
+from utils.graphing.band import Bands
 from utils.log import *
-from utils.graph_type import GraphType
-from typing import *
+from utils.graphing.graph_type import GraphType
 
 import functools
-from random import randint
 
-from widgets.hapi_chart_view import HapiChartView
+from widgets.graphing.hapi_chart_view import HapiChartView
 
 
 class BandDisplayWindowGui(GraphDisplayWindowGui):
@@ -57,18 +56,24 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 self.chart.removeAxis(self.axisx)
 
             self.axisx = QValueAxis()
-            self.axisx.setTickCount(5)
+            self.axisx.setTickCount(Config.axisx_ticks)
             self.axisx.setTitleText("Wavenumber (cm<sup>-1</sup>)")
             self.chart.addAxis(self.axisx, QtCore.Qt.AlignBottom)
 
-            self.axisy = QValueAxis()
-            self.axisy.setTitleText("Intensity")
-            self.axisy.setTickCount(5)
-            self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
+            self.axisy_type = "log"
+            self.axisy = QLogValueAxis()
+            self.axisy.setTitleText("Intensity Contribution")
+            self.axisy.setMinorTickCount(5)
+            self.axisy.setBase(10.0)
+            self.axisy.setLabelFormat(Config.axisy_log_label_format)
+            self.chart.setAxisY(self.axisy)
+            # self.chart.addAxis(self.axisy, QtCore.Qt.AlignLeft)
 
             self.chart_view = HapiChartView(self)
             self.chart_view.setRubberBand(QChartView.RectangleRubberBand)
             self.chart_view.setRenderHint(QtGui.QPainter.Antialiasing)
+
+            self.chart.zoomReset()
 
             self.loading_label.setDisabled(True)
             self.graph_container.layout().addWidget(self.chart_view)
