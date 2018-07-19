@@ -25,7 +25,7 @@ class HapiSeries:
         else:
             self.series = self.create_series()
 
-        self.series.setName(title)
+        self.series.setName(name)
 
         self.series.setUseOpenGL(True)
 
@@ -36,6 +36,9 @@ class HapiSeries:
 
     def append(self, *args):
         self.series.append(*args)
+
+    def isVisible(self) -> bool:
+        return self.series.isVisible()
 
     def internal_copy(self):
         """

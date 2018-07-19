@@ -34,8 +34,6 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
     def add_bands(self, bands: Bands):
         if self.chart == None:
             series = []
-            color = QColor(self.colors.next())
-
             for band in bands.bands:
                 cur_series = HapiSeries(band.x, band.y)
                 cur_series.setName(band.band_id)
@@ -78,8 +76,9 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             self.loading_label.setDisabled(True)
             self.graph_container.layout().addWidget(self.chart_view)
-            self.graph_container.layout().addWidget(self.legend)
             self.graph_container.layout().removeWidget(self.loading_label)
+
+            self.legend.show()
         else:
             series = []
             color = QColor(self.colors.next())
@@ -96,13 +95,14 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         list(map(lambda s: s.add_to_chart(self.chart), series))
         self.chart.setTitle("Table '{}' Bands".format(bands.table_name))
 
-        self.legend.add_item(series, bands.table_name, color.rgb())
+        list(map(lambda args: args[0].setColor(QColor(args[1])), zip(series, cycle(Colors.colors))))
+
+        self.legend.add_item(series, bands.table_name)
         if bands.table_name in self.band_series:
             self.band_series[bands.table_name] += series
         else:
             self.band_series[bands.table_name] = series
 
-        list(map(lambda args: args[0].setColor(QColor(args[1])), zip(series, cycle(Colors.colors))))
 
         patterns = [Qt.DiagCrossPattern, Qt.Dense6Pattern, Qt.Dense5Pattern, Qt.Dense4Pattern, Qt.Dense3Pattern, Qt.Dense2Pattern,
                     Qt.Dense1Pattern, Qt.SolidPattern, Qt.CrossPattern]
@@ -110,10 +110,11 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         brush = QBrush()
 
         for s, pattern in zip(series, cycle(patterns)):
-            s.setWidth(15)
+            s.setWidth(4)
             new_brush = QBrush(brush)
             new_brush.setStyle(pattern)
             new_brush.setColor(s.color())
+            print('uhh' + str(s.color().rgb()))
             s.setBrush(new_brush)
             s.attachAxis(self.axisx)
             s.attachAxis(self.axisy)

@@ -1,4 +1,7 @@
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtCore
+from PyQt5.QtWidgets import QLayout, QComboBox, QLabel, QCheckBox, QDoubleSpinBox, QPushButton, QLineEdit
+
+from utils.log import err_log
 from utils.metadata.hapi_metadata import *
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
@@ -290,8 +293,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         work = HapiWorker.echo(TableName=self.get_data_name(), title="Bands")
         if self.use_existing_window.isChecked():
             selected_window = self.selected_window.currentText()
-            if self.selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.BANDS)
+            if selected_window in GraphDisplayWindow.graph_windows:
+                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
                 return
         self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.BANDS, work, self))
         self.update_existing_window_items()
