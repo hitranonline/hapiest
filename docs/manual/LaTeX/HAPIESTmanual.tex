@@ -61,7 +61,7 @@ The Fetch tab allows the user to download data from HITRAN onto their local disk
 \subsection{Edit Tab}
 The edit tab allows users to view and edit local data that has been downloaded through HAPIEST. It offers a table view of all parameters and values, and can be saved to disk.
 \begin{center}
-\includegraphics[scale = 0.4]{MainWindow_Edit}
+\includegraphics[scale = 0.5]{MainWindow_Edit}
 \end{center}
 
 \addcontentsline{toc}{subsubsection}{Edit Dictionary}
@@ -73,6 +73,8 @@ The edit tab allows users to view and edit local data that has been downloaded t
 \item (Left and Right Arrows) - Select between pages of data.
 \item Save to Disk - Button that saves the  current table to disk.
 \end{itemize}
+
+\newpage
 
 \subsection{Select Tab}
 The select tab is dedicated to the select method call available in HAPI and allows users a more advanced fetch.
@@ -114,7 +116,7 @@ In the graphing tab, the user is given a list of parameter fields to populate in
 \subsection{About Tab}
 The about tab is a summary tab informing the user about the development and includes some information about each tab.
 \begin{center}
-\includegraphics[scale = 0.5]{MainWindow_About}
+\includegraphics[scale = 0.6]{MainWindow_About}
 \end{center}
 \newpage
 
@@ -122,23 +124,29 @@ The about tab is a summary tab informing the user about the development and incl
 Graphs are displayed in this window. There is an option in the graphing tab to display multiple graphs in the same window. 
 
 \subsection{User Interactivity}
-Inside the graph display windows, the user has options to zoom on the graph, reset view, plot in different and save the graph in popular file formats.In the menu bar, file is used for saving graphs to local disk, view contains options to reset the view of the graph, and scale allows the user to change between linear, base 10 log, and natural log plots for both the X and Y-axis.
-
-
-
+Inside the graph display windows, the user has options to zoom on the graph, reset view, plot in different and save the graph in popular file formats. In the menu bar, file is used for saving graphs to local disk, view contains options to change the view of the graph, and scale allows the user to change between linear, base 10 log, and natural log plots for both the X and Y-axis.
 
 \addcontentsline{toc}{subsubsection}{Box Zoom}
-\subsubsection*{Box Zoom},
+\subsubsection*{Box Zoom}
 To box zoom, hold the left mouse button down and drag across the area you want to zoom in on, and release. In order to reset the graph view, click View in the menu and then click Fit.
 \begin{center}
-\includegraphics[scale = 0.5]{GraphBoxZoomBoth}
+\includegraphics[scale = 0.4]{GraphBoxZoomBoth}
 \end{center}
+
+\subsubsection*{View}
+In the graph window and under View in the menu, there are options to alter the viewing window of the graph. Clicking on Fit resets the graphing window to the original view of the graph, while clicking on exact gives the user the option to specifically enter the on-axis values they want to highlight/display.
 
 \addcontentsline{toc}{subsubsection}{Save Features}
 \subsubsection*{Save Features}
+\begin{minipage}[c]{0.3\textwidth}
+\includegraphics[scale = 0.5]{GraphSave}
+\end{minipage}
+\hfill\vline\hfill
+\begin{minipage}[c]{0.6\textwidth}
 Under File in the menu bar, there are options to save graphs in image formats PNG and JPEG, or  text based as Comma Separated Values (CSV), Text File (TXT), or in JSON format.
-%\includegraphics{}
-\newpage
+\end{minipage}
+
+
 
 \section{How to Use}
 
@@ -154,7 +162,6 @@ In order to plot/graph data, the user needs to first download data from the HITR
 \item Select from the Parameter Groups and Parameters list to download further data for the selected Isotopologues.
 \item Edit the Wave Number Min and Max values to refine your download (Smaller ranges are faster to fetch and take up less space).
 \end{enumerate}
-\newpage
 
 \subsection{Graphing Data}
 Once you have data on your system, you can then go to the Graphing Tab to produce a graph. 
@@ -168,5 +175,4 @@ Once you have data on your system, you can then go to the Graphing Tab to produc
 \item Now, if you want to plot another graph of the same type in/with a previous plot, check the Draw in Existing Window check box and select the compatible window in the drop-down list.
 \end{enumerate}
 
-\section{Demo}
 \end{document}
