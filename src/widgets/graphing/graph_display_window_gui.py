@@ -2,6 +2,7 @@ from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QOpenGLWidget
 
 from utils.graphics.colors import Colors
 from utils.graphing.hapi_series import HapiSeries

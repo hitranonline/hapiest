@@ -6,6 +6,16 @@ import time
 
 
 class HapiWorker(HapiThread):
+    """
+    A HapiWorker is a part of a work around to Python's GIL (global interpreter lock). Since threads can only run one at
+    time in Python, the GUI will freeze even if a worker thread is used. Instead of using threads, separate processes
+    are used to separate the calculations form the GUI. The process is a completely separate instance of the python
+    interpreter. Data can be sent between the two processes using Queues. These queues, under the hood, work by writing
+    serialized python objects to a temp file.
+
+    The HapiWorker object is a way to request work from this worker process, and receive the result from it. Each
+    HapiWorker is assigned an id, and will spin until a work result with the same job_id is found.
+    """
     job_id: int = 0
 
     step_signal = QtCore.pyqtSignal(object)

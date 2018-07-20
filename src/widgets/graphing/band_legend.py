@@ -11,8 +11,8 @@ from utils.hapiest_util import *
 
 class LegendItem(QFrame):
 
-    SELECTED_WIDTH = 8
-    NORMAL_WIDTH = 2
+    SELECTED_WIDTH = 11
+    NORMAL_WIDTH = 5
 
 
     def __init__(self, bands: List[HapiSeries], name, chart):
@@ -30,6 +30,8 @@ class LegendItem(QFrame):
 
         for band in self.bands:
             color_indicator = QWidget()
+            color_indicator.band = band
+            color_indicator.installEventFilter(self)
             color_indicator.setFixedSize(24, 24)
             color_indicator.setStyleSheet("""
             QWidget {{
@@ -81,25 +83,28 @@ class LegendItem(QFrame):
 
         self.on_hover_fn = lambda: ()
 
-        self.installEventFilter(self)
+        # self.installEventFilter(self)
         self.setMouseTracking(True)
 
     def eventFilter(self, obj, event):
+        print(obj, event)
         if event.type() == QEvent.Enter:
-            for band in self.bands:
-                pen = band.pen()
-                pen.setWidth(LegendItem.SELECTED_WIDTH)
-                band.setPen(pen)
-                band.setVisible(not band.isVisible())
-                band.setVisible(not band.isVisible())
+            band = obj.band
+            band.series.setMarkerSize(LegendItem.SELECTED_WIDTH)
+            # pen = band.pen()
+            # pen.setWidth(LegendItem.SELECTED_WIDTH)
+            # band.setPen(pen)
+            band.setVisible(not band.isVisible())
+            band.setVisible(not band.isVisible())
             return True
         elif event.type() == QEvent.Leave:
-            for band in self.bands:
-                pen = band.pen()
-                pen.setWidth(LegendItem.NORMAL_WIDTH)
-                band.setPen(pen)
-                band.setVisible(not band.isVisible())
-                band.setVisible(not band.isVisible())
+            band = obj.band
+            band.series.setMarkerSize(LegendItem.NORMAL_WIDTH)
+            # pen = band.pen()
+            # pen.setWidth(LegendItem.NORMAL_WIDTH)
+            # band.setPen(pen)
+            band.setVisible(not band.isVisible())
+            band.setVisible(not band.isVisible())
             return True
         return False
 

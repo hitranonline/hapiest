@@ -9,7 +9,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 
-from widgets.graphing.band_legend import BandLegend
+from widgets.graphing.band_legend import BandLegend, LegendItem
 from utils.graphing.band import Bands
 from utils.log import *
 from utils.graphing.graph_type import GraphType
@@ -23,6 +23,10 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
     def __init__(self):
         GraphDisplayWindowGui.__init__(self, GraphType.BANDS, "Bands")
+
+    def closeEvent(self, event):
+        self.legend.close()
+        event.accept()
 
     def all_series(self):
         if self.highlighted_point is None:
@@ -85,6 +89,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             for band in bands.bands:
                 cur_series = HapiSeries(band.x, band.y)
+                cur_series.series.setMarkerSize(LegendItem.NORMAL_WIDTH)
 
                 series.append(cur_series)
                 cur_series.hovered.connect(lambda point, state:
@@ -106,7 +111,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         brush = QBrush()
 
         for s in series:
-            s.setWidth(4)
+            s.setWidth(LegendItem.NORMAL_WIDTH)
             new_brush = QBrush(brush)
             new_brush.setColor(s.color())
             s.setBrush(new_brush)
