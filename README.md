@@ -8,7 +8,7 @@ Windows x86 Executable [Download](https://github.com/hitranonline/hapiest/releas
 There are no Mac OSX or Linux executables, please make an issue in this repository to request one.
 
 # How to Manually Install
-Hapiest has a limited number of binary packages (only Windows 64-bit right now), but the program itself can be downloaded
+Hapiest has a limited number of binary packages (only Windows 32-bit right now), but the program itself can be downloaded
 with the [install.py](https://github.com/hitranonline/hapiest/blob/master/install.py) script.
 
 *You must have python 3.6 or later to install and use hapiest*.
