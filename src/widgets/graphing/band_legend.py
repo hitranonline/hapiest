@@ -5,8 +5,43 @@ from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QFrame, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QCheckBox, QScrollArea, QSizePolicy
 
+from utils.graphing.band import Band
 from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
+
+class BandWidget(QWidget):
+
+    def __init__(self, band: HapiSeries):
+        QWidget.__init__(self)
+        self.band = band
+
+        self.color_indicator = QWidget()
+        self.color_indicator.installEventFilter(self)
+        self.color_indicator.setFixedSize(24, 24)
+        self.color_indicator.setStyleSheet("""
+        QWidget {{
+            background-color: #{:x};
+            border: 1px solid black;
+        }}
+        """.format(band.color().rgb()))
+
+        self.toggle = QCheckBox()
+        self.toggle.setChecked(True)
+        self.toggle.toggled.connect(self.hide_band)
+
+        self.label = QLabel(band.series.name())
+
+        layout = QHBoxLayout()
+
+        layout.addWidget(self.toggle)
+        layout.addWidget(self.color_indicator)
+        layout.addWidget(self.label)
+
+        self.setLayout(layout)
+
+    def hide_band(self, checked):
+        self.band.setVisible(checked)
+
 
 
 class LegendItem(QFrame):
@@ -21,7 +56,7 @@ class LegendItem(QFrame):
         self.chart = chart
         self.bands = bands
 
-        self.band_layouts = []
+        self.band_widgets = []
 
         def band_hide_function_gen(band):
             def hide(checked):
@@ -29,41 +64,15 @@ class LegendItem(QFrame):
             return hide
 
         for band in self.bands:
-            color_indicator = QWidget()
-            color_indicator.band = band
-            color_indicator.installEventFilter(self)
-            color_indicator.setFixedSize(24, 24)
-            color_indicator.setStyleSheet("""
-            QWidget {{
-                background-color: #{:x};
-                border: 1px solid black;
-            }}
-            """.format(band.color().rgb()))
-
-            toggle = QCheckBox()
-            toggle.toggled.connect(band_hide_function_gen(band))
-
-            label = QLabel(band.series.name())
-
-            layout = QHBoxLayout()
-
-            layout.addWidget(toggle)
-            layout.addWidget(color_indicator)
-            layout.addWidget(label)
-
-            self.band_layouts.append({
-                'label': label,
-                'layout': layout,
-                'toggle': toggle,
-                'color_indicator': color_indicator
-            })
+            self.band_widgets.append(BandWidget(band))
 
         self.toggle_all_layout = QHBoxLayout()
         self.toggle_all = QCheckBox()
+        self.toggle_all.setChecked(True)
 
         def on_toggle_all_toggled(checked: bool):
-            for band_layout in self.band_layouts:
-                band_layout['toggle'].setChecked(checked)
+            for band_widget in self.band_widgets:
+                band_widget.toggle.setChecked(checked)
 
         self.toggle_all.toggled.connect(on_toggle_all_toggled)
 
@@ -76,8 +85,8 @@ class LegendItem(QFrame):
 
         self.layout.addLayout(self.toggle_all_layout)
 
-        for band_item in self.band_layouts:
-            self.layout.addLayout(band_item['layout'])
+        for band_item in self.band_widgets:
+            self.layout.addWidget(band_item)
 
         self.setLayout(self.layout)
 
