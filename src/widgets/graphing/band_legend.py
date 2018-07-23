@@ -125,6 +125,9 @@ class BandLegend(QWidget):
 
     def __init__(self, chart: QChart):
         QWidget.__init__(self)
+
+        self.setWindowTitle("Band Legend")
+
         self.scroll_area = QScrollArea()
         self.scroll_area.setLayout(QVBoxLayout())
         self.scroll_area.setWidgetResizable(True)

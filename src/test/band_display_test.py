@@ -18,10 +18,12 @@ class BandDisplayTest(Test):
     def test(self) -> bool:
         app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
+        widget = BandDisplayWindowGui()
 
         def close_window():
             sleep(0.25)
-            # window.deleteLater()
+            widget.close()
+            window.deleteLater()
 
         step = 0.1
 
@@ -43,7 +45,6 @@ class BandDisplayTest(Test):
 
         t = threading.Thread(target=close_window)
         t.start()
-        widget = BandDisplayWindowGui()
         widget.setMinimumSize(256, 256)
         widget.add_bands(bands1)
         widget.add_bands(bands2)

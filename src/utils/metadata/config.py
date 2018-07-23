@@ -2,80 +2,188 @@ import os.path
 import toml
 import sys
 
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
+    QCheckBox
+
+
+class ConfigEditorWidget(QWidget):
+
+    def __init__(self):
+        QWidget.__init__(self)
+
+        self.setWindowTitle("Config editor")
+
+        self.main_layout = QVBoxLayout()
+
+        for key, meta in Config.config_options.items():
+            layout = QHBoxLayout()
+            label = QLabel(key)
+
+            layout.addWidget(label)
+
+            ty = meta['type']
+            input = None
+            if ty == str:
+                input = QLineEdit()
+                input.setText(Config.__dict__[key])
+            elif ty == int:
+                input = QSpinBox()
+                input.setMaximum(10000000)
+                input.setMinimum(-10000000)
+                input.setValue(Config.__dict__[key])
+            elif ty == float:
+                input = QDoubleSpinBox()
+                input.setMaximum(1000000000.0)
+                input.setMinimum(-1000000000.0)
+                input.setValue(Config.__dict__[key])
+            elif ty == bool:
+                input = QCheckBox()
+                print(Config.__dict__[key])
+                input.setChecked(Config.__dict__[key])
+
+            layout.addWidget(input)
+            setattr(self, key, { 'input': input, 'layout': layout })
+            # self.__dict__[key] = {
+            #     'input': input,
+            #     'layout': layout
+            # }
+
+            self.main_layout.addLayout(layout)
+
+        self.save_button = QPushButton('Save')
+        self.save_button.clicked.connect(self.__on_save_clicked)
+        self.cancel_button = QPushButton('Cancel')
+        self.cancel_button.clicked.connect(self.__on_cancel_clicked)
+
+        self.buttons_layout = QHBoxLayout()
+        self.buttons_layout.addWidget(self.cancel_button)
+        self.buttons_layout.addWidget(self.save_button)
+
+        self.main_layout.addLayout(self.buttons_layout)
+
+    def __on_save_clicked(self, *args):
+        for key, meta in Config.config_options:
+            ty = meta['type']
+            if ty == str:
+                value = self.__dict__[key]['input'].currentText()
+            elif ty in [int, float]:
+                value = self.__dict__[key]['input'].value()
+            elif ty == bool:
+                value = self.__dict__[key]['input'].isChecked()
+            else:
+                value = None
+
+            Config.__dict__[key] = value
+
+        Config.write_config(Config.gen_config_string())
+        self.close()
+
+    def __on_cancel_clicked(self, *args):
+        self.close()
+
 class Config():
     """
     The configuration class is a singleton class that contains static members for each of the possible user
     configurable settings.
 
     """
-    ## The number of values to display along the x axis in graphs
-    axisx_ticks = 5
+    config_options = {
+        ## The number of values to display along the x axis in graphs
+        'axisx_ticks': {
+            'default_value': 5,
+            'type': int
+        },
 
-    ## The number of values to display along the y axis in graphs
-    axisy_ticks = 5
+        ## The number of values to display along the y axis in graphs
+        'axisy_ticks': {
+            'default_value': 5,
+            'type': int
+        },
 
-    ## The folder where data is stored
-    data_folder = 'data'
+        ## The folder where data is stored
+        'data_folder': {
+            'default_value': 'data',
+            'type': str
+        },
 
-    ## Whether the program should be ran with high-dpi scaling enabled.
-    high_dpi = 'false'
+        ## Whether the program should be ran with high-dpi scaling enabled.
+        'high_dpi': {
+            'default_value': False,
+            'type': bool
+        },
 
-    ## The number of rows that tables should be paginated with.
-    select_page_length = 100
+        ## The number of rows that tables should be paginated with.
+        'select_page_length': {
+            'default_value': 100,
+            'type': int
+        },
 
-    axisx_label_format = '%f'
+        'axisx_label_format': {
+            'default_value': '%f',
+            'type': str
+        },
 
-    axisx_log_label_format = '%.3E'
+        'axisx_log_label_format': {
+            'default_value': '%.3E',
+            'type': str
+        },
 
-    axisy_label_format = '%f'
+        'axisy_label_format': {
+            'default_value': '%f',
+            'type': str
+        },
 
-    axisy_log_label_format = '%.3E'
+        'axisy_log_label_format': {
+            'default_value': '%.3E',
+            'type': str
+        },
+    }
 
-    DEFAULT_CONFIG =  """[hapiest]
-data_folder         = '{data_folder}'
-high_dpi            = '{high_dpi}'
-select_page_length  = {select_page_length}
-hapi_api_key        = '{hapi_api_key}'
-axisx_ticks         = {axisx_ticks}
-axisx_labal_format  = {axisx_label_format}
-axisx_log_label_format = {axisx_log_label_format}
-axisy_ticks         = {axisy_ticks}
-axisy_label_format  = {axisy_label_format}
-axisy_log_label_format = {axisy_log_label_format}
-""".format(
-        data_folder         = data_folder,
-        high_dpi            = high_dpi,
-        select_page_length  = select_page_length,
-        hapi_api_key        = 'no key needed until hapiest migrates to hapi v2',
-        axisx_ticks         = axisx_ticks,
-        axisy_ticks         = axisy_ticks,
-        axisx_label_format  = axisx_label_format,
-        axisy_label_format  = axisy_label_format,
-        axisx_log_label_format = axisx_log_label_format,
-        axisy_log_label_format = axisy_log_label_format,
-    )
-    
+    DEFAULT_CONFIG = ""
+
     CONFIG_LOCATION = 'Config.toml'
-   
+
+    @staticmethod
+    def gen_config_string():
+        config_string = "[hapiest]\n"
+
+        for name, meta in Config.config_options.items():
+            ty = meta['type']
+            if ty == str:
+                config_string += '{} = \'{}\''.format(name, meta['default_value'])
+            elif ty in [int, bool, float]:
+                config_string += '{} = {}'.format(name, str(meta['default_value']))
+
+        return config_string
+
     @staticmethod
     def config_init():
         """
         Reads in the config file. If it doesn't eist, it will create it with the default settings set.
     
         """
+        for name, meta in Config.config_options.items():
+            if name not in Config.__dict__:
+                setattr(Config, name, meta['default_value'])
+                # Config.__dict__[name] = meta['default_value']
+
+        Config.DEFAULT_CONFIG = Config.gen_config_string()
 
         if not os.path.isfile(Config.CONFIG_LOCATION):
-            try:
-                fh = open(Config.CONFIG_LOCATION, 'w')
-                fh.write(Config.DEFAULT_CONFIG)
-                fh.close()
-            except Exception as e:
-                print("Encountered error while attempting to read configuration file: " + str(e))
+            Config.write_config(Config.DEFAULT_CONFIG)
         else:
             with open(Config.CONFIG_LOCATION, 'r') as file:
                 text = file.read()
-
                 Config.load_config(text)
+
+    @staticmethod
+    def write_config(config_string):
+        try:
+            fh = open(Config.CONFIG_LOCATION, 'w')
+            fh.write(config_string)
+            fh.close()
+        except Exception as e:
+            print("Encountered error while attempting to write configuration file: " + str(e))
 
     @staticmethod
     def set_values(dict):

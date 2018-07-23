@@ -23,14 +23,14 @@ class Test:
 
     def run(self, q: multiprocessing.Queue):
         def gen_tb(exc_type, exc_value, exc_traceback):
-            return '\n'.join([''] + traceback.format_tb(exc_traceback) + [repr(exc_value)]).replace('\n', '\n    |   ') + '\n'
+            return '\n'.join(traceback.format_exception(exc_type, exc_value, exc_traceback)).replace('\n', '\n    |   ') + '\n'
 
         result = None
         try:
             result = self.test()
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            result = gen_tb(exc_type, exc_traceback, exc_traceback)
+            result = gen_tb(exc_type, exc_value, exc_traceback)
         if result == None:
             result = self.shouldFail()
         print(result)

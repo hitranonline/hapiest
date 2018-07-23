@@ -33,9 +33,10 @@ class App(QtWidgets.QApplication):
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         import test
+        test.run_tests()
         return
 
-    if Config.high_dpi == 'true':
+    if Config.high_dpi:
         # Enable High DPI display with PyQt5
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
