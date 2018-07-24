@@ -12,10 +12,10 @@ from utils.hapiest_util import *
 class HapiLineEdit(QLineEdit):
 
     def __init__(self, table, row, col):
+        QLineEdit.__init__(self)
         self.row = row
         self.col = col
         self.table = table
-        QTextEdit.__init__(self)
         self.editingFinished.connect(self.__editing_finished_handler)
         self.font_metrics = QFontMetrics(self.font())
         
@@ -125,7 +125,7 @@ class HapiTableView(QTableView):
     def closeEditor(self, editor, hint):
         if hint == QAbstractItemDelegate.EditNextItem and self.currentColumn() == 1:
             hint = QAbstractItemDelegate.EditPreviousItem
-        elif hint == QAbstractItemDelegate.EditPreviousItem and currentColumn() == 0:
+        elif hint == QAbstractItemDelegate.EditPreviousItem and self.currentColumn() == 0:
             hint = QAbstractItemDelegate.EditNextItem
 
         QTableWidget.closeEditor(editor, hint)

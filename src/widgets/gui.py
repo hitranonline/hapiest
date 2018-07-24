@@ -15,5 +15,5 @@ class GUI:
         self.on_close_fn()
         event.accept()
 
-    def reject():
+    def reject(self):
         self.on_close_fn()

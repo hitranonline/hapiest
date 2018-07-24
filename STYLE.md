@@ -21,7 +21,7 @@ should be followed.
 
 - Docummenting static or local variables should be done using `##`
 - Documenting classes, functions, and methods should be done using docstrings with double quotes `""" like this """`
-- Methods and functions should be documented using javadoc style (e.g. `@param x the x coordinate`)
+- Methods and functions should be documented using javadoc style (e.g. `:param x the x coordinate`)
 
 e.g.
 ```python
@@ -50,9 +50,9 @@ class Example:
         """
         Adds to self.var
 
-        @param to_add the amount var should be increased by
-        @returns the new value of var
-        @throws Exception thrown then to_add is not an integer
+        :param to_add the amount var should be increased by
+        :returns: the new value of var
+        :throws Exception thrown then to_add is not an integer
         
         """
         if type(to_add) == int:

@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from utils.dsl import DSL
+from utils.log import err_log, debug, log
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 class SelectWidget(QWidget):
@@ -53,7 +54,7 @@ class SelectWidget(QWidget):
 
     def __on_select_table_name_selection_changed(self, new_selection):
         """
-        *When the table that is being worked with changes, update the parameter list.*
+        When the table that is being worked with changes, update the parameter list.
         """
         self.run_button.setDisabled(True)
         if new_selection == '':
@@ -68,7 +69,7 @@ class SelectWidget(QWidget):
 
     def __on_select_table_name_complete(self, work_result):
         """
-        *Removes worker thread, returns results or handles error if no result is returned.*
+        Removes worker thread, returns results or handles error if no result is returned.
         """
         self.parent.remove_worker_by_jid(work_result.job_id)
 
@@ -95,7 +96,7 @@ class SelectWidget(QWidget):
 
     def __on_run_button_click(self):
         """
-        *Tries to run the select function*
+        Creates a HapiWorker to run the Select query.
         """
         selected_params = self.get_select_parameters()
         table_name = self.get_select_table_name()
@@ -121,7 +122,7 @@ class SelectWidget(QWidget):
 
     def __on_run_done(self, work_result):
         """
-        *Handles user feedback on success or failure of select function.*
+        Handles user feedback on success or failure of select function.
         """
         self.run_button.setEnabled(True)
         self.parent.remove_worker_by_jid(work_result.job_id)
@@ -170,8 +171,8 @@ class SelectWidget(QWidget):
 
     def __on_conditions_finished_editing(self):
         """
-        *When the conditions are changed, make sure they are valid - if they're not, disable the install.py button
-        and display a warning..*
+        When the conditions are changed, make sure they are valid - if they're not, disable the install.py button
+        and display a warning..
         """
         expression = self.get_select_expression()
         res = DSL.parse_expression(expression)
@@ -190,28 +191,28 @@ class SelectWidget(QWidget):
 
     def get_select_table_name(self):
         """
-        *Returns the select table name.*
+        Returns the select table name.
         """
         return self.table_name.currentText()
 
 
     def get_select_expression(self):
         """
-        *Returns select expression entered in by user.*
+        Returns select expression entered in by user.
         """
         return self.select_expression.toPlainText()
 
 
     def get_output_table_name(self):
         """
-        *Returns the destination table name the user entered for select function.*
+        Returns the destination table name the user entered for select function.
         """
         return self.output_name.text()
 
 
     def get_select_parameters(self):
         """
-        *Returns the paramaters the user chose for the select function.*
+        Returns the paramaters the user chose for the select function.
         """
         selected = []
         for i in range(self.parameter_list.count()):

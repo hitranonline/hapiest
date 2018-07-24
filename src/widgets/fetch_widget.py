@@ -60,11 +60,14 @@ class FetchWidget(QWidget):
         self.wn_max.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
-    ## Populates the parameter lists with all parameters / parameter groups
-    # that HITRAN has to offer.
+
+
     def populate_parameter_lists(self):
-        # Add all parameter groups to the parameter groups list.
-        
+        """
+        Populates the parameter lists with all parameters / parameter groups
+        that HITRAN has to offer.
+        """
+
         for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if item[0].isalpha()]:
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() |
@@ -87,7 +90,7 @@ class FetchWidget(QWidget):
 
     def populate_molecule_list(self):
         """
-        *Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.*
+        Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.
         """
         # our list of molecule names in the gui
         for molecule_id, _ in Isotopologue.molecules.items():
@@ -102,7 +105,7 @@ class FetchWidget(QWidget):
         """
         User feedback for GUI paramter fields of the fetch function in the Main Window.
 
-        @param work_result contains the work result (error or success)
+        :param work_result contains the work result (error or success)
         """
         try:
             self.parent.remove_worker_by_jid(work_result.job_id)
@@ -158,7 +161,7 @@ class FetchWidget(QWidget):
 
     def __iso_list_item_click(self, item):
         """
-        *Toggle the item that was activated.*
+        Toggle the item that was activated.
         """
         if item.checkState() == QtCore.Qt.Checked:
             item.setCheckState(QtCore.Qt.Unchecked)
@@ -179,8 +182,8 @@ class FetchWidget(QWidget):
 
     def __wn_min_change(self, value):
         """
-        *when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
-        isn't below the minimum.*
+        when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
+        isn't below the minimum.
         """
         min = self.wn_min.minimum()
         if value < min:
@@ -189,8 +192,8 @@ class FetchWidget(QWidget):
 
     def __molecule_id_index_changed(self):
         """
-        *This method repopulates the isotopologue list widget after the molecule
-        that is being worked with changes.*
+        This method repopulates the isotopologue list widget after the molecule
+        that is being worked with changes.
         """
         molecule = self.get_selected_molecule()
 
@@ -236,7 +239,7 @@ class FetchWidget(QWidget):
 
     def __handle_fetch_clicked(self):
         """
-        *Handles fetching of data, checks to make sure that certain things are proper such as min values being smaller than max numbers.*
+        Handles fetching of data, checks to make sure that certain things are proper such as min values being smaller than max numbers.
         """
         self.disable_fetch_button()
         molecule = self.get_selected_molecule()
@@ -273,14 +276,14 @@ class FetchWidget(QWidget):
 
     def get_selected_molecule(self):
         """
-        *converts the selected molecule to a molecule id.*
+        converts the selected molecule to a molecule id.
         """
         return Isotopologue.from_molecule_name(self.molecule_id.currentText())
 
 
     def get_selected_isotopologues(self):
         """
-        *Returns a list containing all of the checked isotopologues.*
+        Returns a list containing all of the checked isotopologues.
         """
         selected_isos = []
 
@@ -299,7 +302,7 @@ class FetchWidget(QWidget):
 
     def get_selected_params(self):
         """
-        *Returns a list containing all of the checked parameters.*
+        Returns a list containing all of the checked parameters.
         """
         selected_params = []
 
@@ -316,7 +319,7 @@ class FetchWidget(QWidget):
 
     def get_selected_param_groups(self):
         """
-        *Returns a list containing all of the checked groups.*
+        Returns a list containing all of the checked groups.
         """
         selected_groups = []
 
@@ -333,20 +336,20 @@ class FetchWidget(QWidget):
 
     def get_data_name(self):
         """
-        *Returns data name for fetch tab.*
+        Returns data name for fetch tab.
         """
         return str(self.data_name.text()).strip()
 
 
     def get_wn_max(self):
         """
-        *Fetches the double value from the QDoubleSpinBox wn_max.*
+        Fetches the double value from the QDoubleSpinBox wn_max.
         """
         return self.wn_max.value()
 
 
     def get_wn_min(self):
         """
-        *Fetches the double value from the QDoubleSpinBox wn_min.*
+        Fetches the double value from the QDoubleSpinBox wn_min.
         """
         return self.wn_min.value()

@@ -28,6 +28,16 @@ class WorkFunctions:
         except Exception as e:
             print('Error initializing hapi db...' + str(e))
             return False
+
+        # All file names in the data folder
+        all_files = os.listdir(Config.data_folder)
+        # Create a HMD file for every table that doesn't have one.
+        for key, table in LOCAL_TABLE_CACHE.items():
+            if (str(key) + ".hmd") not in all_files:
+                hmd = HapiMetaData(key)
+                hmd.initialize_from_hapi_table(key)
+                hmd.save()
+
         return True
 
     graph_type_map = {
@@ -51,8 +61,10 @@ class WorkFunctions:
     @staticmethod
     def graph_bands(TableName: str, **kwargs) -> Bands:
         """
-        The following set of local functions were supplied by R.V. Kochanov, modified / refactored by Joshua Karns
-        @returns the bands for the table!
+        The following set of local functions were supplied by R.V. Kochanov, modified / refactored by Joshua Karns.
+        The process every line in a table and separate the bands (i.e. groups together bands that have the same lower
+        and upper quanta.
+        :returns: the bands for the table!
         """
 
         def make_band_index():
@@ -100,7 +112,7 @@ class WorkFunctions:
         """
         Applies an instrumental function to (x, y) coordinates if one was selected.
         
-        @returns the original (x, y) coordinates if no instrumental function was selected,
+        :returns: the original (x, y) coordinates if no instrumental function was selected,
                 otherwise it applies it and returns the result.
         """
         instrumental_fn = instrumental_fn.lower()

@@ -320,14 +320,14 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         
     def get_diluent(self):
         """
-        @returns a dictionary containing all of the broadening parameters (currently, that is just gamma_air and gamma_self).
+        :returns: a dictionary containing all of the broadening parameters (currently, that is just gamma_air and gamma_self).
         """
         gamma_air = self.gamma_air.value()
         return { 'air': gamma_air, 'self': 1.0 - gamma_air }
 
     def get_data_name(self):
         """
-        @returns name of the selected table
+        :returns: name of the selected table
         """
         return self.data_name.currentText()
 
@@ -336,13 +336,13 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_graph_type(self):
         """
-        @returns the type of graph selected
+        :returns: the type of graph selected
         """
         return self.graph_type.currentText()
 
     def get_intensity_threshold(self):
         """
-        @returns the intensity threshold input by the user, if there is one. If there was none, he default is returned
+        :returns: the intensity threshold input by the user, if there is one. If there was none, he default is returned
         """
         if self.intensity_threshold_enabled.checkState() == QtCore.Qt.Checked:
             return self.intensity_threshold.value()
@@ -351,13 +351,13 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_wn_range(self):
         """
-        @returns a tuple containing first the minimum wave number, second the maximum wave number
+        :returns: a tuple containing first the minimum wave number, second the maximum wave number
         """
         return (self.wn_min.value(), self.wn_max.value())
 
     def get_wn_step(self):
         """
-        @returns the wave number step if it was input by the user, otherwise it returns None and lets hapi decide the 
+        :returns: the wave number step if it was input by the user, otherwise it returns None and lets hapi decide the
                  default value.
         """
         if self.wn_step_enabled.checkState() == QtCore.Qt.Checked:
@@ -367,7 +367,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_wn_wing(self):
         """
-        @returns the wave number wing if it was input by the user, otherwise it returns None and lets hapi decide the
+        :returns: the wave number wing if it was input by the user, otherwise it returns None and lets hapi decide the
                  default value.
         """
         if self.wn_wing_enabled.checkState() == QtCore.Qt.Checked:
@@ -377,7 +377,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_wn_wing_hw(self):
         """
-        @returns the wave number half-width if one was input by the user, otherwise it returns None and lets hapi
+        :returns: the wave number half-width if one was input by the user, otherwise it returns None and lets hapi
                  decide the default value
         """
         if self.wn_wing_hw_enabled.checkState() == QtCore.Qt.Checked:
@@ -387,85 +387,85 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_temp(self):
         """
-        @returns the temperature parameter
+        :returns: the temperature parameter
         """
         return self.temperature.value()
 
     def get_pressure(self):
         """
-        @returns the pressure parameter
+        :returns: the pressure parameter
         """
         return self.pressure.value()
 
     def get_as_instrumental_fn(self):
         """
-        @returns Absorption spectrum instrumental fn
+        :returns: Absorption spectrum instrumental fn
         """
         return self.as_instrumental_fn.currentText()
 
     def get_ts_instrumental_fn(self):
         """
-        @returns the Transmittance spectrum instrumental fn
+        :returns: the Transmittance spectrum instrumental fn
         """
         return self.ts_instrumental_fn.currentText()
 
     def get_rs_instrumental_fn(self):
         """
-        @returns the Radiance spectrum instrumental fn
+        :returns: the Radiance spectrum instrumental fn
         """
         return self.rs_instrumental_fn.currentText()
 
     def get_rs_path_length(self):
         """
-        @returns the radiance spectrum path length
+        :returns: the radiance spectrum path length
         """
         return self.rs_path_length.value()
 
     def get_ts_path_length(self):
         """
-        @returns the transmittance spectrum path length
+        :returns: the transmittance spectrum path length
         """
         return self.ts_path_length.value()
 
     def get_as_path_length(self):
         """
-        @returns the absorbtion spectrum path length
+        :returns: the absorbtion spectrum path length
         """
         return self.as_path_length.value()
 
     def get_as_instrumental_fn_wing(self):
         """
-        @returns the absorbtion spectrum instrumental fn wing
+        :returns: the absorbtion spectrum instrumental fn wing
         """
         return self.as_instrumental_fn_wing.value()
 
     def get_as_instrumental_resolution(self):
         """
-        @returns the absorbtion spectrum resolution
+        :returns: the absorbtion spectrum resolution
         """
         return self.as_instrumental_resolution.value()
 
     def get_ts_instrumental_fn_wing(self):
         """
-        @returns the transmittance spectrum fn wing
+        :returns: the transmittance spectrum fn wing
         """
         return self.ts_instrumental_fn_wing.value()
 
     def get_ts_instrumental_resolution(self):
         """
-        @returns the Transmittance spectrum resolution
+        :returns: the Transmittance spectrum resolution
         """
         return self.ts_instrumental_resolution.value()
 
     def get_rs_instrumental_fn_wing(self):
         """
-        @returns the radiance spectrum instrumental fn wing
+        :returns: the radiance spectrum instrumental fn wing
         """
         return self.rs_instrumental_fn_wing.value()
 
     def get_rs_instrumental_resolution(self):
         """
-        @returns the radiance spectrum resolution
+        :returns: the radiance spectrum resolution
         """
         return self.rs_instrumental_resolution.value()
 

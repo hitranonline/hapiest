@@ -4,9 +4,6 @@ class HapiMetaData():
     """
     Hapiest Meta Data class - to be paired with the .data and .header files generated
     with each fetch request.
-    
-    TODO: Significantly improve and standardize the '.hmd' format.
-
     """
 
     HMD_FILEDS = ['numin', 'numax', 'table_name', 'isos']
@@ -29,11 +26,8 @@ class HapiMetaData():
 
     def initialize_from_file(self, table_name: str):
         """
-        Initializes a '.hmd' by reading it from the supplied filename.
-        @param filename the filename to read from
-        
-        TODO: Generate a '.hmd' file if there is not one present.
-
+        Initializes a HapiMetaData object by reading it from the supplied filename.
+        :param filename the filename to read from
         """
         try:
             with open(Config.data_folder + "/" + self.table_name + ".hmd", 'r') as file:
@@ -42,7 +36,7 @@ class HapiMetaData():
                 return True
         except Exception as e:
             print('Encoutnered error: {}'.format(str(e)))
-            print('No HMD file found for table \'{}\''.format(self.table_name))
+            print('No HMD file found for table \'{}\'.'.format(self.table_name))
             return False
 
     def initialize_from_hapi_table(self, table_name):

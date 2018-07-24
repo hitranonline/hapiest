@@ -219,7 +219,7 @@ class Config():
         """
         Sets values from a parsed toml dictionary.
 
-        @param dict The parsed toml key-value dictionary
+        :param dict The parsed toml key-value dictionary
         
         """
         for key, _ in Config.config_options.items():
@@ -244,7 +244,7 @@ class Config():
         Attempts to load a configuration from the supplied text. If it fails to do so, it sets unspecified values to
         their defaults.
         
-        @param config_text The text of the configuration file
+        :param config_text The text of the configuration file
         
         """
         try:

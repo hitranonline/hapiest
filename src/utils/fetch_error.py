@@ -27,8 +27,8 @@ class FetchError:
         """
         Constructs a FetchError object.
 
-        @param error The type of error encountered
-        @param description A description of what happened
+        :param error The type of error encountered
+        :param description A description of what happened
         
         """
         self.error = error

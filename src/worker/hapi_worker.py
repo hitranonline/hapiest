@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtWidgets
-from utils.log import *
 from worker.hapi_thread import HapiThread
 from worker.work_request import *
 import time
@@ -59,11 +58,16 @@ class HapiWorker(HapiThread):
         return
 
     def __run(self):
+        """
+        Attempts to pull results from the result queue until if finds the matching result. The matching result is the
+        one that has the same job_id as this HapiWorker object. If it polls a result that does not have the same job_id,
+        it places it into a list for other HapiWorkers to check.
+        """
         work_request = WorkRequest(self.job_id, self.work_type, self.args)
         WorkRequest.WORKQ.put(work_request)
 
         while True:
-            time.sleep(0.1)
+            time.sleep(0.25)
             try:
                 work_result = WorkRequest.RESULTQ.get_nowait()
                 if work_result.job_id == self.job_id:
