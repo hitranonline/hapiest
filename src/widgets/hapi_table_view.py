@@ -1,11 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
-from worker.hapi_worker import *
 from worker.work_request import *
 from worker.work_result import *
 from utils.lines import *
-from functools import reduce
 import itertools
 from utils.hapiest_util import *
 

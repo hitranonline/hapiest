@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QTextEdit, QVBoxLayout, QPushButton, QComboBox, QWidget, QScrollArea, QAction, \
+from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
     QStatusBar
 
 from widgets.graphing.graphing_widget import *
@@ -97,7 +97,7 @@ class MainWindowGui(GUI, QMainWindow):
         self.molecule_container.addWidget(self.molecule_info)
 
     def __on_molecules_popout_button(self):
-        new_window = MoleculeInfoWindow(self.parent, self.molecules_current_molecule.currentText())
+        new_window: MoleculeInfoWindow = MoleculeInfoWindow(self.parent, self.molecules_current_molecule.currentText())
         new_window.gui.show()
         self.parent.add_child_window(new_window)
 

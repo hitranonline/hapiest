@@ -1,11 +1,10 @@
-from PyQt5 import QtCore, QtWidgets, QtGui, uic
-from PyQt5.QtGui import QFont
+from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from utils.dsl import DSL
 from utils.log import err_log, debug, log
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
+
 class SelectWidget(QWidget):
 
     def __init__(self, parent):

@@ -1,12 +1,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets, QtCore, QtGui, uic
+from PyQt5 import QtGui, uic
 
-from utils.log import *
 from utils.isotopologue import *
-from utils.log import *
-from utils.fetch_error import FetchErrorKind, FetchError
-from worker.work_result import *
 from worker.hapi_worker import *
 
 class FetchWidget(QWidget):
