@@ -172,6 +172,17 @@ class Config():
 
     CONFIG_LOCATION = 'Config.toml'
 
+    axisx_ticks = None
+    axisy_ticks = None
+    data_folder = None
+    high_dpi = None
+    select_page_length = None
+    hapi_api_key = None
+    axisx_label_format = None
+    axisx_log_label_format = None
+    axisy_label_format = None
+    axisy_log_label_format = None
+
     @staticmethod
     def gen_config_string():
         config_string = "[hapiest]\n"
@@ -224,7 +235,6 @@ class Config():
         """
         for key, _ in Config.config_options.items():
             if key in dict['hapiest']:
-                print('{} = {}'.format(key, dict['hapiest'][key]))
                 setattr(Config, key, dict['hapiest'][key])
 
         # Config.data_folder = dict['hapiest']['data_folder']

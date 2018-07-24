@@ -60,17 +60,17 @@ HAPI_VERSION = '1.1.0.7'
 # ADDED METADATA FOR HTP, FIXED NORMALIZATION IN CONVOLVESPECTRUMSAME (ver. 1.1.0.7) 
 
 # version header
-print('HAPI version: %s' % HAPI_VERSION)
-print('To get the most up-to-date version please check http://hitran.org/hapi')
-print('ATTENTION: Python versions of partition sums from TIPS-2017 are available at http://hitran.org/suppl/TIPS/')
-print('           To use them in HAPI ver. 1.1.0.7, use partitionFunction parameter of the absorptionCoefficient_ routine.')
-print('')
-print('           It is free to use HAPI. If you use HAPI in your research or software development,')
-print('           please cite it using the following reference:')
-print('           R.V. Kochanov, I.E. Gordon, L.S. Rothman, P. Wcislo, C. Hill, J.S. Wilzewski,')
-print('           HITRAN Application Programming Interface (HAPI): A comprehensive approach')
-print('           to working with spectroscopic data, J. Quant. Spectrosc. Radiat. Transfer 177, 15-30 (2016)')
-print('           DOI: 10.1016/j.jqsrt.2016.03.005')
+# print('HAPI version: %s' % HAPI_VERSION)
+# print('To get the most up-to-date version please check http://hitran.org/hapi')
+# print('ATTENTION: Python versions of partition sums from TIPS-2017 are available at http://hitran.org/suppl/TIPS/')
+# print('           To use them in HAPI ver. 1.1.0.7, use partitionFunction parameter of the absorptionCoefficient_ routine.')
+# print('')
+# print('           It is free to use HAPI. If you use HAPI in your research or software development,')
+# print('           please cite it using the following reference:')
+# print('           R.V. Kochanov, I.E. Gordon, L.S. Rothman, P. Wcislo, C. Hill, J.S. Wilzewski,')
+# print('           HITRAN Application Programming Interface (HAPI): A comprehensive approach')
+# print('           to working with spectroscopic data, J. Quant. Spectrosc. Radiat. Transfer 177, 15-30 (2016)')
+# print('           DOI: 10.1016/j.jqsrt.2016.03.005')
 
 # define precision
 __ComplexType__ = complex128
