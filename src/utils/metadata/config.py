@@ -17,7 +17,8 @@ class ConfigEditorWidget(QWidget):
 
         for key, meta in Config.config_options.items():
             layout = QHBoxLayout()
-            label = QLabel(key)
+            label = QLabel(meta['display_name'])
+            label.setToolTip(meta['tool_tip'])
 
             layout.addWidget(label)
 
@@ -41,6 +42,7 @@ class ConfigEditorWidget(QWidget):
                 print(Config.__dict__[key])
                 input.setChecked(Config.__dict__[key])
 
+            input.setToolTip(meta['tool_tip'])
             layout.addWidget(input)
             setattr(self, key, { 'input': input, 'layout': layout })
             # self.__dict__[key] = {
@@ -61,19 +63,21 @@ class ConfigEditorWidget(QWidget):
 
         self.main_layout.addLayout(self.buttons_layout)
 
+        self.setLayout(self.main_layout)
+
     def __on_save_clicked(self, *args):
-        for key, meta in Config.config_options:
+        for key, meta in Config.config_options.items():
             ty = meta['type']
             if ty == str:
-                value = self.__dict__[key]['input'].currentText()
+                value = self.__dict__[key]['input'].text()
             elif ty in [int, float]:
                 value = self.__dict__[key]['input'].value()
             elif ty == bool:
                 value = self.__dict__[key]['input'].isChecked()
             else:
                 value = None
-
-            Config.__dict__[key] = value
+            setattr(Config, key, value)
+            # Config.__dict__[key] = value
 
         Config.write_config(Config.gen_config_string())
         self.close()
@@ -91,50 +95,75 @@ class Config():
         ## The number of values to display along the x axis in graphs
         'axisx_ticks': {
             'default_value': 5,
+            'display_name': 'X-Axis Ticks',
+            'tool_tip': 'The number of ticks that will be displayed along the x axis.',
             'type': int
         },
 
         ## The number of values to display along the y axis in graphs
         'axisy_ticks': {
             'default_value': 5,
+            'display_name': 'Y-Axis Ticks',
+            'tool_tip': 'The number of ticks that will be displayed along the y axis.',
             'type': int
         },
 
         ## The folder where data is stored
         'data_folder': {
             'default_value': 'data',
+            'display_name': 'Data Folder',
+            'tool_tip': 'The path to the folder where data downloaded from HITRAN will be stored.',
             'type': str
         },
 
         ## Whether the program should be ran with high-dpi scaling enabled.
         'high_dpi': {
             'default_value': False,
+            'display_name': 'High DPI Mode',
+            'tool_tip': 'Whether to use high DPI mode or not. If the program looks strange on your screen you may want '
+                        'to enable this.',
             'type': bool
         },
 
         ## The number of rows that tables should be paginated with.
         'select_page_length': {
             'default_value': 100,
+            'display_name': 'Edit Page Length',
+            'tool_tip': 'The number of rows to show per page in the edit tab table.',
             'type': int
         },
 
+        'hapi_api_key': {
+            'default_value': 'You can create an API key at https://hitran.org',
+            'display_name': 'HAPI API Key',
+            'tool_tip': 'The HAPI API key that is needed to use HAPI v2 functionality.',
+            'type': str
+        },
         'axisx_label_format': {
             'default_value': '%f',
+            'display_name': 'Axis-X Tick Label Format',
+            'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str
         },
 
         'axisx_log_label_format': {
             'default_value': '%.3E',
+            'display_name': 'Log Axis-X Tick Label Format',
+            'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str
         },
 
         'axisy_label_format': {
             'default_value': '%f',
+            'display_name': 'Axis-Y Tick Label Format',
+            'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str
         },
 
         'axisy_log_label_format': {
             'default_value': '%.3E',
+            'display_name': 'Log Axis-Y Tick Label Format',
+            'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str
         },
     }
@@ -150,9 +179,9 @@ class Config():
         for name, meta in Config.config_options.items():
             ty = meta['type']
             if ty == str:
-                config_string += '{} = \'{}\''.format(name, meta['default_value'])
+                config_string += '{} = \'{}\'\n'.format(name, Config.__dict__[name])
             elif ty in [int, bool, float]:
-                config_string += '{} = {}'.format(name, str(meta['default_value']))
+                config_string += '{} = {}\n'.format(name, str(Config.__dict__[name]).lower())
 
         return config_string
 
@@ -193,10 +222,15 @@ class Config():
         @param dict The parsed toml key-value dictionary
         
         """
-        Config.data_folder = dict['hapiest']['data_folder']
-        Config.high_dpi = dict['hapiest']['high_dpi']
-        Config.select_page_length = dict['hapiest']['select_page_length']
-        Config.hapi_api_key = dict['hapiest']['hapi_api_key']
+        for key, _ in Config.config_options.items():
+            if key in dict['hapiest']:
+                print('{} = {}'.format(key, dict['hapiest'][key]))
+                setattr(Config, key, dict['hapiest'][key])
+
+        # Config.data_folder = dict['hapiest']['data_folder']
+        # Config.high_dpi = dict['hapiest']['high_dpi']
+        # Config.select_page_length = dict['hapiest']['select_page_length']
+        # Config.hapi_api_key = dict['hapiest']['hapi_api_key']
         if Config.hapi_api_key == '':
             print('TODO: Add a link to the registration website and directions on how to add it to Cargo.toml')
             print('If you\'re seeing this, currently, just put anything other than empty string for hapi_api_key in Config.toml and it will work')

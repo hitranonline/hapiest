@@ -19,6 +19,7 @@ class ConfigEditorTest(Test):
     def test(self) -> bool:
         app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
+        window.setWindowTitle("Config")
 
         def close_window():
             sleep(0.25)

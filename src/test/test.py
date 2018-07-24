@@ -33,5 +33,4 @@ class Test:
             result = gen_tb(exc_type, exc_value, exc_traceback)
         if result == None:
             result = self.shouldFail()
-        print(result)
         q.put(result)
