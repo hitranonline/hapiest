@@ -79,6 +79,9 @@ class HapiSeries:
     def setName(self, name: str):
         self.series.setName(name)
 
+    def name(self):
+        return self.series.name()
+
     def setUseOpenGL(self, use_opengl: bool):
         self.series.setUseOpenGL(use_opengl)
 

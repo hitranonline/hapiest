@@ -353,12 +353,14 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return
 
         try:
-            for i in range(0, len(self.series)):
-                ith_filename = '{}_{}.txt'.format(filename, i)
+            i = 0
+            for series in self.all_series():
+                print(series.name())
+                ith_filename = '{} {}.txt'.format(filename[0:len(filename) - 4], series.name())
                 with open(ith_filename, "w") as file:
-                    for point in self.series[i].pointsVector():
+                    for point in series.pointsVector():
                         file.write('{:<16.8f}{:.8f}\n'.format(point.x(), point.y()))
-
+                i += 1
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 
@@ -376,7 +378,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         dict = {}
         series_lists = list(map(lambda series: dict.update({
             filter_series_name(series.name()):
-                list(map(lambda point: [point.x(), point.y()], series.pointsVector()))}), self.series))
+                list(map(lambda point: [point.x(), point.y()], series.pointsVector()))}), self.all_series()))
         try:
             with open(filename, 'w') as file:
                 file.write(json.dumps(dict, indent=4))
@@ -394,13 +396,19 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         try:
             point_vectors = []
-            for i in range(0, len(self.series)):
-                point_vectors.append(self.series[i].pointsVector())
+            all_series = self.all_series()
+            for series in all_series:
+                point_vectors.append(series.pointsVector())
             max_len = max(map(len, point_vectors))
             with open(filename, "w") as file:
+                s = ''
+                for series in all_series:
+                    s += ' {:24s}, {:4s},'.format(series.name(), '')
+                file.write('{}\n'.format(s))
+
                 for point_index in range(0, max_len):
                     s = ''
-                    for i in range(0, len(self.series)):
+                    for i in range(0, len(point_vectors)):
                         if point_index >= len(point_vectors[i]):
                             s = '{} {:14s}, {:14s},'.format(s, '', '')
                         else:
