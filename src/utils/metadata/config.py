@@ -202,8 +202,7 @@ class Config():
     
         """
         for name, meta in Config.config_options.items():
-            if name not in Config.__dict__:
-                setattr(Config, name, meta['default_value'])
+            setattr(Config, name, meta['default_value'])
                 # Config.__dict__[name] = meta['default_value']
 
         Config.DEFAULT_CONFIG = Config.gen_config_string()
