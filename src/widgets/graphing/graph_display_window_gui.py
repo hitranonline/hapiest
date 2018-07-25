@@ -73,6 +73,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.axisx_type = "linear"
         self.axisy_type = "linear"
 
+        self.point_label: QLabel = QLabel()
+
         self.show()
 
     def all_series(self):
@@ -147,6 +149,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
             self.loading_label.setDisabled(True)
             self.graph_container.layout().addWidget(self.chart_view)
+            self.graph_container.layout().addWidget(self.point_label)
             self.graph_container.layout().removeWidget(self.loading_label)
         else:
             series = HapiSeries(x, y, False)
@@ -216,7 +219,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return
 
         if self.highlighted_point != None:
-            self.chart.removeSeries(self.highlighted_point)
+            self.chart.removeSeries(self.highlighted_point.series)
 
         global_coord = QCursor.pos()
         widget_coord = self.chart_view.mapFromGlobal(global_coord)
@@ -224,6 +227,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         chart_item_coord = self.chart.mapFromScene(scene_coord)
         point = self.chart.mapToValue(chart_item_coord)
         px, py = (point.x(), point.y())
+
+        print('px: {}, py: {}'.format(px, py))
 
         def dist(p1, p2):
             x1, y1 = (p1.x(), p1.y())
@@ -236,18 +241,21 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         x, y = None, None
         min_dist = 100000
-        for series in self.series:
+        for series in self.all_series():
+            if series.use_scatter_plot:
+                return
             points = series.pointsVector()
-            if len(points) <= 1 or px < points[0].x() or px > points[len(points) - 1].x():
+            if len(points) <= 3 or px < points[0].x() or px > points[len(points) - 1].x():
                 continue
-            dx = points[1].x() - points[0].x()
-            index = int((px - points[0].x()) // dx)
+            dx = series.step
+            index = int((px - points[0].x()) / dx)
+            print("index = {}, len = {}, step = {}".format(index, len(points), dx))
             np = points[index]
             distance = dist(point, np)
             if distance < min_dist:
                 x, y = (np.x(), np.y())
                 min_dist = distance
-            if index + 1 >= len(points):
+            if index >= len(points):
                 continue
             np = points[index + 1]
             distance = dist(point, np)
@@ -260,7 +268,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.highlighted_point = HapiSeries()
         self.highlighted_point.append(x, y)
-        self.highlighted_point.setName("Selected point:<br>x: {},<br>y: {}".format(x, y))
+        self.point_label.setText("Selected point:<br>x: {},<br>y: {}".format(x, y))
+        self.highlighted_point.setName(self.point_label.text())
         color = QColor(0, 0, 0)
         self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)

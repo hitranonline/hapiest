@@ -12,18 +12,21 @@ class HapiSeries:
         return QLineSeries()
 
     def __init__(self, x = (), y = (), use_scatter_plot = True, name = ""):
-        if len(x) != 0:
-            self.use_scatter_plot = use_scatter_plot
+        self.use_scatter_plot = use_scatter_plot
+        if len(x) >= 2:
+            self.step = x[1] - x[0]
             self.series = self.create_series()
             for i in range(0, len(x)):
                 # Since qt won't graph a chart using a log scale if there is a negative or zero value,
                 # make sure everything is > 0.
                 # This shouldn't be a problem since all of the graph types work with positive quantities.
                 if y[i] < 1e-138:
-                    continue
-                self.append(x[i], y[i])
+                    self.append(x[i], 1e-138)
+                else:
+                    self.append(x[i], y[i])
         else:
             self.series = self.create_series()
+            self.step = 0
 
         self.series.setName(name)
 
