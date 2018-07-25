@@ -232,7 +232,9 @@ class Config():
         
         """
         for key, _ in Config.config_options.items():
-            if key in dict['hapiest']:
+            if  key in dict['hapiest']      \
+                and key in Config.config_options  \
+                and type(dict['hapiest'][key]) == Config.config_options[key]['type']:
                 setattr(Config, key, dict['hapiest'][key])
 
         # Config.data_folder = dict['hapiest']['data_folder']
