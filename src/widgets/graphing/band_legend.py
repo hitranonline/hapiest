@@ -96,7 +96,6 @@ class LegendItem(QFrame):
         self.setMouseTracking(True)
 
     def eventFilter(self, obj, event):
-        print(obj, event)
         if event.type() == QEvent.Enter:
             band = obj.band
             band.series.setMarkerSize(LegendItem.SELECTED_WIDTH)

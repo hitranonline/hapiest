@@ -64,14 +64,12 @@ class HapiMetaData():
         Initializes all of the values in this HapiMetaData object from a dictonary that was read from a toml formatted
         file.
         """
-        print(self.__dict__)
         for field in HapiMetaData.HMD_FILEDS:
             self.__dict__[field] = dict[field]
         self.populate_iso_tuples()
 
 
     def as_dict(self):
-        print(self.__dict__)
         dict = {}
         for field in HapiMetaData.HMD_FILEDS:
             dict[field] = self.__dict__[field]

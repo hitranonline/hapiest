@@ -45,11 +45,15 @@ class MainWindowGui(GUI, QMainWindow):
         self.graphing_container: QScrollArea = None
 
         # Other stuff..
-        self.graph_window_action: QAction = None
+        self.config_action: QAction = None
         self.statusbar: QStatusBar = None
+
+        self.config_window = None
 
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
+
+        self.config_action.triggered.connect(self.__on_config_action)
 
         self.about.setText(open('res/html/description.html', 'r').read())
 
@@ -81,6 +85,11 @@ class MainWindowGui(GUI, QMainWindow):
         # Display the GUI since we're done configuring it
         self.show()
 
+    def closeEvent(self, event):
+        if self.config_window:
+            self.config_window.close()
+        QMainWindow.closeEvent(self, event)
+
     def remove_worker_by_jid(self, jid: int):
         """
         *Params : int jid (job id), the method terminates a worker thread based on a given job id.*
@@ -89,6 +98,10 @@ class MainWindowGui(GUI, QMainWindow):
             if worker.job_id == jid:
                 worker.safe_exit()
                 break
+
+    def __on_config_action(self, *args):
+        self.config_window = ConfigEditorWidget()
+        self.config_window.show()
 
     def __on_molecules_current_index_changed(self, _index):
         if self.molecule_info != None:

@@ -39,7 +39,6 @@ class ConfigEditorWidget(QWidget):
                 input.setValue(Config.__dict__[key])
             elif ty == bool:
                 input = QCheckBox()
-                print(Config.__dict__[key])
                 input.setChecked(Config.__dict__[key])
 
             input.setToolTip(meta['tool_tip'])

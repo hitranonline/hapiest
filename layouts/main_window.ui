@@ -230,8 +230,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>899</width>
+             <height>665</height>
             </rect>
            </property>
           </widget>
@@ -277,6 +277,23 @@
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>933</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="config_action"/>
+   </widget>
+   <addaction name="menuEdit"/>
+  </widget>
   <action name="graph_window_action">
    <property name="icon">
     <iconset>
@@ -289,6 +306,11 @@
     <font>
      <pointsize>9</pointsize>
     </font>
+   </property>
+  </action>
+  <action name="config_action">
+   <property name="text">
+    <string>Config</string>
    </property>
   </action>
  </widget>
