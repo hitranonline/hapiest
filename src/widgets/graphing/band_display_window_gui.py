@@ -66,7 +66,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             self.axisy_type = "log"
             self.axisy = QLogValueAxis()
             self.axisy.setTitleText("Intensity Contribution")
-            self.axisy.setMinorTickCount(5)
+            # setMinorTickCount is not supported in older versions of pyqtchart (< 5.9?)
+            # self.axisy.setMinorTickCount(5)
             self.axisy.setBase(10.0)
             self.axisy.setLabelFormat(Config.axisy_log_label_format)
             self.chart.setAxisY(self.axisy)
