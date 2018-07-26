@@ -37,6 +37,10 @@ class HapiSeries:
     def add_to_chart(self, chart: QChart):
         chart.addSeries(self.series)
 
+    def add_on_point_click(self, on_point_click):
+        if self.use_scatter_plot:
+            self.series.pointC
+
     def append(self, *args):
         self.series.append(*args)
 

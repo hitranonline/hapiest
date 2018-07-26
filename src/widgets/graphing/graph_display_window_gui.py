@@ -242,8 +242,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         x, y = None, None
         min_dist = 100000
         for series in self.all_series():
-            if series.use_scatter_plot:
-                return
             points = series.pointsVector()
             if len(points) <= 3 or px < points[0].x() or px > points[len(points) - 1].x():
                 continue

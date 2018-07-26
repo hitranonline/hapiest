@@ -1,3 +1,4 @@
+import math
 from itertools import cycle
 
 from utils.graphics.colors import Colors
@@ -81,6 +82,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             self.loading_label.setDisabled(True)
             self.graph_container.layout().addWidget(self.chart_view)
+            self.graph_container.layout().addWidget(self.point_label)
             self.graph_container.layout().removeWidget(self.loading_label)
 
             self.legend.show()
@@ -140,6 +142,57 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             else:
                 self.view_ymax = max(band.y)
         self.on_view_fit_triggered(True)
+
+    def on_point_clicked(self):
+        if self.chart == None:
+            return
+
+        if self.highlighted_point != None:
+            self.chart.removeSeries(self.highlighted_point.series)
+
+        global_coord = QCursor.pos()
+        widget_coord = self.chart_view.mapFromGlobal(global_coord)
+        scene_coord = self.chart_view.mapToScene(widget_coord)
+        chart_item_coord = self.chart.mapFromScene(scene_coord)
+        point = self.chart.mapToValue(chart_item_coord)
+        px, py = (point.x(), point.y())
+
+        print('px: {}, py: {}'.format(px, py))
+
+        def dist(p1, p2):
+            x1, y1 = (p1.x(), p1.y())
+            x2, y2 = (p2.x(), p2.y())
+            a = x1 - x2
+            a *= a
+            b = y1 - y2
+            b *= b
+            return math.sqrt(a + b)
+
+        x, y = None, None
+        min_dist = 100000
+        for series in self.all_series():
+            points = series.pointsVector()
+            for np in points:
+                distance = dist(point, np)
+                if distance < min_dist:
+                    x, y = (np.x(), np.y())
+                    min_dist = distance
+
+        if x == None:
+            return
+
+        self.highlighted_point = HapiSeries()
+        self.highlighted_point.append(x, y)
+        self.point_label.setText("Selected point:<br>x: {},<br>y: {}".format(x, y))
+        self.highlighted_point.setName(self.point_label.text())
+        color = QColor(0, 0, 0)
+        self.highlighted_point.add_to_chart(self.chart)
+        self.highlighted_point.brush().setColor(color)
+        self.highlighted_point.pen().setColor(color)
+        self.highlighted_point.pen().setWidth(8)
+        self.highlighted_point.attachAxis(self.axisx)
+        self.highlighted_point.attachAxis(self.axisy)
+
 
     def __on_series_hover(self, series, point: QPointF, state: bool):
         if state:
