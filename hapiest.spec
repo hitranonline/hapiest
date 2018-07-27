@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['src\\__main__.py'],
-             pathex=['C:\\Python36\\lib\\site-packages\\PyQt5\\Qt\\bin', 'C:\\Users\\Wyatt.DESKTOP-UD45PN0\\hapiest\\hapiest'],
+a = Analysis(['./src/__main__.py'],
+             pathex=['./hapiest'],
              binaries=[],
-             datas=[('layouts\*.ui', 'layouts'),('res', 'res')],
+             datas=[('./layouts/*.ui', 'layouts'),('res', 'res')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

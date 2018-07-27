@@ -9,7 +9,6 @@ Config.toml
 docs/html
 docs/latex
 /venv/
-*.spec
 dist/
 build/
 *.log
@@ -17,3 +16,5 @@ build/
 *.toc
 *.synctex
 *.aux
+build/*
+dist/*
