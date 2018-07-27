@@ -228,8 +228,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         point = self.chart.mapToValue(chart_item_coord)
         px, py = (point.x(), point.y())
 
-        print('px: {}, py: {}'.format(px, py))
-
         def dist(p1, p2):
             x1, y1 = (p1.x(), p1.y())
             x2, y2 = (p2.x(), p2.y())

@@ -102,7 +102,7 @@ class WorkFunctions:
         def get_band(band) -> Band:
             ids = band2index[band]
             nu, sw = get_parameters(ids)
-            return Band(nu, sw, "l {} u {}".format(band[0].strip(), band[1].strip()))
+            return Band(nu, sw, "lower - {} upper - {}".format(band[0].strip(), band[1].strip()))
 
         return Bands(list(map(get_band, band2index.keys())), TableName)
 

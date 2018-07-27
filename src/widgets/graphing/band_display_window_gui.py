@@ -1,5 +1,6 @@
 import math
 from itertools import cycle
+from time import sleep
 
 from utils.graphics.colors import Colors
 from utils.metadata.config import Config
@@ -24,9 +25,11 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
     def __init__(self):
         GraphDisplayWindowGui.__init__(self, GraphType.BANDS, "Bands")
+        self.setting = False
 
     def closeEvent(self, event):
         self.legend.close()
+        self.close()
         event.accept()
 
     def all_series(self):
@@ -144,12 +147,16 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         self.on_view_fit_triggered(True)
 
     def on_point_clicked(self):
+
         if self.chart == None:
             return
 
         if self.highlighted_point != None:
             self.chart.removeSeries(self.highlighted_point.series)
 
+        sleep(0.1)
+
+        self.graph_container.layout().addWidget(self.point_label)
         global_coord = QCursor.pos()
         widget_coord = self.chart_view.mapFromGlobal(global_coord)
         scene_coord = self.chart_view.mapToScene(widget_coord)
@@ -157,11 +164,9 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         point = self.chart.mapToValue(chart_item_coord)
         px, py = (point.x(), point.y())
 
-        print('px: {}, py: {}'.format(px, py))
-
         def dist(p1, p2):
-            x1, y1 = (p1.x(), p1.y())
-            x2, y2 = (p2.x(), p2.y())
+            x1, y1 = (p1.x(), p1.y() * 1e21)
+            x2, y2 = (p2.x(), p2.y() * 1e21)
             a = x1 - x2
             a *= a
             b = y1 - y2
@@ -169,13 +174,17 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
             return math.sqrt(a + b)
 
         x, y = None, None
+        band = None
         min_dist = 100000
         for series in self.all_series():
+            if series == self.highlighted_point:
+                continue
             points = series.pointsVector()
             for np in points:
                 distance = dist(point, np)
                 if distance < min_dist:
                     x, y = (np.x(), np.y())
+                    band = series.name()
                     min_dist = distance
 
         if x == None:
@@ -183,8 +192,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
         self.highlighted_point = HapiSeries()
         self.highlighted_point.append(x, y)
-        self.point_label.setText("Selected point:<br>x: {},<br>y: {}".format(x, y))
-        self.highlighted_point.setName(self.point_label.text())
+        self.point_label.clear()
+        self.point_label.setText("<b>{:15s}</b> ({}, {})<br><b>{:15s}</b> {}".format('Selected Point:', x, y, 'Band:' + ('&nbsp;' * 10), band))
         color = QColor(0, 0, 0)
         self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)
@@ -192,7 +201,6 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         self.highlighted_point.pen().setWidth(8)
         self.highlighted_point.attachAxis(self.axisx)
         self.highlighted_point.attachAxis(self.axisy)
-
 
     def __on_series_hover(self, series, point: QPointF, state: bool):
         if state:
