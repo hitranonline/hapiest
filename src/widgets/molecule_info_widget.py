@@ -1,4 +1,5 @@
 from PyQt5.QtCore import *
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 import json
 from widgets.gui import GUI
@@ -12,7 +13,9 @@ class MoleculeInfoWidget(QScrollArea, GUI):
     def __init__(self, json_file_name = None, parent = None):
         QScrollArea.__init__(self, parent)
         GUI.__init__(self)
-        
+
+        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
+
         def create_field(text):
             field_name = text.lower()
             label = QLabel('<b>{}:</b>'.format(text))

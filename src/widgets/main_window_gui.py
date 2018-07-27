@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
     QStatusBar
 
@@ -23,6 +24,8 @@ class MainWindowGui(GUI, QMainWindow):
         """
         QMainWindow.__init__(self)
         GUI.__init__(self)
+
+        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
 
         self.parent = parent
         self.workers = []

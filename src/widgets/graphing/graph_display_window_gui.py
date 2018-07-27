@@ -26,6 +26,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
 
+        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
+
         self.graph_ty = ty
 
         self.colors = Colors()
