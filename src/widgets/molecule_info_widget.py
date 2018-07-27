@@ -2,6 +2,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 import json
+
+from utils.hapiest_util import program_icon
 from widgets.gui import GUI
 from utils.log import *
 from utils.isotopologue import Isotopologue
@@ -14,16 +16,16 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         QScrollArea.__init__(self, parent)
         GUI.__init__(self)
 
-        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
+        self.setWindowIcon(program_icon())
 
         def create_field(text):
             field_name = text.lower()
             label = QLabel('<b>{}:</b>'.format(text))
             value = QLabel()
-            value.setTextInteractionFlags(Qt.TextSelectableByMouse); 
+            value.setTextInteractionFlags(Qt.TextSelectableByMouse)
             label.setTextFormat(Qt.RichText)
             value.setTextFormat(Qt.RichText)
-            
+
             self.__dict__[field_name + "_label"] = label
             self.__dict__[field_name] = value
 

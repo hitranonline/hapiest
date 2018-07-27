@@ -1,14 +1,23 @@
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import *
 from utils.dsl import DSL
+from utils.hapiest_util import program_icon
 from utils.log import err_log, debug, log
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 
 class SelectWidget(QWidget):
 
-    def __init__(self, parent):
-        QWidget.__init__(self)
+    instances = []
+
+    @staticmethod
+    def set_table_names(table_names):
+        for widget in SelectWidget.instances:
+            widget.table_name.clear()
+            widget.table_name.addItems(table_names)
+
+    def __init__(self, parent = None):
+        QWidget.__init__(self, parent)
         self.parent = parent
 
         self.export_button: QPushButton = None
@@ -21,7 +30,11 @@ class SelectWidget(QWidget):
         self.deselect_all_button: QPushButton = None
 
         uic.loadUi('layouts/select_widget.ui', self)
-        
+
+        self.setWindowIcon(program_icon())
+
+        self.setWindowTitle("Select")
+
         self.select_all_button.clicked.connect(self.__on_select_all_button_click)
         self.run_button.clicked.connect(self.__on_run_button_click)
         self.deselect_all_button.clicked.connect(self.__on_deselect_all_button_click)

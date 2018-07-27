@@ -2,6 +2,8 @@ import math
 from itertools import cycle
 from time import sleep
 
+from PyQt5.QtWidgets import QMainWindow
+
 from utils.graphics.colors import Colors
 from utils.metadata.config import Config
 from utils.graphing.hapi_series import HapiSeries
@@ -29,8 +31,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
     def closeEvent(self, event):
         self.legend.close()
-        self.close()
-        event.accept()
+        QMainWindow.closeEvent(self, event)
 
     def all_series(self):
         if self.highlighted_point is None:

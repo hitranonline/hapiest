@@ -126,7 +126,7 @@ class BandLegend(QWidget):
         QWidget.__init__(self)
 
         self.setWindowTitle("Band Legend")
-        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
+        self.setWindowIcon(program_icon())
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setLayout(QVBoxLayout())

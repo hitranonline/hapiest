@@ -2,6 +2,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
     QStatusBar
 
+from widgets.about_widget import AboutWidget
 from widgets.graphing.graphing_widget import *
 from widgets.molecule_info_widget import MoleculeInfoWidget
 from windows.molecule_info_window import MoleculeInfoWindow
@@ -25,17 +26,13 @@ class MainWindowGui(GUI, QMainWindow):
         QMainWindow.__init__(self)
         GUI.__init__(self)
 
-        self.setWindowIcon(QIcon('res/img/icons/icon.png'))
+        self.setWindowIcon(program_icon())
 
         self.parent = parent
         self.workers = []
 
-        self.about: QTextEdit = None
-
         # Containers
-        self.select_container: QVBoxLayout = None
         self.fetch_container: QVBoxLayout = None
-        self.edit_container: QVBoxLayout = None
 
         # Elements in 'Molecules' tab
         self.molecule_container: QVBoxLayout = None
@@ -45,32 +42,27 @@ class MainWindowGui(GUI, QMainWindow):
 
         # Elements in 'Graphing' tab
         self.graphing_tab: QWidget = None
-        self.graphing_container: QScrollArea = None
+        self.graphing_container: QVBoxLayout = None
 
         # Other stuff..
         self.config_action: QAction = None
+        self.about_hapiest_action: QAction = None
         self.statusbar: QStatusBar = None
 
         self.config_window = None
+        self.about_window = None
 
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
 
         self.config_action.triggered.connect(self.__on_config_action)
-
-        self.about.setText(open('res/html/description.html', 'r').read())
+        self.about_hapiest_action.triggered.connect(self.__on_about_action)
 
         self.fetch_widget = FetchWidget(self)
         self.fetch_container.addWidget(self.fetch_widget)
 
-        self.select_widget = SelectWidget(self)
-        self.select_container.addWidget(self.select_widget)
-
-        self.edit_widget = EditWidget(self)
-        self.edit_container.addWidget(self.edit_widget)
-
-        self.graphing_widget = GraphingWidget(self)
-        self.graphing_container.setWidget(self.graphing_widget)
+        self.graphing_widget: QWidget = GraphingWidget(self)
+        self.graphing_container.addWidget(self.graphing_widget)
 
         self.populate_table_lists()
         self.populate_molecule_list()
@@ -82,7 +74,7 @@ class MainWindowGui(GUI, QMainWindow):
 
         self.workers = []
 
-        self.status_bar_label = QtWidgets.QLabel("Ready")
+        self.status_bar_label: QWidget = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
 
         # Display the GUI since we're done configuring it
@@ -91,6 +83,10 @@ class MainWindowGui(GUI, QMainWindow):
     def closeEvent(self, event):
         if self.config_window:
             self.config_window.close()
+        if self.about_window:
+            self.about_window.close()
+        for window in list(GraphDisplayWindow.graph_windows.values()):
+            window.close()
         QMainWindow.closeEvent(self, event)
 
     def remove_worker_by_jid(self, jid: int):
@@ -103,8 +99,17 @@ class MainWindowGui(GUI, QMainWindow):
                 break
 
     def __on_config_action(self, *args):
-        self.config_window = ConfigEditorWidget()
+        # if self.config_window:
+        #     self.config_window.close()
+        self.config_window = ConfigEditorWidget(None)
         self.config_window.show()
+        print('hey')
+
+    def __on_about_action(self, *args):
+        # if self.about_window:
+        #     self.about_window.close()
+        self.about_window = AboutWidget(None)
+        self.about_window.show()
 
     def __on_molecules_current_index_changed(self, _index):
         if self.molecule_info != None:
@@ -134,9 +139,13 @@ class MainWindowGui(GUI, QMainWindow):
         """
         if data_names == None:
             data_names = get_all_data_names()
-        self.edit_widget.table_name.clear()
-        self.edit_widget.table_name.addItems(data_names)
-        self.select_widget.table_name.clear()
-        self.select_widget.table_name.addItems(data_names)
+
+        # self.edit_widget.table_name.clear()
+        # self.edit_widget.table_name.addItems(data_names)
+        # self.select_widget.table_name.clear()
+        # self.select_widget.table_name.addItems(data_names)
+        EditWidget.set_table_names(data_names)
+        SelectWidget.set_table_names(data_names)
+
         self.graphing_widget.data_name.clear()
         self.graphing_widget.data_name.addItems(data_names)

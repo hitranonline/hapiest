@@ -1,11 +1,19 @@
 import re
 import os
+
+from PyQt5.QtGui import QIcon
+
 from utils.metadata.config import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
 DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')
 
-
+ICON = None
+def program_icon():
+    global ICON
+    if ICON is None:
+        ICON = QIcon("res/img/icons/icon.png")
+    return ICON
 
 def get_all_data_names():
     """

@@ -10,7 +10,6 @@ from windows.graph_display_window import GraphDisplayWindow
 from utils.graphing.graph_type import GraphType
 import builtins
 
-
 class GraphingWidget(GUI, QtWidgets.QWidget):
 
     ABSORPTION_COEFFICIENT_STRING: str = "Absorption Coefficient"

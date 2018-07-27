@@ -1,14 +1,27 @@
 from PyQt5 import QtCore, QtWidgets, QtGui, uic
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
+
+from utils.hapiest_util import program_icon
 from widgets.hapi_table_view import HapiTableView
 
 class EditWidget(QWidget):
 
-    def __init__(self, parent):
-        QWidget.__init__(self)
+    instances = []
+
+    @staticmethod
+    def set_table_names(table_names):
+        for widget in EditWidget.instances:
+            widget.table_name.clear()
+            widget.table_name.addItems(table_names)
+
+    def __init__(self, parent = None):
+        QWidget.__init__(self, parent)
+
+        EditWidget.instances.append(self)
+
         self.parent = parent
-        
+
         self.table: HapiTableView = None
         self.back_button: QToolButton = None
         self.next_button: QToolButton = None
@@ -20,6 +33,9 @@ class EditWidget(QWidget):
 
         uic.loadUi('layouts/edit_widget.ui', self)
 
+        self.setWindowIcon(program_icon())
+        self.setWindowTitle("Edit")
+
         self.edit_button.clicked.connect(self.__on_edit_button_click)
         
         if 0 != self.table_name.count():
@@ -29,6 +45,11 @@ class EditWidget(QWidget):
         self.back_button.setToolTip("(Edit) Previous page.")
         self.next_button.setToolTip("(Edit) Next page.")
         self.edit_button.setToolTip("Opens interactable data table.")
+
+
+    def closeEvent(self, a0: QtGui.QCloseEvent):
+        EditWidget.instances.remove(self)
+        QWidget.closeEvent(self, a0)
 
     ###
     # Event Handlers

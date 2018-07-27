@@ -5,15 +5,17 @@ import sys
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
     QCheckBox
 
-
 class ConfigEditorWidget(QWidget):
 
-    def __init__(self):
-        QWidget.__init__(self)
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
 
         self.setWindowTitle("Config editor")
 
         self.main_layout = QVBoxLayout()
+
+        from utils.hapiest_util import program_icon
+        self.setWindowIcon(program_icon())
 
         for key, meta in Config.config_options.items():
             layout = QHBoxLayout()

@@ -1,8 +1,11 @@
+from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, uic
 
 from utils.isotopologue import *
+from widgets.edit_widget import EditWidget
+from widgets.select_widget import SelectWidget
 from worker.hapi_worker import *
 
 class FetchWidget(QWidget):
@@ -10,6 +13,8 @@ class FetchWidget(QWidget):
     def __init__(self, parent):
         QWidget.__init__(self)
         self.parent = parent
+
+        self.children = []
 
         self.data_name: QLineEdit = None
         self.fetch_button: QPushButton = None
@@ -20,8 +25,11 @@ class FetchWidget(QWidget):
         self.iso_list = None
         self.param_group_list = None 
         self.param_list = None
+        self.select_button: QPushButton = None
+        self.edit_button: QPushButton = None
 
         uic.loadUi('layouts/fetch_widget.ui', self)
+
 
         self.populate_molecule_list()
         self.populate_parameter_lists()
@@ -36,6 +44,8 @@ class FetchWidget(QWidget):
         self.fetch_button.clicked.connect(self.__handle_fetch_clicked)
         self.wn_max.valueChanged.connect(self.__wn_max_change)
         self.wn_min.valueChanged.connect(self.__wn_min_change)
+        self.edit_button.clicked.connect(self.__on_edit_clicked)
+        self.select_button.clicked.connect(self.__on_select_clicked)
 
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
@@ -264,8 +274,29 @@ class FetchWidget(QWidget):
             parameters=parameters)
         self.worker = HapiWorker(WorkRequest.FETCH, work, callback=self.fetch_done)
         self.parent.workers.append(self.worker)
-        self.worker.start()       
-    
+        self.worker.start()
+
+    def eventFilter(self, object: QObject, event: QEvent):
+        if event.type() == QEvent.Close:
+            self.children.remove(object)
+        return False
+
+    def __on_edit_clicked(self, *args):
+        new_edit_window = EditWidget()
+        new_edit_window.installEventFilter(self)
+        self.children.append(new_edit_window)
+        new_edit_window.show()
+
+        EditWidget.set_table_names(get_all_data_names())
+
+    def __on_select_clicked(self, *args):
+        new_select_window = SelectWidget()
+        new_select_window.installEventFilter(self)
+        self.children.append(new_select_window)
+        new_select_window.show()
+
+        SelectWidget.set_table_names(get_all_data_names())
+
     ###
     # Getters
     ###

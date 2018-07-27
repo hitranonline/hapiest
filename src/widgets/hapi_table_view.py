@@ -117,7 +117,7 @@ class HapiTableView(QTableView):
                 self.setCurrentIndex(self.currentIndex().sibling(self.current_row(), current_column + 1))
         else:
             QTableView.keyPressEvent(self, event)
-        
+
         self.widgets[self.current_row()][self.current_column()].setFocus(Qt.TabFocusReason)
     
     def closeEditor(self, editor, hint):
@@ -133,6 +133,7 @@ class HapiTableView(QTableView):
         """
         Displays first page of info for edit functionity, sets 'on edit' functions.
         """
+        self.edit_widget.setWindowTitle("Editing - {}".format(self.edit_widget.get_table_name()))
         self.table = work_result.result
         self.data = self.table['data']
         lines: Lines = Lines(self.table)
