@@ -55,15 +55,21 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         self.vlayout = QVBoxLayout()
         self.vlayout.addWidget(self.name)
         self.vlayout.addLayout(self.form_layout)
+        # self.vlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.Expanding))
         self.hlayout.addLayout(self.vlayout)
+        self.hlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
         
         self.container = QWidget()
         self.container.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
+        self.container_layout = QVBoxLayout()
+        self.container_layout.addLayout(self.hlayout)
+        spacer = QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        self.container_layout.addItem(spacer)
         self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
         self.vlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.container.setLayout(self.hlayout)
+        self.container.setLayout(self.container_layout)
         self.setWidget(self.container)
         
         if json_file_name != None:
@@ -77,36 +83,38 @@ class MoleculeInfoWidget(QScrollArea, GUI):
                     self.data = json.loads(text)
             except Exception as e:
                 log('No such molecule \'{}\' with error {}'.format(json_file_name, str(e))) 
-            if self.data != None:
-                self.restructure_aliases()
-                try:
-                    self.name.setText('<span style="font-size: 16pt"><i><b>{}</b></i></span>'.format(self.data['short_alias']))
-                    self.formula.setText(self.data['ordinary_formula_html'])
-                    if 'hitranonline_id' in self.data and self.data['hitranonline_id'] != None:
-                        self.hitranonline_id.setText(str(self.data['hitranonline_id']))
-                    else:
-                        self.hitranonline_id.setText(str(Isotopologue.from_molecule_name(self.data['ordinary_formula']).id))
-                    self.inchi.setText(self.data['inchi'])
-                    self.inchikey.setText(self.data['aliases']['inchikey'])
-                    
-                    alias_text = ''
-                    for ty, alias in self.data['aliases'].items():
-                        alias_text = '{}<br><b>{}</b>: <i>{}</i>'.format(alias_text, str(ty), str(alias))
-                    self.aliases.setText(alias_text)
+            if self.data == None:
+                return
 
-                    categories_text = ''
-                    for categorie in self.data['categories']:
-                        categories_text = '{}<br>{}'.format(categories_text, str(categorie))
-                    self.categories.setText(categories_text)
-                    
-                except Exception as e:
-                    err_log('Encountered error \'{}\' - likely a malformed molecule json file'.format(str(e)))
-                
-                self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-                self.setMinimumWidth(self.container.geometry().width())
-                self.setWidgetResizable(True)
-                self.widget().adjustSize()
-                self.adjustSize()
+            self.restructure_aliases()
+            try:
+                self.name.setText('<span style="font-size: 16pt"><i><b>{}</b></i></span>'.format(self.data['short_alias']))
+                self.formula.setText(self.data['ordinary_formula_html'])
+                if 'hitranonline_id' in self.data and self.data['hitranonline_id'] != None:
+                    self.hitranonline_id.setText(str(self.data['hitranonline_id']))
+                else:
+                    self.hitranonline_id.setText(str(Isotopologue.from_molecule_name(self.data['ordinary_formula']).id))
+                self.inchi.setText(self.data['inchi'])
+                self.inchikey.setText(self.data['aliases']['inchikey'])
+
+                alias_text = ''
+                for ty, alias in self.data['aliases'].items():
+                    alias_text = '{}<br><b>{}</b>: <i>{}</i>'.format(alias_text, str(ty), str(alias))
+                self.aliases.setText(alias_text)
+
+                categories_text = ''
+                for categorie in self.data['categories']:
+                    categories_text = '{}<br>{}'.format(categories_text, str(categorie))
+                self.categories.setText(categories_text)
+
+            except Exception as e:
+                err_log('Encountered error \'{}\' - likely a malformed molecule json file'.format(str(e)))
+
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setMinimumWidth(self.container.geometry().width())
+            self.setWidgetResizable(True)
+            self.widget().adjustSize()
+            self.adjustSize()
          
     def restructure_aliases(self):
         if 'aliases' in self.data:
