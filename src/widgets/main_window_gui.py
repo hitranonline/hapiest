@@ -103,7 +103,6 @@ class MainWindowGui(GUI, QMainWindow):
         #     self.config_window.close()
         self.config_window = ConfigEditorWidget(None)
         self.config_window.show()
-        print('hey')
 
     def __on_about_action(self, *args):
         # if self.about_window:

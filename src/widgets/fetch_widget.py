@@ -279,6 +279,7 @@ class FetchWidget(QWidget):
     def eventFilter(self, object: QObject, event: QEvent):
         if event.type() == QEvent.Close:
             self.children.remove(object)
+            return True
         return False
 
     def __on_edit_clicked(self, *args):

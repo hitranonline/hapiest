@@ -13,7 +13,7 @@ class EditWidget(QWidget):
     def set_table_names(table_names):
         for widget in EditWidget.instances:
             widget.table_name.clear()
-            widget.table_name.addItems(table_names)
+            widget.table_name.addItems(list(table_names))
 
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
