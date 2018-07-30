@@ -1,6 +1,8 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton
 
+from utils.isotopologue import Isotopologue
+
 
 class CrossSectionFetchWidget(QWidget):
 
@@ -25,3 +27,7 @@ class CrossSectionFetchWidget(QWidget):
         self.fetch_button: QPushButton = None
 
         uic.loadUi('layouts/cross_section_widget.ui', self)
+
+        for mol_id, molecule_list in Isotopologue.molecules.items():
+            molecule = molecule_list[0]
+            self.molecule.addItem(molecule.molecule_name)
