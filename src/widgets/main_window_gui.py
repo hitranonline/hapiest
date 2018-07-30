@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
     QStatusBar
 
 from widgets.about_widget import AboutWidget
+from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 from widgets.graphing.graphing_widget import *
 from widgets.molecule_info_widget import MoleculeInfoWidget
 from windows.molecule_info_window import MoleculeInfoWindow
@@ -33,6 +34,7 @@ class MainWindowGui(GUI, QMainWindow):
 
         # Containers
         self.fetch_container: QVBoxLayout = None
+        self.cross_section_fetch_widget: QVBoxLayout = None
 
         # Elements in 'Molecules' tab
         self.molecule_container: QVBoxLayout = None
@@ -63,6 +65,9 @@ class MainWindowGui(GUI, QMainWindow):
 
         self.graphing_widget: QWidget = GraphingWidget(self)
         self.graphing_container.addWidget(self.graphing_widget)
+
+        self.cross_section_fetch_widget = CrossSectionFetchWidget(self)
+        self.cross_section_container.addWidget(self.cross_section_fetch_widget)
 
         self.populate_table_lists()
         self.populate_molecule_list()
@@ -112,7 +117,8 @@ class MainWindowGui(GUI, QMainWindow):
 
     def __on_molecules_current_index_changed(self, _index):
         if self.molecule_info != None:
-            self.molecule_container.removeWidget(self.molecule_info)
+            for i in reversed(range(self.molecule_container.count())):
+                self.molecule_container.itemAt(i).widget().setParent(None)
         self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText())
         self.molecule_container.addWidget(self.molecule_info)
 

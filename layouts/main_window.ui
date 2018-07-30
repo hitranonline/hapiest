@@ -72,7 +72,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="molecules_tab">
        <attribute name="title">
@@ -156,7 +156,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout"/>
+         <layout class="QVBoxLayout" name="cross_section_container"/>
         </item>
        </layout>
       </widget>

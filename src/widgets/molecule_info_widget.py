@@ -8,13 +8,12 @@ from widgets.gui import GUI
 from utils.log import *
 from utils.isotopologue import Isotopologue
 
-class MoleculeInfoWidget(QScrollArea, GUI):
+class MoleculeInfoWidget(QWidget):
 
     FIELDS = ['Formula', 'InChi', 'InChiKey', 'HITRANonline_ID', 'Categories', 'Aliases']
 
     def __init__(self, json_file_name = None, parent = None):
-        QScrollArea.__init__(self, parent)
-        GUI.__init__(self)
+        QWidget.__init__(self, parent)
 
         self.setWindowIcon(program_icon())
 
@@ -59,8 +58,6 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         self.hlayout.addLayout(self.vlayout)
         self.hlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
         
-        self.container = QWidget()
-        self.container.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
         self.container_layout = QVBoxLayout()
         self.container_layout.addLayout(self.hlayout)
         spacer = QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -69,8 +66,7 @@ class MoleculeInfoWidget(QScrollArea, GUI):
         self.vlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.container.setLayout(self.container_layout)
-        self.setWidget(self.container)
+        self.setLayout(self.container_layout)
         
         if json_file_name != None:
             self.img.setAttribute(Qt.WA_StyledBackground)
@@ -110,10 +106,6 @@ class MoleculeInfoWidget(QScrollArea, GUI):
             except Exception as e:
                 err_log('Encountered error \'{}\' - likely a malformed molecule json file'.format(str(e)))
 
-            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            self.setMinimumWidth(self.container.geometry().width())
-            self.setWidgetResizable(True)
-            self.widget().adjustSize()
             self.adjustSize()
          
     def restructure_aliases(self):
