@@ -57,6 +57,8 @@ class MainWindowGui(GUI, QMainWindow):
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
 
+        self.setWindowTitle("hapiest")
+
         self.config_action.triggered.connect(self.__on_config_action)
         self.about_hapiest_action.triggered.connect(self.__on_about_action)
 
@@ -91,6 +93,10 @@ class MainWindowGui(GUI, QMainWindow):
         if self.about_window:
             self.about_window.close()
         for window in list(GraphDisplayWindow.graph_windows.values()):
+            window.close()
+        for window in list(SelectWidget.instances):
+            window.close()
+        for window in list(EditWidget.instances):
             window.close()
         QMainWindow.closeEvent(self, event)
 

@@ -11,7 +11,6 @@ class Window(QtCore.QObject):
         self.gui: GUI = gui
         self.child_windows: List[Window] = []
         
-        self.gui.set_on_close(self.close)
         self.is_open = False
     
     #def event(self, e):

@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtWidgets, uic
+from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import *
 from utils.dsl import DSL
 from utils.hapiest_util import program_icon
@@ -19,6 +19,7 @@ class SelectWidget(QWidget):
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
         self.parent = parent
+
 
         self.export_button: QPushButton = None
         self.output_name: QLineEdit = None
@@ -45,6 +46,7 @@ class SelectWidget(QWidget):
         
         self.table_name.currentTextChanged.connect(self.__on_select_table_name_selection_changed)
 
+        self.instances.append(self)
        
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.parameter_list.setToolTip("Select the parameters for the select function.")
@@ -54,6 +56,11 @@ class SelectWidget(QWidget):
     ###
     # Event Handlers
     ###
+
+    def closeEvent(self, a0: QtGui.QCloseEvent):
+        self.close()
+        self.instances.remove(self)
+        QWidget.closeEvent(a0)
 
     def __on_select_all_button_click(self):
         for i in range(0, self.parameter_list.count()):

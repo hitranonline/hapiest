@@ -70,7 +70,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
             self.axisy_type = "log"
             self.axisy = QLogValueAxis()
-            self.axisy.setTitleText("Intensity Contribution")
+            self.axisy.setTitleText("cm<sup>2</sup>/molecule")
             # setMinorTickCount is not supported in older versions of pyqtchart (< 5.9?)
             # self.axisy.setMinorTickCount(5)
             self.axisy.setBase(10.0)
@@ -198,7 +198,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         for point in min_series.pointsVector():
             self.highlighted_point.append(point.x(), point.y())
         self.point_label.clear()
-        self.point_label.setText("<b>{:15s}</b> {}".format('Band:' + ('&nbsp;' * 10), band))
+        self.point_label.setText("<b>{:15s}</b> {}".format('Selected Band:' + ('&nbsp;' * 10), band))
         color = QColor(0, 0, 0)
         self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)

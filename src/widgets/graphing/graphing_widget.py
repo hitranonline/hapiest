@@ -202,7 +202,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         work = HapiWorker.echo(
             title=GraphingWidget.ABSORPTION_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
-            titley="Intensity",
+            titley="Absorption Spectrum",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
@@ -236,7 +236,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         work = HapiWorker.echo(
             title=GraphingWidget.RADIANCE_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
-            titley="Intensity",
+            titley="Radiance (erg * c<sup>-1</sup>*cm<sup>-1</sup>)",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
@@ -270,7 +270,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         work = HapiWorker.echo(
             title=GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
             titlex="Wavenumber (cm<sup>-1</sup>)",
-            titley="Intensity",
+            titley="Transmittance",
             path_length=path_length,
             instrumental_fn=instrumental_fn,
             Resolution=Resolution,
