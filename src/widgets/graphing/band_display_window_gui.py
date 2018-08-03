@@ -164,10 +164,11 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         chart_item_coord = self.chart.mapFromScene(scene_coord)
         point = self.chart.mapToValue(chart_item_coord)
         px, py = (point.x(), point.y())
+        xscale = self.view_ymax - self.view_ymin
 
         def dist(p1, p2):
-            x1, y1 = (p1.x(), p1.y() * 1e21)
-            x2, y2 = (p2.x(), p2.y() * 1e21)
+            x1, y1 = (p1.x() * xscale, p1.y())
+            x2, y2 = (p2.x() * xscale, p2.y())
             a = x1 - x2
             a *= a
             b = y1 - y2
@@ -176,6 +177,7 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
 
         x, y = None, None
         band = None
+        min_series = None
         min_dist = 100000
         for series in self.all_series():
             if series == self.highlighted_point:
@@ -186,15 +188,17 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 if distance < min_dist:
                     x, y = (np.x(), np.y())
                     band = series.name()
+                    min_series = series
                     min_dist = distance
 
         if x == None:
             return
 
         self.highlighted_point = HapiSeries()
-        self.highlighted_point.append(x, y)
+        for point in min_series.pointsVector():
+            self.highlighted_point.append(point.x(), point.y())
         self.point_label.clear()
-        self.point_label.setText("<b>{:15s}</b> ({}, {})<br><b>{:15s}</b> {}".format('Selected Point:', x, y, 'Band:' + ('&nbsp;' * 10), band))
+        self.point_label.setText("<b>{:15s}</b> {}".format('Band:' + ('&nbsp;' * 10), band))
         color = QColor(0, 0, 0)
         self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)
