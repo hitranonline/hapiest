@@ -1,13 +1,7 @@
 import multiprocessing
-from multiprocessing import Process, freeze_support
-from time import sleep
+from multiprocessing import Process
 from typing import *
 from types import TracebackType
-from threading import *
-import traceback
-import sys
-import os
-from utils import *
 from test.test import Test
 from test.fail_test import FailTest
 from test.throw_test import ThrowTest
@@ -58,7 +52,7 @@ def run_tests():
                 print(result_fmt.format('', 'Failed (should throw)'))
             else:
                 traceback = result
-                print(result_fmt.format('', 'Failed with exception:'))
+                print(result_fmt.format('', 'Succeeded with exception:'))
                 print(traceback)
         else:
             if result == True:

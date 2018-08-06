@@ -2,10 +2,9 @@ from typing import List
 
 from PyQt5.QtCore import *
 from PyQt5.QtChart import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QFrame, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QCheckBox, QScrollArea, QSizePolicy
+from PyQt5.QtWidgets import QFrame, QScrollArea, QSizePolicy, \
+    QSpacerItem
 
-from utils.graphing.band import Band
 from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
 
@@ -25,24 +24,42 @@ class BandWidget(QWidget):
         }}
         """.format(band.color().rgb()))
 
-        self.toggle = QCheckBox()
-        self.toggle.setChecked(True)
-        self.toggle.toggled.connect(self.hide_band)
+        self.visibility_toggle = QCheckBox()
+        self.visibility_toggle.setChecked(True)
+        self.visibility_toggle.toggled.connect(self.hide_band)
+
+        self.bold_toggle = QCheckBox()
+        self.bold_toggle.setChecked(False)
+        self.bold_toggle.toggled.connect(self.__on_bold_check_toggled)
 
         self.label = QLabel(band.series.name())
 
         layout = QHBoxLayout()
 
-        layout.addWidget(self.toggle)
+        layout.addWidget(self.visibility_toggle)
+        layout.addWidget(self.bold_toggle)
         layout.addWidget(self.color_indicator)
         layout.addWidget(self.label)
+        layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Maximum))
 
         self.setLayout(layout)
 
     def hide_band(self, checked):
         self.band.setVisible(checked)
 
+    def set_bold(self):
+        self.band.series.setMarkerSize(LegendItem.SELECTED_WIDTH)
 
+    def set_normal(self):
+        self.band.series.setMarkerSize(LegendItem.NORMAL_WIDTH)
+
+    def __on_bold_check_toggled(self, checked):
+        if checked:
+            self.set_bold()
+        else:
+            self.set_normal()
+        self.band.series.setVisible(not self.band.isVisible())
+        self.band.series.setVisible(not self.band.isVisible())
 
 class LegendItem(QFrame):
 
@@ -69,17 +86,27 @@ class LegendItem(QFrame):
         self.toggle_all_layout = QHBoxLayout()
         self.toggle_all = QCheckBox()
         self.toggle_all.setChecked(True)
+        self.toggle_all_bold = QCheckBox()
+        self.toggle_all_bold.setChecked(False)
 
         def on_toggle_all_toggled(checked: bool):
             for band_widget in self.band_widgets:
                 band_widget.toggle.setChecked(checked)
 
+        def on_toggle_all_bold_toggled(checked: bool):
+            for band_widget in self.band_widgets:
+                band_widget.bold_toggle.setChecked(checked)
+
         self.toggle_all.toggled.connect(on_toggle_all_toggled)
+        self.toggle_all_bold.toggled.connect(on_toggle_all_bold_toggled)
 
         self.label = QLabel('table: {}'.format(name))
         self.label.setWordWrap(True)
         self.toggle_all_layout.addWidget(self.toggle_all)
+        self.toggle_all_layout.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Fixed, QSizePolicy.Fixed))
+        self.toggle_all_layout.addWidget(self.toggle_all_bold)
         self.toggle_all_layout.addWidget(self.label)
+        self.toggle_all_layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Maximum))
 
         self.layout = QVBoxLayout()
 
@@ -87,12 +114,14 @@ class LegendItem(QFrame):
 
         for band_item in self.band_widgets:
             self.layout.addWidget(band_item)
+            # The hover-to-bolden feature has been replaced
+            # band_item.installEventFilter(self)
+        self.layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Expanding))
 
         self.setLayout(self.layout)
 
         self.on_hover_fn = lambda: ()
 
-        # self.installEventFilter(self)
         self.setMouseTracking(True)
 
     def eventFilter(self, obj, event):
@@ -140,6 +169,11 @@ class BandLegend(QWidget):
         self.layout.addWidget(self.scroll_area)
         self.setMouseTracking(True)
 
+        self.hlayout = QHBoxLayout()
+        self.hlayout.addWidget(QLabel("Visible?   "))
+        self.hlayout.addWidget(QLabel("Bold?      "))
+        self.hlayout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
+        self.widget.layout().addLayout(self.hlayout)
 
     def add_item(self, bands, name):
         self.widget.layout().addWidget(LegendItem(bands, name, self.chart))

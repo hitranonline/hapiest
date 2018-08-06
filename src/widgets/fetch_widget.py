@@ -129,7 +129,6 @@ class FetchWidget(QWidget):
             for err in errs:
                 # This means the wavenumber range was too small (probably), so
                 # we'll tell the user it is too small
-                # TODO: Highlight empty elements / invalid elements
                 if err.error == FetchErrorKind.FailedToRetreiveData:
                     err_log('The entered wavenumber range is too small, try increasing it')
                 # Not much to do in regards to user feedback in this case....
