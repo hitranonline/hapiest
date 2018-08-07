@@ -24,11 +24,11 @@ class BandWidget(QWidget):
         }}
         """.format(band.color().rgb()))
 
-        self.visibility_toggle = QCheckBox()
+        self.visibility_toggle = QCheckBox("      ")
         self.visibility_toggle.setChecked(True)
         self.visibility_toggle.toggled.connect(self.hide_band)
 
-        self.bold_toggle = QCheckBox()
+        self.bold_toggle = QCheckBox("      ")
         self.bold_toggle.setChecked(False)
         self.bold_toggle.toggled.connect(self.__on_bold_check_toggled)
 
@@ -84,14 +84,14 @@ class LegendItem(QFrame):
             self.band_widgets.append(BandWidget(band))
 
         self.toggle_all_layout = QHBoxLayout()
-        self.toggle_all = QCheckBox()
+        self.toggle_all = QCheckBox("      ")
         self.toggle_all.setChecked(True)
-        self.toggle_all_bold = QCheckBox()
+        self.toggle_all_bold = QCheckBox("     ")
         self.toggle_all_bold.setChecked(False)
 
         def on_toggle_all_toggled(checked: bool):
             for band_widget in self.band_widgets:
-                band_widget.toggle.setChecked(checked)
+                band_widget.visibility_toggle.setChecked(checked)
 
         def on_toggle_all_bold_toggled(checked: bool):
             for band_widget in self.band_widgets:
@@ -170,7 +170,7 @@ class BandLegend(QWidget):
         self.setMouseTracking(True)
 
         self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(QLabel("Visible?   "))
+        self.hlayout.addWidget(QLabel("Visible?  "))
         self.hlayout.addWidget(QLabel("Bold?      "))
         self.hlayout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
         self.widget.layout().addLayout(self.hlayout)
