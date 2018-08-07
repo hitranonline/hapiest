@@ -17,7 +17,7 @@ class SelectWidget(QWidget):
             widget.table_name.addItems(table_names)
 
     def __init__(self, parent = None):
-        QWidget.__init__(self, parent)
+        QWidget.__init__(self)
         self.parent = parent
 
 
@@ -60,7 +60,7 @@ class SelectWidget(QWidget):
     def closeEvent(self, a0: QtGui.QCloseEvent):
         self.close()
         self.instances.remove(self)
-        QWidget.closeEvent(a0)
+        QWidget.closeEvent(self, a0)
 
     def __on_select_all_button_click(self):
         for i in range(0, self.parameter_list.count()):

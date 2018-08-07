@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
+    <width>696</width>
     <height>305</height>
    </rect>
   </property>
@@ -52,7 +52,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="edit_button">
+        <widget class="QPushButton" name="view_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -65,7 +65,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Edit</string>
+          <string>View</string>
          </property>
         </widget>
        </item>
@@ -81,6 +81,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="editing_enabled">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Enable Editing</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

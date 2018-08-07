@@ -1,3 +1,4 @@
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
@@ -7,6 +8,7 @@ from utils.lines import *
 import itertools
 from utils.hapiest_util import *
 
+
 class HapiLineEdit(QLineEdit):
 
     def __init__(self, table, row, col):
@@ -15,8 +17,7 @@ class HapiLineEdit(QLineEdit):
         self.col = col
         self.table = table
         self.editingFinished.connect(self.__editing_finished_handler)
-        self.font_metrics = QFontMetrics(self.font())
-        
+
     def __editing_finished_handler(self):
         """
         Alters a field in the corresponding hapi table. Each cell in the table is
@@ -25,6 +26,12 @@ class HapiLineEdit(QLineEdit):
         t = type(self.table.data[self.table.lines.param_order[self.col]][0])
         value = self.text()
         line = self.table.lines.get_line(self.row)
+        if str(value).strip() != str(line.get_nth_field(self.col)).strip():
+            self.table.hmd.add_dirty_cell(self.col, self.row + self.table.page_min)
+            self.set_dirty_style()
+        else:
+            self.set_normal_style()
+            self.table.hmd.remove_dirty_cell(self.col, self.row + self.table.page_min)
         if t == int:
             line.update_nth_field(self.col, int(value))
         elif t == float:
@@ -40,23 +47,19 @@ class HapiLineEdit(QLineEdit):
         else:
             QLineEdit.keyPressEvent(self, event)
 
-    """def sizeHint(self):
-        super_sizehint = QLineEdit.sizeHint(self)
-        super_sizehint.setWidth(self.font_metrics.width(self.text()))
-        return super_sizehint
-"""
-"""
-class HapiTableDelegate(QStyledItemDelegate):
-    def __init__(self, table):
-        QStyledItemDelegate.__init__(self)
-        self.table = table
+    def set_dirty_style(self):
+        self.setStyleSheet("""
+            * {
+                background: #ff6961;
+                border: 1px dotted #ff392e;
+            } """)
+
+    def set_normal_style(self):
+        self.setStyleSheet("")
 
 
-    def createEditor(self, parent, option, index):
-        line_edit = HapiLineEdit(self.table, index.row(), index.col())
-        return line_edit
-"""
 class HapiTableView(QTableView):
+
     Row = int
     Column = int
     Position = Tuple[Row, Column]
@@ -65,6 +68,8 @@ class HapiTableView(QTableView):
         super(HapiTableView, self).__init__()
 
         self.table_name = table_name
+        self.hmd = HapiMetaData(table_name)
+
         self.table = None
 
         self.edit_widget = parent
@@ -81,6 +86,7 @@ class HapiTableView(QTableView):
         self.current_page = 1
         self.current_page_len = Config.select_page_length
         self.page_len = int(Config.select_page_length)
+        self.page_min = 0
 
         if self.table_name != None:
             self.workers = []
@@ -99,6 +105,15 @@ class HapiTableView(QTableView):
         self.double_validator.setNotation(QDoubleValidator.ScientificNotation)
         self.int_validator = QIntValidator() 
         # self.horizontalHeader().setStretchLastSection(True)
+
+    def update_dirty_cells(self):
+        for row in range(self.page_min, self.page_len + self.page_min):
+            for col in range(0, self.nparams):
+                w = self.widgets[row - self.page_min][col]
+                if (row, col) in self.hmd.dirty_cells:
+                    w.set_dirty_style()
+                else:
+                    w.set_normal_style()
 
     def current_row(self):
         return self.currentIndex().row()
@@ -197,12 +212,14 @@ class HapiTableView(QTableView):
         elif page_number > self.lines.last_page:
             page_number = self.lines.last_page
         self.current_page = page_number
+        print(self.current_page)
 
         self.lines.set_page(self.current_page)
 
         self.next_button.setEnabled(True)
         self.back_button.setEnabled(True)
         page_min = (self.current_page - 1) * self.lines.get_len()
+        self.page_min = page_min
         self.table_model.setVerticalHeaderLabels(map(str, range(page_min + 1,  1 + page_min + self.current_page_len)))
         # for i in range(0, self.current_page_len):
         #    item = self.verticalHeaderItem(i)
@@ -214,15 +231,18 @@ class HapiTableView(QTableView):
             line = self.lines.get_line(row)
             for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
-                self.widgets[row][column].setText((self.column_formats[column] % line.get_nth_field(column)).strip())
-                        # str(line.get_nth_field(column)).strip())
-                # self.items[row][column].setText(str(line.get_nth_field(column)).strip())
-        
+                w: QLineEdit = self.widgets[row][column]
+                if (column, row + page_min) in self.hmd.dirty_cells:
+                    w.set_dirty_style()
+                else:
+                    w.set_normal_style()
+                w.setText((self.column_formats[column] % line.get_nth_field(column)).strip())
+
         self.setVisible(False)
         self.resizeColumnsToContents()
         self.setVisible(True)
         
-        self.edit_widget.edit_button.setEnabled(True)
+        self.edit_widget.view_button.setEnabled(True)
         self.save_button.setEnabled(True)
 
     def remove_worker_by_jid(self, jid: int):
@@ -256,16 +276,21 @@ class HapiTableView(QTableView):
         """
         *Saves table information to local machine.*
         """
-        self.edit_widget.edit_button.setDisabled(True)
+        self.edit_widget.view_button.setDisabled(True)
         self.edit_widget.table_name.setDisabled(True)
         self.edit_widget.output_name.setDisabled(True)
         self.edit_widget.next_button.setDisabled(True)
         self.edit_widget.back_button.setDisabled(True)
         self.save_button.setDisabled(True)
 
+        # Name for the new table.
+        output_name = self.edit_widget.get_output_name()
+
         worker = HapiWorker(WorkRequest.SAVE_TABLE,
-                            {'table': self.table, 'name': self.edit_widget.get_output_name()},
+                            {'table': self.table, 'name': output_name},
                             self.done_saving)
+
+        self.hmd.save_as(output_name)
         self.workers.append(worker)
         worker.start()
 
@@ -280,7 +305,7 @@ class HapiTableView(QTableView):
             return
         self.remove_worker_by_jid(work_result.job_id)
  
-        self.edit_widget.edit_button.setEnabled(True)
+        self.edit_widget.view_button.setEnabled(True)
         self.edit_widget.table_name.setEnabled(True)
         self.edit_widget.output_name.setEnabled(True)
         self.edit_widget.next_button.setEnabled(True)

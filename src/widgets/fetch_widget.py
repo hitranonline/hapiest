@@ -276,22 +276,19 @@ class FetchWidget(QWidget):
         self.worker.start()
 
     def eventFilter(self, object: QObject, event: QEvent):
-        if event.type() == QEvent.Close:
-            self.children.remove(object)
-            return True
         return False
 
     def __on_edit_clicked(self, *args):
-        new_edit_window = EditWidget()
-        new_edit_window.installEventFilter(self)
+        new_edit_window = EditWidget(self.parent)
+        # new_edit_window.installEventFilter(self)
         self.children.append(new_edit_window)
         new_edit_window.show()
 
         EditWidget.set_table_names(get_all_data_names())
 
     def __on_select_clicked(self, *args):
-        new_select_window = SelectWidget()
-        new_select_window.installEventFilter(self)
+        new_select_window = SelectWidget(self.parent)
+        # new_select_window.installEventFilter(self)
         self.children.append(new_select_window)
         new_select_window.show()
 

@@ -289,12 +289,19 @@ class WorkFunctions:
         Saves the modified table in the local table cache and on disk.
         """
         try:
+            # This also means the files already exist on disk and do not need to be created
             if name in LOCAL_TABLE_CACHE:
                 del LOCAL_TABLE_CACHE[name]
+            else:
+                open(Config.data_folder + "/{}.header".format(name),    'w+')
+                open(Config.data_folder + "/{}.data".format(name),      'w+')
+
             LOCAL_TABLE_CACHE[name] = table
+            # Cahce2storage requires that the '{tablename}.par' and '{tablename}.header' files exist
             cache2storage(TableName=name)
             return True
-        except:
+        except Exception as e:
+            print(str(e))
             return False
 
     @staticmethod

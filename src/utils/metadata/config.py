@@ -129,8 +129,8 @@ class Config():
         ## The number of rows that tables should be paginated with.
         'select_page_length': {
             'default_value': 100,
-            'display_name': 'Edit Page Length',
-            'tool_tip': 'The number of rows to show per page in the edit tab table.',
+            'display_name': 'View Page Length',
+            'tool_tip': 'The number of rows to show per page in the view table.',
             'type': int
         },
 

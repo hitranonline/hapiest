@@ -73,7 +73,7 @@ class Lines:
         line = []
         
         # index of the `line_number`th field of page 
-        index = line_number + ((self.page_number - 1) * self.page_number)
+        index = line_number + ((self.page_number - 1) * self.page_len)
         for param in self.param_order:
             line.append(self.data[param][line_number + index])
 
