@@ -74,10 +74,10 @@ class Lines:
         
         # index of the `line_number`th field of page 
         index = line_number + ((self.page_number - 1) * self.page_len)
+        print("Index = " + str(index))
         for param in self.param_order:
-            line.append(self.data[param][line_number + index])
-
-        l = Line(line_number, line, self)
+            line.append(self.data[param][index])
+        l = Line(line_number + (self.page_number - 1) * self.page_len, line, self)
         return l
     
 

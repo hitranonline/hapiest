@@ -1,3 +1,5 @@
+from functools import reduce
+
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -26,12 +28,30 @@ class HapiLineEdit(QLineEdit):
         t = type(self.table.data[self.table.lines.param_order[self.col]][0])
         value = self.text()
         line = self.table.lines.get_line(self.row)
-        if str(value).strip() != str(line.get_nth_field(self.col)).strip():
+        old_val = line.get_nth_field(self.col)
+        res = False
+
+        if type(old_val) == float:
+            try:
+                value = float(value)
+                # Float comparison is not always a good thing. In this case it isn't a big deal. You should probably
+                # not use this method to compare floats unless... uh
+                res = str(old_val) == str(value)
+            except:
+                res = False
+        elif type(old_val) == int:
+            try:
+                value = int(value)
+                res = old_val == value
+            except:
+                res = False
+        elif type(old_val) == str:
+            res = str(old_val).strip() == str(value).strip()
+
+        if not res:
             self.table.hmd.add_dirty_cell(self.col, self.row + self.table.page_min)
             self.set_dirty_style()
-        else:
-            self.set_normal_style()
-            self.table.hmd.remove_dirty_cell(self.col, self.row + self.table.page_min)
+
         if t == int:
             line.update_nth_field(self.col, int(value))
         elif t == float:
@@ -66,6 +86,10 @@ class HapiTableView(QTableView):
 
     def __init__(self, parent, table_name):
         super(HapiTableView, self).__init__()
+
+        self.read_only = False
+
+        self.nparams: int = None
 
         self.table_name = table_name
         self.hmd = HapiMetaData(table_name)
@@ -106,10 +130,20 @@ class HapiTableView(QTableView):
         self.int_validator = QIntValidator() 
         # self.horizontalHeader().setStretchLastSection(True)
 
+    def get_widget(self, row, column):
+        return self.indexWidget(self.table_model.createIndex(row, column))
+
+    def set_read_only(self, read_only):
+        self.read_only = read_only
+        if self.nparams:
+            for row in  range(0, self.page_len):
+                for column in range(0, self.nparams):
+                    self.get_widget(row, column).setReadOnly(read_only)
+
     def update_dirty_cells(self):
         for row in range(self.page_min, self.page_len + self.page_min):
             for col in range(0, self.nparams):
-                w = self.widgets[row - self.page_min][col]
+                w = self.get_widget(row - self.page_min, col) # self.widgets[row - self.page_min][col]
                 if (row, col) in self.hmd.dirty_cells:
                     w.set_dirty_style()
                 else:
@@ -133,15 +167,17 @@ class HapiTableView(QTableView):
         else:
             QTableView.keyPressEvent(self, event)
 
-        self.widgets[self.current_row()][self.current_column()].setFocus(Qt.TabFocusReason)
-    
+        w = self.get_widget(self.current_row(), self.current_column())
+        if w:
+            w.setFocus(Qt.TabFocusReason)
+
     def closeEditor(self, editor, hint):
         if hint == QAbstractItemDelegate.EditNextItem and self.currentColumn() == 1:
             hint = QAbstractItemDelegate.EditPreviousItem
         elif hint == QAbstractItemDelegate.EditPreviousItem and self.currentColumn() == 0:
             hint = QAbstractItemDelegate.EditNextItem
 
-        QTableWidget.closeEditor(editor, hint)
+        QTableWidget.closeEditor(self, editor, hint)
 
 
     def display_first_page(self, work_result: WorkResult):
@@ -153,7 +189,7 @@ class HapiTableView(QTableView):
         self.data = self.table['data']
         lines: Lines = Lines(self.table)
         self.lines = lines
-        nparams = len(lines.param_order)
+        nparams: int = len(lines.param_order)
         self.nparams = nparams
 
         self.table_model = QStandardItemModel(Config.select_page_length, nparams)
@@ -183,25 +219,23 @@ class HapiTableView(QTableView):
             new_names.append(("%-" + str(column_width) + "." +  str(column_width + 1) + "s") % lines.param_order[column])
         
         self.table_model.setHorizontalHeaderLabels(new_names)
-        self.widgets = [[0] * self.nparams] * self.current_page_len
         for row in range(0, self.current_page_len):
             line = self.lines.get_line(row)
             # self.items.append([])
             for column in range(0, nparams):
+                line_edit = HapiLineEdit(self, row, column)
+                self.setIndexWidget(self.table_model.createIndex(row, column), line_edit)
                 item = line.get_nth_field(column)
-                self.widgets[row][column] = HapiLineEdit(self, row, column)
-                self.setIndexWidget(self.table_model.createIndex(row, column), self.widgets[row][column])
-                line_edit = self.widgets[row][column]
                 if type(item) == float:
                     line_edit.setValidator(self.double_validator)
                 elif type(item) == int:
                     line_edit.setValidator(self.int_validator)
 
                 str_value = str(item).strip()
-
-                # self.items[row].append(line_edit)
                 line_edit.setText(str_value)
-                
+                line_edit.setReadOnly(self.read_only)
+
+
         # self.resizeColumnsToContents()
         self.display_page(1)
 
@@ -212,7 +246,6 @@ class HapiTableView(QTableView):
         elif page_number > self.lines.last_page:
             page_number = self.lines.last_page
         self.current_page = page_number
-        print(self.current_page)
 
         self.lines.set_page(self.current_page)
 
@@ -231,12 +264,15 @@ class HapiTableView(QTableView):
             line = self.lines.get_line(row)
             for column in range(0, len(nparams)):
                 x = line.get_nth_field(column)
-                w: QLineEdit = self.widgets[row][column]
+                w: QLineEdit = self.indexWidget(self.table_model.createIndex(row, column)) # self.widgets[row][column]
                 if (column, row + page_min) in self.hmd.dirty_cells:
                     w.set_dirty_style()
                 else:
                     w.set_normal_style()
-                w.setText((self.column_formats[column] % line.get_nth_field(column)).strip())
+
+                new_text = (self.column_formats[column] % x).strip()
+                print(new_text)
+                w.setText(new_text)
 
         self.setVisible(False)
         self.resizeColumnsToContents()

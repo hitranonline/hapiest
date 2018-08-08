@@ -60,7 +60,7 @@ class EditWidget(QWidget):
 
     def __on_editing_enabled_checked(self, checked):
         if self.table:
-            self.table.setDisabled(not checked)
+            self.table.set_read_only(not checked)
             self.table.update_dirty_cells()
 
     def __on_view_button_click(self):
@@ -77,7 +77,8 @@ class EditWidget(QWidget):
             self.editing_enabled.setEnabled(True)
 
         self.table = HapiTableView(self, table_name)
-        self.table.setDisabled(True)
+        self.table.set_read_only(True)
+        self.editing_enabled.setChecked(False)
 
         layout = QtWidgets.QGridLayout(self.table_container)
         layout.addWidget(self.table)
