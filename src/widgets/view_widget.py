@@ -5,20 +5,20 @@ from PyQt5.QtWidgets import *
 from utils.hapiest_util import program_icon
 from widgets.hapi_table_view import HapiTableView
 
-class EditWidget(QWidget):
+class ViewWidget(QWidget):
 
     instances = []
 
     @staticmethod
     def set_table_names(table_names):
-        for widget in EditWidget.instances:
+        for widget in ViewWidget.instances:
             widget.table_name.clear()
             widget.table_name.addItems(list(table_names))
 
     def __init__(self, parent = None):
         QWidget.__init__(self)
 
-        EditWidget.instances.append(self)
+        ViewWidget.instances.append(self)
 
         self.parent = parent
 
@@ -32,10 +32,10 @@ class EditWidget(QWidget):
         self.table_name: QComboBox = None
         self.editing_enabled: QCheckBox = None
 
-        uic.loadUi('layouts/edit_widget.ui', self)
+        uic.loadUi('layouts/view_widget.ui', self)
 
         self.setWindowIcon(program_icon())
-        self.setWindowTitle("Edit")
+        self.setWindowTitle("View")
 
         self.view_button.clicked.connect(self.__on_view_button_click)
         self.editing_enabled.toggled.connect(self.__on_editing_enabled_checked)
@@ -51,7 +51,7 @@ class EditWidget(QWidget):
 
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
-        EditWidget.instances.remove(self)
+        ViewWidget.instances.remove(self)
         QWidget.closeEvent(self, a0)
 
     ###

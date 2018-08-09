@@ -1,24 +1,9 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
-from utils.isotopologue import *
 from widgets.main_window_gui import MainWindowGui
-from utils.log import *
-from utils.fetch_error import FetchErrorKind, FetchError
-from worker.work_result import *
 from windows.window import Window
 
 class MainWindow(Window):
     def __init__(self):
         Window.__init__(self, MainWindowGui(self), None)
-
-
-    def open_graph_window(self):
-        """
-        TODO: Implement this method?
-        
-        """
-        raise Exception("Unsupported: graph operation")
 
     def open(self):
         """
@@ -26,7 +11,6 @@ class MainWindow(Window):
         
         """
         self.gui.open()
-
 
     def text_log(self, text):
         """

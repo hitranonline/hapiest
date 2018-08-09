@@ -11,7 +11,7 @@ from widgets.gui import GUI
 
 from widgets.select_widget import SelectWidget
 from widgets.fetch_widget import FetchWidget
-from widgets.edit_widget import EditWidget
+from widgets.view_widget import ViewWidget
 
 
 class MainWindowGui(GUI, QMainWindow):
@@ -96,7 +96,7 @@ class MainWindowGui(GUI, QMainWindow):
             window.close()
         for window in list(SelectWidget.instances):
             window.close()
-        for window in list(EditWidget.instances):
+        for window in list(ViewWidget.instances):
             window.close()
         QMainWindow.closeEvent(self, event)
 
@@ -151,11 +151,11 @@ class MainWindowGui(GUI, QMainWindow):
         if data_names == None:
             data_names = get_all_data_names()
 
-        # self.edit_widget.table_name.clear()
-        # self.edit_widget.table_name.addItems(data_names)
+        # self.view_widget.table_name.clear()
+        # self.view_widget.table_name.addItems(data_names)
         # self.select_widget.table_name.clear()
         # self.select_widget.table_name.addItems(data_names)
-        EditWidget.set_table_names(data_names)
+        ViewWidget.set_table_names(data_names)
         SelectWidget.set_table_names(data_names)
 
         self.graphing_widget.data_name.clear()

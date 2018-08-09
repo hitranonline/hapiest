@@ -433,7 +433,7 @@
      <item>
       <widget class="QPushButton" name="edit_button">
        <property name="text">
-        <string>Edit</string>
+        <string>View Tables</string>
        </property>
       </widget>
      </item>

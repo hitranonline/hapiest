@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, uic
 
 from utils.isotopologue import *
-from widgets.edit_widget import EditWidget
+from widgets.view_widget import ViewWidget
 from widgets.select_widget import SelectWidget
 from worker.hapi_worker import *
 
@@ -279,12 +279,12 @@ class FetchWidget(QWidget):
         return False
 
     def __on_edit_clicked(self, *args):
-        new_edit_window = EditWidget(self.parent)
+        new_edit_window = ViewWidget(self.parent)
         # new_edit_window.installEventFilter(self)
         self.children.append(new_edit_window)
         new_edit_window.show()
 
-        EditWidget.set_table_names(get_all_data_names())
+        ViewWidget.set_table_names(get_all_data_names())
 
     def __on_select_clicked(self, *args):
         new_select_window = SelectWidget(self.parent)
