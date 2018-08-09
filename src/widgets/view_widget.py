@@ -1,9 +1,9 @@
-from PyQt5 import QtCore, QtWidgets, QtGui, uic
-from PyQt5.QtGui import QFont
+from PyQt5 import QtWidgets, QtGui, uic
 from PyQt5.QtWidgets import *
 
 from utils.hapiest_util import program_icon
 from widgets.hapi_table_view import HapiTableView
+
 
 class ViewWidget(QWidget):
 

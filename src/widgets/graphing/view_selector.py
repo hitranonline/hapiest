@@ -1,7 +1,4 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore, Qt
-from PyQt5.QtCore import *
-from PyQt5.QtChart import *
-from PyQt5.QtGui import *
+from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
 class ViewSelector(QDialog):

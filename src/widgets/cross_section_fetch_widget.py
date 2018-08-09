@@ -1,6 +1,7 @@
+from typing import List
+
 from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton
-from typing import List
 
 from utils.isotopologue import Isotopologue
 

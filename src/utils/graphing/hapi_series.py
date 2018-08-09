@@ -1,6 +1,4 @@
-from PyQt5 import QtChart
 from PyQt5.QtChart import QLineSeries, QAbstractAxis, QChart, QScatterSeries
-from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPen, QBrush, QColor
 
 

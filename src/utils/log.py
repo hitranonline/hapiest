@@ -1,6 +1,6 @@
 import sys
-
 from multiprocessing import Queue
+
 from PyQt5 import QtCore
 
 

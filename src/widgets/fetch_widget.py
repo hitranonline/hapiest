@@ -1,12 +1,13 @@
+from PyQt5 import QtGui, uic
 from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui, uic
 
 from utils.isotopologue import *
-from widgets.view_widget import ViewWidget
 from widgets.select_widget import SelectWidget
+from widgets.view_widget import ViewWidget
 from worker.hapi_worker import *
+
 
 class FetchWidget(QWidget):
 

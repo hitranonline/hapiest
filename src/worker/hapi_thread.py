@@ -1,6 +1,7 @@
-from PyQt5.QtCore import QThread
-from typing import *
 from time import sleep
+from typing import *
+
+from PyQt5.QtCore import QThread
 
 
 class HapiThread(QThread):

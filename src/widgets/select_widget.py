@@ -1,10 +1,12 @@
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import *
+
 from utils.dsl import DSL
 from utils.hapiest_util import program_icon
 from utils.log import err_log, debug, log
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
+
 
 class SelectWidget(QWidget):
 

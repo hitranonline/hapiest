@@ -1,17 +1,15 @@
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
+from PyQt5.QtWidgets import QMainWindow, QAction, \
     QStatusBar
 
 from widgets.about_widget import AboutWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
-from widgets.graphing.graphing_widget import *
-from widgets.molecule_info_widget import MoleculeInfoWidget
-from windows.molecule_info_window import MoleculeInfoWindow
-from widgets.gui import GUI
-
-from widgets.select_widget import SelectWidget
 from widgets.fetch_widget import FetchWidget
+from widgets.graphing.graphing_widget import *
+from widgets.gui import GUI
+from widgets.molecule_info_widget import MoleculeInfoWidget
+from widgets.select_widget import SelectWidget
 from widgets.view_widget import ViewWidget
+from windows.molecule_info_window import MoleculeInfoWindow
 
 
 class MainWindowGui(GUI, QMainWindow):

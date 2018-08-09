@@ -1,9 +1,10 @@
 import os.path
-import toml
 import sys
 
+import toml
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
     QCheckBox
+
 
 class ConfigEditorWidget(QWidget):
 

@@ -1,14 +1,16 @@
+import builtins
+
 from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtWidgets import QLayout, QComboBox
 
+from utils.graphing.graph_type import GraphType
 from utils.log import err_log
 from utils.metadata.hapi_metadata import *
-from worker.hapi_worker import HapiWorker
-from worker.work_request import WorkRequest
 from widgets.gui import GUI
 from windows.graph_display_window import GraphDisplayWindow
-from utils.graphing.graph_type import GraphType
-import builtins
+from worker.hapi_worker import HapiWorker
+from worker.work_request import WorkRequest
+
 
 class GraphingWidget(GUI, QtWidgets.QWidget):
 

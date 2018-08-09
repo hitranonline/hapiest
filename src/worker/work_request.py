@@ -1,17 +1,15 @@
-from typing import *
 import multiprocessing as mp
 import traceback
+from typing import *
 
 from hapi import *
-
-from worker.work_result import WorkResult
-
-from utils.log import *
-from utils.metadata.config import Config
+from utils.fetch_error import FetchErrorKind, FetchError
 from utils.graphing.band import Band, Bands
 from utils.hapiest_util import echo
+from utils.log import *
+from utils.metadata.config import Config
 from utils.metadata.hapi_metadata import HapiMetaData
-from utils.fetch_error import FetchErrorKind, FetchError
+from worker.work_result import WorkResult
 
 
 class WorkFunctions:

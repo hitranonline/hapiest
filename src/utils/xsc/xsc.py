@@ -1,7 +1,7 @@
-from utils.log import err_log
 import json
 import time
 
+from utils.log import err_log
 from utils.metadata.config import Config
 
 

@@ -1,10 +1,10 @@
+from utils.graphing.graph_type import GraphType
 from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
 from widgets.graphing.graph_display_window_gui import *
-from worker.hapi_worker import *
-from worker.work_result import WorkResult
-from worker.work_request import WorkRequest
 from windows.window import Window
-from utils.graphing.graph_type import GraphType
+from worker.hapi_worker import *
+from worker.work_request import WorkRequest
+from worker.work_result import WorkResult
 
 
 class GraphDisplayWindow(Window):

@@ -1,6 +1,6 @@
-from PyQt5 import QtWidgets, QtCore, uic, QtGui
-from types import *
 from typing import *
+
+from PyQt5 import QtWidgets
 
 
 class HapiSourceWidget(QtWidgets.QTextEdit):

@@ -1,14 +1,13 @@
-from functools import reduce
+import itertools
 
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
+from utils.hapiest_util import *
+from utils.lines import *
 from worker.work_request import *
 from worker.work_result import *
-from utils.lines import *
-import itertools
-from utils.hapiest_util import *
 
 
 class HapiLineEdit(QLineEdit):
