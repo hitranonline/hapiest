@@ -1,3 +1,5 @@
+import functools
+
 from PyQt5.QtWidgets import QMainWindow, QAction, \
     QStatusBar
 
@@ -147,9 +149,8 @@ class MainWindowGui(GUI, QMainWindow):
         *This method initializes the default table values for the fetch tab and the edit tab.*
         """
         if data_names == None:
-            data_names = get_all_data_names()
-
-        non_xsc_data = list(filter(lambda name: not name.endswith('.xsc'), data_names))
+            data_names = list(get_all_data_names())
+        non_xsc_data = list(data for data in data_names if not data.endswith(".xsc"))
 
         # self.view_widget.table_name.clear()
         # self.view_widget.table_name.addItems(data_names)

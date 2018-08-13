@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPush
 
 from utils.isotopologue import Isotopologue
 from utils.xsc.api import CrossSectionApi
-from utils.xsc.xsc import CrossSectionMolecules, CrossSectionMeta
+from utils.xsc import CrossSectionMolecules, CrossSectionMeta, CrossSectionFilter
 from worker.hapi_worker import HapiWorker, WorkRequest
 
 
@@ -72,6 +72,30 @@ class CrossSectionFetchWidget(QWidget):
     ###
     # Event handlers
     ###
+
+    def __on_apply_filters_clicked(self, _checked: bool):
+        if self.pressure_check.isChecked():
+            pressure = [self.pressure_min.value(), self.pressure_max.value()]
+            pressure.sort()
+        else:
+            pressure = None
+
+        if self.wn_check.isChecked():
+            wn = [self.wn_min.value(), self.pressure_max.value()]
+            wn.sort()
+        else:
+            wn = None
+
+        if self.temp_check.isChecked():
+            temp = [self.temp_min.value(), self.temp_max.value()]
+            temp.sort()
+        else:
+            temp = None
+
+        filter = CrossSectionFilter(self.get_selected_molecule_id(), wn, pressure, temp)
+
+        self.cross_section.clear()
+        self.cross_section.addItems(filter.get_cross_sections())
 
     def __on_molecule_selection_changed(self, current_text: str):
         self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())

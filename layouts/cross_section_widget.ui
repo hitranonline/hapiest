@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>924</width>
-    <height>579</height>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,7 +81,7 @@
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="pressure_max">
          <property name="suffix">
-          <string>atm</string>
+          <string>torr</string>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -91,7 +91,7 @@
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="pressure_min">
          <property name="suffix">
-          <string>atm</string>
+          <string>torr</string>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
