@@ -1,22 +1,60 @@
 import json
 import time
+from typing import List, Optional, Any, Dict
 
 from utils.log import err_log
 from utils.metadata.config import Config
+from utils.xsc.api import CrossSectionApi
 
 
-class CrossSectionRequestException(Exception):
+class CrossSectionMolecules:
+    FROM_MID = {}
+    FROM_NAME = {}
+    FROM_HTML = {}
+    MOLECULES = []
 
-    INVALID_API_KEY = 0
-    CONNECTION_FAILED = 1
-    INVALID_JSON = 2
+    PATH = "res/xsc/molecules.json"
 
-    def __init__(self, reason: int, description: str):
-        Exception.__init__(self)
-        self.reason = reason
-        self.description = description
+    @staticmethod
+    def init():
+        try:
+            with open(CrossSectionMolecules.PATH, "r") as file:
+               contents = file.read()
+            molecules = json.loads(contents)
+            CrossSectionMolecules.MOLECULES = molecules
+        except Exception as e:
+            print("Encountered error '{}' while initializing CrossSectionMolecules".format(str(e)))
+            return
 
-class MoleculeCrossSectionMeta:
+        for molecule in molecules:
+            CrossSectionMolecules.FROM_MID[molecule['id']] = molecule
+            CrossSectionMolecules.FROM_NAME[molecule['ordinary_formula']] = molecule
+            CrossSectionMolecules.FROM_HTML[molecule['ordinary_formula_html']] = molecule
+
+    @staticmethod
+    def molecule_id_to_name(molecule_id: int) -> Optional[str]:
+        if molecule_id not in CrossSectionMolecules.FROM_MID:
+            return None
+        else:
+            return CrossSectionMolecules.FROM_MID[molecule_id]['ordinary_formula']
+
+    @staticmethod
+    def name_to_molecule_id(name: str) -> Optional[int]:
+        if name not in CrossSectionMolecules.FROM_NAME:
+            return None
+        else:
+            return CrossSectionMolecules.FROM_NAME[name]['id']
+
+    @staticmethod
+    def all_names() -> List[str]:
+        return list(CrossSectionMolecules.FROM_NAME.keys())
+
+    @staticmethod
+    def all_molecules() -> List[str]:
+        return list(CrossSectionMolecules.MOLECULES)
+
+
+class CrossSectionMeta:
     """
     This class represents meta data about all of a molecules available
     cross-sections. It can cache to disk in the '{data}/.cache/xsc/' folder to prevent
@@ -58,9 +96,7 @@ class MoleculeCrossSectionMeta:
 
     """
 
-    ##
-    # TODO: make this proper, maybe move it to a more focal location.
-    API_ROOT = "http://hitran.org/"
+    molecule_metas = {}
 
     def __init__(self, molecule_id):
         """
@@ -70,8 +106,21 @@ class MoleculeCrossSectionMeta:
 
         self.metas = []
 
-        if not self.initialize_from_cache():
-            self.initialize_from_web()
+        self.api = CrossSectionApi()
+
+        # initialization basically means assigning CrossSectionMeta.all_metas a valid value
+        if str(molecule_id) not in CrossSectionMeta.molecule_metas and not self.initialize_from_cache():
+            if not self.initialize_from_web():
+                raise Exception("Failed to download xsc metadata for molecule_id = {}".format(self.molecule_id))
+
+        if self.molecule_id in CrossSectionMeta.molecule_metas:
+            self.metas = CrossSectionMeta.molecule_metas[self.molecule_id]
+
+    def molecule_id_matches(self, d: Dict[str, Any]):
+        return 'molecule_id' in d and d['molecule_id'] == self.molecule_id
+
+    def get_all_filenames(self) -> List[str]:
+        return list(map(lambda x: x['filename'], self.metas))
 
     def initialize_from_cache(self):
         """
@@ -81,47 +130,55 @@ class MoleculeCrossSectionMeta:
         """
         import os.path
 
-        cache_path = '{}/.cache/xsc/'.format(Config.data_folder)
-
+        cache_path = '{}/.cache/'.format(Config.data_folder)
+        xsc_cache_path = '{}/xsc'.format(cache_path)
         if not os.path.exists(cache_path):
             os.mkdir(cache_path)
+            os.mkdir(xsc_cache_path)
+            return False
 
-        molecule_cache_path = '{}/{}.xscm'.format(cache_path, str(self.molecule_id))
+        molecule_cache_path = '{}/cache.xscm'.format(xsc_cache_path, self.molecule_id)
 
         if os.path.exists(molecule_cache_path) and os.path.isfile(molecule_cache_path):
             try:
                 with open(molecule_cache_path, 'r') as file:
-                    text = file.read() # This reads whoe whole contents of the file.
+                    text = file.read()  # This reads whole contents of the file.
                 parsed = json.loads(text)
+                # It has been more than 24 hours since this cached file was retrieved, returning false will re-retrieve
+                # it.
                 if time.time() > parsed['timestamp'] + 60*60*24:
                     return False
-                self.metas = parsed['metas']
+
             except Exception as e:
                 err_log("Encountered exception '{}'".format(str(e)))
 
         return False
 
     def initialize_from_web(self):
-        import urllib.request as url
+        if str(self.molecule_id) not in CrossSectionMeta.molecule_metas:
+            res = self.api.request_xsc_meta()  # This will fetch meta data about every cross section
+            if type(res) == list:
+                self.add_meta_objects(res)
+            else:
+                return False
         try:
-            content = url.urlopen("{}?apikey={}&molecule_ids={}".format(MoleculeCrossSectionMeta.API_ROOT, Config.hapi_api_key, str(self.molecule_id))).read()
-        except Exception as e:
-            return CrossSectionRequestException(CrossSectionRequestException.CONNECTION_FAILED, str(e))
-
-        try:
-            parsed = json.loads(content)
-        except Exception as e:
-            # TODO:
-            # Add a clause here that checks the response for indications that the HAPI API KEY is invalid.
-            return CrossSectionRequestException(CrossSectionRequestException.INVALID_JSON, str(e))
-
-        self.metas = parsed
-        try:
-            path = '{}/.cache/xsc/{}.xscm'.format(Config.data_folder, str(self.molecule_id))
+            path = '{}/.cache/xsc/cache.xscm'.format(Config.data_folder, str(self.molecule_id))
             with open(path, "w+") as file:
                 file.write(json.dumps({
                     'timestamp': int(time.time()),
-                    'metas': parsed
+                    'metas': res
                 }))
-        except:
-            pass
+        except Exception as _:
+            print("Failed to write to CrossSectionMeta cache")
+
+        return True
+
+    def add_meta_objects(self, meta_objs: List[Dict]):
+        def insert(meta_obj):
+            ind = meta_obj['molecule_id']
+            if str(ind) in CrossSectionMeta.molecule_metas:
+                CrossSectionMeta.molecule_metas[ind].append(meta_obj)
+            else:
+                CrossSectionMeta.molecule_metas[ind] = [meta_obj]
+
+        list(map(insert, meta_objs))

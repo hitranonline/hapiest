@@ -6,7 +6,7 @@ from PyQt5.QtGui import QIcon
 from utils.metadata.config import *
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
-DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par)\\Z')
+DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par|xsc)\\Z')
 
 ICON = None
 def program_icon():

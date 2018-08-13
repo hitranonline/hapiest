@@ -115,7 +115,7 @@
    </widget>
    <widget class="QMenu" name="menuScale">
     <property name="title">
-     <string>Scale</string>
+     <string>Axis</string>
     </property>
     <widget class="QMenu" name="menuX_Axis">
      <property name="enabled">
@@ -145,7 +145,7 @@
   </widget>
   <action name="view_fit">
    <property name="text">
-    <string>Fit</string>
+    <string>Reset</string>
    </property>
   </action>
   <action name="save_as_csv">
@@ -210,7 +210,7 @@
   </action>
   <action name="exact_fit">
    <property name="text">
-    <string>Exact</string>
+    <string>Custom</string>
    </property>
   </action>
   <action name="x_log10">

@@ -149,12 +149,16 @@ class MainWindowGui(GUI, QMainWindow):
         if data_names == None:
             data_names = get_all_data_names()
 
+        non_xsc_data = list(filter(lambda name: not name.endswith('.xsc'), data_names))
+
         # self.view_widget.table_name.clear()
         # self.view_widget.table_name.addItems(data_names)
         # self.select_widget.table_name.clear()
         # self.select_widget.table_name.addItems(data_names)
-        ViewWidget.set_table_names(data_names)
-        SelectWidget.set_table_names(data_names)
+
+        # cross sections can only be graphed, not modified or transformed using select.
+        ViewWidget.set_table_names(non_xsc_data)
+        SelectWidget.set_table_names(non_xsc_data)
 
         self.graphing_widget.data_name.clear()
         self.graphing_widget.data_name.addItems(data_names)

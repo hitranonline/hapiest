@@ -1,9 +1,12 @@
 from typing import List
 
-from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton
+from PyQt5 import uic, QtCore
+from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton, QCompleter
 
 from utils.isotopologue import Isotopologue
+from utils.xsc.api import CrossSectionApi
+from utils.xsc.xsc import CrossSectionMolecules, CrossSectionMeta
+from worker.hapi_worker import HapiWorker, WorkRequest
 
 
 class CrossSectionFetchWidget(QWidget):
@@ -14,6 +17,8 @@ class CrossSectionFetchWidget(QWidget):
 
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
+
+        self.parent = parent
 
         self.wn_check: QCheckBox = None
         self.wn_min: QDoubleSpinBox = None
@@ -33,6 +38,8 @@ class CrossSectionFetchWidget(QWidget):
         self.fetch_button: QPushButton = None
         self.apply_filters: QPushButton = None
 
+        self.cross_section_meta: CrossSectionMeta = None
+
         uic.loadUi('layouts/cross_section_widget.ui', self)
 
         self.pressure_check.toggled.connect(self.gen_toggle_function([self.pressure_max, self.pressure_min]))
@@ -47,9 +54,48 @@ class CrossSectionFetchWidget(QWidget):
         self.wn_check.toggle()
         self.pressure_check.toggle()
 
-        for mol_id, molecule_list in Isotopologue.molecules.items():
-            molecule = molecule_list[0]
-            self.molecule.addItem(molecule.molecule_name)
+        self.fetch_button.clicked.connect(self.__on_fetch_clicked)
+        self.apply_filters.clicked.connect(self.__on_apply_filters_clicked)
+
+        self.molecule.addItems(CrossSectionMolecules.all_names())
+        self.molecule.setEditable(True)
+        self.completer: QCompleter = QCompleter(CrossSectionMolecules.all_names(), self)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
+        self.molecule.setCompleter(self.completer)
+
+        self.molecule.currentTextChanged.connect(self.__on_molecule_selection_changed)
+        self.__on_molecule_selection_changed(self.molecule.currentText())
 
     def gen_toggle_function(self, other_widgets: List[QWidget]):
         return lambda checked: list(map(lambda widget: widget.setDisabled(not checked), other_widgets))
+
+    ###
+    # Event handlers
+    ###
+
+    def __on_molecule_selection_changed(self, current_text: str):
+        self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())
+        self.cross_section.clear()
+        items = self.cross_section_meta.get_all_filenames()
+        self.cross_section.addItems(items)
+        if len(items) == 0:
+            self.fetch_button.setDisabled(True)
+
+    def __on_fetch_clicked(self, _checked: bool):
+        args = HapiWorker.echo(xsc = self.cross_section.currentText())
+        self.fetch_button.setDisabled(True)
+        self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSC, args, self.__on_fetch_xsc_done)
+        self.worker.start()
+
+    def __on_fetch_xsc_done(self, res):
+        _result = res.result
+        self.parent.populate_table_lists()
+
+    ###
+    # Getters
+    ###
+
+    def get_selected_molecule_id(self) -> int:
+        selected_molecule_name = self.molecule.currentText()
+        mid = CrossSectionMolecules.name_to_molecule_id(selected_molecule_name)
+        return mid

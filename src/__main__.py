@@ -46,6 +46,10 @@ def main():
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
+    from utils.xsc.xsc import CrossSectionMolecules
+    # Loads molecule meta info from a static json file
+    CrossSectionMolecules.init()
+
     app = App(sys.argv)
 
     window = MainWindow()
