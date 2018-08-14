@@ -67,7 +67,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>34</width>
+           <width>30</width>
            <height>20</height>
           </size>
          </property>
@@ -543,6 +543,22 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_32">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <property name="spacing">
             <number>18</number>
@@ -634,7 +650,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>60</width>
+             <width>61</width>
              <height>20</height>
             </size>
            </property>
