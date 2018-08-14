@@ -353,7 +353,7 @@ class WorkFunctions:
 
     @staticmethod
     def download_xsc(name: str, **kwargs):
-        from utils.xsc.api import CrossSectionApi
+        from utils.api import CrossSectionApi
         api = CrossSectionApi()
         res = api.download_xsc(name)
         if res == False:

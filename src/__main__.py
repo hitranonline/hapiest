@@ -2,6 +2,8 @@ import os
 import re
 import sys
 
+from utils.metadata.molecule import MoleculeMeta
+
 if sys.version_info < (3, 6):
     print('You must have Python 3 installed to use hapiest - current version is ' + str(sys.version))
     sys.exit(0)
@@ -46,9 +48,7 @@ def main():
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
-    from utils.xsc import CrossSectionMolecules
-    # Loads molecule meta info from a static json file
-    CrossSectionMolecules.init()
+    _ = MoleculeMeta(0)
 
     app = App(sys.argv)
 

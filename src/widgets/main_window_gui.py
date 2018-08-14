@@ -1,8 +1,9 @@
 import functools
 
 from PyQt5.QtWidgets import QMainWindow, QAction, \
-    QStatusBar
+    QStatusBar, QCompleter
 
+from utils.metadata.molecule import MoleculeMeta
 from widgets.about_widget import AboutWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 from widgets.fetch_widget import FetchWidget
@@ -138,11 +139,13 @@ class MainWindowGui(GUI, QMainWindow):
         *Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.*
         """
         # our list of molecule names in the gui
-        for molecule_id, _ in Isotopologue.molecules.items():
-            if molecule_id >= 1000:
-                continue
-            molecule = Isotopologue.from_molecule_id(molecule_id)
-        self.molecules_current_molecule.addItems(list(set(get_all_json_molecule_names())))
+        molecule = MoleculeMeta(0)
+        self.molecules_current_molecule.addItems(list(set(molecule.all_formulas())))
+        self.completer: QCompleter = QCompleter(molecule.all_formulas(), self)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
+        self.molecules_current_molecule.setEditable(True)
+        self.molecules_current_molecule.setCompleter(self.completer)
+
 
     def populate_table_lists(self, data_names=None):
         """

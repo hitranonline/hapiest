@@ -3,9 +3,8 @@ from typing import List
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton, QCompleter
 
-from utils.isotopologue import Isotopologue
-from utils.xsc.api import CrossSectionApi
-from utils.xsc import CrossSectionMolecules, CrossSectionMeta, CrossSectionFilter
+from utils.metadata.molecule import MoleculeMeta
+from utils.xsc import CrossSectionMeta, CrossSectionFilter
 from worker.hapi_worker import HapiWorker, WorkRequest
 
 
@@ -57,9 +56,9 @@ class CrossSectionFetchWidget(QWidget):
         self.fetch_button.clicked.connect(self.__on_fetch_clicked)
         self.apply_filters.clicked.connect(self.__on_apply_filters_clicked)
 
-        self.molecule.addItems(CrossSectionMolecules.all_names())
+        self.molecule.addItems(MoleculeMeta.all_names())
         self.molecule.setEditable(True)
-        self.completer: QCompleter = QCompleter(CrossSectionMolecules.all_names(), self)
+        self.completer: QCompleter = QCompleter(MoleculeMeta.all_names(), self)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
         self.molecule.setCompleter(self.completer)
 
@@ -121,5 +120,5 @@ class CrossSectionFetchWidget(QWidget):
 
     def get_selected_molecule_id(self) -> int:
         selected_molecule_name = self.molecule.currentText()
-        mid = CrossSectionMolecules.name_to_molecule_id(selected_molecule_name)
-        return mid
+        mid = MoleculeMeta(selected_molecule_name)
+        return mid.id

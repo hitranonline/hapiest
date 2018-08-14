@@ -1,22 +1,32 @@
 import urllib.request
-import xlrd
-
-book = xlrd.open_workbook("mols_all.xlsx")
-sheet = book.sheet_by_index(0)
 
 url_prefix = "https://cactus.nci.nih.gov/chemical/structure/"
-url_suffix = "/image?width=500&height=500&linewidth=2&symbolfontsize=16"
-path_prefix = ".\\structural_diagrams"
-for i in range(sheet.nrows):
-    if not i == 0 and not sheet.cell_value(i, 0) == "" and not sheet.cell_value(i, 6) == "":
-        inchi = sheet.cell_value(i, 6)
-        filenum = sheet.cell_value(i, 0)
+url_suffix = "/image?width=500&height=500&linewidth=4&symbolfontsize=32"
+path_prefix = "../molecules"
+import os
+if not os.path.isfile("../../../data/.cache/.molm"):
+    print("Run hapi with the data directory set to 'data' and try again.")
+    os._exit(-1)
+import json
+text = ''
+with open('../../../data/.cache/.molm', 'r') as file:
+    text = file.read()
+parsed = json.loads(text)
+if 'cached' in parsed:
+    parsed = json.loads(parsed['cached'])
+
+for molecule in parsed:
+        inchi = molecule['inchi']
         #print(inchi)
         #print(int(filenum))
         inchifixed = inchi.replace('(', '%28').replace(')', '%29')
         #print(inchifixed)
         url = url_prefix + inchifixed + url_suffix
+        print(url)
         #print(url)
-        filename = str(int(filenum)) + ".jpg"
-        path = path_prefix + "\\" + filename
-        urllib.request.urlretrieve(url, path)
+        filename = str(molecule['ordinary_formula']) + ".gif"
+        path = path_prefix + "/" + filename
+        try:
+            urllib.request.urlretrieve(url, path)
+        except:
+            print("Failed to retreive {}".format(filename))

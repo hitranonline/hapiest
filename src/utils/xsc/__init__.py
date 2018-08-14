@@ -1,57 +1,10 @@
 import json
-import time
+from datetime import timedelta
 from typing import List, Optional, Any, Dict, Tuple
 
+from utils.cache import JsonCache
 from utils.log import err_log
-from utils.metadata.config import Config
-from utils.xsc.api import CrossSectionApi
-
-
-class CrossSectionMolecules:
-    FROM_MID = {}
-    FROM_NAME = {}
-    FROM_HTML = {}
-    MOLECULES = []
-
-    PATH = "res/xsc/molecules.json"
-
-    @staticmethod
-    def init():
-        try:
-            with open(CrossSectionMolecules.PATH, "r") as file:
-               contents = file.read()
-            molecules = json.loads(contents)
-            CrossSectionMolecules.MOLECULES = molecules
-        except Exception as e:
-            print("Encountered error '{}' while initializing CrossSectionMolecules".format(str(e)))
-            return
-
-        for molecule in molecules:
-            CrossSectionMolecules.FROM_MID[molecule['id']] = molecule
-            CrossSectionMolecules.FROM_NAME[molecule['ordinary_formula']] = molecule
-            CrossSectionMolecules.FROM_HTML[molecule['ordinary_formula_html']] = molecule
-
-    @staticmethod
-    def molecule_id_to_name(molecule_id: int) -> Optional[str]:
-        if molecule_id not in CrossSectionMolecules.FROM_MID:
-            return None
-        else:
-            return CrossSectionMolecules.FROM_MID[molecule_id]['ordinary_formula']
-
-    @staticmethod
-    def name_to_molecule_id(name: str) -> Optional[int]:
-        if name not in CrossSectionMolecules.FROM_NAME:
-            return None
-        else:
-            return CrossSectionMolecules.FROM_NAME[name]['id']
-
-    @staticmethod
-    def all_names() -> List[str]:
-        return list(CrossSectionMolecules.FROM_NAME.keys())
-
-    @staticmethod
-    def all_molecules() -> List[str]:
-        return list(CrossSectionMolecules.MOLECULES)
+from utils.api import CrossSectionApi
 
 
 class CrossSectionMeta:
@@ -108,70 +61,21 @@ class CrossSectionMeta:
 
         self.api = CrossSectionApi()
 
-        # initialization basically means assigning CrossSectionMeta.all_metas a valid value
-        if str(molecule_id) not in CrossSectionMeta.molecule_metas and not self.initialize_from_cache():
-            if not self.initialize_from_web():
-                raise Exception("Failed to download xsc metadata for molecule_id = {}".format(self.molecule_id))
+        self.cache = JsonCache(".xscm", self.api.request_xsc_meta, timedelta(days = 1.0))
 
-        if self.molecule_id in CrossSectionMeta.molecule_metas:
-            self.metas = CrossSectionMeta.molecule_metas[self.molecule_id]
+        if not self.cache.ok():
+            err_log("Failed to load xscm from cache.")
+        else:
+            parsed = self.cache.data()
+            self.add_meta_objects(parsed)
+            if self.molecule_id in CrossSectionMeta.molecule_metas:
+                self.metas = CrossSectionMeta.molecule_metas[self.molecule_id]
 
     def molecule_id_matches(self, d: Dict[str, Any]):
         return 'molecule_id' in d and d['molecule_id'] == self.molecule_id
 
     def get_all_filenames(self) -> List[str]:
         return list(map(lambda x: x['filename'], self.metas))
-
-    def initialize_from_cache(self):
-        """
-        Since the meta data is sent in JSON format it is easy to cache. See if there is a cache entry for the molecule,
-        if it is check the date on it, if it is less than a day old use that otherwise fail.
-        :return:
-        """
-        import os.path
-
-        cache_path = '{}/.cache/'.format(Config.data_folder)
-        xsc_cache_path = '{}/xsc'.format(cache_path)
-        if not os.path.exists(cache_path):
-            os.mkdir(cache_path)
-            os.mkdir(xsc_cache_path)
-            return False
-
-        molecule_cache_path = '{}/cache.xscm'.format(xsc_cache_path, self.molecule_id)
-
-        if os.path.exists(molecule_cache_path) and os.path.isfile(molecule_cache_path):
-            try:
-                with open(molecule_cache_path, 'r') as file:
-                    text = file.read()  # This reads whole contents of the file.
-                parsed = json.loads(text)
-                # It has been more than 24 hours since this cached file was retrieved, returning false will re-retrieve
-                # it.
-                if int(time.time()) > parsed['timestamp'] + 60*60*24:
-                    return False
-                self.add_meta_objects(parsed['metas'])
-            except Exception as e:
-                err_log("Encountered exception '{}'".format(str(e)))
-                return False
-
-        return True
-
-    def initialize_from_web(self):
-        res = self.api.request_xsc_meta()  # This will fetch meta data about every cross section
-        if type(res) == list:
-            self.add_meta_objects(res)
-        else:
-            return False
-        try:
-            path = '{}/.cache/xsc/cache.xscm'.format(Config.data_folder, str(self.molecule_id))
-            with open(path, "w+") as file:
-                file.write(json.dumps({
-                    'timestamp': int(time.time()),
-                    'metas': res
-                }))
-        except Exception as e:
-            print("Failed to write to CrossSectionMeta cache: {}".format(str(e)))
-            return False
-        return True
 
     def add_meta_objects(self, meta_objs: List[Dict]):
         def insert(meta_obj):

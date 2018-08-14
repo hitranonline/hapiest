@@ -247,7 +247,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 continue
             dx = series.step
             index = int((px - points[0].x()) / dx)
-            print("index = {}, len = {}, step = {}".format(index, len(points), dx))
             np = points[index]
             distance = dist(point, np)
             if distance < min_dist:
