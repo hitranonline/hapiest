@@ -1,15 +1,16 @@
 import multiprocessing
 from multiprocessing import Process
-from typing import *
 from types import TracebackType
-from test.test import Test
-from test.fail_test import FailTest
-from test.throw_test import ThrowTest
-from test.hapi_sources_test import HapiSourcesTest
-from test.molecule_info_test import MoleculeInfoTest
-from test.graph_display_test import GraphDisplayTest
+from typing import *
+
 from test.band_display_test import BandDisplayTest
 from test.config_editor_test import ConfigEditorTest
+from test.fail_test import FailTest
+from test.graph_display_test import GraphDisplayTest
+from test.hapi_sources_test import HapiSourcesTest
+from test.molecule_info_test import MoleculeInfoTest
+from test.test import Test
+from test.throw_test import ThrowTest
 
 tests: List[Test] = [
     Test(),

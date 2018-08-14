@@ -1,4 +1,3 @@
-import sys
 import threading
 from time import sleep
 
@@ -19,7 +18,7 @@ sources = {
 }
 
 from test.test import Test
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from widgets.molecule_info_widget import MoleculeInfoWidget
 
 class MoleculeInfoTest(Test):

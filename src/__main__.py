@@ -1,6 +1,5 @@
 import os
 import re
-import inspect
 import sys
 
 if sys.version_info < (3, 6):
@@ -14,14 +13,11 @@ srcre = re.compile('.+src\\Z')
 if srcre.match(os.getcwd()):
     os.chdir('..')
 
-from PyQt5 import QtWidgets, QtCore
 from windows.main_window import *
 from worker.hapi_worker import *
-from utils.log import *
 from worker.work_request import *
 from worker.hapi_thread import HapiThread
-from multiprocessing import Process, freeze_support
-import multiprocessing
+from multiprocessing import freeze_support
 
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
@@ -49,6 +45,10 @@ def main():
     # Hapi is now started automatically in the work process
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
+
+    from utils.xsc import CrossSectionMolecules
+    # Loads molecule meta info from a static json file
+    CrossSectionMolecules.init()
 
     app = App(sys.argv)
 

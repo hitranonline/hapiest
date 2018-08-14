@@ -1,6 +1,9 @@
-from PyQt5 import QtGui, QtWidgets, uic, QtCore
 from typing import List
+
+from PyQt5 import QtCore
+
 from widgets.gui import GUI
+
 
 class Window(QtCore.QObject):
 

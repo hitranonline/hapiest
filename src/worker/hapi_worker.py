@@ -1,7 +1,9 @@
+import time
+
 from PyQt5 import QtWidgets
+
 from worker.hapi_thread import HapiThread
 from worker.work_request import *
-import time
 
 
 class HapiWorker(HapiThread):

@@ -1,12 +1,13 @@
 from typing import List
 
-from PyQt5.QtCore import *
 from PyQt5.QtChart import *
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QFrame, QScrollArea, QSizePolicy, \
     QSpacerItem
 
 from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
+
 
 class BandWidget(QWidget):
 

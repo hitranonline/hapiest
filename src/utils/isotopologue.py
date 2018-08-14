@@ -1,6 +1,7 @@
+from typing import *
+
 from hapi import *
 from utils.hapiest_util import *
-from typing import *
 
 MoleculeId = int
 IsotopologueId = int

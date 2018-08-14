@@ -1,14 +1,13 @@
-from functools import reduce
+import itertools
 
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
+from utils.hapiest_util import *
+from utils.lines import *
 from worker.work_request import *
 from worker.work_result import *
-from utils.lines import *
-import itertools
-from utils.hapiest_util import *
 
 
 class HapiLineEdit(QLineEdit):
@@ -96,7 +95,7 @@ class HapiTableView(QTableView):
 
         self.table = None
 
-        self.edit_widget = parent
+        self.view_widget = parent
 
         self.next_button = parent.next_button
         self.back_button = parent.back_button
@@ -146,8 +145,6 @@ class HapiTableView(QTableView):
                 w = self.get_widget(row - self.page_min, col) # self.widgets[row - self.page_min][col]
                 if (row, col) in self.hmd.dirty_cells:
                     w.set_dirty_style()
-                else:
-                    w.set_normal_style()
 
     def current_row(self):
         return self.currentIndex().row()
@@ -184,7 +181,7 @@ class HapiTableView(QTableView):
         """
         Displays first page of info for edit functionity, sets 'on edit' functions.
         """
-        self.edit_widget.setWindowTitle("Editing - {}".format(self.edit_widget.get_table_name()))
+        self.view_widget.setWindowTitle("Viewing - {}".format(self.view_widget.get_table_name()))
         self.table = work_result.result
         self.data = self.table['data']
         lines: Lines = Lines(self.table)
@@ -271,14 +268,13 @@ class HapiTableView(QTableView):
                     w.set_normal_style()
 
                 new_text = (self.column_formats[column] % x).strip()
-                print(new_text)
                 w.setText(new_text)
 
         self.setVisible(False)
         self.resizeColumnsToContents()
         self.setVisible(True)
         
-        self.edit_widget.view_button.setEnabled(True)
+        self.view_widget.view_button.setEnabled(True)
         self.save_button.setEnabled(True)
 
     def remove_worker_by_jid(self, jid: int):
@@ -312,15 +308,15 @@ class HapiTableView(QTableView):
         """
         *Saves table information to local machine.*
         """
-        self.edit_widget.view_button.setDisabled(True)
-        self.edit_widget.table_name.setDisabled(True)
-        self.edit_widget.output_name.setDisabled(True)
-        self.edit_widget.next_button.setDisabled(True)
-        self.edit_widget.back_button.setDisabled(True)
+        self.view_widget.view_button.setDisabled(True)
+        self.view_widget.table_name.setDisabled(True)
+        self.view_widget.output_name.setDisabled(True)
+        self.view_widget.next_button.setDisabled(True)
+        self.view_widget.back_button.setDisabled(True)
         self.save_button.setDisabled(True)
 
         # Name for the new table.
-        output_name = self.edit_widget.get_output_name()
+        output_name = self.view_widget.get_output_name()
 
         worker = HapiWorker(WorkRequest.SAVE_TABLE,
                             {'table': self.table, 'name': output_name},
@@ -341,17 +337,17 @@ class HapiTableView(QTableView):
             return
         self.remove_worker_by_jid(work_result.job_id)
  
-        self.edit_widget.view_button.setEnabled(True)
-        self.edit_widget.table_name.setEnabled(True)
-        self.edit_widget.output_name.setEnabled(True)
-        self.edit_widget.next_button.setEnabled(True)
-        self.edit_widget.back_button.setEnabled(True)
+        self.view_widget.view_button.setEnabled(True)
+        self.view_widget.table_name.setEnabled(True)
+        self.view_widget.output_name.setEnabled(True)
+        self.view_widget.next_button.setEnabled(True)
+        self.view_widget.back_button.setEnabled(True)
         
         table_lists = get_all_data_names() 
-        self.edit_widget.parent.populate_table_lists(table_lists)
-        index = table_lists.index(self.edit_widget.get_output_name())
+        self.view_widget.parent.populate_table_lists(table_lists)
+        index = table_lists.index(self.view_widget.get_output_name())
         if index != -1:
-            self.edit_widget.table_name.setCurrentIndex(index)
+            self.view_widget.table_name.setCurrentIndex(index)
 
 
     def close_table(self):

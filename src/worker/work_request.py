@@ -1,18 +1,26 @@
-from typing import *
 import multiprocessing as mp
 import traceback
+from typing import *
 
 from hapi import *
-
-from worker.work_result import WorkResult
-
-from utils.log import *
-from utils.metadata.config import Config
+from utils.fetch_error import FetchErrorKind, FetchError
 from utils.graphing.band import Band, Bands
 from utils.hapiest_util import echo
+from utils.log import *
+from utils.metadata.config import Config
 from utils.metadata.hapi_metadata import HapiMetaData
-from utils.fetch_error import FetchErrorKind, FetchError
+from worker.work_result import WorkResult
 
+LOCAL_XSC_CACHE = {
+#    'exampletable': {
+#        'x': [1, 2, 3],
+#        'y': [4, 5, 6],
+#    }
+}
+
+def add_xsc_to_cache(name, text):
+    # TODO: Implement this
+    raise Exception("This needs to be implemented!!!!!")
 
 class WorkFunctions:
     @staticmethod
@@ -343,6 +351,18 @@ class WorkFunctions:
 
         return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
 
+    @staticmethod
+    def download_xsc(name: str, **kwargs):
+        from utils.xsc.api import CrossSectionApi
+        api = CrossSectionApi()
+        res = api.download_xsc(name)
+        if res == False:
+            return None
+        else:
+            add_xsc_to_cache(name, res)
+            return name
+
+
 class WorkRequest:
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
         self.job_id = job_id
@@ -364,6 +384,8 @@ class WorkRequest:
     RADIANCE_SPECTRUM: WorkType = 10
     ABSORPTION_SPECTRUM: WorkType = 11
     BANDS: WorkType = 12
+
+    DOWNLOAD_XSC: WorkType = 13
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -406,8 +428,8 @@ class Work:
             WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.graph_absorption_spectrum,
             WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.graph_transmittance_spectrum,
             WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum,
-            WorkRequest.BANDS: WorkFunctions.graph_bands
-
+            WorkRequest.BANDS: WorkFunctions.graph_bands,
+            WorkRequest.DOWNLOAD_XSC: WorkFunctions.download_xsc
         }
 
         WorkFunctions.start_hapi(**{})

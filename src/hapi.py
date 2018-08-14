@@ -23,21 +23,42 @@ import json
 import os, os.path
 import re
 from os import listdir
-from numpy import zeros,array,zeros,setdiff1d,ndarray,arange
-from numpy import place,where,insert,real,polyval
-from numpy import complex128,complex64,int64,int32,float64,float32
+from numpy import array,zeros,setdiff1d,ndarray,arange
+from numpy import place,where, real,polyval
+from numpy import complex128, int64, float64,float32
 from numpy import sqrt,abs,exp,pi,log,sin,cos,tan
 from numpy import convolve
 from numpy import flipud
 from numpy.fft import fft,fftshift
 from numpy import linspace,floor
 from numpy import any,minimum,maximum
-from numpy import modf
 from numpy import sort as npsort
 from bisect import bisect
 #from collections import OrderedDict
 from warnings import warn,simplefilter
 import pydoc
+# import httplib
+# import urllib2
+import json
+import os
+import os.path
+import pydoc
+import re
+from bisect import bisect
+from os import listdir
+# from collections import OrderedDict
+from warnings import warn, simplefilter
+
+from numpy import any, minimum, maximum
+from numpy import array, zeros, setdiff1d, ndarray, arange
+from numpy import complex128, int64, float64, float32
+from numpy import convolve
+from numpy import flipud
+from numpy import linspace, floor
+from numpy import place, where, real, polyval
+from numpy import sort as npsort
+from numpy import sqrt, abs, exp, pi, log, sin, cos, tan
+from numpy.fft import fft, fftshift
 
 # Enable warning repetitions
 simplefilter('always', UserWarning)
@@ -11717,7 +11738,6 @@ def read_hotw(filename):
       nu, coef
     Other lines are omitted.
     """
-    import sys
     f = open(filename,'r')
     nu = []
     coef = []

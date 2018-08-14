@@ -1,12 +1,12 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import *
 import json
 
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+
 from utils.hapiest_util import program_icon
-from widgets.gui import GUI
-from utils.log import *
 from utils.isotopologue import Isotopologue
+from utils.log import *
+
 
 class MoleculeInfoWidget(QWidget):
 

@@ -1,9 +1,7 @@
 import multiprocessing
-from asyncio import sleep
-from typing import *
-from types import TracebackType
-import traceback
 import sys
+import traceback
+
 
 class Test:
     def __init__(self):

@@ -1,23 +1,23 @@
+import json
+import math
+import os
+from typing import *
+
 from PyQt5 import QtGui, QtWidgets, uic
-from PyQt5.QtCore import *
 from PyQt5.QtChart import *
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QOpenGLWidget
 
 from utils.graphics.colors import Colors
+from utils.graphing.graph_type import GraphType
 from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
 from utils.log import *
-from utils.graphing.graph_type import GraphType
-from widgets.gui import GUI
-from widgets.graphing.view_selector import ViewSelector
-from widgets.graphing.hapi_chart_view import HapiChartView
-from typing import *
 from utils.metadata.config import Config
-
-import os
-import json
-import math
+from widgets.graphing.hapi_chart_view import HapiChartView
+from widgets.graphing.view_selector import ViewSelector
+from widgets.gui import GUI
 
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):

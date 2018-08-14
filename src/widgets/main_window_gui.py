@@ -1,17 +1,17 @@
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QTextEdit, QScrollArea, QAction, \
+import functools
+
+from PyQt5.QtWidgets import QMainWindow, QAction, \
     QStatusBar
 
 from widgets.about_widget import AboutWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
-from widgets.graphing.graphing_widget import *
-from widgets.molecule_info_widget import MoleculeInfoWidget
-from windows.molecule_info_window import MoleculeInfoWindow
-from widgets.gui import GUI
-
-from widgets.select_widget import SelectWidget
 from widgets.fetch_widget import FetchWidget
-from widgets.edit_widget import EditWidget
+from widgets.graphing.graphing_widget import *
+from widgets.gui import GUI
+from widgets.molecule_info_widget import MoleculeInfoWidget
+from widgets.select_widget import SelectWidget
+from widgets.view_widget import ViewWidget
+from windows.molecule_info_window import MoleculeInfoWindow
 
 
 class MainWindowGui(GUI, QMainWindow):
@@ -96,7 +96,7 @@ class MainWindowGui(GUI, QMainWindow):
             window.close()
         for window in list(SelectWidget.instances):
             window.close()
-        for window in list(EditWidget.instances):
+        for window in list(ViewWidget.instances):
             window.close()
         QMainWindow.closeEvent(self, event)
 
@@ -149,14 +149,17 @@ class MainWindowGui(GUI, QMainWindow):
         *This method initializes the default table values for the fetch tab and the edit tab.*
         """
         if data_names == None:
-            data_names = get_all_data_names()
+            data_names = list(get_all_data_names())
+        non_xsc_data = list(data for data in data_names if not data.endswith(".xsc"))
 
-        # self.edit_widget.table_name.clear()
-        # self.edit_widget.table_name.addItems(data_names)
+        # self.view_widget.table_name.clear()
+        # self.view_widget.table_name.addItems(data_names)
         # self.select_widget.table_name.clear()
         # self.select_widget.table_name.addItems(data_names)
-        EditWidget.set_table_names(data_names)
-        SelectWidget.set_table_names(data_names)
+
+        # cross sections can only be graphed, not modified or transformed using select.
+        ViewWidget.set_table_names(non_xsc_data)
+        SelectWidget.set_table_names(non_xsc_data)
 
         self.graphing_widget.data_name.clear()
         self.graphing_widget.data_name.addItems(data_names)

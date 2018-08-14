@@ -1,4 +1,3 @@
-from typing import *
 from test.test import Test
 
 class FailTest(Test):

@@ -23,7 +23,7 @@ sources = {
 }
 
 from test.test import Test
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from widgets.hapi_source_widget import HapiSourceWidget
 
 class HapiSourcesTest(Test):

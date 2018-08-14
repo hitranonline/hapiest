@@ -1,10 +1,11 @@
 import math
+import random
 import threading
 from time import sleep
-import random
+
+from PyQt5 import QtWidgets
 
 from test.test import Test
-from PyQt5 import QtWidgets
 from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
 
 

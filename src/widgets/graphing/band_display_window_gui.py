@@ -1,25 +1,22 @@
+import functools
 import math
 from itertools import cycle
 from time import sleep
 
+from PyQt5 import QtGui
+from PyQt5.QtChart import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMainWindow
 
 from utils.graphics.colors import Colors
-from utils.metadata.config import Config
-from utils.graphing.hapi_series import HapiSeries
-from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
-from PyQt5 import QtGui
-from PyQt5.QtCore import *
-from PyQt5.QtChart import *
-from PyQt5.QtGui import *
-
-from widgets.graphing.band_legend import BandLegend, LegendItem
 from utils.graphing.band import Bands
-from utils.log import *
 from utils.graphing.graph_type import GraphType
-
-import functools
-
+from utils.graphing.hapi_series import HapiSeries
+from utils.log import *
+from utils.metadata.config import Config
+from widgets.graphing.band_legend import BandLegend, LegendItem
+from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
 from widgets.graphing.hapi_chart_view import HapiChartView
 
 
