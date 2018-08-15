@@ -12,15 +12,23 @@ from utils.metadata.hapi_metadata import HapiMetaData
 from worker.work_result import WorkResult
 
 LOCAL_XSC_CACHE = {
-#    'exampletable': {
+#    'MOLECULE_PARAMATERS.xsc': { # Keep the .xsc extension on the name
 #        'x': [1, 2, 3],
 #        'y': [4, 5, 6],
-#    }
+#    },
 }
 
 def add_xsc_to_cache(name, text):
-    # TODO: Implement this
-    raise Exception("This needs to be implemented!!!!!")
+    from utils.xsc.parser import XscParser
+    try:
+        parser = XscParser.parse(text)
+        with open(name, 'w+') as file:
+            file.write(text)
+    except Exception as e:
+        print("Failed to add xsc to in memory cache.")
+        return False
+
+    return True
 
 class WorkFunctions:
     @staticmethod
@@ -355,13 +363,14 @@ class WorkFunctions:
     def download_xsc(name: str, **kwargs):
         from utils.api import CrossSectionApi
         api = CrossSectionApi()
-        res = api.download_xsc(name)
+        res: bytes = api.request_xsc(name)
         if res == False:
             return None
         else:
-            add_xsc_to_cache(name, res)
-            return name
-
+            if add_xsc_to_cache(name, res):
+                return name
+            else:
+                return None
 
 class WorkRequest:
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
