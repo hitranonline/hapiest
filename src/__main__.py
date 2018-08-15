@@ -2,8 +2,6 @@ import os
 import re
 import sys
 
-from utils.metadata.molecule import MoleculeMeta
-
 if sys.version_info < (3, 6):
     print('You must have Python 3 installed to use hapiest - current version is ' + str(sys.version))
     sys.exit(0)
@@ -13,8 +11,10 @@ if sys.version_info < (3, 6):
 # If someone launches the program through the command 'python3 __main__.py' this move the working directory to the proper place
 srcre = re.compile('.+src\\Z')
 if srcre.match(os.getcwd()):
+    print(os.getcwd())
     os.chdir('..')
 
+from utils.metadata.molecule import MoleculeMeta
 from windows.main_window import *
 from worker.hapi_worker import *
 from worker.work_request import *

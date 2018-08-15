@@ -172,7 +172,7 @@ class Config():
 
     DEFAULT_CONFIG = ""
 
-    CONFIG_LOCATION = 'Config.toml'
+    CONFIG_LOCATION = os.getcwd() + '/Config.toml'
 
     axisx_ticks = None
     axisy_ticks = None
