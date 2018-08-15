@@ -10,6 +10,9 @@ if sys.version_info < (3, 6):
 
 # If someone launches the program through the command 'python3 __main__.py' this move the working directory to the proper place
 srcre = re.compile('.+src\\Z')
+path, file = os.path.split(sys.argv[0])
+print(f"Path:{path}")
+os.chdir(path)
 if srcre.match(os.getcwd()):
     print(os.getcwd())
     os.chdir('..')

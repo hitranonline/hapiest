@@ -361,7 +361,6 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         try:
             i = 0
             for series in self.all_series():
-                print(series.name())
                 ith_filename = '{} {}.txt'.format(filename[0:len(filename) - 4], series.name())
                 with open(ith_filename, "w") as file:
                     for point in series.pointsVector():

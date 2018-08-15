@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['./src/__main__.py'],
+a = Analysis(['src/__main__.py'],
              pathex=['./hapiest'],
              binaries=[],
-             datas=[('./layouts/*.ui', 'layouts'),('res', 'res')],
+             datas=[('res/', 'res'), ('layouts/', 'layouts')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

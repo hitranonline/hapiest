@@ -18,7 +18,6 @@ class MoleculeMeta:
         if cache.ok():
             data = cache.data()
         else:
-            print(cache.err().description)
             return
         MoleculeMeta.__FORMULA_TO_MID = {}
         MoleculeMeta.__MOLECULE_METADATA = {}
