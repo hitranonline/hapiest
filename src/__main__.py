@@ -23,6 +23,7 @@ from worker.hapi_worker import *
 from worker.work_request import *
 from worker.hapi_thread import HapiThread
 from multiprocessing import freeze_support
+from PyQt5 import sip
 
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
