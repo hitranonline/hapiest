@@ -125,6 +125,7 @@ class CrossSectionApi:
             content = url.urlopen(uri).read()
         # TODO: Add more robust error handling here. It could be a bad connection or a bad API key.
         except Exception as e:
+            print(str(e))
             return HapiApiException(HapiApiException.CONNECTION_FAILED, str(e))
         return content
 

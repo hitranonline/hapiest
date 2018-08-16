@@ -65,6 +65,9 @@ class CrossSectionFetchWidget(QWidget):
         self.molecule.currentTextChanged.connect(self.__on_molecule_selection_changed)
         self.__on_molecule_selection_changed(self.molecule.currentText())
 
+        # Since the cross section functionality is not complete at this time, disable it entirely.
+        self.setDisabled(True)
+
     def gen_toggle_function(self, other_widgets: List[QWidget]):
         return lambda checked: list(map(lambda widget: widget.setDisabled(not checked), other_widgets))
 

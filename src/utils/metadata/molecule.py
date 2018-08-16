@@ -17,6 +17,8 @@ class MoleculeMeta:
         cache = JsonCache(".molm", api.request_molecule_meta, timedelta(days=1))
         if cache.ok():
             data = cache.data()
+        else:
+            return
         MoleculeMeta.__FORMULA_TO_MID = {}
         MoleculeMeta.__MOLECULE_METADATA = {}
 
