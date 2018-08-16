@@ -136,7 +136,7 @@ class Config():
         },
 
         'hapi_api_key': {
-            'default_value': 'You can create an API key at https://hitran.org',
+            'default_value': '0000',
             'display_name': 'HAPI API Key',
             'tool_tip': 'The HAPI API key that is needed to use HAPI v2 functionality.',
             'type': str
@@ -244,11 +244,6 @@ class Config():
         # Config.high_dpi = dict['hapiest']['high_dpi']
         # Config.select_page_length = dict['hapiest']['select_page_length']
         # Config.hapi_api_key = dict['hapiest']['hapi_api_key']
-        if Config.hapi_api_key == '':
-            print('TODO: Add a link to the registration website and directions on how to add it to Cargo.toml')
-            print('If you\'re seeing this, currently, just put anything other than empty string for hapi_api_key in Config.toml and it will work')
-            print('The hapi_api_key found in the Config.toml file is invalid or empty.')
-            sys.exit(0)
 
     # Tries to load a configuration, if it fails
     @staticmethod
