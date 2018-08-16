@@ -36,6 +36,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
         self.workers = []
 
+        self.graph_type: QComboBox = None
         self.line_profile_layout: QLayout = None
         self.wn_layout: QLayout = None
         self.wn_cfg_layout: QLayout = None
@@ -133,16 +134,28 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_standard_parameters(self):
         data_name = self.get_data_name()
-        hmd = HapiMetaData(data_name)
+        if self.is_xsc:
+            header = self.xsc_header
+            Components = []
+            SourceTables = [data_name]
+            Environment = {'p': header['pressure'], 'T': header['temp'] }
+            WavenumberRange = (header['numin'], header['numax'])
+            WavenumberStep = header['step']
+            Diluent = {'air': 0.0, 'self': 1.0}
+            # TODO: Verify that these are the proper values.
+            WavenumberWing = 0.0
+            WavenumberWingHW = 0.0
+        else:
+            hmd = HapiMetaData(data_name)
+            Components = hmd.iso_tuples
+            SourceTables = [data_name]
+            Environment = {'p': self.get_pressure(), 'T': self.get_temp()}
+            Diluent = self.get_diluent()
+            WavenumberRange = self.get_wn_range()
+            WavenumberStep = self.get_wn_step()
+            WavenumberWing = self.get_wn_wing()
+            WavenumberWingHW = self.get_wn_wing_hw()
 
-        Components = hmd.iso_tuples
-        SourceTables = [data_name]
-        Environment = {'p': self.get_pressure(), 'T': self.get_temp()}
-        Diluent = self.get_diluent()
-        WavenumberRange = self.get_wn_range()
-        WavenumberStep = self.get_wn_step()
-        WavenumberWing = self.get_wn_wing()
-        WavenumberWingHW = self.get_wn_wing_hw()
         graph_fn = self.get_line_profile()
 
         return HapiWorker.echo(
@@ -587,14 +600,29 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             if 'parameters' not in result:
                 self.set_graph_buttons_enabled(True)
                 return
-            for param in GraphingWidget.parameters_required_to_graph:
-                if param not in result['parameters']:
-                    err_log('Table does not contain required parameters.')
-                    return
+
+            if not result['xsc']:
+                for param in GraphingWidget.parameters_required_to_graph:
+                    if param not in result['parameters']:
+                        err_log('Table does not contain required parameters.')
+                        return
+
             self.wn_min.setValue(result['wn_min'])
             self.wn_max.setValue(result['wn_max'])
-
             self.set_graph_buttons_enabled(True)
+
+            if result['xsc']:
+                self.graph_type.clear()
+                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
+                                          GraphingWidget.ABSORPTION_SPECTRUM_STRING,
+                                          GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
+                                          GraphingWidget.RADIANCE_SPECTRUM_STRING])
+                self.xsc_header = result['header']
+            else:
+                self.graph_type.clear()
+                self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
+
+            self.is_xsc = result['xsc']
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
         self.workers.append(worker)

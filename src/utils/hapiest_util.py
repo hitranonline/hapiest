@@ -28,7 +28,10 @@ def get_all_data_names():
         match = DATA_FILE_REGEX.match(f)
         if match == None:
             continue
-        datas.append(match.groupdict()['data_handle'])
+        if f.endswith('.xsc'):
+            datas.append(match.string)
+        else:
+            datas.append(match.groupdict()['data_handle'])
     return list(set(datas))
 
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'

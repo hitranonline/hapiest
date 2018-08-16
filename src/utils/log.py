@@ -118,7 +118,11 @@ def log(arg):
     """
     s = str(arg)
     if TextReceiver.TEXT_STREAM != None:
-        print_html_to_status_bar('<div style="color: #7878e2">[Log]</div>&nbsp;' + s)
+        if len(s) > 128:
+            s = s[0:128]
+            print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}...')
+        else:
+            print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}')
     print("[Log] ", s, file=sys.__stdout__)
 
 
@@ -128,9 +132,14 @@ def err_log(dat):
 
     """
     s = str(dat)
+
     if TextReceiver.TEXT_STREAM != None:
-        print_html_to_status_bar('<div style="color: #e27878">[Error]</div>&nbsp;' + s)
-    print("[Err] ", s, file=sys.__stdout__)
+        if len(s) > 128:
+            s = s[0:128]
+            print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}...')
+        else:
+            print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}')
+    print("[Err] ", str(dat), file=sys.__stdout__)
 
 
 def debug_log(dat):
@@ -140,6 +149,10 @@ def debug_log(dat):
     """
     s = str(dat)
     if TextReceiver.TEXT_STREAM != None:
-        print_html_to_status_bar('<div style="color: #78e278">[Debug]</div>&nbsp;' + s)
-    print("[Debug] ", s, file=sys.__stdout__)
+        if len(s) > 128:
+            s = s[0:128]
+            print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}...')
+        else:
+            print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}')
+    print("[Debug] ", str(dat), file=sys.__stdout__)
 

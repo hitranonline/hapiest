@@ -53,7 +53,7 @@ def verify_internet_connection():
     from utils.api import CrossSectionApi
     try:
         with urllib.request.urlopen(
-                f"{CrossSectionApi.BASE_URL}/{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"):
+                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"):
             pass
         return True
     except HTTPError as e:

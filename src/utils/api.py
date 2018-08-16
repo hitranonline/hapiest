@@ -112,7 +112,8 @@ class CrossSectionApi:
     http://hitran.org/data/xsec/HNO4_220.0_0.1_780.0-830.0_04.xsc
     """
 
-    BASE_URL = "http://hitran.org/api/dev"
+    BASE_URL = "http://hitran.org/"
+    API_ROUTE = "api/dev"
     XSC_META_ROUTE = "cross-sections"
     XSC_ROUTE = "data/xsec"
     MOLECULES_ROUTE = "molecules"
@@ -134,7 +135,7 @@ class CrossSectionApi:
         """
         :return: json text that contains information about every molecule in the HITRAN database.
         """
-        uri = "{}/{}/{}".format(CrossSectionApi.BASE_URL, Config.hapi_api_key, CrossSectionApi.MOLECULES_ROUTE)
+        uri = f"{CrossSectionApi.BASE_URL}/{Config.hapi_api_key}/{CrossSectionApi.MOLECULES_ROUTE}"
         return self.__send_request(uri)
 
     def request_xsc_meta(self, molecule_id: int = None) -> Union[bytes, HapiApiException]:
@@ -145,7 +146,8 @@ class CrossSectionApi:
                               something like 400 molecules as of August 2018).
         :return: will return a dictionary on success, which will
         """
-        uri = "{}/{}/{}".format(CrossSectionApi.BASE_URL, Config.hapi_api_key, CrossSectionApi.XSC_META_ROUTE)
+        uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/" + \
+              f"{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
         return self.__send_request(uri)
 
     def request_xsc(self, xsc_name: str):
@@ -154,14 +156,16 @@ class CrossSectionApi:
         :param xsc_name: Name of the cross section file.
         :return: returns False if something went wrong, otherwise it returns the bytes of the cross section.
         """
-        uri = "{}/{}/{}".format(CrossSectionApi.BASE_URL, CrossSectionApi.XSC_ROUTE, xsc_name)
+        uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.XSC_ROUTE}/{xsc_name}"
+        print(uri)
         try:
             content = url.urlopen(uri).read()
         except Exception as e:
+            print(str(e))
             return False
 
         try:
-            with open("{}/{}".format(Config.data_folder, xsc_name), "w+") as f:
+            with open("{}/{}".format(Config.data_folder, xsc_name), "w+b") as f:
                 f.write(content)
         except IOError as e:
             print("Encountered IO Error while attempting to save xsc...")

@@ -163,10 +163,10 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             pen.setWidth(4)
             pen.setCosmetic(False)
             series.setPen(pen)
-
-            series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
-                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
-                args['Diluent']['air'], args['Diluent']['self']))
+            if not name.endswith('.xsc'):
+                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+                                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
+                                args['Diluent']['air'], args['Diluent']['self']))
             series.setUseOpenGL(True)
 
             series.add_to_chart(self.chart)

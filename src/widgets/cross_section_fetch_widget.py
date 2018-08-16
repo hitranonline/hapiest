@@ -65,9 +65,6 @@ class CrossSectionFetchWidget(QWidget):
         self.molecule.currentTextChanged.connect(self.__on_molecule_selection_changed)
         self.__on_molecule_selection_changed(self.molecule.currentText())
 
-        # Since the cross section functionality is not complete at this time, disable it entirely.
-        self.setDisabled(True)
-
     def gen_toggle_function(self, other_widgets: List[QWidget]):
         return lambda checked: list(map(lambda widget: widget.setDisabled(not checked), other_widgets))
 
@@ -106,9 +103,11 @@ class CrossSectionFetchWidget(QWidget):
         self.cross_section.addItems(items)
         if len(items) == 0:
             self.fetch_button.setDisabled(True)
+        else:
+            self.fetch_button.setEnabled(True)
 
     def __on_fetch_clicked(self, _checked: bool):
-        args = HapiWorker.echo(xsc = self.cross_section.currentText())
+        args = HapiWorker.echo(name = self.cross_section.currentText())
         self.fetch_button.setDisabled(True)
         self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSC, args, self.__on_fetch_xsc_done)
         self.worker.start()

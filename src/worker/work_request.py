@@ -12,23 +12,38 @@ from utils.metadata.hapi_metadata import HapiMetaData
 from worker.work_result import WorkResult
 
 LOCAL_XSC_CACHE = {
-#    'MOLECULE_PARAMATERS.xsc': { # Keep the .xsc extension on the name
-#        'x': [1, 2, 3],
-#        'y': [4, 5, 6],
-#    },
+    #    'MOLECULE_PARAMATERS.xsc': { # Keep the .xsc extension on the name
+    #        'nu': [1, 2, 3],
+    #        'abscoef': [4, 5, 6],
+    #        'numin': 1,
+    #        'numax: 3
+    #    },
 }
 
-def add_xsc_to_cache(name, text):
+
+def add_xsc_to_cache(name, text=None):
+    """
+    Adds a cross section to the in memory cache.
+    :param name: The name of the file. This should not be a path, just the filename.
+    :param text: If this cross section hasn't been written to the filesystem yet, specify the file text here, and it
+                will be written to a file.
+    :return: Returns True if it was added to the cache successfully, False otherwise.
+    """
     from utils.xsc.parser import XscParser
     try:
-        parser = XscParser.parse(text)
-        with open(name, 'w+') as file:
-            file.write(text)
+        if text is None:
+            with open(os.path.join(Config.data_folder, name), "r") as file:
+                text = file.read()
+        else:
+            with open(name, 'w+') as file:
+                file.write(text)
     except Exception as e:
-        print("Failed to add xsc to in memory cache.")
+        print(f"Failed to add xsc to in memory cache: {str(e)}")
         return False
 
+    LOCAL_XSC_CACHE[name] = XscParser.parse(text)
     return True
+
 
 class WorkFunctions:
     @staticmethod
@@ -53,6 +68,9 @@ class WorkFunctions:
                 hmd = HapiMetaData(key)
                 hmd.initialize_from_hapi_table(key)
                 hmd.save()
+        for filename in os.listdir(Config.data_folder):
+            if filename.endswith('.xsc'):
+                add_xsc_to_cache(filename)
 
         return True
 
@@ -100,12 +118,13 @@ class WorkFunctions:
                 """
                 band2index.setdefault((params[0], params[1]), []).append(params[2])
 
-            quanta_with_index = zip(data['global_upper_quanta'], data['global_lower_quanta'], range(0, len(data['global_lower_quanta'])))
+            quanta_with_index = zip(data['global_upper_quanta'], data['global_lower_quanta'],
+                                    range(0, len(data['global_lower_quanta'])))
             list(map(process_band, quanta_with_index))
 
             return band2index
 
-        def get_parameters(ids, params = ('nu', 'sw')):
+        def get_parameters(ids, params=('nu', 'sw')):
             """
             Get line parameters as a columns from the LOCAL_TABLE_HASH
             using the ID numbers. Parameter names are specified in PARS.
@@ -121,7 +140,6 @@ class WorkFunctions:
             return Band(nu, sw, "{} _ {}".format(band[0].strip(), band[1].strip()))
 
         return Bands(list(map(get_band, band2index.keys())), TableName)
-
 
     @staticmethod
     def convolve_spectrum(x, y, instrumental_fn: str, Resolution: float, AF_wing: float):
@@ -142,14 +160,34 @@ class WorkFunctions:
     @staticmethod
     def graph_absorption_coefficient(
             graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], Diluent: dict, HITRAN_units: bool, WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str, titlex: str, titley: str,
-            **kwargs) -> Union[Bands, Exception]:
+            **kwargs) -> Dict[str, Union[str, Any]]:
         """
-        Generates coordinates for absorption coeffecient graph.
+        :param graph_fn:        Name of the graphing function to be applied.
+        :param Components:      Which (mol_id, isotopologue_id) pairs will be found in the table
+        :param SourceTables:    A list which (should) only contains one element.
+        :param Environment:     Temperature and pressure information.
+        :param Diluent:         Mixing ratio of air / substace
+        :param WavenumberRange: Min and max wavenumber
+        :param WavenumberStep:  How much the wavenumber increases per step
+        :param WavenumberWing:  Not sure
+        :param WavenumberWingHW: Note sure
+        :param title:           Title of the graph
+        :param titlex:          Title for the x axis
+        :param titley:          Title for the y axis
+        :param kwargs:         Unused keyword-arguments
+        :return:
         """
-        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
-                   'Diluent': Diluent }
+        if SourceTables[0] in LOCAL_XSC_CACHE:
+            item = LOCAL_XSC_CACHE[SourceTables[0]]
+            return {'x': item['nu'], 'y': item['abscoef'], 'title': title, 'titlex': titlex, 'titley': titley,
+                    'name': SourceTables[0],
+                    'args': {
+                        'graph_fn': graph_fn, 'Environment': Environment, 'Diluent': Diluent, **kwargs}}
+
+        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                  'Diluent': Diluent}
         # absorptionCoefficient_Doppler functions do not use Diluent
         if WorkFunctions.graph_type_map[graph_fn] == WorkFunctions.graph_type_map["Galatry"]:
             x, y = WorkFunctions.graph_type_map[graph_fn](
@@ -160,7 +198,7 @@ class WorkFunctions:
                 WavenumberRange=WavenumberRange,
                 WavenumberStep=WavenumberStep,
                 WavenumberWing=WavenumberWing,
-                WavenumberWingHW=WavenumberWingHW) 
+                WavenumberWingHW=WavenumberWingHW)
         else:
             x, y = WorkFunctions.graph_type_map[graph_fn](
                 Components=Components,
@@ -172,9 +210,16 @@ class WorkFunctions:
                 WavenumberStep=WavenumberStep,
                 WavenumberWing=WavenumberWing,
                 WavenumberWingHW=WavenumberWingHW)
-        result = Bands([Band(x, y, "Absorption Coef." + title)], "Absorption Coef. " + title)
-        result.use_scatter_plot = False
-        return result
+
+        return {
+            'x': x,
+            'y': y,
+            'title': title,
+            'titlex': titlex,
+            'titley': titley,
+            'name': SourceTables[0],
+            'args': kwargs
+        }
 
     @staticmethod
     def graph_absorption_spectrum(
@@ -186,8 +231,8 @@ class WorkFunctions:
         """
         Generates coordinates for absorption spectrum graph.
         """
-        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
-                   'Diluent': Diluent }
+        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                  'Diluent': Diluent}
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -198,11 +243,11 @@ class WorkFunctions:
             WavenumberStep=WavenumberStep,
             WavenumberWing=WavenumberWing,
             WavenumberWingHW=WavenumberWingHW)
-        Environment = { 'l': path_length }
+        Environment = {'l': path_length}
         x, y = absorptionSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
-                 'titley': titley, 'args': kwargs }
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                'titley': titley, 'args': kwargs}
 
     @staticmethod
     def graph_radiance_spectrum(
@@ -214,8 +259,8 @@ class WorkFunctions:
         """
         Generates coordinates for radiance spectrum graph.
         """
-        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
-                   'Diluent': Diluent }
+        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                  'Diluent': Diluent}
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -229,8 +274,8 @@ class WorkFunctions:
         Environment['l'] = path_length
         x, y = radianceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
-                 'titley': titley, 'args': kwargs }
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                'titley': titley, 'args': kwargs}
 
     @staticmethod
     def graph_transmittance_spectrum(
@@ -242,8 +287,8 @@ class WorkFunctions:
         """
         Generates coordinates for transmittance spectrum graph.
         """
-        kwargs = { 'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
-                   'Diluent': Diluent }
+        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                  'Diluent': Diluent}
         wn, ac = WorkFunctions.graph_type_map[graph_fn](
             Components=Components,
             SourceTables=SourceTables,
@@ -257,13 +302,12 @@ class WorkFunctions:
         Environment = {'l': path_length}
         x, y = transmittanceSpectrum(wn, ac, Environment=Environment, File=File, Format=Format)
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution=Resolution, AF_wing=AF_wing)
-        return { 'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
-                 'titley': titley, 'args': kwargs }
-
+        return {'x': rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+                'titley': titley, 'args': kwargs}
 
     @staticmethod
     def fetch(data_name: str, iso_id_list: List[int], numin: float, numax: float,
-                  parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
+              parameter_groups: List[str] = (), parameters: List[str] = (), **kwargs) -> Union[
         Dict[str, List[str]], 'FetchError']:
         """
         Method handles verification of user input for fetch function.
@@ -288,8 +332,7 @@ class WorkFunctions:
                 return FetchError(
                     FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
-        return { 'all_tables': list(tableList()) }
-   
+        return {'all_tables': list(tableList())}
 
     @staticmethod
     def get_table(table_name: str) -> Optional[Dict[str, Any]]:
@@ -298,7 +341,6 @@ class WorkFunctions:
         else:
             return None
 
-    
     @staticmethod
     def save_table(table: Dict[str, Any], name: str, **kwargs):
         """
@@ -309,8 +351,8 @@ class WorkFunctions:
             if name in LOCAL_TABLE_CACHE:
                 del LOCAL_TABLE_CACHE[name]
             else:
-                open(Config.data_folder + "/{}.header".format(name),    'w+')
-                open(Config.data_folder + "/{}.data".format(name),      'w+')
+                open(Config.data_folder + "/{}.header".format(name), 'w+')
+                open(Config.data_folder + "/{}.data".format(name), 'w+')
 
             LOCAL_TABLE_CACHE[name] = table
             # Cahce2storage requires that the '{tablename}.par' and '{tablename}.header' files exist
@@ -327,13 +369,23 @@ class WorkFunctions:
         """
         if table_name == None or table_name == '':
             return None
-        table = LOCAL_TABLE_CACHE[table_name]['data']
-        header = LOCAL_TABLE_CACHE[table_name]['header']
-        parameters = list(table.keys())
-        wn_min = min(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
-        wn_max = max(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
-        length = header['number_of_rows']
-        return echo(length=length, header=header, parameters=parameters, wn_min=wn_min, wn_max=wn_max)
+
+        if table_name in LOCAL_XSC_CACHE:
+            header = LOCAL_XSC_CACHE[table_name]['header']
+            wn_min = header['numin']
+            wn_max = header['numax']
+            length = header['len']
+            parameters = []
+            xsc = True
+        else:
+            table = LOCAL_TABLE_CACHE[table_name]['data']
+            header = LOCAL_TABLE_CACHE[table_name]['header']
+            parameters = list(table.keys())
+            wn_min = min(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
+            wn_max = max(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
+            length = header['number_of_rows']
+            xsc = False
+        return echo(length=length, header=header, parameters=parameters, wn_min=wn_min, wn_max=wn_max, xsc=xsc)
 
     @staticmethod
     def table_names(**kwargs):
@@ -348,12 +400,12 @@ class WorkFunctions:
 
     @staticmethod
     def select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
-                   Conditions: List[Any] = None, Output: bool = False, File=None, **kwargs):
+               Conditions: List[Any] = None, Output: bool = False, File=None, **kwargs):
         """
         Attempts to call the select() method from hapi.
         """
         select(TableName=TableName, DestinationTableName=DestinationTableName, ParameterNames=ParameterNames,
-              Conditions=Conditions, Output=Output, File=File)
+               Conditions=Conditions, Output=Output, File=File)
         hmd = HapiMetaData(DestinationTableName)
         WorkFunctions.save_table(LOCAL_TABLE_CACHE[TableName], table_name=DestinationTableName)
 
@@ -371,6 +423,7 @@ class WorkFunctions:
                 return name
             else:
                 return None
+
 
 class WorkRequest:
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
@@ -442,9 +495,9 @@ class Work:
         }
 
         WorkFunctions.start_hapi(**{})
+
         def print_tb(tb, exc_value):
             print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n')
-
 
         while True:
             work_request = workq.get()
