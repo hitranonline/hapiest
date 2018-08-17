@@ -43,6 +43,8 @@ class MainWindowGui(GUI, QMainWindow):
         self.selected_molecules: QComboBox = None
         self.molecule_info = None
 
+        self.completer = None
+
         # Elements in 'Graphing' tab
         self.graphing_tab: QWidget = None
         self.graphing_container: QVBoxLayout = None
@@ -138,10 +140,10 @@ class MainWindowGui(GUI, QMainWindow):
         """
         *Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.*
         """
-        # our list of molecule names in the gui
-        molecule = MoleculeMeta(0)
-        self.molecules_current_molecule.addItems(list(set(molecule.all_formulas())))
-        self.completer: QCompleter = QCompleter(molecule.all_formulas(), self)
+        # Make sure that molecule meta has had it's static members initialized initialized.
+        _ = MoleculeMeta(0)
+        self.molecules_current_molecule.addItems(list(set(MoleculeMeta.all_names())))
+        self.completer: QCompleter = QCompleter(MoleculeMeta.all_names(), self)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
         self.molecules_current_molecule.setEditable(True)
         self.molecules_current_molecule.setCompleter(self.completer)

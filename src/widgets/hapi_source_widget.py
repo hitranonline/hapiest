@@ -31,7 +31,7 @@ class HapiSourceWidget(QtWidgets.QTextEdit):
         if self.doi == '':
             return '';
         else:
-            return 'DOI: {}'.format(self.doi)
+            return f'DOI: {self.doi}'
 
     def generate_latex(self) -> str:
         pass

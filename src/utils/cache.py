@@ -96,13 +96,13 @@ class Cache:
             self.__err = res
             return False
         try:
-            with open(self.path, "w+") as file:
+            with open(self.path, 'w+') as file:
                 file.write(json.dumps({
                     'timestamp': int(time.time()) + self.lifetime,
                     'cached': self.cached
                 }))
         except Exception as e:
-            print("Failed to write to CrossSectionMeta cache: {}".format(str(e)))
+            print('Failed to write to CrossSectionMeta cache: {}'.format(str(e)))
         return True
 
     def err(self) -> Any:

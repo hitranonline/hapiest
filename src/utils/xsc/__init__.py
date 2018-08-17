@@ -49,6 +49,8 @@ class CrossSectionMeta:
 
     """
 
+    ##
+    # A dictionary that maps molecule id to a list of cross section meta info.
     molecule_metas = {}
 
     def __init__(self, molecule_id):

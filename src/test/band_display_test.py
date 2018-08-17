@@ -36,12 +36,12 @@ class BandDisplayTest(Test):
             y = [0.0] * len(x)
             for i in range(0, int(100.0 / step)):
                 y[i] = abs(amp * math.sin(freq * x[i]))
-            return Band(x, y, "{}, {}".format(freq, amp))
+            return Band(x, y, f'{freq}, {amp}')
 
-        bands1 = Bands([], "of")
+        bands1 = Bands([], 'of')
         for i in range(0, 10):
             bands1.add_band(random_band())
-        bands2 = Bands([], "aw")
+        bands2 = Bands([], 'aw')
         for i in range(0, 10):
             bands2.add_band(random_band())
 

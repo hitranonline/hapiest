@@ -10,11 +10,7 @@ from worker.hapi_worker import HapiWorker, WorkRequest
 
 class CrossSectionFetchWidget(QWidget):
 
-    ##
-    # Constant dictionary that maps HITRAN molecule id to info about that molecule.
-    MOLECULES = {}
-
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
         self.parent = parent
@@ -98,7 +94,7 @@ class CrossSectionFetchWidget(QWidget):
         self.cross_section.clear()
         self.cross_section.addItems(filter.get_cross_sections())
 
-    def __on_molecule_selection_changed(self, current_text: str):
+    def __on_molecule_selection_changed(self, _current_text: str):
         self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())
         self.cross_section.clear()
         items = self.cross_section_meta.get_all_filenames()
@@ -113,7 +109,7 @@ class CrossSectionFetchWidget(QWidget):
             self.fetch_button.setEnabled(True)
 
     def __on_fetch_clicked(self, _checked: bool):
-        args = HapiWorker.echo(name = self.cross_section.currentText())
+        args = HapiWorker.echo(name=self.cross_section.currentText())
         self.fetch_button.setDisabled(True)
         self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSC, args, self.__on_fetch_xsc_done)
         self.worker.start()

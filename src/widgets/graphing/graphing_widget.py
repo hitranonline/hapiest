@@ -616,10 +616,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
             if result['xsc']:
                 self.graph_type.clear()
-                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
-                                          GraphingWidget.ABSORPTION_SPECTRUM_STRING,
-                                          GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
-                                          GraphingWidget.RADIANCE_SPECTRUM_STRING])
+                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING,])
                 self.xsc_header = result['header']
             else:
                 self.graph_type.clear()

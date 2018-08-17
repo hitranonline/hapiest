@@ -34,7 +34,7 @@ def add_xsc_to_cache(name, text=None):
         text = text.decode('utf-8')
     try:
         if text is None:
-            with open(os.path.join(Config.data_folder, name), "r") as file:
+            with open(os.path.join(Config.data_folder, name), 'r') as file:
                 text = file.read()
         else:
             with open(os.path.join(Config.data_folder, name), 'w+') as file:
