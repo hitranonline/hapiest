@@ -1,3 +1,4 @@
+import functools
 import multiprocessing as mp
 import traceback
 from typing import *
@@ -412,15 +413,22 @@ class WorkFunctions:
         return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
 
     @staticmethod
-    def download_xsc(name: str, **kwargs):
+    def download_xsc(xsc_name: str, molecule_name: str, **kwargs):
         from utils.api import CrossSectionApi
         api = CrossSectionApi()
-        res: bytes = api.request_xsc(name)
-        if res == False:
+
+        split = molecule_name.split('_')
+        if len(split) <= 1:
+            filename = xsc_name
+        else:
+            split[0] = molecule_name
+            filename = functools.reduce(str.__add__, split)
+        res: bytes = api.request_xsc(xsc_name, filename)
+        if res is None:
             return None
         else:
-            if add_xsc_to_cache(name, res):
-                return name
+            if add_xsc_to_cache(filename, res):
+                return xsc_name
             else:
                 return None
 

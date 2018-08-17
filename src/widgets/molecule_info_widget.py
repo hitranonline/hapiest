@@ -69,9 +69,10 @@ class MoleculeInfoWidget(QWidget):
         self.setLayout(self.container_layout)
 
         self.molecule = MoleculeMeta(molecule_name)
+        formula = self.molecule.formula
         if self.molecule.is_populated():
             self.img.setAttribute(Qt.WA_StyledBackground)
-            self.img.setStyleSheet(f'border-image: url("res/img/molecules/{molecule_name}.gif") 0 0 0 0 stretch stretch;')
+            self.img.setStyleSheet(f'border-image: url("res/img/molecules/{formula}.gif") 0 0 0 0 stretch stretch;')
             self.img.show()
 
             self.restructure_aliases()

@@ -37,8 +37,10 @@ class MoleculeMeta:
 
     @staticmethod
     def all_names_with_xsc() -> List[str]:
-        return list(name for name in MoleculeMeta.all_names()
-                    if MoleculeMeta.__NAME_TO_MID[name] in CrossSectionMeta.molecule_metas)
+        def has_xscs(name):
+            return MoleculeMeta.__NAME_TO_MID[name] in CrossSectionMeta.molecule_metas
+        r = [name for name in MoleculeMeta.all_names() if has_xscs(name)]
+        return r
 
     def __init__(self, molecule_id: Union[int, str]):
         if MoleculeMeta.__MOLECULE_METADATA is None:

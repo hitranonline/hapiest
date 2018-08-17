@@ -152,7 +152,7 @@ class CrossSectionApi:
               f"{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
         return self.__send_request(uri)
 
-    def request_xsc(self, xsc_name: str):
+    def request_xsc(self, xsc_name: str, filename: str):
         """
         Attempts to download the specified cross section.
         :param xsc_name: Name of the cross section file.
@@ -164,13 +164,13 @@ class CrossSectionApi:
             content = url.urlopen(uri).read()
         except Exception as e:
             print(str(e))
-            return False
+            return None
 
         try:
-            with open("{}/{}".format(Config.data_folder, xsc_name), "w+b") as f:
+            with open("{}/{}".format(Config.data_folder, filename), "w+b") as f:
                 f.write(content)
         except IOError as e:
-            print("Encountered IO Error while attempting to save xsc...")
-            return False
+            print(f'Encountered IO Error while attempting to save xsc: {str(e)}')
+            return None
 
         return content

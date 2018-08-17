@@ -106,6 +106,8 @@ def main():
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
     _ = MoleculeMeta(0)
+    from utils.xsc import CrossSectionMeta
+    _ = CrossSectionMeta(0)
 
     app = App(sys.argv)
 

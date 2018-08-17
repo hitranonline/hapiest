@@ -53,8 +53,7 @@ class CrossSectionFetchWidget(QWidget):
 
         self.fetch_button.clicked.connect(self.__on_fetch_clicked)
         self.apply_filters.clicked.connect(self.__on_apply_filters_clicked)
-
-        self.molecule.addItems(MoleculeMeta.all_names())
+        self.molecule.addItems(MoleculeMeta.all_names_with_xsc())
         self.molecule.setEditable(True)
         self.completer: QCompleter = QCompleter(MoleculeMeta.all_names(), self)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
@@ -109,7 +108,7 @@ class CrossSectionFetchWidget(QWidget):
             self.fetch_button.setEnabled(True)
 
     def __on_fetch_clicked(self, _checked: bool):
-        args = HapiWorker.echo(name=self.cross_section.currentText())
+        args = HapiWorker.echo(xsc_name=self.cross_section.currentText(), molecule_name=self.molecule.currentText())
         self.fetch_button.setDisabled(True)
         self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSC, args, self.__on_fetch_xsc_done)
         self.worker.start()
