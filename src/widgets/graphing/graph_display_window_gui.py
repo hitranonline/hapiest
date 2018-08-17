@@ -115,8 +115,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             series.setPen(pen)
 
             self.series = [series]
-            series.setName(
-                name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+            if 'xsc' in args and args['xsc']:
+                series.setName(name)
+            else:
+                series.setName(
+                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                     args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                     args['Diluent']['air'], args['Diluent']['self']))
 
@@ -163,7 +166,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             pen.setWidth(4)
             pen.setCosmetic(False)
             series.setPen(pen)
-            if not name.endswith('.xsc'):
+            if 'xsc' in args and args['xsc']:
+                series.setName(name)
+            else:
                 series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
                                 args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                                 args['Diluent']['air'], args['Diluent']['self']))

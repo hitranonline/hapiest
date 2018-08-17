@@ -32,7 +32,7 @@ class ApiKeyHelpWidget(QWidget):
         self.api_key_area.setValidator(self.validator)
         self.ok_button = QPushButton('Okay')
         self.ok_button.clicked.connect(self.__on_ok_button_clicked)
-        layout.addWidget(QLabel("You can find a hapi API key at https://hitran.org.\n"
+        layout.addWidget(QLabel("You can find a hapi API key at http://hitran.org/profile.\n"
                                 "Paste your API key in the text area below and hit\n"
                                 "the 'Ok' button to save it, and then restart the program."))
         layout.addWidget(self.api_key_area)

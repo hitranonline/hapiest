@@ -210,9 +210,10 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         if standard_params['WavenumberStep'] == None:
             standard_params['WavenumberStep'] = Resolution / 2
         elif standard_params['WavenumberStep'] <= Resolution:
-            err_log('Wavenumber Step must be less than Instrumental Resolution')
-            self.done_graphing()
-            return
+            standard_params['WavenumberStep'] = Resolution * 1.0001
+            # err_log('Wavenumber Step must be less than Instrumental Resolution')
+            # self.done_graphing()
+            # return
 
         work = HapiWorker.echo(
             title=GraphingWidget.ABSORPTION_SPECTRUM_STRING,

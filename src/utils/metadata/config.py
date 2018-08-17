@@ -142,7 +142,7 @@ class Config():
             'type': str
         },
         'axisx_label_format': {
-            'default_value': '%f',
+            'default_value': '%.3E',
             'display_name': 'Axis-X Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str
@@ -156,7 +156,7 @@ class Config():
         },
 
         'axisy_label_format': {
-            'default_value': '%f',
+            'default_value': '%.3E',
             'display_name': 'Axis-Y Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style format.',
             'type': str

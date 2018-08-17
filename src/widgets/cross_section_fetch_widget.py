@@ -39,6 +39,8 @@ class CrossSectionFetchWidget(QWidget):
 
         self.cross_section_meta: CrossSectionMeta = None
 
+        self.fetching = False
+
         uic.loadUi('layouts/cross_section_widget.ui', self)
 
         self.pressure_check.toggled.connect(self.gen_toggle_function([self.pressure_max, self.pressure_min]))
@@ -101,6 +103,10 @@ class CrossSectionFetchWidget(QWidget):
         self.cross_section.clear()
         items = self.cross_section_meta.get_all_filenames()
         self.cross_section.addItems(items)
+
+        if self.fetching:
+            return
+
         if len(items) == 0:
             self.fetch_button.setDisabled(True)
         else:
@@ -115,6 +121,8 @@ class CrossSectionFetchWidget(QWidget):
     def __on_fetch_xsc_done(self, res):
         _result = res.result
         self.parent.populate_table_lists()
+        self.fetching = False
+        self.fetch_button.setEnabled(True)
 
     ###
     # Getters

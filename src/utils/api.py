@@ -126,6 +126,7 @@ class CrossSectionApi:
             content = url.urlopen(uri).read()
         # TODO: Add more robust error handling here. It could be a bad connection or a bad API key.
         except Exception as e:
+            print(f'uri: {uri}')
             print(str(e))
             return HapiApiException(HapiApiException.CONNECTION_FAILED, str(e))
         return content
@@ -135,7 +136,8 @@ class CrossSectionApi:
         """
         :return: json text that contains information about every molecule in the HITRAN database.
         """
-        uri = f"{CrossSectionApi.BASE_URL}/{Config.hapi_api_key}/{CrossSectionApi.MOLECULES_ROUTE}"
+        uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}" \
+              f"/{CrossSectionApi.MOLECULES_ROUTE}"
         return self.__send_request(uri)
 
     def request_xsc_meta(self, molecule_id: int = None) -> Union[bytes, HapiApiException]:

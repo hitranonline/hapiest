@@ -2,25 +2,32 @@
 *hapiest* is a GUI that works with the HITRAN API, enabling access
 to all sorts of spectrographic data without knowledge of python.
 
-# License 
+## License 
 *hapiest* is licensed under the LGPL license.
 
-# Download
+## Download
 Windows x86 Executable [Download](https://github.com/hitranonline/hapiest/releases/tag/v0.1-alpha)
 
 There are no Mac OSX or Linux executables, please make an issue in this repository to request one.
 
-# How to Manually Install
-Hapiest has a limited number of binary packages (only Windows 32-bit right now), but the program itself can be downloaded
+## Usage
+A manual that documents what hapiest can do can be found 
+[here](https://github.com/hitranonline/hapiest/raw/master/doc/HAPIESTmanual.pdf) (this link will download the PDF file).
+
+## How to Manually Install
+Hapiest has a limited number of binary packages (only Windows 32-bit right now), but the program itself can be
+downloaded
 
 *You must have python 3.6 or later to install and use hapiest*.
 
-For mac and linux you can run the following in the terminal, and on windows in the command line (you must have git installed):
+For mac and linux you can run the following in the terminal, and on windows in the command line (you must have git
+installed):
 ```bash
 git clone https://github.com/hitranonline/hapiest
 ```
 
-This will download the latest version of hapiest and put it in a folder named hapiest. You may need to manually install packages using pip.
+This will download the latest version of hapiest and put it in a folder named hapiest. You may need to manually install
+packages using pip.
 
 Then, to run the program execute the following:
 ```bash
@@ -34,12 +41,13 @@ configuration.
 After you install hapiest, you can start it by calling `run` in a command prompt or terminal. If you are on mac you may
 have to edit the `run` file and replace `python` with `python3` or `python3.6`.
 
-# Troubleshooting
+## Troubleshooting
 *hapiest* is still a very immature piece of software. If you encounter any bugs, you're encouraged to open an issue with
 your bug report.
 
 # References
-If you use data retreived using hapiest or hapi and use it, please use the following citation if you publish it:
+If you use data retreived using hapiest or hapi and use it in research, please use the following citation if you publish
+it:
 
 ```
 R.V. Kochanov, I.E. Gordon, L.S. Rothman, P. Wcislo, C. Hill, J.S. Wilzewski, HITRAN Application Programming Interface

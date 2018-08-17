@@ -30,12 +30,14 @@ def add_xsc_to_cache(name, text=None):
     :return: Returns True if it was added to the cache successfully, False otherwise.
     """
     from utils.xsc.parser import XscParser
+    if type(text) == bytes:
+        text = text.decode('utf-8')
     try:
         if text is None:
             with open(os.path.join(Config.data_folder, name), "r") as file:
                 text = file.read()
         else:
-            with open(name, 'w+') as file:
+            with open(os.path.join(Config.data_folder, name), 'w+') as file:
                 file.write(text)
     except Exception as e:
         print(f"Failed to add xsc to in memory cache: {str(e)}")
@@ -179,15 +181,13 @@ class WorkFunctions:
         :param kwargs:         Unused keyword-arguments
         :return:
         """
+        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
+                  'Diluent': Diluent}
         if SourceTables[0] in LOCAL_XSC_CACHE:
             item = LOCAL_XSC_CACHE[SourceTables[0]]
             return {'x': item['nu'], 'y': item['abscoef'], 'title': title, 'titlex': titlex, 'titley': titley,
-                    'name': SourceTables[0],
-                    'args': {
-                        'graph_fn': graph_fn, 'Environment': Environment, 'Diluent': Diluent, **kwargs}}
+                    'name': SourceTables[0], 'args': { 'xsc': True,  **kwargs}}
 
-        kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
-                  'Diluent': Diluent}
         # absorptionCoefficient_Doppler functions do not use Diluent
         if WorkFunctions.graph_type_map[graph_fn] == WorkFunctions.graph_type_map["Galatry"]:
             x, y = WorkFunctions.graph_type_map[graph_fn](
@@ -218,7 +218,7 @@ class WorkFunctions:
             'titlex': titlex,
             'titley': titley,
             'name': SourceTables[0],
-            'args': kwargs
+            'args': {'xsc': False, **kwargs}
         }
 
     @staticmethod
