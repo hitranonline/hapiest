@@ -498,6 +498,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                 worker.safe_exit()
                 break
 
+    ##
+    #  Parameters that are required to graph hapi tables. These are not required to graph bands.
     parameters_required_to_graph = ['molec_id', 'local_iso_id', 'nu', 'sw', 'a', 'elower', 'gamma_air', 'delta_air',
                                     'gamma_self', 'n_air', 'gp', 'gpp']
 
