@@ -16,8 +16,8 @@ class CrossSectionFetchWidget(QWidget):
         self.parent = parent
 
         self.wn_check: QCheckBox = None
-        self.wn_min: QDoubleSpinBox = None
-        self.wn_max: QDoubleSpinBox = None
+        self.numin: QDoubleSpinBox = None
+        self.numax: QDoubleSpinBox = None
 
         self.pressure_check: QCheckBox = None
         self.pressure_min: QDoubleSpinBox = None
@@ -41,7 +41,7 @@ class CrossSectionFetchWidget(QWidget):
 
         self.pressure_check.toggled.connect(self.gen_toggle_function([self.pressure_max, self.pressure_min]))
         self.temp_check.toggled.connect(self.gen_toggle_function([self.temp_max, self.temp_min]))
-        self.wn_check.toggled.connect(self.gen_toggle_function([self.wn_max, self.wn_min]))
+        self.wn_check.toggled.connect(self.gen_toggle_function([self.numax, self.numin]))
 
         self.pressure_check.setChecked(True)
         self.temp_check.setChecked(True)
@@ -77,7 +77,7 @@ class CrossSectionFetchWidget(QWidget):
             pressure = None
 
         if self.wn_check.isChecked():
-            wn = [self.wn_min.value(), self.pressure_max.value()]
+            wn = [self.numin.value(), self.pressure_max.value()]
             wn.sort()
         else:
             wn = None

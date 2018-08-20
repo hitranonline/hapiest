@@ -1,10 +1,28 @@
 import json
 from datetime import timedelta
-from typing import List, Optional, Any, Dict, Tuple
+from typing import List, Optional, Any, Dict, Tuple, Iterable
 
 from utils.cache import JsonCache
 from utils.log import err_log
 from utils.api import CrossSectionApi
+
+
+class CrossSection:
+    """
+    Represents a parsed cross section. This is just a data class so it doesn't get represented by a dictionary.
+    """
+
+    def __init__(self, nu: Iterable[float], abscoef: Iterable[float], step: float, numin: float, numax: float,
+                 molecule: str, len: int, pressure: float, temp: float):
+        self.nu = list(nu)
+        self.abscoef = list(abscoef)
+        self.step = step
+        self.numin = numin
+        self.numax = numax
+        self.molecule = molecule
+        self.len = len
+        self.pressure = pressure
+        self.temp = temp
 
 
 class CrossSectionMeta:

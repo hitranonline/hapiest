@@ -244,7 +244,7 @@ class Isotopologue():
 
         if molecule_id in Isotopologue.MOLECULE_DATA_RANGE:
             self.wn_range = Isotopologue.MOLECULE_DATA_RANGE[molecule_id]
-            (self.wn_min, self.wn_max) = self.wn_range
+            (self.numin, self.numax) = self.wn_range
 
         # Create mapings for conversion methods
         Isotopologue.FROM_GLOBAL_ID[self.id] = self

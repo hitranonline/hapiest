@@ -21,8 +21,8 @@ class FetchWidget(QWidget):
         self.fetch_button: QPushButton = None
         self.list_container: QWidget = None
         self.molecule_id: QComboBox = None
-        self.wn_max: QDoubleSpinBox = None
-        self.wn_min: QDoubleSpinBox = None
+        self.numax: QDoubleSpinBox = None
+        self.numin: QDoubleSpinBox = None
         self.iso_list = None
         self.param_group_list = None 
         self.param_list = None
@@ -43,8 +43,8 @@ class FetchWidget(QWidget):
 
         self.iso_list.itemPressed.connect(self.__iso_list_item_click)
         self.fetch_button.clicked.connect(self.__handle_fetch_clicked)
-        self.wn_max.valueChanged.connect(self.__wn_max_change)
-        self.wn_min.valueChanged.connect(self.__wn_min_change)
+        self.numax.valueChanged.connect(self.__numax_change)
+        self.numin.valueChanged.connect(self.__numin_change)
         self.edit_button.clicked.connect(self.__on_edit_clicked)
         self.select_button.clicked.connect(self.__on_select_clicked)
 
@@ -63,8 +63,8 @@ class FetchWidget(QWidget):
         self.iso_list.setToolTip('Select the molecule isotopologues you wish to query.')
         self.molecule_id.setToolTip('Type in, or use the drop-down menu to select your molecule.')
         self.data_name.setToolTip('Specify local name for fetched data')
-        self.wn_min.setToolTip('Specify lower bound wave number to query, must be positive number.\n(default: absolute min for given molecule).')
-        self.wn_max.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
+        self.numin.setToolTip('Specify lower bound wave number to query, must be positive number.\n(default: absolute min for given molecule).')
+        self.numax.setToolTip('Specify upper bound wave number to query, must be greater than min wave number.\n(default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
 
@@ -175,25 +175,25 @@ class FetchWidget(QWidget):
             item.setCheckState(QtCore.Qt.Checked)
 
 
-    def __wn_max_change(self, value):
+    def __numax_change(self, value):
         """
-        when the wn_max spinbox changes, make sure it's value isn't lower than that of wn_min, and ensure the value isn't
+        when the numax spinbox changes, make sure it's value isn't lower than that of numin, and ensure the value isn't
         greater than the maximum.
         """
-        max = self.wn_max.maximum()
+        max = self.numax.maximum()
         if value > max:
-            self.wn_min.setValue(max)
+            self.numin.setValue(max)
             return
 
 
-    def __wn_min_change(self, value):
+    def __numin_change(self, value):
         """
-        when the wn_min spinbox changes make sure it's value isn't greater than that of wn_max, and make sure it's value
+        when the numin spinbox changes make sure it's value isn't greater than that of numax, and make sure it's value
         isn't below the minimum.
         """
-        min = self.wn_min.minimum()
+        min = self.numin.minimum()
         if value < min:
-            self.wn_min.setValue(min)
+            self.numin.setValue(min)
 
 
     def __molecule_id_index_changed(self):
@@ -207,11 +207,11 @@ class FetchWidget(QWidget):
         min, max = molecule.get_wn_range()
 
         # Change the range for wn
-        self.wn_min.setMinimum(min)
-        self.wn_max.setMaximum(max)
+        self.numin.setMinimum(min)
+        self.numax.setMaximum(max)
 
-        self.wn_min.setValue(min)
-        self.wn_max.setValue(max)
+        self.numin.setValue(min)
+        self.numax.setValue(max)
 
         # Remove all old elements
         self.iso_list.clear()
@@ -250,8 +250,8 @@ class FetchWidget(QWidget):
         self.disable_fetch_button()
         molecule = self.get_selected_molecule()
 
-        numax = self.get_wn_max()
-        numin = self.get_wn_min()
+        numax = self.get_numax()
+        numin = self.get_numin()
 
         if numax < numin:
             self.numax.setValue(numin)
@@ -366,15 +366,15 @@ class FetchWidget(QWidget):
         return str(self.data_name.text()).strip()
 
 
-    def get_wn_max(self):
+    def get_numax(self):
         """
-        Fetches the double value from the QDoubleSpinBox wn_max.
+        Fetches the double value from the QDoubleSpinBox numax.
         """
-        return self.wn_max.value()
+        return self.numax.value()
 
 
-    def get_wn_min(self):
+    def get_numin(self):
         """
-        Fetches the double value from the QDoubleSpinBox wn_min.
+        Fetches the double value from the QDoubleSpinBox numin.
         """
-        return self.wn_min.value()
+        return self.numin.value()

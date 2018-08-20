@@ -119,7 +119,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 series.setName(name)
             else:
                 series.setName(
-                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
+                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, self: {:.2f}'.format(
                     args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
                     args['Diluent']['air'], args['Diluent']['self']))
 
@@ -169,9 +169,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             if 'xsc' in args and args['xsc']:
                 series.setName(name)
             else:
-                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>γ-air: {:.2f}, γ-self: {:.2f}'.format(
-                                args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
-                                args['Diluent']['air'], args['Diluent']['self']))
+                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>air: {:.2f}, self: {:.2f}'.format(
+                    args['graph_fn'], args['Environment']['T'], args['Environment']['p'], args['Diluent']['air'],
+                    args['Diluent']['self']))
             series.setUseOpenGL(True)
 
             series.add_to_chart(self.chart)
@@ -365,11 +365,18 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         try:
             i = 0
+            if len(self.all_series()) == 0:
+                with open(filename, "w") as file:
+                    series = self.all_series()[0]
+                    for point in series.pointsVector():
+                        file.write('{:<16.8e}{:.8e}\n'.format(point.x(), point.y()))
+                return
+
             for series in self.all_series():
                 ith_filename = '{} {}.txt'.format(filename[0:len(filename) - 4], series.name())
                 with open(ith_filename, "w") as file:
                     for point in series.pointsVector():
-                        file.write('{:<16.8f}{:.8f}\n'.format(point.x(), point.y()))
+                        file.write('{:<16.8e}{:.8e}\n'.format(point.x(), point.y()))
                 i += 1
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
@@ -382,13 +389,18 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         if filename == None:
             return
 
-        def filter_series_name(s):
-            return s.replace('<br>', ' ').replace('γ', 'gamma')
+        def to_x_y_arrays(series):
+            points_vector = series.pointsVector()
+            x = []
+            y = []
+            for point in points_vector:
+                x.append(point.x())
+                y.append(point.y())
+            return {'x': x, 'y': y}
 
         dict = {}
         series_lists = list(map(lambda series: dict.update({
-            filter_series_name(series.name()):
-                list(map(lambda point: [point.x(), point.y()], series.pointsVector()))}), self.all_series()))
+            series.name(): to_x_y_arrays(series)}), self.all_series()))
         try:
             with open(filename, 'w') as file:
                 file.write(json.dumps(dict, indent=4))

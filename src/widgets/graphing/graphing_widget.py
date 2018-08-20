@@ -40,7 +40,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.line_profile_layout: QLayout = None
         self.wn_layout: QLayout = None
         self.wn_cfg_layout: QLayout = None
-        self.plot_title_layout: QLayout = None
         self.graph_button_layout: QLayout = None
         self.window_layout: QLayout = None
         self.data_name_layout: QLayout = None
@@ -60,8 +59,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.wn_wing_hw_enabled: QCheckBox = None
         self.intensity_threshold: QDoubleSpinBox = None
         self.intensity_threshold_enabled: QCheckBox = None
-        self.wn_max: QDoubleSpinBox = None
-        self.wn_min: QDoubleSpinBox = None
+        self.numax: QDoubleSpinBox = None
+        self.numin: QDoubleSpinBox = None
         # Changed to gamma_air, gamma_self proportion
         # self.broadening_parameter: QComboBox = None
         self.gamma_air: QDoubleSpinBox = None
@@ -122,8 +121,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.temperature.setToolTip("Select the temperature to graph the data at.")
         self.pressure.setToolTip("Select the pressure to graph the data at.")
         self.intensity_threshold.setToolTip("Absolute value of minimum intensity.")
-        self.wn_min.setToolTip("Select min wavelength for graph.")
-        self.wn_max.setToolTip("Select max wavelength for graph.")
+        self.numin.setToolTip("Select min wavelength for graph.")
+        self.numax.setToolTip("Select max wavelength for graph.")
 
         self.wn_step.setToolTip("Select increment for wave number (wn).")
         self.wn_wing.setToolTip(
@@ -134,13 +133,12 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     def get_standard_parameters(self):
         data_name = self.get_data_name()
-        if self.is_xsc:
-            header = self.xsc_header
+        if self.xsc is not None:
             Components = []
             SourceTables = [data_name]
-            Environment = {'p': header['pressure'], 'T': header['temp'] }
-            WavenumberRange = (header['numin'], header['numax'])
-            WavenumberStep = header['step']
+            Environment = {'p': self.xsc.pressure, 'T': self.xsc.temp }
+            WavenumberRange = (self.xsc.numin, self.xsc.numax)
+            WavenumberStep = self.xsc.step
             Diluent = {'air': 0.0, 'self': 1.0}
             # TODO: Verify that these are the proper values.
             WavenumberWing = 0.0
@@ -366,7 +364,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         """
         :returns: a tuple containing first the minimum wave number, second the maximum wave number
         """
-        return (self.wn_min.value(), self.wn_max.value())
+        return (self.numin.value(), self.numax.value())
 
     def get_wn_step(self):
         """
@@ -542,7 +540,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.line_profile_layout.setEnabled(True)
         self.wn_layout.setEnabled(True)
         self.wn_cfg_layout.setEnabled(True)
-        self.plot_title_layout.setEnabled(True)
         self.graph_button_layout.setEnabled(True)
         self.window_layout.setEnabled(True)
         self.data_name_layout.setEnabled(True)
@@ -598,7 +595,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         def callback(work_result):
             self.remove_worker_by_jid(work_result.job_id)
             result = work_result.result
-            if result == None:
+            if result is None:
                 return
             if 'parameters' not in result:
                 self.set_graph_buttons_enabled(True)
@@ -610,23 +607,44 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
                         err_log('Table does not contain required parameters.')
                         return
 
-            self.wn_min.setValue(result['wn_min'])
-            self.wn_max.setValue(result['wn_max'])
+            self.numin.setValue(result['numin'])
+            self.numax.setValue(result['numax'])
             self.set_graph_buttons_enabled(True)
 
-            if result['xsc']:
+            if result['xsc'] is not None:
+                self.set_xsc_mode(True)
                 self.graph_type.clear()
                 self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING])
                 self.xsc_header = result['header']
             else:
+                self.set_xsc_mode(False)
                 self.graph_type.clear()
                 self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
 
-            self.is_xsc = result['xsc']
+            self.xsc = result['xsc']
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
         self.workers.append(worker)
         worker.start()
+
+    def set_xsc_mode(self, xsc_mode):
+        enabled = not xsc_mode
+        self.gamma_air.setEnabled(enabled)
+        self.gamma_self.setEnabled(enabled)
+        self.numin.setEnabled(enabled)
+        self.numax.setEnabled(enabled)
+        self.wn_step_enabled.setEnabled(enabled)
+        self.wn_step.setEnabled(enabled)
+        self.wn_wing.setEnabled(enabled)
+        self.wn_wing_enabled.setEnabled(enabled)
+        self.wn_wing_hw.setEnabled(enabled)
+        self.wn_wing_hw_enabled.setEnabled(enabled)
+        self.intensity_threshold.setEnabled(enabled)
+        self.intensity_threshold_enabled.setEnabled(enabled)
+        self.spectrum_tabs.setEnabled(enabled)
+        self.temperature.setEnabled(enabled)
+        self.pressure.setEnabled(enabled)
+        self.line_profile.setEnabled(enabled)
 
     def __on_gamma_air_changed(self, new_value: float):
         self.gamma_self.setText('{:8.4f}'.format(1.0 - new_value))

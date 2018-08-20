@@ -150,7 +150,7 @@
                 <string>Wavenumber Range</string>
             </property>
         </widget>
-        <widget class="QDoubleSpinBox" name="wn_min">
+        <widget class="QDoubleSpinBox" name="numin">
             <property name="geometry">
                 <rect>
                     <x>110</x>
@@ -172,7 +172,7 @@
                 <double>1.000000000000000</double>
             </property>
         </widget>
-        <widget class="QDoubleSpinBox" name="wn_max">
+        <widget class="QDoubleSpinBox" name="numax">
             <property name="geometry">
                 <rect>
                     <x>110</x>

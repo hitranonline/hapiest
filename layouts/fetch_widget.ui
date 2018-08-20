@@ -110,7 +110,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="wn_min">
+        <widget class="QDoubleSpinBox" name="numin">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -242,7 +242,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="wn_max">
+        <widget class="QDoubleSpinBox" name="numax">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>

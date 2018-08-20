@@ -10,9 +10,10 @@ from utils.hapiest_util import echo
 from utils.log import *
 from utils.metadata.config import Config
 from utils.metadata.hapi_metadata import HapiMetaData
+from utils.xsc import CrossSection
 from worker.work_result import WorkResult
 
-LOCAL_XSC_CACHE = {
+LOCAL_XSC_CACHE: Dict[str, CrossSection] = {
     #    'MOLECULE_PARAMATERS.xsc': { # Keep the .xsc extension on the name
     #        'nu': [1, 2, 3],
     #        'abscoef': [4, 5, 6],
@@ -185,8 +186,8 @@ class WorkFunctions:
         kwargs = {'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
                   'Diluent': Diluent}
         if SourceTables[0] in LOCAL_XSC_CACHE:
-            item = LOCAL_XSC_CACHE[SourceTables[0]]
-            return {'x': item['nu'], 'y': item['abscoef'], 'title': title, 'titlex': titlex, 'titley': titley,
+            xsc = LOCAL_XSC_CACHE[SourceTables[0]]
+            return {'x': xsc.nu, 'y': xsc.abscoef, 'title': title, 'titlex': titlex, 'titley': titley,
                     'name': SourceTables[0], 'args': { 'xsc': True,  **kwargs}}
 
         # absorptionCoefficient_Doppler functions do not use Diluent
@@ -371,22 +372,23 @@ class WorkFunctions:
         if table_name == None or table_name == '':
             return None
 
+        # The header is only used for normal tables, not cross sections
+        header = None
         if table_name in LOCAL_XSC_CACHE:
-            header = LOCAL_XSC_CACHE[table_name]['header']
-            wn_min = header['numin']
-            wn_max = header['numax']
-            length = header['len']
+            xsc = LOCAL_XSC_CACHE[table_name]
+            numin = xsc.numin
+            numax = xsc.numax
+            length = xsc.len
             parameters = []
-            xsc = True
         else:
             table = LOCAL_TABLE_CACHE[table_name]['data']
             header = LOCAL_TABLE_CACHE[table_name]['header']
             parameters = list(table.keys())
-            wn_min = min(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
-            wn_max = max(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
+            numin = min(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
+            numax = max(LOCAL_TABLE_CACHE[table_name]['data']['nu'])
             length = header['number_of_rows']
-            xsc = False
-        return echo(length=length, header=header, parameters=parameters, wn_min=wn_min, wn_max=wn_max, xsc=xsc)
+            xsc = None
+        return echo(length=length, header=header, parameters=parameters, numin=numin, numax=numax, xsc=xsc)
 
     @staticmethod
     def table_names(**kwargs):
