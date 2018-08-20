@@ -1,6 +1,9 @@
 # hapiest
 *hapiest* is a GUI that works with the HITRAN API, enabling access
 to all sorts of spectrographic data without knowledge of python.
+.
+## Manual
+The most up to date version of the manual can be downloaded [here](https://github.com/hitranonline/hapiest/raw/master/docs/manual.pdf).
 
 ## License 
 *hapiest* is licensed under the LGPL license.
