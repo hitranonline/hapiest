@@ -334,7 +334,8 @@ class WorkFunctions:
                 return FetchError(
                     FetchErrorKind.FailedToRetreiveData,
                     'Fetch failure: Failed to fetch data (connected successfully, received HTTP error as response)')
-        return {'all_tables': list(tableList())}
+
+        return {'all_tables': WorkFunctions.get_all_table_names()}
 
     @staticmethod
     def get_table(table_name: str) -> Optional[Dict[str, Any]]:
@@ -363,6 +364,12 @@ class WorkFunctions:
         except Exception as e:
             print(str(e))
             return False
+
+    @staticmethod
+    def get_all_table_names() -> List[str]:
+        l = tableList()
+        l.append(LOCAL_XSC_CACHE.keys())
+        return l
 
     @staticmethod
     def table_meta_data(table_name: str):
@@ -395,11 +402,7 @@ class WorkFunctions:
         """
         Returns all table names in local cache.
         """
-        table_names = []
-        for (table_name, table) in LOCAL_TABLE_CACHE.items():
-            table_names.append(table_name)
-
-        return echo(table_names=table_names)
+        return WorkFunctions.get_all_table_names()
 
     @staticmethod
     def select(TableName: str, DestinationTableName: str = QUERY_BUFFER, ParameterNames: List[str] = None,
