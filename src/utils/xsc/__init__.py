@@ -81,7 +81,7 @@ class CrossSectionMeta:
 
         self.api = CrossSectionApi()
 
-        self.cache = JsonCache(".xscm", self.api.request_xsc_meta, timedelta(days = 1.0))
+        self.cache = JsonCache(".xscm", self.api.request_xsc_meta, timedelta(days=1.0))
 
         if not self.cache.ok():
             err_log("Failed to load xscm from cache.")
@@ -100,7 +100,7 @@ class CrossSectionMeta:
     def add_meta_objects(self, meta_objs: List[Dict]):
         def insert(meta_obj):
             ind = meta_obj['molecule_id']
-            if ind in CrossSectionMeta.molecule_metas:
+            if ind in CrossSectionMeta.molecule_metas and meta_obj not in CrossSectionMeta.molecule_metas[ind]:
                 CrossSectionMeta.molecule_metas[ind].append(meta_obj)
             else:
                 CrossSectionMeta.molecule_metas[ind] = [meta_obj]

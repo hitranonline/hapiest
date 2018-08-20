@@ -1,11 +1,11 @@
 from typing import List
 
-from PyQt5 import uic, QtCore
-from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton, QCompleter
+from PyQt5 import uic, QtCore, QtWidgets
+from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton, QCompleter, QListWidget
 
 from utils.metadata.molecule import MoleculeMeta
 from utils.xsc import CrossSectionMeta, CrossSectionFilter
-from worker.hapi_worker import HapiWorker, WorkRequest
+from worker.hapi_worker import HapiWorker, WorkRequest, err_log
 
 
 class CrossSectionFetchWidget(QWidget):
@@ -28,7 +28,7 @@ class CrossSectionFetchWidget(QWidget):
         self.temp_max: QDoubleSpinBox = None
 
         self.molecule: QComboBox = None
-        self.cross_section: QComboBox = None
+        self.cross_section_list: QListWidget = None
 
         self.fetch_button: QPushButton = None
         self.apply_filters: QPushButton = None
@@ -65,6 +65,15 @@ class CrossSectionFetchWidget(QWidget):
     def gen_toggle_function(self, other_widgets: List[QWidget]):
         return lambda checked: list(map(lambda widget: widget.setDisabled(not checked), other_widgets))
 
+    def get_selected_xscs(self) -> List[str]:
+        xscs = []
+        for i in range(self.cross_section_list.count()):
+            item = self.cross_section_list.item(i)
+
+            if item.checkState() == QtCore.Qt.Checked:
+                xscs.append(str(item.text()))
+        return xscs
+
     ###
     # Event handlers
     ###
@@ -89,15 +98,12 @@ class CrossSectionFetchWidget(QWidget):
             temp = None
 
         filter = CrossSectionFilter(self.get_selected_molecule_id(), wn, pressure, temp)
-
-        self.cross_section.clear()
-        self.cross_section.addItems(filter.get_cross_sections())
+        self.set_cross_section_list_items(filter.get_cross_sections())
 
     def __on_molecule_selection_changed(self, _current_text: str):
         self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())
-        self.cross_section.clear()
         items = self.cross_section_meta.get_all_filenames()
-        self.cross_section.addItems(items)
+        self.set_cross_section_list_items(items)
 
         if self.fetching:
             return
@@ -108,13 +114,18 @@ class CrossSectionFetchWidget(QWidget):
             self.fetch_button.setEnabled(True)
 
     def __on_fetch_clicked(self, _checked: bool):
-        args = HapiWorker.echo(xsc_name=self.cross_section.currentText(), molecule_name=self.molecule.currentText())
+        xscs = self.get_selected_xscs()
+        if len(xscs) == 0:
+            return
+        args = HapiWorker.echo(xscs=xscs, molecule_name=self.molecule.currentText())
         self.fetch_button.setDisabled(True)
-        self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSC, args, self.__on_fetch_xsc_done)
+        self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSCS, args, self.__on_fetch_xsc_done)
         self.worker.start()
 
     def __on_fetch_xsc_done(self, res):
         _result = res.result
+        if _result is None:
+            err_log("Failed to fetch cross sections...")
         self.parent.populate_table_lists()
         self.fetching = False
         self.fetch_button.setEnabled(True)
@@ -127,3 +138,18 @@ class CrossSectionFetchWidget(QWidget):
         selected_molecule_name = self.molecule.currentText()
         mid = MoleculeMeta(selected_molecule_name)
         return mid.id
+
+    ###
+    # Setters
+    ###
+
+    def set_cross_section_list_items(self, xscs: List[str]):
+        list(map(lambda _: self.cross_section_list.takeItem(0), range(self.cross_section_list.count())))
+        for xsc in xscs:
+            item = QtWidgets.QListWidgetItem(xsc)
+            item.setFlags(item.flags() |
+                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            self.cross_section_list.addItem(item)

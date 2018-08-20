@@ -64,7 +64,7 @@ class GraphDisplayWindow(Window):
     def add_worker(self, graph_ty, work_object):
         id = str(self.cur_work_id)
         self.cur_work_id += 1
-        if graph_ty in (GraphType.BANDS, GraphType.ABSORPTION_COEFFICIENT):
+        if graph_ty == GraphType.BANDS:
             worker = HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
                                 lambda x: [self.plot_bands(x), self.workers.pop(id)])
         else:

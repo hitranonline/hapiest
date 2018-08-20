@@ -105,7 +105,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
         self.graph_button.clicked.connect(self.graph)
         self.graph_type.currentTextChanged.connect(self.__on_graph_type_changed)
-        self.data_name.currentTextChanged.connect(self.__on_data_name_chagned)
+        self.data_name.currentTextChanged.connect(self.__on_data_name_changed)
         self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
 
         # Set initial values automatically for gamma_air and gamma_self
@@ -205,7 +205,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         AF_wing = self.get_as_instrumental_fn_wing()
         Resolution = self.get_as_instrumental_resolution()
 
-        if standard_params['WavenumberStep'] == None:
+        if standard_params['WavenumberStep'] is None:
             standard_params['WavenumberStep'] = Resolution / 2
         elif standard_params['WavenumberStep'] <= Resolution:
             standard_params['WavenumberStep'] = Resolution * 1.0001
@@ -324,6 +324,127 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         Re-enables buttons for use after graphing is finished.
         """
         self.graph_button.setEnabled(True)
+
+    ###
+    #   Handlers
+    ####
+
+    def __on_graph_type_changed(self, graph_type):
+        self.update_existing_window_items()
+
+        self.line_profile_layout.setEnabled(True)
+        self.wn_layout.setEnabled(True)
+        self.wn_cfg_layout.setEnabled(True)
+        self.graph_button_layout.setEnabled(True)
+        self.window_layout.setEnabled(True)
+        self.data_name_layout.setEnabled(True)
+        self.env_layout.setEnabled(True)
+        self.mixing_ratio_layout.setEnabled(True)
+        self.graph_type_layout.setEnabled(True)
+
+        if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
+            self.spectrum_tabs.setDisabled(True)
+        elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.absorbtion.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.absorbtion)
+            self.transmittance.setDisabled(True)
+            self.radiance.setDisabled(True)
+        elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.transmittance.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.transmittance)
+            self.absorbtion.setDisabled(True)
+            self.radiance.setDisabled(True)
+        elif graph_type == GraphingWidget.RADIANCE_SPECTRUM_STRING:
+            self.spectrum_tabs.setEnabled(True)
+            self.radiance.setEnabled(True)
+            self.spectrum_tabs.setCurrentWidget(self.radiance)
+            self.absorbtion.setDisabled(True)
+            self.transmittance.setDisabled(True)
+        elif graph_type == GraphingWidget.BANDS_STRING:
+            self.line_profile_layout.setEnabled(False)
+            self.wn_layout.setEnabled(False)
+            self.line_profile_layout.setEnabled(False)
+            self.wn_layout.setEnabled(False)
+            self.wn_cfg_layout.setEnabled(False)
+            self.env_layout.setEnabled(False)
+            self.mixing_ratio_layout.setEnabled(False)
+
+    def __handle_checkbox_toggle(self, checkbox, element):
+        """
+        A handler for checkboxes that will either enable or disable the corresponding element, depending on
+        whether the checkbox is checked or not
+        """
+        if checkbox.isChecked():
+            element.setEnabled(True)
+        else:
+            element.setDisabled(True)
+
+    def __on_data_name_changed(self, new_table):
+        """
+        Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
+        """
+        self.set_graph_buttons_enabled(False)
+        self.same_window_checked = self.use_existing_window.isChecked()
+
+        def callback(work_result):
+            self.remove_worker_by_jid(work_result.job_id)
+            result = work_result.result
+            if result is None:
+                return
+            if 'parameters' not in result:
+                self.set_graph_buttons_enabled(True)
+                return
+
+            if not result['xsc']:
+                for param in GraphingWidget.parameters_required_to_graph:
+                    if param not in result['parameters']:
+                        err_log('Table does not contain required parameters.')
+                        return
+
+            self.numin.setValue(result['numin'])
+            self.numax.setValue(result['numax'])
+            self.set_graph_buttons_enabled(True)
+
+            if result['xsc'] is not None:
+                self.set_xsc_mode(True)
+                self.graph_type.clear()
+                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING])
+            else:
+                self.set_xsc_mode(False)
+                self.graph_type.clear()
+                self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
+
+            self.xsc = result['xsc']
+
+            self.use_existing_window.setChecked(self.same_window_checked)
+
+        worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
+        self.workers.append(worker)
+        worker.start()
+
+    def set_xsc_mode(self, xsc_mode):
+        enabled = not xsc_mode
+        self.gamma_air.setEnabled(enabled)
+        self.gamma_self.setEnabled(enabled)
+        self.numin.setEnabled(enabled)
+        self.numax.setEnabled(enabled)
+        self.wn_step_enabled.setEnabled(enabled)
+        self.wn_step.setEnabled(enabled)
+        self.wn_wing.setEnabled(enabled)
+        self.wn_wing_enabled.setEnabled(enabled)
+        self.wn_wing_hw.setEnabled(enabled)
+        self.wn_wing_hw_enabled.setEnabled(enabled)
+        self.intensity_threshold.setEnabled(enabled)
+        self.intensity_threshold_enabled.setEnabled(enabled)
+        self.spectrum_tabs.setEnabled(enabled)
+        self.temperature.setEnabled(enabled)
+        self.pressure.setEnabled(enabled)
+        self.line_profile.setEnabled(enabled)
+
+    def __on_gamma_air_changed(self, new_value: float):
+        self.gamma_self.setText('{:8.4f}'.format(1.0 - new_value))
 
     ##
     # Getters
@@ -521,7 +642,6 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
         list(map(lambda x: self.selected_window.addItem(str(x.window_id), None), fitting_graph_windows))
         self.use_existing_window.setEnabled(True)
-        self.use_existing_window.setEnabled(True)
 
     def populate_graph_types(self):
         self.graph_type.addItem(GraphingWidget.ABSORPTION_SPECTRUM_STRING)
@@ -530,121 +650,3 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.graph_type.addItem(GraphingWidget.ABSORPTION_COEFFICIENT_STRING)
         self.graph_type.addItem(GraphingWidget.BANDS_STRING)
 
-    ###
-    #   Handlers
-    ####
-
-    def __on_graph_type_changed(self, graph_type):
-        self.update_existing_window_items()
-
-        self.line_profile_layout.setEnabled(True)
-        self.wn_layout.setEnabled(True)
-        self.wn_cfg_layout.setEnabled(True)
-        self.graph_button_layout.setEnabled(True)
-        self.window_layout.setEnabled(True)
-        self.data_name_layout.setEnabled(True)
-        self.env_layout.setEnabled(True)
-        self.mixing_ratio_layout.setEnabled(True)
-        self.graph_type_layout.setEnabled(True)
-
-        if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
-            self.spectrum_tabs.setDisabled(True)
-        elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.absorbtion.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.absorbtion)
-            self.transmittance.setDisabled(True)
-            self.radiance.setDisabled(True)
-        elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.transmittance.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.transmittance)
-            self.absorbtion.setDisabled(True)
-            self.radiance.setDisabled(True)
-        elif graph_type == GraphingWidget.RADIANCE_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.radiance.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.radiance)
-            self.absorbtion.setDisabled(True)
-            self.transmittance.setDisabled(True)
-        elif graph_type == GraphingWidget.BANDS_STRING:
-            self.line_profile_layout.setEnabled(False)
-            self.wn_layout.setEnabled(False)
-            self.line_profile_layout.setEnabled(False)
-            self.wn_layout.setEnabled(False)
-            self.wn_cfg_layout.setEnabled(False)
-            self.env_layout.setEnabled(False)
-            self.mixing_ratio_layout.setEnabled(False)
-
-    def __handle_checkbox_toggle(self, checkbox, element):
-        """
-        A handler for checkboxes that will either enable or disable the corresponding element, depending on
-        whether the checkbox is checked or not
-        """
-        if checkbox.isChecked():
-            element.setEnabled(True)
-        else:
-            element.setDisabled(True)
-
-    def __on_data_name_chagned(self, new_table):
-        """
-        Disables all graph buttons. (Inner method callback : enables graph buttons if necessary params to graph are supplied.)
-        """
-        self.set_graph_buttons_enabled(False)
-
-        def callback(work_result):
-            self.remove_worker_by_jid(work_result.job_id)
-            result = work_result.result
-            if result is None:
-                return
-            if 'parameters' not in result:
-                self.set_graph_buttons_enabled(True)
-                return
-
-            if not result['xsc']:
-                for param in GraphingWidget.parameters_required_to_graph:
-                    if param not in result['parameters']:
-                        err_log('Table does not contain required parameters.')
-                        return
-
-            self.numin.setValue(result['numin'])
-            self.numax.setValue(result['numax'])
-            self.set_graph_buttons_enabled(True)
-
-            if result['xsc'] is not None:
-                self.set_xsc_mode(True)
-                self.graph_type.clear()
-                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING])
-                self.xsc_header = result['header']
-            else:
-                self.set_xsc_mode(False)
-                self.graph_type.clear()
-                self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
-
-            self.xsc = result['xsc']
-
-        worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
-        self.workers.append(worker)
-        worker.start()
-
-    def set_xsc_mode(self, xsc_mode):
-        enabled = not xsc_mode
-        self.gamma_air.setEnabled(enabled)
-        self.gamma_self.setEnabled(enabled)
-        self.numin.setEnabled(enabled)
-        self.numax.setEnabled(enabled)
-        self.wn_step_enabled.setEnabled(enabled)
-        self.wn_step.setEnabled(enabled)
-        self.wn_wing.setEnabled(enabled)
-        self.wn_wing_enabled.setEnabled(enabled)
-        self.wn_wing_hw.setEnabled(enabled)
-        self.wn_wing_hw_enabled.setEnabled(enabled)
-        self.intensity_threshold.setEnabled(enabled)
-        self.intensity_threshold_enabled.setEnabled(enabled)
-        self.spectrum_tabs.setEnabled(enabled)
-        self.temperature.setEnabled(enabled)
-        self.pressure.setEnabled(enabled)
-        self.line_profile.setEnabled(enabled)
-
-    def __on_gamma_air_changed(self, new_value: float):
-        self.gamma_self.setText('{:8.4f}'.format(1.0 - new_value))

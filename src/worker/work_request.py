@@ -415,24 +415,23 @@ class WorkFunctions:
         return echo(new_table_name=DestinationTableName, all_tables=list(tableList()))
 
     @staticmethod
-    def download_xsc(xsc_name: str, molecule_name: str, **kwargs):
+    def download_xscs(xscs: List[str], molecule_name: str, **kwargs):
         from utils.api import CrossSectionApi
         api = CrossSectionApi()
-
-        split = molecule_name.split('_')
-        if len(split) <= 1:
-            filename = xsc_name
-        else:
-            split[0] = molecule_name
-            filename = functools.reduce(str.__add__, split)
-        res: bytes = api.request_xsc(xsc_name, filename)
-        if res is None:
-            return None
-        else:
-            if add_xsc_to_cache(filename, res):
-                return xsc_name
+        for xsc_name in xscs:
+            split = molecule_name.split('_')
+            if len(split) <= 1:
+                filename = xsc_name
             else:
+                split[0] = molecule_name
+                filename = functools.reduce(str.__add__, split)
+            res: bytes = api.request_xsc(xsc_name, filename)
+            if res is None:
                 return None
+            else:
+                if not add_xsc_to_cache(filename, res):
+                    return None
+        return True
 
 
 class WorkRequest:
@@ -456,8 +455,7 @@ class WorkRequest:
     RADIANCE_SPECTRUM: WorkType = 10
     ABSORPTION_SPECTRUM: WorkType = 11
     BANDS: WorkType = 12
-
-    DOWNLOAD_XSC: WorkType = 13
+    DOWNLOAD_XSCS: WorkType = 13
 
     WORKQ: mp.Queue = mp.Queue()
     RESULTQ: mp.Queue = mp.Queue()
@@ -501,7 +499,7 @@ class Work:
             WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.graph_transmittance_spectrum,
             WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum,
             WorkRequest.BANDS: WorkFunctions.graph_bands,
-            WorkRequest.DOWNLOAD_XSC: WorkFunctions.download_xsc
+            WorkRequest.DOWNLOAD_XSCS: WorkFunctions.download_xscs
         }
 
         WorkFunctions.start_hapi(**{})

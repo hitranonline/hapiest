@@ -94,7 +94,6 @@ class FetchWidget(QWidget):
 
             self.param_list.addItem(item)
 
-
     def populate_molecule_list(self):
         """
         Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.
