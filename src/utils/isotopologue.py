@@ -8,7 +8,6 @@ IsotopologueId = int
 GlobalIsotopologueId = int
 IsoName = AnyStr
 
-
 class Isotopologue():
     """
      Static members.

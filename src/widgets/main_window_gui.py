@@ -60,7 +60,7 @@ class MainWindowGui(GUI, QMainWindow):
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
 
-        self.setWindowTitle("hapiest")
+        self.setWindowTitle("hapiest - {}".format(VERSION_STRING))
 
         self.config_action.triggered.connect(self.__on_config_action)
         self.about_hapiest_action.triggered.connect(self.__on_about_action)
