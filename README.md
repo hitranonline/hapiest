@@ -1,4 +1,4 @@
-# hapiest
+# hapiest v0.1a
 *hapiest* is a GUI that works with the HITRAN API, enabling access
 to all sorts of spectrographic data without knowledge of python.
 .
