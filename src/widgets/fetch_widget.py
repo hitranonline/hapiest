@@ -262,11 +262,15 @@ class FetchWidget(QWidget):
         parameter_groups = self.get_selected_param_groups()
         parameters = self.get_selected_params()
         log(str("Sending fetch request..."))
+
+        selected_isos = self.get_selected_isotopologues()
+        if len(selected_isos) == 0:
+            return
  
         self.disable_fetch_button()
         work = HapiWorker.echo(
             data_name=self.get_data_name(),
-            iso_id_list=self.get_selected_isotopologues(),
+            iso_id_list=selected_isos,
             numin=numin,
             numax=numax,
             parameter_groups=parameter_groups,
