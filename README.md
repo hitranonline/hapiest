@@ -1,7 +1,8 @@
-# hapiest v0.1a
+# hapiest v0.2-alpha
 *hapiest* is a GUI that works with the HITRAN API, enabling access
 to all sorts of spectrographic data without knowledge of python.
-.
+
+*hapiest* is still in it's alpha stage of development. 
 ## Manual
 The most up to date version of the manual can be downloaded [here](https://github.com/hitranonline/hapiest/raw/master/docs/manual.pdf).
 

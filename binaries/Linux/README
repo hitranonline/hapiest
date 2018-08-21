@@ -1,0 +1,8 @@
+The program can be launched by using the 'hapiest.sh' script. If you cannot launch the script by
+double clicking it, you will have to run it in a terminal. Open a terminal and cd into the directory 
+that contains 'hapiest.sh' and simply invoke:
+
+./hapiest.sh
+
+If you encounter trouble, please open in issue on the Github page: 
+https://github.com/hitranonline/hapiest/issues

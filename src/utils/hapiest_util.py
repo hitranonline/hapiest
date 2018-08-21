@@ -8,7 +8,7 @@ from utils.metadata.config import *
 # Regex that captures files ending in .data, and binds everything before the .data to 'data_handle'
 DATA_FILE_REGEX = re.compile('(?P<data_handle>.+)\\.(data|par|xsc)\\Z')
 
-VERSION_STRING = "v0.1a"
+VERSION_STRING = "v0.2-alpha"
 
 ICON = None
 def program_icon():
