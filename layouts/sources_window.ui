@@ -30,8 +30,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>696</width>
-        <height>419</height>
+        <width>700</width>
+        <height>429</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3"/>
@@ -97,7 +97,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Generate LaTEX</string>
+        <string>Generate LaTeX</string>
        </property>
       </widget>
      </item>
