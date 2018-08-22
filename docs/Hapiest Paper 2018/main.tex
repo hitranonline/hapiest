@@ -351,7 +351,8 @@
 
 
 \newcommand{\paperTitle}{HAPIEST: Flashy Eye-catching Title} % TODO: Think of a good title
-
+\usepackage{hyperref}
+\usepackage{graphicx}
 \begin{document}
 %
 % paper title
@@ -433,12 +434,12 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-Current high-resolution spectroscopic data have become more and more complex and extensive. In order to make
+Current high-resolution spectroscopic data has become increasingly complex and extensive. In order to make
 connections between spectroscopic data in different formats and spectra observed in different applications, one
 may need a reliable, flexible tool which is easy to learn, use, and deploy. 
 
-The cross-platform and portable program HAPIEST is an answer to this need. The current features, future plans, and limitations of HAPIEST be
-explorered in this paper.
+The cross-platform and portable program HAPIEST is an answer to this need. The current features, future plans, and
+limitations of HAPIEST be explorered in this paper.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -454,8 +455,6 @@ HITRAN, HAPI, HAPIEST
 % For peerreview papers, this IEEEtran command inserts a page break and
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
-
-
 
 \section{Introduction}
 % The very first letter is a 2 line initial drop letter followed
@@ -474,10 +473,11 @@ HITRAN, HAPI, HAPIEST
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
 \IEEEPARstart{T}{he} 
-\textbf{H}ITRAN \textbf{A}pplication \textbf{P}rograming \textbf{I}nterface and \textbf{E}fficient \textbf{S}pectroscopic \textbf{T}ools (HAPIEST) is a
-joint project which started in the Fall of 2017 as a collaboration between the HITRAN team and the State University of
-New York at Oswego. The purpose of HAPIEST is to simplify usage of the the \textbf{H}ITRAN \textbf{A}pplication
-\textbf{P}rograming \textbf{I}nterface (HAPI, http://hitran.org/hapi ) 
+\textbf{H}ITRAN \textbf{A}pplication \textbf{P}rograming \textbf{I}nterface and \textbf{E}fficient
+\textbf{S}pectroscopic \textbf{T}ools (HAPIEST) is a joint project which started in the Fall of 2017 as a collaboration
+between the HITRAN team and the State University of New York at Oswego. The purpose of HAPIEST is to simplify usage of
+the the \textbf{H}ITRAN \textbf{A}pplication \textbf{P}rograming \textbf{I}nterface 
+(HAPI, \href{http://hitran.org/hapi}{http://hitran.org/hapi}) 
 \footnote{Kochanov RV, Gordon IE, Rothman LS, Wcislo P, Hill C, Wilzewski JS. HITRAN Application Programming Interface
           (HAPI): A comprehensive approach to working with spectroscopic data. J Quant Spectrosc Radiat Transf
           2016;177:15–30. doi:10.1016/j.jqsrt.2016.03.005.}
@@ -491,7 +491,7 @@ fetching and selecting, as well as generating and plotting of the spectral funct
 transmittance, absorption, and radiance spectra). Moreover, HAPIEST provides access to most of the controls which
 are involved in the spectral filtering and simulation, and is distributed both as binary and source code.
 The recent version of the source code can be found on Github
-(https://github.com/hapiest-team/hapiest).
+(\href{https://github.com/hapiest-team/hapiest}{https://github.com/hapiest-team/hapiest}).
 The HAPI library, on which the HAPIEST is based, is a free open-source Python module (library) which provides a set of
 tools for working with the structured spectroscopic data from different sources. The principal aim of HAPI is
 facilitating physically-sound interpretation of observations and more realistic models for a wide variety of
@@ -501,34 +501,31 @@ calculations caused by misuse of spectroscopic tools and databases. The descript
 and its features can be found in the dedicated paper
 \footnote{Kochanov RV, Gordon IE, Rothman LS, Wcislo P, Hill C, Wilzewski JS. J. Quant. Spectrosc. Radiat. Transf.
           177, 15-30 (2016).}
-and in the official web page (http://hitran.org/hapi).
+and in the official web page (\href{http://hitran.org/hapi}{http://hitran.org/hapi}).
 
 \subsection{Current Development Status}
-HAPIEST is currently in the alpha-stage of development - it's layout and features are still quite volatile, and may contain bugs. If you use HAPIEST, it will be very benificial if you document any bugs you experience on this Github
-issues page (https://github.com/hitranonline/hapiest/issues).
-
-\subsection{Future Plans}
-...?
+HAPIEST is currently in the alpha-stage of development - it's layout and features are still quite volatile, and may
+contain bugs. If you use HAPIEST, it will be very benificial if you document any bugs you experience on this Github
+issues page (\href{https://github.com/hitranonline/hapiest/issues}{https://github.com/hitranonline/hapiest/issues}).
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
 
 \section{Usage}
 HAPIEST has a manual which documents all of the functionality and features HAPIEST has to offer. The manual can be
-downloaded in a PDF format from the Github page (https://github.com/hitranonline/hapiest\#manual)
+downloaded in a PDF format from the Github page (\href{https://github.com/hitranonline/hapiest\#manual}{https://github.com/hitranonline/hapiest\#manual})
 
 \subsection{License}
 HAPIEST is licensed under the GNU Lesser General Public License version 3 (LGPLv3). In brief, this means usage of and
 modifications to the program are allowed as long as the changes are documented. You can read more about the specific
 terms of the LGPLv3 here:
-https://www.gnu.org/licenses/lgpl-3.0.en.html.
+\href{https://www.gnu.org/licenses/lgpl-3.0.en.html}{https://www.gnu.org/licenses/lgpl-3.0.en.html}.
 
 \subsection{Running Using Binary Packages}
 There are several binary distributions available for HAPIEST. This includes Windows, Mac OSX, and Linux. They are
 available for download on the releases section on HAPIEST's Github page
-(https://github.com/hitranonline/hapiest/releases).
+(\href{https://github.com/hitranonline/hapiest/releases}{https://github.com/hitranonline/hapiest/releases}).
 
 \section{Features}
-\subsection{Cross Sections}
-HAPIEST can download cross sections from HITRAN, and graph the retreived cross sections. HITRAN has cross sections for
-324 molecules as of August 2018. cont.
 
 \subsection{Line-by-Line Data}
 By using HAPI, HAPIEST can retreive line-by-line data. Line-by-line data can be retreived for any molecule or
@@ -546,6 +543,19 @@ fields that have been modified manually will be flagged highlighted red in the v
 Line-by-line data retrieved from HITRAN can be modified using SQL-like queiries in a LISP-like domain specific 
 language. These queries can transform and filter data.
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{xsc_graph_display.png}
+    \caption{A screenshot of a graph display window in HAPIEST. In this example there are 7 cross sections of CFC-11
+    on the plot. }
+    \label{xsc_graph}
+\end{figure*}
+\subsection{Cross Sections}
+HAPIEST can download cross sections from HITRAN, and graph the retreived cross sections. HITRAN has cross sections for
+324 molecules as of August 2018.
+
+After downloading cross sections using HAPIEST, they can be graphed and compared to each other. An example of graphed
+cross sections can be seen in \ref{xsc_graph}.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -559,17 +569,6 @@ language. These queries can transform and filter data.
 % Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
 % option should be used if it is desired that the figures are to be
 % displayed while in draft mode.
-%
-%\begin{figure}[!t]
-%\centering
-%\includegraphics[width=2.5in]{myfigure}
-% where an .eps filename suffix will be assumed under latex, 
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-%\caption{Simulation results for the network.}
-%\label{fig_sim}
-%\end{figure}
-
 % Note that the IEEE typically puts floats only at the top, even when this
 % results in a large percentage of a column being occupied by floats.
 
@@ -675,7 +674,7 @@ The conclusion goes here.
 
 
 % use section* for acknowledgment
-\section*{Acknowledgments}
+\section*{Acknowledgment}
 Shashi Kanbur and Bastian Tenbergen of the State University of New York at Oswego.
 
 

@@ -1,8 +1,6 @@
 \documentclass[12pt]{article}
 
 \usepackage{graphicx}
-\graphicspath{{figures/}} % Location of the graphics files
-\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
 \usepackage{amsfonts, amsmath, amsthm, amssymb}
 %\usepackage{wrapfig}
 \usepackage{indentfirst}
@@ -42,7 +40,7 @@ HAPIEST is available to follow and download on our \href{https://github.com/hitr
 The molecules tab, shown in Fig.~\ref{fig:molecules}, provides reference for the available molecules and also reference ID's for each molecule.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.6]{hapiest_molecules}
+    \includegraphics[scale=1]{hapiest_molecules.png}
 \caption{Example display of Carbon Dioxide}
 \label{fig:molecules}
 \end{figure}
@@ -52,7 +50,7 @@ The molecules tab, shown in Fig.~\ref{fig:molecules}, provides reference for the
 The Line-by-line tab allows the user to download data from HITRAN onto their local disk for the available molecules and their supported isotopologues. Furthermore, the user can select from the Parameter Groups list and Parameters list to download more specific data. This window is the users primary method of obtaining data.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.6]{hapiest_line_by_line}
+\includegraphics[scale = 0.6]{hapiest_line_by_line.png}
 \caption{Line-by-line tab filled out to fetch data for CO2}
 \label{fig:line-by-line}
 \end{figure}
@@ -77,7 +75,7 @@ The Line-by-line tab allows the user to download data from HITRAN onto their loc
 The Edit tab, shown in Fig.~\ref{fig:edit}, allows users to view and edit local data that has been downloaded through HAPIEST. It offers a table view of all parameters and values, and can be saved to disk.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.5]{hapiest_edit}
+\includegraphics[scale = 0.5]{hapiest_edit.png}
 \caption{Generated table of downloaded parameters}
 \label{fig:edit}
 \end{figure}
@@ -98,7 +96,7 @@ The Edit tab, shown in Fig.~\ref{fig:edit}, allows users to view and edit local 
 The Select tab, shown in Fig.~\ref{fig:select}, is dedicated to the select function available in HAPI and allows users a more advanced fetch.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.6]{select_window}
+\includegraphics[scale = 0.6]{select_window.png}
 \caption{Page resulting from Select tab}
 \label{fig:select}
 \end{figure}
@@ -110,7 +108,7 @@ The Select tab, shown in Fig.~\ref{fig:select}, is dedicated to the select funct
 In the Graphing tab, shown in Fig.~\ref{fig:graphing}, the user is given a list of parameter fields to populate in order to create the specific graph they need for each graph type (Absorption Coefficient; Absorption, Transmittance, and Radiance Spectra graphs). Multiple plots of the same type may be displayed together on the same graph.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.6]{hapiest_graphing}
+\includegraphics[scale = 0.6]{hapiest_graphing.png}
 \caption{Example of Graphing tab}
 \label{fig:graphing}
 \end{figure}
@@ -145,7 +143,7 @@ Inside the graph display windows, the user has options to zoom in on the graph, 
 To box zoom  (see Fig.~\ref{fig:graph_tab}), hold the left mouse button down and drag across the area you want to zoom in on, and release. In order to reset the graph view, click View in the menu and then click Fit.
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.4]{GraphBoxZoomBoth}
+\includegraphics[scale = 0.4]{GraphBoxZoomBoth.png}
 \caption{Example of a box zoom of a spectrum. The blue box is highlighted, and the new plot is given in the same window by using the multiple graphing functionality}
 \label{fig:graph_tab}
 \end{figure}
@@ -158,7 +156,7 @@ In the graph window and under View in the menu, there are options to alter the v
 \begin{figure}[h]
 \begin{minipage}[c]{0.3\textwidth}
 \centering
-\includegraphics[scale = 0.5]{GraphSave}
+\includegraphics[scale = 0.5]{GraphSave.png}
 \caption{Sequence of steps to generate plots}
 \label{fig:save}
 \end{minipage}
@@ -175,7 +173,7 @@ In order to plot/graph data, the user needs to first download data from the HITR
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale = 0.6]{hapiest_line_by_line_guide}
+\includegraphics[scale = 0.6]{hapiest_line_by_line_guide.png}
 \caption{Sequence of steps to fetch data}
 \label{fig:how_to_fetch}
 \end{figure}

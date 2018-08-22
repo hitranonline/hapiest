@@ -10,16 +10,16 @@ The most up to date version of the manual can be downloaded [here](https://githu
 *hapiest* is licensed under the LGPL license.
 
 ## Download
-Windows x86 Executable [Download](https://github.com/hitranonline/hapiest/releases/tag/v0.1-alpha)
+You can download an executable for your system [here.](https://github.com/hitranonline/hapiest/releases/tag/v0.2-alpha)
 
-There are no Mac OSX or Linux executables, please make an issue in this repository to request one.
+Currently 32 bit (x86) Windows and Linux machines are not supported but they will be eventually.
 
 ## Usage
 A manual that documents what hapiest can do can be found 
 [here](https://github.com/hitranonline/hapiest/raw/master/doc/HAPIESTmanual.pdf) (this link will download the PDF file).
 
 ## How to Manually Install
-Hapiest has a limited number of binary packages (only Windows 32-bit right now), but the program itself can be
+Hapiest has a limited number of binary packages, but the program itself can be
 downloaded
 
 *You must have python 3.6 or later to install and use hapiest*.

@@ -1,0 +1,5 @@
+You can start hapiest by running the 'hapiest.sh' shell script, by double clicking or by invoking the following in a terminal:
+
+bash hapiest.sh
+
+In the bin folder, there is an executable named hapiest. This can be ran, however there is no gaurentee it will work properly.
