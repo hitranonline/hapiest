@@ -101,6 +101,9 @@ class CrossSectionFetchWidget(QWidget):
         self.set_cross_section_list_items(filter.get_cross_sections())
 
     def __on_molecule_selection_changed(self, _current_text: str):
+        mid = self.get_selected_molecule_id()
+        if mid is None:
+            return
         self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())
         items = self.cross_section_meta.get_all_filenames()
         self.set_cross_section_list_items(items)
@@ -137,7 +140,10 @@ class CrossSectionFetchWidget(QWidget):
     def get_selected_molecule_id(self) -> int:
         selected_molecule_name = self.molecule.currentText()
         mid = MoleculeMeta(selected_molecule_name)
-        return mid.id
+        if mid.populated:
+            return mid.id
+        else:
+            return None
 
     ###
     # Setters

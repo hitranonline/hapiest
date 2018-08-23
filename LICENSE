@@ -2,7 +2,6 @@ Third-party Software
 
 this program uses the following packages:
 
-- Python v3.6.3, available at: https://www.python.org
 - PyQt5 v5.9, GPL v3, available at: https://riverbankcomputing.com/software/pyqt/intro
 - PyQtChart v5.9, GPL v3, available at: https://www.riverbankcomputing.com/software/pyqtchart/intro
 - toml v0.9.3, MIT License, available at: https://github.com/uiri/toml
