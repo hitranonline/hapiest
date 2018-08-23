@@ -104,7 +104,8 @@ class CrossSectionFetchWidget(QWidget):
         mid = self.get_selected_molecule_id()
         if mid is None:
             return
-        self.cross_section_meta = CrossSectionMeta(self.get_selected_molecule_id())
+
+        self.cross_section_meta = CrossSectionMeta(mid)
         items = self.cross_section_meta.get_all_filenames()
         self.set_cross_section_list_items(items)
 
