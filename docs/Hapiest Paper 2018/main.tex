@@ -351,8 +351,9 @@
 
 
 \newcommand{\paperTitle}{HAPIEST: Flashy Eye-catching Title} % TODO: Think of a good title
-\usepackage{hyperref}
+
 \usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
 \begin{document}
 %
 % paper title
@@ -374,11 +375,15 @@
 %
 
 
-\author{~Joshua~Karns,
-        ~Wyatt~Matt,
-        ~Roman~V.~Kochanov,
-        ~Iouli~E.~Gordon,
-        `TODO:~Add~all~of~the~correct~names}
+\author{\underline{~Joshua~Karns}$^{a,b}$,
+        \underline{~Wyatt~Matt}$^{a,b}$,
+        \underline{~Roman~V.~Kochanov}$^{b,c}$,
+        \underline{~Iouli~E.~Gordon}$^b$,
+        \underline{L.~S.~Rothman}$^b$,
+        \underline{Y.~Tan}$^b$,
+        R.~Hashemi$^{b,c}$,
+        S.~Kanbur$^a$,
+        B.~Tenbergen$^a$}
 
 % note the % following the last \IEEEmembership and also \thanks - 
 % these prevent an unwanted space from occurring between the last author name
@@ -426,10 +431,15 @@
 %\IEEEspecialpapernotice{(Invited Paper)}
 
 
-
-
 % make the title area
 \maketitle
+
+\begin{flushleft}
+$^a$\textit{  State University of New York at Oswego, Oswego, NY, USA}
+$^b$\textit{  Atomic and Molecular Physics, Harvard-Smithsonian Center for Astrophysics, Cambridge, MA, USA}
+
+$^c$\textit{  University of Lethbridge, Alberta, Canada}
+\end{flushleft}
 
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
@@ -507,6 +517,7 @@ and in the official web page (\href{http://hitran.org/hapi}{http://hitran.org/ha
 HAPIEST is currently in the alpha-stage of development - it's layout and features are still quite volatile, and may
 contain bugs. If you use HAPIEST, it will be very benificial if you document any bugs you experience on this Github
 issues page (\href{https://github.com/hitranonline/hapiest/issues}{https://github.com/hitranonline/hapiest/issues}).
+Moreover, development will be in a bug-fix only state until mid-2019 at the soonest.
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
 
@@ -515,47 +526,54 @@ HAPIEST has a manual which documents all of the functionality and features HAPIE
 downloaded in a PDF format from the Github page (\href{https://github.com/hitranonline/hapiest\#manual}{https://github.com/hitranonline/hapiest\#manual})
 
 \subsection{License}
-HAPIEST is licensed under the GNU Lesser General Public License version 3 (LGPLv3). In brief, this means usage of and
-modifications to the program are allowed as long as the changes are documented. You can read more about the specific
+HAPIEST is licensed under the GNU Lesser General Public License version 3 (LGPLv3). You can read more about the specific
 terms of the LGPLv3 here:
 \href{https://www.gnu.org/licenses/lgpl-3.0.en.html}{https://www.gnu.org/licenses/lgpl-3.0.en.html}.
+Changes and redistribution of HAPIEST are welcomed but must be documented and free.
 
-\subsection{Running Using Binary Packages}
+\subsection{Binary Distributions}
 There are several binary distributions available for HAPIEST. This includes Windows, Mac OSX, and Linux. They are
 available for download on the releases section on HAPIEST's Github page
 (\href{https://github.com/hitranonline/hapiest/releases}{https://github.com/hitranonline/hapiest/releases}).
 
 \section{Features}
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{xsc_graph_display.png}
+    \caption{A screenshot of a graph display window in HAPIEST. In this example there are 3 cross sections of CFC-11
+    on the plot. }
+    \label{fig:xsc_graph}
+\end{figure*}
+
 \subsection{Line-by-Line Data}
 By using HAPI, HAPIEST can retreive line-by-line data. Line-by-line data can be retreived for any molecule or
 isotopologue that HITRAN contains. Moreover, additional parameter groups like those required for speed-dependent Voigt
 and Galatry line profiles are optionaly available.
 
-\subsubsection{Viewing Line-by-Line Data}
-HAPIEST has a 'view' feature which allows tables to be viewed in a spreadsheet-like widget. The view feature
+\subsubsection{Viewing}
+HAPIEST has a 'view' feature which allows line lists to be viewed in a spreadsheet-like widget. The view feature
 automatically paginates tables to save on system resources, but this page-length can be changed in the
 user-configurable settings ('Settings' -> 'Edit Configuration' in the main window).
 The view functionality also allows for manual editing of tables, although it is not recommended. As a safety measure,
 fields that have been modified manually will be flagged highlighted red in the view widget.
 
+\subsubsection{Graphing}
+One of HAPIEST's major features is it's graphing capabilities. HAPIEST can graph Line-by-Line data by calculating
+the absorption coefficient, and absorption, transmittance, and raidance spectra. There is also the option to apply
+instrumental functions and line profiles to these spectra. HAPIEST can also separate and graph the bands of each table.
+HAPIEST creates a special legend for band graphs which will show the upper and lower quanta of each band. 
+
 \subsubsection{Data Selection}
 Line-by-line data retrieved from HITRAN can be modified using SQL-like queiries in a LISP-like domain specific 
-language. These queries can transform and filter data.
+language. These queries can transform and filter data efficiently.
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{xsc_graph_display.png}
-    \caption{A screenshot of a graph display window in HAPIEST. In this example there are 7 cross sections of CFC-11
-    on the plot. }
-    \label{xsc_graph}
-\end{figure*}
 \subsection{Cross Sections}
 HAPIEST can download cross sections from HITRAN, and graph the retreived cross sections. HITRAN has cross sections for
 324 molecules as of August 2018.
 
-After downloading cross sections using HAPIEST, they can be graphed and compared to each other. An example of graphed
-cross sections can be seen in \ref{xsc_graph}.
+\subsubsection{Graphing}
+Graphing of any downloaded cross sections is possible. Cross-sections can be plotted, as seen in Fig.~\ref{fig:xsc_graph}.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -674,8 +692,7 @@ The conclusion goes here.
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
-Shashi Kanbur and Bastian Tenbergen of the State University of New York at Oswego.
+%\section*{Acknowledgment}
 
 
 % Can use something like this to put references on a page
