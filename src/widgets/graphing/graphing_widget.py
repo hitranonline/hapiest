@@ -188,7 +188,11 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def graph_abs_coef(self, standard_parameters):
         work = HapiWorker.echo(title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
                                titlex="Wavenumber (cm<sup>-1</sup>)",
-                               titley='Absorption Coefficient cm<sup>-1</sup>', **standard_parameters)
+                               titley='Absorption Coefficient ', **standard_parameters)
+
+        if work['SourceTables'][0].endswith('.xsc'):
+            work['titley'] = 'molecules / cm<sup>2</sup>'
+            work['title'] = 'Absorption Cross-Section'
 
         if self.use_existing_window.isChecked():
             selected_window = self.selected_window.currentText()
