@@ -368,8 +368,7 @@ class WorkFunctions:
     @staticmethod
     def get_all_table_names() -> List[str]:
         l = list(tableList())
-        l.append(list(LOCAL_XSC_CACHE.keys()))
-        return l
+        return l + list(LOCAL_XSC_CACHE.keys())
 
     @staticmethod
     def table_meta_data(table_name: str):
