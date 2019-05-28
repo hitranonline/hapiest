@@ -20,6 +20,7 @@ sources = {
 from test.test import Test
 from PyQt5 import QtWidgets
 from widgets.molecule_info_widget import MoleculeInfoWidget
+from utils.metadata.molecule import MoleculeMeta
 
 class MoleculeInfoTest(Test):
     def __init__(self):
@@ -34,7 +35,9 @@ class MoleculeInfoTest(Test):
         def close_window():
             sleep(0.25)
             window.deleteLater()
-            
+        # Necessary initialization
+        _ = MoleculeMeta(0)     
+        
         t = threading.Thread(target=close_window)
         t.start()
         widget = MoleculeInfoWidget('CO2')

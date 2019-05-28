@@ -4,10 +4,11 @@ import sys
 from urllib.error import URLError, HTTPError
 
 if sys.version_info < (3, 6):
-    print('You must have Python 3 installed to use hapiest - current version is ' + str(sys.version))
+    print(f"You must have Python 3 installed to use hapiest - current version is {str(sys.version)}")
     sys.exit(0)
 
-# If someone launches the program through the command 'python3 __main__.py' this move the working directory to the proper place
+# If someone launches the program through the command 'python3 __main__.py'
+# this moves the current working directory to the proper place
 srcre = re.compile('.+src\\Z')
 if srcre.match(os.getcwd()):
     os.chdir('..')
@@ -18,18 +19,22 @@ from worker.work_request import *
 from worker.hapi_thread import HapiThread
 from multiprocessing import freeze_support
 
+# Create the data folder if it doesn't exist.
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
 
-
+# This is not necessary right now but will be helpful of the behavior of
+# the QApplication needs to be modified.
 class App(QtWidgets.QApplication):
     def __init__(self, *args):
         QtWidgets.QApplication.__init__(self, *args)
 
 
-def verify_apikey():
+def obtain_apikey():
     """
-    :return: True if the api key appears to be valid, False otherwise.
+    Attempts to obtain an API key from the user if there is not one in the user Config already.
+    If there is no valid API key when this function is called, the user will be prompted for one
+    and the program will exit.
     """
     Config.hapi_api_key = Config.hapi_api_key.strip().lower()
 
@@ -38,15 +43,13 @@ def verify_apikey():
         app = App(sys.argv)
         _ = ApiKeyHelpWidget()
         app.exec_()
-        return False
-    return True
 
 
 def verify_internet_connection():
     """
     This function also verifies that the supplied hapi api key is valid. If the api key is not valid, then the value in
-    the config (in memory) is overwritten and the verify_apikey function is called, which will prompt the user for a
-    valid API key
+    the config (in memory and on disk) is overwritten and the obtain_apikey function is called, which will prompt the user for a
+    valid API key and close the program.
     :return: True if there is an internet connection, false otherwise.
     """
     import urllib.request
@@ -58,14 +61,20 @@ def verify_internet_connection():
         return True
     except HTTPError as e:
         # An HTTP error code was given the response. This means the APIKEY was invalid
-        err_msg = "Your hapi API key is invalid. Hapiest will close after you hit Ok, " \
-                  "and will prompt you for your hapi API key upon the next launch"
+        err_msg = """
+Your HAPI API key is invalid. Hapiest will close after you hit Ok, and will \
+prompt you for your hapi API key upon the next launch. If you think your HAPI \ 
+is valid, please file a bug  report at https://github.com/hitranonline/hapiest
+"""
         Config.hapi_api_key = '0000'
-        verify_apikey()
+        obtain_apikey()
+        Config.rewrite_config() 
     except URLError as e:
         # URL Lookup failed. Probably means there is no internet connection
-        err_msg = "You do not have a working internet connection. A working " \
-                  "internet connection is needed in order to use hapiest."
+        err_msg = """
+You do not have a working internet connection. A working internet connection \
+is needed in order to use hapiest.
+"""
 
     from widgets.error_msg_widget import ErrorMsgWidget
     app = App(sys.argv)
@@ -88,25 +97,31 @@ def main():
     os.environ['no_proxy'] = '*'
 
     ##
-    # The following blocks of code verify the hapi API key is in place, and it is valid. If it is not valid or in place
-    # the user will we prompted for one.
-    # This code also checks for a working internet connection, as hapi needs one to do most everything.
+    # The following blocks of code verify the hapi API key is in place, and it
+    # is valid. If it is not valid or in place the user will we prompted for
+    # one. This code also checks for a working internet connection, as hapi
+    # needs one to download data. In the future, if there is no internet
+    # connection the GUI should simply disable the features that require it,
+    # and there could be a periodic check for internet connection that will
+    # re-enable them.
 
-    if not verify_apikey():
-        return 0
+    obtain_apikey()
     if not verify_internet_connection():
         return 0
 
     from utils.metadata.molecule import MoleculeMeta
 
     WorkRequest.start_work_process()
-
+    
     # Hapi is now started automatically in the work process
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
+    # 
     _ = MoleculeMeta(0)
     from utils.xsc import CrossSectionMeta
+    # If the cache is expired, download a list of the cross section meta file.
+    # This also populates the CrossSectionMeta.molecule_metas field.
     _ = CrossSectionMeta(0)
 
     app = App(sys.argv)

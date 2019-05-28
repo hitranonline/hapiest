@@ -45,9 +45,11 @@ class MoleculeMeta:
     def __init__(self, molecule_id: Union[int, str]):
         if MoleculeMeta.__MOLECULE_METADATA is None:
             MoleculeMeta.__initialize_molecule_metadata()
-
-        if type(molecule_id) == str and molecule_id in MoleculeMeta.__NAME_TO_MID:
-            molecule_id = MoleculeMeta.__NAME_TO_MID[molecule_id]
+        if type(molecule_id) == str:
+            if molecule_id in MoleculeMeta.__NAME_TO_MID:
+                molecule_id = MoleculeMeta.__NAME_TO_MID[molecule_id]
+            elif molecule_id in MoleculeMeta.__FORMULA_TO_MID:
+                molecule_id = MoleculeMeta.__FORMULA_TO_MID[molecule_id]
         if molecule_id in MoleculeMeta.__MOLECULE_METADATA:
             self.populated = True
             self.mmd = MoleculeMeta.__MOLECULE_METADATA[molecule_id]

@@ -21,11 +21,11 @@ class ConfigEditorTest(Test):
 
         def close_window():
             sleep(0.25)
-            # window.deleteLater()
+            window.deleteLater()
 
         t = threading.Thread(target=close_window)
         t.start()
-        widget = ConfigEditorWidget()
+        widget = ConfigEditorWidget(None)
         widget.setMinimumSize(256, 256)
         window.setCentralWidget(widget)
         window.show()

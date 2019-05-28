@@ -24,14 +24,12 @@ tests: List[Test] = [
 ]
 
 def run_tests():
-    result_fmt = '\n{:36s} {:36s}'
+    result_fmt = '{:36s} {:36s}'
     name_fmt = '{:36s} '
     print('{}{}'.format(name_fmt, name_fmt).format('Test Name', 'Test Result'))
-    print('NAME: ' + __name__)
 
     q = multiprocessing.Queue()
     for test in tests:
-        print('_' * 60)
         print(name_fmt.format(test.name()))
         p = Process(target=test.run, args=(q,))
         p.start()
@@ -41,25 +39,23 @@ def run_tests():
             if result == False:
                 print(result_fmt.format('', 'Ok!'))
             elif result == True:
-                print(result_fmt.format('', 'Failed'))
+                print(result_fmt.format('', 'Failed.'))
             else:
                 traceback = result
                 print(result_fmt.format('', 'Failed with exception:'))
                 print(traceback)
         elif test.should_throw():
-            if result == True:
-                print(result_fmt.format('', 'Failed (should throw)'))
-            elif result == False:
+            if result == True or result == False:
                 print(result_fmt.format('', 'Failed (should throw)'))
             else:
                 traceback = result
-                print(result_fmt.format('', 'Succeeded with exception:'))
-                print(traceback)
+                print(result_fmt.format('', 'Ok!'))
+                # print(traceback)
         else:
             if result == True:
                 print(result_fmt.format('', 'Ok!'))
             elif result == False:
-                print(result_fmt.format('', 'Failed'))
+                print(result_fmt.format('', 'Failed.'))
             else:
                 traceback = result
                 print(result_fmt.format('', 'Failed with exception:'))

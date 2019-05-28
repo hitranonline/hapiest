@@ -218,6 +218,13 @@ class Config():
                 Config.load_config(text)
 
     @staticmethod
+    def rewrite_config():
+        """
+        Generates a new config string, then writes it to the disk.
+        """
+        write_config(gen_config_string())
+
+    @staticmethod
     def write_config(config_string):
         try:
             fh = open(Config.CONFIG_LOCATION, 'w')
