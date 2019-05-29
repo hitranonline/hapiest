@@ -1,7 +1,9 @@
+import os
+import sys
 import functools
-import multiprocessing as mp
 import traceback
-from typing import *
+import multiprocessing as mp
+from typing import Dict, List, Tuple, Union, Any, Optional, Callable
 
 from hapi import *
 from utils.fetch_error import FetchErrorKind, FetchError
@@ -31,7 +33,7 @@ def add_xsc_to_cache(name, text=None):
                 will be written to a file.
     :return: Returns True if it was added to the cache successfully, False otherwise.
     """
-    from utils.xsc.parser import XscParser
+    from utils.xsc import XscParser
     if type(text) == bytes:
         text = text.decode('utf-8')
     try:
