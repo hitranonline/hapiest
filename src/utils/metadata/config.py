@@ -222,7 +222,7 @@ class Config():
         """
         Generates a new config string, then writes it to the disk.
         """
-        write_config(gen_config_string())
+        Config.write_config(Config.gen_config_string())
 
     @staticmethod
     def write_config(config_string):

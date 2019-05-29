@@ -2,6 +2,7 @@ data/*
 src/*.pyc
 *.pyc
 src/__pycache__/
+*/__pycache__/*
 test_data/*
 Config.toml
 .idea/*
