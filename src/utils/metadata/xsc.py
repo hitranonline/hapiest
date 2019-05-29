@@ -7,24 +7,6 @@ from utils.log import err_log
 from utils.api import CrossSectionApi
 
 
-class CrossSection:
-    """
-    Represents a parsed cross section. This is just a data class so it doesn't get represented by a dictionary.
-    """
-
-    def __init__(self, nu: Iterable[float], abscoef: Iterable[float], step: float, numin: float, numax: float,
-                 molecule: str, len: int, pressure: float, temp: float):
-        self.nu = list(nu)
-        self.abscoef = list(abscoef)
-        self.step = step
-        self.numin = numin
-        self.numax = numax
-        self.molecule = molecule
-        self.len = len
-        self.pressure = pressure
-        self.temp = temp
-
-
 class CrossSectionMeta:
     """
     This class represents meta data about all of a molecules available
@@ -118,31 +100,3 @@ class CrossSectionMeta:
 
     def get_all_filenames(self) -> List[str]:
         return list(map(lambda x: x['filename'], self.metas))
-
-class CrossSectionFilter:
-
-    def __init__(self, molecule_id: int, wn_range: Tuple[float, float] = None,
-                 pressure_range: Tuple[float, float] = None,
-                 temp_range: Tuple[float, float] = None):
-        self.molecule_id = molecule_id
-        self.wn_range = wn_range
-        self.temp_range = temp_range
-        self.pressure_range = pressure_range
-
-    def get_cross_sections(self) -> List[str]:
-        if self.molecule_id not in CrossSectionMeta.molecule_metas:
-            return []
-        return [item['filename']
-                for item in CrossSectionMeta.molecule_metas[self.molecule_id] 
-                if self.xsc_is_conformant(item)]
-
-    def xsc_is_conformant(self, xsc) -> bool:
-        """
-        :param xsc: The cross-section dict-object which this filter is
-        checking.
-        :return: True if the supplied cross-section satisfies all of the
-        conditions of this filter, otherwise false.
-        """
-        return (self.pressure_range is None or (self.pressure_range[0] < meta['pressure'] < self.pressure_range[1])) \
-                and (self.temp_range is None or (self.temp_range[0] < meta['temperature'] < self.temp_range[1])) \
-                and (self.wn_range is None or (meta['numin'] < self.wn_range[0] and meta['numax'] > self.wn_range[1]))
