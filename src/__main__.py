@@ -1,23 +1,20 @@
+# This should be imported first: it verifies the correct python version is running, and moves the
+# current working directory to wherever it ought to be.
+import startup
+
 import os
 import re
 import sys
 from urllib.error import URLError, HTTPError
 
-if sys.version_info < (3, 6):
-    print(f"You must have Python 3 installed to use hapiest - current version is {str(sys.version)}")
-    sys.exit(0)
+from PyQt5 import QtWidgets
 
-# If someone launches the program through the command 'python3 __main__.py'
-# this moves the current working directory to the proper place
-srcre = re.compile('.+src\\Z')
-if srcre.match(os.getcwd()):
-    os.chdir('..')
-
-from windows.main_window import *
-from worker.hapi_worker import *
-from worker.work_request import *
+from windows.main_window import MainWindow
+from worker.hapi_worker import HapiWorker
+from worker.work_request import WorkRequest
 from worker.hapi_thread import HapiThread
 from multiprocessing import freeze_support
+from utils.metadata.config import Config
 
 # Create the data folder if it doesn't exist.
 if not os.path.exists(Config.data_folder):
@@ -39,7 +36,8 @@ def obtain_apikey():
     Config.hapi_api_key = Config.hapi_api_key.strip().lower()
 
     from widgets.apikey_help_widget import ApiKeyHelpWidget, ApiKeyValidator
-    if Config.hapi_api_key == '0000' or ApiKeyValidator.APIKEY_REGEX.match(Config.hapi_api_key) is None:
+    if Config.hapi_api_key == '0000' or \
+       ApiKeyValidator.APIKEY_REGEX.match(Config.hapi_api_key) is None:
         app = App(sys.argv)
         _ = ApiKeyHelpWidget()
         app.exec_()
@@ -47,16 +45,18 @@ def obtain_apikey():
 
 def verify_internet_connection():
     """
-    This function also verifies that the supplied hapi api key is valid. If the api key is not valid, then the value in
-    the config (in memory and on disk) is overwritten and the obtain_apikey function is called, which will prompt the user for a
-    valid API key and close the program.
+    This function also verifies that the supplied hapi api key is valid. If the api key is not
+    valid, then the value in the config (in memory and on disk) is overwritten and the
+    obtain_apikey function is called, which will prompt the user for a valid API key and close the
+    program.
     :return: True if there is an internet connection, false otherwise.
     """
     import urllib.request
     from utils.api import CrossSectionApi
     try:
         with urllib.request.urlopen(
-                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"):
+                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}"\
+                f"{CrossSectionApi.XSC_META_ROUTE}"):
             pass
         return True
     except HTTPError as e:
@@ -68,7 +68,7 @@ is valid, please file a bug  report at https://github.com/hitranonline/hapiest
 """
         Config.hapi_api_key = '0000'
         obtain_apikey()
-        Config.rewrite_config() 
+        Config.rewrite_config()
     except URLError as e:
         # URL Lookup failed. Probably means there is no internet connection
         err_msg = """
@@ -112,12 +112,11 @@ def main():
     from utils.metadata.molecule import MoleculeMeta
 
     WorkRequest.start_work_process()
-    
+
     # Hapi is now started automatically in the work process
     # start = HapiWorker(WorkRequest.START_HAPI, {})
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
-    # 
     _ = MoleculeMeta(0)
     from utils.xsc import CrossSectionMeta
     # If the cache is expired, download a list of the cross section meta file.
