@@ -1,6 +1,7 @@
 from widgets.molecule_info_widget import *
 from windows.window import Window
 
+
 class MoleculeInfoWindow(Window):
 
     def __init__(self, parent: Window, molecule_name: str):
@@ -13,8 +14,7 @@ class MoleculeInfoWindow(Window):
 
         """
         Window.__init__(self, MoleculeInfoWidget(molecule_name), parent)
-        
+
         self.molecule_name = molecule_name
 
         self.gui.setWindowTitle(self.molecule_name)
-

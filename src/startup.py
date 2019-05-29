@@ -6,8 +6,10 @@ current working directory to the proper place, if necessary.
 import os
 import re
 import sys
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
+
 from PyQt5 import QtWidgets
+
 
 if sys.version_info < (3, 6):
     print(f"You must have Python 3 installed to use hapiest, current version is {str(sys.version)}")
@@ -19,7 +21,8 @@ SRC_REGEX = re.compile('.+src\\Z')
 if SRC_REGEX.match(os.getcwd()):
     os.chdir('..')
 
-from utils.metadata.config import Config
+from metadata.config import Config
+
 
 def obtain_apikey():
     """
@@ -30,11 +33,13 @@ def obtain_apikey():
     Config.hapi_api_key = Config.hapi_api_key.strip().lower()
 
     from widgets.apikey_help_widget import ApiKeyHelpWidget, ApiKeyValidator
+
     if Config.hapi_api_key == '0000' or \
-       ApiKeyValidator.APIKEY_REGEX.match(Config.hapi_api_key) is None:
+            ApiKeyValidator.APIKEY_REGEX.match(Config.hapi_api_key) is None:
         app = QtWidgets.QApplication(sys.argv)
         _ = ApiKeyHelpWidget()
         app.exec_()
+
 
 def verify_internet_connection_and_obtain_api_key():
     """
@@ -45,10 +50,11 @@ def verify_internet_connection_and_obtain_api_key():
     :return: True if there is an internet connection, false otherwise.
     """
     import urllib.request
-    from utils.api import CrossSectionApi
+    from utils.hapi_api import CrossSectionApi
+
     try:
         with urllib.request.urlopen(
-                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}"\
+                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}" \
                 f"{CrossSectionApi.XSC_META_ROUTE}"):
             pass
         return True
@@ -70,6 +76,7 @@ is needed in order to use hapiest.
 """
 
     from widgets.error_msg_widget import ErrorMsgWidget
+
     app = QtWidgets.QApplication(sys.argv)
     _ = ErrorMsgWidget(err_msg)
     app.exec_()

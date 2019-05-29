@@ -6,23 +6,24 @@ import os
 import sys
 from multiprocessing import freeze_support
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtCore, QtWidgets
 
+from metadata.config import Config
 # This should be imported first: it verifies the correct python version is running, and moves the
 # current working directory to wherever it ought to be. Importing things for their side-effects
 # is probably bad practice, but so is using python.
 from startup import verify_internet_connection_and_obtain_api_key
-
+from utils.log import TextReceiver
 from windows.main_window import MainWindow
+from worker.hapi_thread import HapiThread
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
-from worker.hapi_thread import HapiThread
-from utils.metadata.config import Config
-from utils.log import TextReceiver
+
 
 # Create the data folder if it doesn't exist.
 if not os.path.exists(Config.data_folder):
     os.makedirs(Config.data_folder)
+
 
 # This is not necessary right now but will be helpful of the behavior of
 # the QApplication needs to be modified.
@@ -36,6 +37,7 @@ def main():
     """
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         import test
+
         test.run_tests()
         return 0
 
@@ -58,7 +60,7 @@ def main():
     if not verify_internet_connection_and_obtain_api_key():
         return 0
 
-    from utils.metadata.molecule import MoleculeMeta
+    from metadata.molecule_meta import MoleculeMeta
 
     WorkRequest.start_work_process()
 
@@ -67,7 +69,8 @@ def main():
     # start.start() # When a start_hapi request is sent, it starts automatically.
 
     _ = MoleculeMeta(0)
-    from utils.metadata.xsc import CrossSectionMeta
+    from metadata.xsc_meta import CrossSectionMeta
+
     # If the cache is expired, download a list of the cross section meta file.
     # This also populates the CrossSectionMeta.molecule_metas field.
     _ = CrossSectionMeta(0)
@@ -82,17 +85,18 @@ def main():
     _qt_result = app.exec_()
 
     TextReceiver.redirect_close()
-    close = HapiWorker(WorkRequest.END_WORK_PROCESS, {}, callback=None)
+    close = HapiWorker(WorkRequest.END_WORK_PROCESS, { }, callback = None)
     close.safe_exit()
     WorkRequest.WORKER.process.join()
     HapiThread.kill_all()
     sys.exit(0)
     return 0
 
+
 if __name__ == '__main__':
     freeze_support()
     # try:
     #    main()
-    #except Exception as error:
+    # except Exception as error:
     #    debug(error)
     main()

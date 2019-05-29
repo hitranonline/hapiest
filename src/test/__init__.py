@@ -12,6 +12,7 @@ from test.molecule_info_test import MoleculeInfoTest
 from test.test import Test
 from test.throw_test import ThrowTest
 
+
 tests: List[Test] = [
     Test(),
     FailTest(),
@@ -21,7 +22,8 @@ tests: List[Test] = [
     GraphDisplayTest(),
     BandDisplayTest(),
     ConfigEditorTest()
-]
+    ]
+
 
 def run_tests():
     result_fmt = '{:36s} {:36s}'
@@ -31,7 +33,7 @@ def run_tests():
     q = multiprocessing.Queue()
     for test in tests:
         print(name_fmt.format(test.name()))
-        p = Process(target=test.run, args=(q,))
+        p = Process(target = test.run, args = (q,))
         p.start()
         p.join()
         result: Union[bool, Tuple[type, Exception, TracebackType]] = q.get()

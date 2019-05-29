@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class FetchErrorKind(Enum):
     BadParameter = 1  # This wont be used
     BadParameterGroup = 2  # This wont be used
@@ -33,4 +34,3 @@ class FetchError:
         """
         self.error = error
         self.description = description
-

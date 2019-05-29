@@ -29,10 +29,10 @@ class TextReceiver(QtCore.QObject):
     Hangs out a background thread and displays messages in the GUI.
 
     """
-    
+
     write_text_signal = QtCore.pyqtSignal(str)
     write_html_signal = QtCore.pyqtSignal(str)
-    
+
     ## An instance of a TextStream that has the queue that the worker thread reads from
     TEXT_STREAM = None
 
@@ -45,7 +45,6 @@ class TextReceiver(QtCore.QObject):
     ## A reference to the main window
     WINDOW = None
 
-
     @staticmethod
     def redirect_close():
         """
@@ -54,7 +53,6 @@ class TextReceiver(QtCore.QObject):
         """
         TextReceiver.TEXT_RECEIVER.running = False
         TextReceiver.TEXT_THREAD.quit()
-
 
     @staticmethod
     def init(main_window, *args, **kwargs):
@@ -72,7 +70,8 @@ class TextReceiver(QtCore.QObject):
         # Connect the signal to the console output handler in the main window
         # Connect the console output signals
         TextReceiver.TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.text_log(str))
-        TextReceiver.TEXT_RECEIVER.write_html_signal.connect(lambda html: main_window.html_log(html))
+        TextReceiver.TEXT_RECEIVER.write_html_signal.connect(
+            lambda html: main_window.html_log(html))
         # Move the receiver to the background thread
         TextReceiver.TEXT_RECEIVER.moveToThread(TextReceiver.TEXT_THREAD)
         # When the thread starts, start the text receiver
@@ -80,14 +79,15 @@ class TextReceiver(QtCore.QObject):
         # Start thread
         TextReceiver.TEXT_THREAD.start()
 
-    def __init__(self, queue, *args, **kwargs):
+    def __init__(self, queue, *_args, **_kwargs):
         QtCore.QObject.__init__(self)
         self.queue = queue
         self.running = True
 
     def run(self):
         """
-    Until the thread should close, read things from the queue and emit the appropriate signal to display them in
+    Until the thread should close, read things from the queue and emit the appropriate signal to
+    display them in
     the GUI.
 
     """
@@ -98,8 +98,10 @@ class TextReceiver(QtCore.QObject):
             else:
                 self.write_html_signal.emit(text)
 
+
 def print_html_to_status_bar(arg):
     TextReceiver.TEXT_STREAM.write_html(arg)
+
 
 def debug(*args, **kwargs):
     """
@@ -107,8 +109,7 @@ def debug(*args, **kwargs):
     
     """
 
-    print(*args, file=sys.stderr, **kwargs)
-
+    print(*args, file = sys.stderr, **kwargs)
 
 
 def log(arg):
@@ -123,7 +124,7 @@ def log(arg):
             print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}')
-    print("[Log] ", s, file=sys.__stdout__)
+    print("[Log] ", s, file = sys.__stdout__)
 
 
 def err_log(dat):
@@ -139,7 +140,7 @@ def err_log(dat):
             print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}')
-    print("[Err] ", str(dat), file=sys.__stdout__)
+    print("[Err] ", str(dat), file = sys.__stdout__)
 
 
 def debug_log(dat):
@@ -154,5 +155,4 @@ def debug_log(dat):
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}')
-    print("[Debug] ", str(dat), file=sys.__stdout__)
-
+    print("[Debug] ", str(dat), file = sys.__stdout__)

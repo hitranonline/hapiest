@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QHBoxLayout, QTextEdit, QWidget
 
 from utils.hapiest_util import program_icon
 

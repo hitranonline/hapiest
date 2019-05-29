@@ -1,15 +1,15 @@
-import json
-import time
+"""
+This module contains various API bindings to the HAPI API, since there is a fair amount of
+boilerplate required
+to call some of the HAPI functions saftely (specifically the networking related functions).
+"""
 import urllib.request as url
+from typing import Union
 
-from functools import reduce
-from typing import Any, Union, List, Dict
-
-from utils.metadata.config import Config
+from metadata.config import Config
 
 
 class HapiApiException(Exception):
-
     INVALID_API_KEY = 0
     CONNECTION_FAILED = 1
     INVALID_JSON = 2
@@ -52,8 +52,10 @@ class CrossSectionApi:
 
     where suffixes are:
 
-      "in"  => take all objects with given parameter parameter taking values from the comma-separated list
-      "between"    =>  all objects where the parameter takes its values in the range (which is given by two comma-separated values)
+      "in"  => take all objects with given parameter parameter taking values from the
+      comma-separated list
+      "between"    =>  all objects where the parameter takes its values in the range (which is
+      given by two comma-separated values)
 
     For example:
 
@@ -66,9 +68,11 @@ class CrossSectionApi:
 
     http://hitran.org/api/dev/<apikey>/molecules   # request all molecules
     http://hitran.org/api/dev/<apikey>/molecules?id=106  # request molecule with specified ID
-    http://hitran.org/api/dev/<apikey>/molecules?id__in=106,107  # request molecules IDs from the list
+    http://hitran.org/api/dev/<apikey>/molecules?id__in=106,107  # request molecules IDs from the
+    list
     http://hitran.org/api/dev/<apikey>/cross-sections  # request all cross-sections
-    http://hitran.org/api/dev/<apikey>/cross-sections?molecule_id=106  # request all cross-sections for the specified molecule (molecule_id is used as a ref)
+    http://hitran.org/api/dev/<apikey>/cross-sections?molecule_id=106  # request all
+    cross-sections for the specified molecule (molecule_id is used as a ref)
 
     ========================================
     OBJECTS FIELDS THAT CAN BE USED IN QUERY
@@ -131,7 +135,6 @@ class CrossSectionApi:
             return HapiApiException(HapiApiException.CONNECTION_FAILED, str(e))
         return content
 
-
     def request_molecule_meta(self) -> Union[bytes, HapiApiException]:
         """
         :return: json text that contains information about every molecule in the HITRAN database.
@@ -143,8 +146,10 @@ class CrossSectionApi:
     def request_xsc_meta(self, molecule_id: int = None) -> Union[bytes, HapiApiException]:
         """
         requests meta data about molecule cross sections.
-        :param molecule_ids: an optional parameter that, if specified, will be used to narrow down what molecules meta
-                              data is retrieved for. Otherwise, meta for all available molecules is retrieved (which is
+        :param molecule_ids: an optional parameter that, if specified, will be used to narrow
+        down what molecules meta
+                              data is retrieved for. Otherwise, meta for all available molecules
+                              is retrieved (which is
                               something like 400 molecules as of August 2018).
         :return: will return a dictionary on success, which will
         """
@@ -156,7 +161,8 @@ class CrossSectionApi:
         """
         Attempts to download the specified cross section.
         :param xsc_name: Name of the cross section file.
-        :return: returns False if something went wrong, otherwise it returns the bytes of the cross section.
+        :return: returns False if something went wrong, otherwise it returns the bytes of the
+        cross section.
         """
         uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.XSC_ROUTE}/{xsc_name}"
         print(uri)

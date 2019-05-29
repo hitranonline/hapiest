@@ -9,7 +9,7 @@ class Test:
 
     def name(self) -> str:
         return 'base test'
-    
+
     def should_throw(self) -> bool:
         return False
 
@@ -21,7 +21,10 @@ class Test:
 
     def run(self, q: multiprocessing.Queue):
         def gen_tb(exc_type, exc_value, exc_traceback):
-            return '\n'.join(traceback.format_exception(exc_type, exc_value, exc_traceback)).replace('\n', '\n    |   ') + '\n'
+            return '\n'.join(
+                traceback.format_exception(exc_type, exc_value, exc_traceback)).replace('\n',
+                                                                                        '\n    |  '
+                                                                                        ' ') + '\n'
 
         result = None
         try:

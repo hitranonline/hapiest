@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtGui, uic
+from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtWidgets import *
 
 from utils.hapiest_util import program_icon
@@ -6,7 +6,6 @@ from widgets.hapi_table_view import HapiTableView
 
 
 class ViewWidget(QWidget):
-
     instances = []
 
     @staticmethod
@@ -15,7 +14,7 @@ class ViewWidget(QWidget):
             widget.table_name.clear()
             widget.table_name.addItems(list(table_names))
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QWidget.__init__(self)
 
         ViewWidget.instances.append(self)
@@ -44,11 +43,9 @@ class ViewWidget(QWidget):
         # if 0 != self.table_name.count():
         #    self.__on_view_button_click()
 
-
         self.back_button.setToolTip("(Edit) Previous page.")
         self.next_button.setToolTip("(Edit) Next page.")
         self.view_button.setToolTip("Opens interactable data table.")
-
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
         ViewWidget.instances.remove(self)
@@ -94,11 +91,8 @@ class ViewWidget(QWidget):
         """
         return self.table_name.currentText()
 
-
     def get_output_name(self):
         """
         *Returns name of destination table name entered in by user.*
         """
         return self.output_name.text()
-
-

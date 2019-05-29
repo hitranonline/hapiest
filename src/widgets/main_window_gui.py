@@ -1,10 +1,26 @@
-import functools
+from PyQt5.QtWidgets import QMainWindow, QAction, QStatusBar, QCompleter, QVBoxLayout, \
+    QPushButton, QWidget
 
-from PyQt5.QtWidgets import QMainWindow, QAction, \
-    QStatusBar, QCompleter
-
-from utils.metadata.molecule import MoleculeMeta
+from metadata.molecule_meta import MoleculeMeta
 from widgets.about_widget import AboutWidget
+from widgets.config_editor_widget import ConfigEditorWidget
+from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
+from widgets.fetch_widget import FetchWidget
+from widgets.graphing.graphing_widget import *
+from widgets.gui import GUI
+from widgets.molecule_info_widget import MoleculeInfoWidget
+from widgets.select_widget import SelectWidget
+from widgets.view_widget import ViewWidget
+from windows.molecule_info_window import MoleculeInfoWindow
+from utils.hapiest_util import get_all_data_names, program_icon
+from PyQt5.QtWidgets import QAction, QCompleter, QMainWindow, QPushButton, QStatusBar, \
+    QVBoxLayout, \
+    QWidget
+
+from metadata.molecule_meta import MoleculeMeta
+from utils.hapiest_util import get_all_data_names, program_icon
+from widgets.about_widget import AboutWidget
+from widgets.config_editor_widget import ConfigEditorWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 from widgets.fetch_widget import FetchWidget
 from widgets.graphing.graphing_widget import *
@@ -17,7 +33,8 @@ from windows.molecule_info_window import MoleculeInfoWindow
 
 class MainWindowGui(GUI, QMainWindow):
     """
-    The main window contains most of the functionality. This includes the Edit widget, Fetch widget, Select widget, and
+    The main window contains most of the functionality. This includes the Edit widget,
+    Fetch widget, Select widget, and
     graphing widget.
     """
 
@@ -79,7 +96,8 @@ class MainWindowGui(GUI, QMainWindow):
 
         # Initially display a molecule in the molecule widget
         self.__on_molecules_current_index_changed(0)
-        self.molecules_current_molecule.currentIndexChanged.connect(self.__on_molecules_current_index_changed)
+        self.molecules_current_molecule.currentIndexChanged.connect(
+            self.__on_molecules_current_index_changed)
         self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
 
         self.workers = []
@@ -112,13 +130,13 @@ class MainWindowGui(GUI, QMainWindow):
                 worker.safe_exit()
                 break
 
-    def __on_config_action(self, *args):
+    def __on_config_action(self, *_args):
         # if self.config_window:
         #     self.config_window.close()
         self.config_window = ConfigEditorWidget(None)
         self.config_window.show()
 
-    def __on_about_action(self, *args):
+    def __on_about_action(self, *_args):
         # if self.about_window:
         #     self.about_window.close()
         self.about_window = AboutWidget(None)
@@ -132,13 +150,15 @@ class MainWindowGui(GUI, QMainWindow):
         self.molecule_container.addWidget(self.molecule_info)
 
     def __on_molecules_popout_button(self):
-        new_window: MoleculeInfoWindow = MoleculeInfoWindow(self.parent, self.molecules_current_molecule.currentText())
+        new_window: MoleculeInfoWindow = MoleculeInfoWindow(self.parent,
+                                                            self.molecules_current_molecule.currentText())
         new_window.gui.show()
         self.parent.add_child_window(new_window)
 
     def populate_molecule_list(self):
         """
-        *Extract the name of each molocule that hapi has data on and add it to the molecule list. Also, enable auto-complete for the combobox.*
+        *Extract the name of each molocule that hapi has data on and add it to the molecule list.
+        Also, enable auto-complete for the combobox.*
         """
         # Make sure that molecule meta has had it's static members initialized initialized.
         _ = MoleculeMeta(0)
@@ -147,7 +167,6 @@ class MainWindowGui(GUI, QMainWindow):
         self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
         self.molecules_current_molecule.setEditable(True)
         self.molecules_current_molecule.setCompleter(self.completer)
-
 
     def populate_table_lists(self, data_names=None):
         """

@@ -1,15 +1,14 @@
-from PyQt5 import QtCore, QtWidgets, uic, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtWidgets import *
 
 from utils.dsl import DSL
 from utils.hapiest_util import program_icon
-from utils.log import err_log, debug, log
+from utils.log import debug, err_log, log
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 
 
 class SelectWidget(QWidget):
-
     instances = []
 
     @staticmethod
@@ -18,10 +17,9 @@ class SelectWidget(QWidget):
             widget.table_name.clear()
             widget.table_name.addItems(table_names)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QWidget.__init__(self)
         self.parent = parent
-
 
         self.export_button: QPushButton = None
         self.output_name: QLineEdit = None
@@ -41,19 +39,18 @@ class SelectWidget(QWidget):
         self.select_all_button.clicked.connect(self.__on_select_all_button_click)
         self.run_button.clicked.connect(self.__on_run_button_click)
         self.deselect_all_button.clicked.connect(self.__on_deselect_all_button_click)
-        
+
         self.output_name.textChanged.connect(self.__on_output_name_change)
         self.select_expression.textChanged.connect(self.__on_conditions_finished_editing)
         self.select_expression.textChanged.connect(self.__on_conditions_finished_editing)
-        
+
         self.table_name.currentTextChanged.connect(self.__on_select_table_name_selection_changed)
 
         self.instances.append(self)
-       
+
         self.table_name.setToolTip("Select data table you wish to augment.")
         self.parameter_list.setToolTip("Select the parameters for the select function.")
         self.export_button.setToolTip("Export data into desired format.")
-
 
     ###
     # Event Handlers
@@ -68,7 +65,6 @@ class SelectWidget(QWidget):
         for i in range(0, self.parameter_list.count()):
             self.parameter_list.item(i).setCheckState(QtCore.Qt.Checked)
 
-
     def __on_deselect_all_button_click(self):
         for i in range(0, self.parameter_list.count()):
             self.parameter_list.item(i).setCheckState(QtCore.Qt.Unchecked)
@@ -81,12 +77,11 @@ class SelectWidget(QWidget):
         if new_selection == '':
             return
 
-        args = HapiWorker.echo(table_name=new_selection)
+        args = HapiWorker.echo(table_name = new_selection)
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
         worker.start()
         self.parent.workers.append(worker)
-
 
     def __on_select_table_name_complete(self, work_result):
         """
@@ -114,7 +109,6 @@ class SelectWidget(QWidget):
         # Check for errors..
         self.__on_output_name_change()
 
-
     def __on_run_button_click(self):
         """
         Creates a HapiWorker to run the Select query.
@@ -134,8 +128,9 @@ class SelectWidget(QWidget):
 
         self.run_button.setDisabled(True)
 
-        args = HapiWorker.echo(ParameterNames=selected_params, TableName=table_name,
-                               DestinationTableName=new_table_name, Conditions=parsed_expression)
+        args = HapiWorker.echo(ParameterNames = selected_params, TableName = table_name,
+                               DestinationTableName = new_table_name,
+                               Conditions = parsed_expression)
 
         worker = HapiWorker(WorkRequest.SELECT, args, self.__on_run_done)
         self.parent.workers.append(worker)
@@ -174,7 +169,6 @@ class SelectWidget(QWidget):
             err_log('Error running select.')
             debug(e)
 
-
     def __on_output_name_change(self):
         """
         """
@@ -189,10 +183,10 @@ class SelectWidget(QWidget):
         except Exception as e:
             debug('fug: ' + str(e))
 
-
     def __on_conditions_finished_editing(self):
         """
-        When the conditions are changed, make sure they are valid - if they're not, disable the install.py button
+        When the conditions are changed, make sure they are valid - if they're not, disable the
+        install.py button
         and display a warning..
         """
         expression = self.get_select_expression()
@@ -205,7 +199,6 @@ class SelectWidget(QWidget):
         else:
             self.run_button.setEnabled(True)
 
-
     ###
     # Getters
     ###
@@ -216,20 +209,17 @@ class SelectWidget(QWidget):
         """
         return self.table_name.currentText()
 
-
     def get_select_expression(self):
         """
         Returns select expression entered in by user.
         """
         return self.select_expression.toPlainText()
 
-
     def get_output_table_name(self):
         """
         Returns the destination table name the user entered for select function.
         """
         return self.output_name.text()
-
 
     def get_select_parameters(self):
         """

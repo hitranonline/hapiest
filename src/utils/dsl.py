@@ -3,23 +3,26 @@ from parsy import *
 
 class DSL:
     """
-    hapi has support for a small lisp-like Domain Specific Language implemented using nested python tuples. The
-    following grammar was made in order to make the language look like a more proper lisp. The grammar is not perfect,
-    there are a few optimizations that could be made quite readily (e.g. use case-independent regex instead of checking
+    hapi has support for a small lisp-like Domain Specific Language implemented using nested 
+    python tuples. The
+    following grammar was made in order to make the language look like a more proper lisp. The 
+    grammar is not perfect,
+    there are a few optimizations that could be made quite readily (e.g. use case-independent 
+    regex instead of checking
     for upper and lower case). The DSL is used by hapi to query and filter tables stored in memory.
     
     The DSL class contains a static parser object for the DSL.
     
     """
-    
-    
+
     ## Whitespace..
     whitespace_parse = whitespace.optional()
 
     ## Literals / Constants
     int_parse = regex('[-+]?(0|([1-9][0-9]*))').map(int)
     float_parse = regex('[-+]?((\\d*\\.\\d+)|(\\d+(\\.\\d*)?))([Ee][+-]?\\d+)?').map(float)
-    string_parse = regex("(\"((\\\\[\\\\a-zA-Z\'])|[^\"])*\")|('((\\\\[\\\\a-zA-Z\'])|[^'])*')").map(eval)
+    string_parse = regex(
+        "(\"((\\\\[\\\\a-zA-Z\'])|[^\"])*\")|('((\\\\[\\\\a-zA-Z\'])|[^'])*')").map(eval)
     name_parse = regex('[a-zA-Z][a-zA-Z_\\-0-9]*')
 
     ## Arithmetic
@@ -37,13 +40,15 @@ class DSL:
     lt_parse = regex('(<)|(less)|(LESS)|(lt)|(LT)').map(lambda x: '<')
     gt_parse = regex('(>)|(more)|(MORE)|(gt)|(GT)|(greater)|(GREATER)').map(lambda x: '>')
     lte_parse = regex('(<=)|(lessorequal)|(LESSOREQUAL)|(lte)|(LTE)').map(lambda x: '<=')
-    gte_parse = regex('(>=)|(moreorequal)|(MOREOREQUAL)|(gte)|(GTE)|(greaterorequal)|(GREATEROREQUAL)').map(
-        lambda x: '>=')
+    gte_parse = regex(
+        '(>=)|(moreorequal)|(MOREOREQUAL)|(gte)|(GTE)|(greaterorequal)|(GREATEROREQUAL)').map(
+            lambda x: '>=')
     equal_parse = regex('(==?)|(eq)|(EQ)|(equal)|(EQUAL)').map(lambda x: '=')
     neq_parse = regex('(!=)|(<>)|(~=)|(ne)|(NE)|(neq)|(NEQ)|(note)|(NOTE)').map(lambda x: '!=')
 
     ## Casting
-    to_string_parse = regex('(to_string)|(TO_STRING)|(str)|(STR)|(string)|(STRING)').map(lambda x: 'str')
+    to_string_parse = regex('(to_string)|(TO_STRING)|(str)|(STR)|(string)|(STRING)').map(
+        lambda x: 'str')
     to_list_parse = regex('(to_list)|(TO_LIST)|(list)|(LIST)').map(lambda x: 'list')
 
     ## Search / Match / Count
@@ -52,14 +57,17 @@ class DSL:
     find_parse = regex('(findall)|(FINDALL)').map(lambda x: 'findall')
     count_parse = regex('(count)|(COUNT)').map(lambda: 'count')
 
-    operation = add_parse | sub_parse | mul_parse | div_parse | between_parse | subset_parse | and_parse | or_parse | \
-                not_parse | lt_parse | gt_parse | lte_parse | gte_parse | equal_parse | neq_parse | to_string_parse | \
+    operation = add_parse | sub_parse | mul_parse | div_parse | between_parse | subset_parse | \
+                and_parse | or_parse | \
+                not_parse | lt_parse | gt_parse | lte_parse | gte_parse | equal_parse | neq_parse\
+                | to_string_parse | \
                 to_list_parse | search_parse | match_parse | find_parse | count_parse
 
     p_open_parse = whitespace_parse >> string('(') >> whitespace_parse
     p_close_parse = whitespace_parse >> string(')') >> whitespace_parse
-    list_parse = p_open_parse >> ((float_parse | int_parse | string_parse) << whitespace_parse).many().map(
-        list) << p_close_parse
+    list_parse = p_open_parse >> (
+                (float_parse | int_parse | string_parse) << whitespace_parse).many().map(
+            list) << p_close_parse
 
     @generate
     def call_parse():
@@ -71,12 +79,13 @@ class DSL:
         return tuple([first] + args)
 
     expression_parse = whitespace_parse >> (
-    float_parse | int_parse | string_parse | name_parse | call_parse | list_parse) << whitespace_parse
+            float_parse | int_parse | string_parse | name_parse | call_parse | list_parse) << \
+                       whitespace_parse
 
     bracket_open = whitespace_parse >> string('[') >> whitespace_parse
     bracket_close = whitespace_parse >> string(']') >> whitespace_parse
-    expression_list_parse = whitespace_parse >> bracket_open >> expression_parse.many() << bracket_close << whitespace_parse
-
+    expression_list_parse = whitespace_parse >> bracket_open >> expression_parse.many() << \
+                            bracket_close << whitespace_parse
 
     @staticmethod
     def parse_expression(expression):
@@ -93,5 +102,3 @@ class DSL:
                 return z
             except Exception as e:
                 return None
-
-

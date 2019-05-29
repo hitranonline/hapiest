@@ -1,13 +1,12 @@
 from datetime import timedelta
 from typing import Dict, List, Union
 
-from utils.api import CrossSectionApi
-from utils.cache import JsonCache
-from utils.xsc import CrossSectionMeta
+from data_structures.cache import JsonCache
+from data_structures.xsc import CrossSectionMeta
+from utils.hapi_api import CrossSectionApi
 
 
 class MoleculeMeta:
-
     __MOLECULE_METADATA: List[Dict] = None
 
     __FORMULA_TO_MID: Dict[str, int] = None
@@ -17,14 +16,14 @@ class MoleculeMeta:
     @staticmethod
     def __initialize_molecule_metadata():
         api = CrossSectionApi()
-        cache = JsonCache(".molm", api.request_molecule_meta, timedelta(days=1))
+        cache = JsonCache(".molm", api.request_molecule_meta, timedelta(days = 1))
         if cache.ok():
             data = cache.data()
         else:
             return
-        MoleculeMeta.__FORMULA_TO_MID = {}
-        MoleculeMeta.__MOLECULE_METADATA = {}
-        MoleculeMeta.__NAME_TO_MID = {}
+        MoleculeMeta.__FORMULA_TO_MID = { }
+        MoleculeMeta.__MOLECULE_METADATA = { }
+        MoleculeMeta.__NAME_TO_MID = { }
 
         for molecule in data:
             MoleculeMeta.__NAME_TO_MID[molecule['common_name']] = molecule['id']
@@ -39,6 +38,7 @@ class MoleculeMeta:
     def all_names_with_xsc() -> List[str]:
         def has_xscs(name):
             return MoleculeMeta.__NAME_TO_MID[name] in CrossSectionMeta.molecule_metas
+
         r = [name for name in MoleculeMeta.all_names() if has_xscs(name)]
         return r
 
@@ -61,7 +61,6 @@ class MoleculeMeta:
             self.id = self.mmd['id']
         else:
             self.populated = False
-
 
     def is_populated(self):
         return self.populated

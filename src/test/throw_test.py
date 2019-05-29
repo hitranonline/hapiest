@@ -1,12 +1,13 @@
 from test.test import Test
 
+
 class ThrowTest(Test):
     def __init__(self):
         Test.__init__(self)
 
     def name(self) -> str:
         return 'throw test'
-    
+
     def should_throw(self) -> bool:
         return True
 
