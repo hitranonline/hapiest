@@ -1,7 +1,13 @@
+"""
+This is the startup module. It has the utility function
+verify_internet_connection_and_obtain_api_key. When this package is imported, it moves the
+current working directory to the proper place, if necessary.
+"""
 import os
 import re
 import sys
 from urllib.error import URLError, HTTPError
+from PyQt5 import QtWidgets
 
 if sys.version_info < (3, 6):
     print(f"You must have Python 3 installed to use hapiest, current version is {str(sys.version)}")
@@ -9,9 +15,11 @@ if sys.version_info < (3, 6):
 
 # If someone launches the program through the command 'python3 __main__.py'
 # this moves the current working directory to the proper place
-srcre = re.compile('.+src\\Z')
-if srcre.match(os.getcwd()):
+SRC_REGEX = re.compile('.+src\\Z')
+if SRC_REGEX.match(os.getcwd()):
     os.chdir('..')
+
+from utils.metadata.config import Config
 
 def obtain_apikey():
     """
@@ -66,5 +74,3 @@ is needed in order to use hapiest.
     _ = ErrorMsgWidget(err_msg)
     app.exec_()
     sys.exit(0)
-
-
