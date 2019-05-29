@@ -17,6 +17,7 @@ build/
 *.toc
 *.synctex
 *.aux
+*.pdf
 build/*
 dist/*
 /binaries/Linux/bin/*
