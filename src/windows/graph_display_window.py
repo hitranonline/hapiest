@@ -1,4 +1,5 @@
-from utils.graphing.graph_type import GraphType
+from data_structures.bands import Bands
+from graphing.graph_type import GraphType
 from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
 from widgets.graphing.graph_display_window_gui import *
 from windows.window import Window
@@ -10,13 +11,11 @@ from worker.work_result import WorkResult
 class GraphDisplayWindow(Window):
     done_signal = QtCore.pyqtSignal(object)
 
-    graph_ty_to_work_ty = {
-        GraphType.ABSORPTION_COEFFICIENT: WorkRequest.ABSORPTION_COEFFICIENT,
-        GraphType.TRANSMITTANCE_SPECTRUM: WorkRequest.TRANSMITTANCE_SPECTRUM,
-        GraphType.RADIANCE_SPECTRUM: WorkRequest.RADIANCE_SPECTRUM,
-        GraphType.ABSORPTION_SPECTRUM: WorkRequest.ABSORPTION_SPECTRUM,
-        GraphType.BANDS: WorkRequest.BANDS
-    }
+    graph_ty_to_work_ty = {GraphType.ABSORPTION_COEFFICIENT: WorkRequest.ABSORPTION_COEFFICIENT,
+        GraphType.TRANSMITTANCE_SPECTRUM:                    WorkRequest.TRANSMITTANCE_SPECTRUM,
+        GraphType.RADIANCE_SPECTRUM:                         WorkRequest.RADIANCE_SPECTRUM,
+        GraphType.ABSORPTION_SPECTRUM:                       WorkRequest.ABSORPTION_SPECTRUM,
+        GraphType.BANDS:                                     WorkRequest.BANDS}
 
     graph_windows = {}
 
@@ -42,12 +41,16 @@ class GraphDisplayWindow(Window):
         self.window_id = GraphDisplayWindow.window_id()
         if graph_ty in [GraphType.BANDS]:
             gui: BandDisplayWindowGui = BandDisplayWindowGui()
-            self.workers = { '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
-                                             lambda x: [self.plot_bands(x), self.workers.pop('0')]) }
+            self.workers = {
+                '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
+                                lambda x: [self.plot_bands(x), self.workers.pop('0')])}
         else:
-            gui: GraphDisplayWindowGui = GraphDisplayWindowGui(graph_ty, work_object['title'] + ' - ' + str(self.window_id))
-            self.workers = { '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
-                                            lambda x: [self.plot(x), self.workers.pop('0')]) }
+            gui: GraphDisplayWindowGui = GraphDisplayWindowGui(graph_ty,
+                                                               work_object['title'] + ' - ' + str(
+                                                                   self.window_id))
+            self.workers = {
+                '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
+                                lambda x: [self.plot(x), self.workers.pop('0')])}
 
         Window.__init__(self, gui, parent)
 
@@ -86,10 +89,13 @@ class GraphDisplayWindow(Window):
     def plot(self, work_result: WorkResult):
         """
         Plots the graph stored in 'work_result', which may be an error message rather than a result
-        dictionary. If this is the case the error is printed to the console. This also emits a 'done' signal.
+        dictionary. If this is the case the error is printed to the console. This also emits a
+        'done' signal.
 
-        :param work_result the result of the HapiWorker; it will either be a string (which indicates an error), or it
-                            will be a dictionary that contains the x and y coordinates and some information about graph
+        :param work_result the result of the HapiWorker; it will either be a string (which
+        indicates an error), or it
+                            will be a dictionary that contains the x and y coordinates and some
+                            information about graph
                             labels
         """
         self.done_signal.emit(0)
@@ -101,8 +107,8 @@ class GraphDisplayWindow(Window):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
-            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'], result['name'],
-                               result['args'])
+            self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'],
+                               result['name'], result['args'])
         except Exception as e:
             err_log(e)
 

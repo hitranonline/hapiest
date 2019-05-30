@@ -1,4 +1,5 @@
 import time
+from typing import List
 
 from PyQt5 import QtWidgets
 
@@ -8,13 +9,18 @@ from worker.work_request import *
 
 class HapiWorker(HapiThread):
     """
-    A HapiWorker is a part of a work around to Python's GIL (global interpreter lock). Since threads can only run one at
-    time in Python, the GUI will freeze even if a worker thread is used. Instead of using threads, separate processes
-    are used to separate the calculations form the GUI. The process is a completely separate instance of the python
-    interpreter. Data can be sent between the two processes using Queues. These queues, under the hood, work by writing
+    A HapiWorker is a part of a work around to Python's GIL (global interpreter lock). Since
+    threads can only run one at
+    time in Python, the GUI will freeze even if a worker thread is used. Instead of using
+    threads, separate processes
+    are used to separate the calculations form the GUI. The process is a completely separate
+    instance of the python
+    interpreter. Data can be sent between the two processes using Queues. These queues, under the
+    hood, work by writing
     serialized python objects to a temp file.
 
-    The HapiWorker object is a way to request work from this worker process, and receive the result from it. Each
+    The HapiWorker object is a way to request work from this worker process, and receive the
+    result from it. Each
     HapiWorker is assigned an id, and will spin until a work result with the same job_id is found.
     """
     job_id: int = 0
@@ -24,7 +30,6 @@ class HapiWorker(HapiThread):
 
     job_results: List[WorkResult] = []
 
-
     @staticmethod
     def echo(**kwargs) -> Dict[str, Any]:
         """
@@ -32,7 +37,8 @@ class HapiWorker(HapiThread):
         """
         return kwargs
 
-    def __init__(self, work_type: WorkRequest.WorkType, args: Dict[str, Any], callback: Callable = None):
+    def __init__(self, work_type: WorkRequest.WorkType, args: Dict[str, Any],
+                 callback: Callable = None):
         super(HapiWorker, self).__init__()
         self.callback = callback
         self.work_type = work_type
@@ -49,7 +55,8 @@ class HapiWorker(HapiThread):
             WorkRequest.WORKQ.put(WorkRequest(self.job_id, self.work_type, self.args))
             self.started.connect(lambda: None)
         else:
-            self.step_signal.connect(lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
+            self.step_signal.connect(
+                lambda x: QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents))
         if callback:
             self.done_signal.connect(self.callback)
 
@@ -61,8 +68,10 @@ class HapiWorker(HapiThread):
 
     def __run(self):
         """
-        Attempts to pull results from the result queue until if finds the matching result. The matching result is the
-        one that has the same job_id as this HapiWorker object. If it polls a result that does not have the same job_id,
+        Attempts to pull results from the result queue until if finds the matching result. The
+        matching result is the
+        one that has the same job_id as this HapiWorker object. If it polls a result that does
+        not have the same job_id,
         it places it into a list for other HapiWorkers to check.
         """
         work_request = WorkRequest(self.job_id, self.work_type, self.args)

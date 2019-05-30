@@ -1,29 +1,21 @@
-import os
-import sys
-import functools
-import traceback
 import multiprocessing as mp
-from typing import Dict, List, Tuple, Union, Any, Optional, Callable
+import traceback
+from typing import Any, Callable, Dict
 
-from hapi import *
-from utils.fetch_error import FetchErrorKind, FetchError
-from utils.graphing.band import Band, Bands
-from utils.hapiest_util import echo
 from utils.log import *
-from utils.metadata.config import Config
-from utils.metadata.hapi_metadata import HapiMetaData
-from utils.xsc import CrossSection
-from worker.work_result import WorkResult
 from worker.work_functions import WorkFunctions
+from worker.work_result import WorkResult
+
 
 class WorkRequest:
+
     def __init__(self, job_id: int, work_type: Any, work_args: Dict[str, Any]):
         self.job_id = job_id
         self.work_type = work_type
         self.work_args = work_args
 
     WorkType = int
-    
+
     # A list of "opcodes," rather than using strings
     START_HAPI: WorkType = 0
     END_WORK_PROCESS: WorkType = 1
@@ -64,31 +56,35 @@ class WorkRequest:
 
 
 class Work:
+
     @staticmethod
     def WORK_FUNCTION(workq: mp.Queue, resultq: mp.Queue) -> int:
         """
         Handles the calling of most hapi functions.
         """
-        WorkRequest.WORK_FUNCTIONS = {
-            WorkRequest.START_HAPI: WorkFunctions.start_hapi,
-            WorkRequest.FETCH: WorkFunctions.fetch,
-            WorkRequest.ABSORPTION_COEFFICIENT: WorkFunctions.graph_absorption_coefficient,
-            WorkRequest.GET_TABLE: WorkFunctions.get_table,
-            WorkRequest.SAVE_TABLE: WorkFunctions.save_table,
-            WorkRequest.TABLE_NAMES: WorkFunctions.table_names,
-            WorkRequest.TABLE_META_DATA: WorkFunctions.table_meta_data,
-            WorkRequest.SELECT: WorkFunctions.select,
-            WorkRequest.ABSORPTION_SPECTRUM: WorkFunctions.graph_absorption_spectrum,
-            WorkRequest.TRANSMITTANCE_SPECTRUM: WorkFunctions.graph_transmittance_spectrum,
-            WorkRequest.RADIANCE_SPECTRUM: WorkFunctions.graph_radiance_spectrum,
-            WorkRequest.BANDS: WorkFunctions.graph_bands,
-            WorkRequest.DOWNLOAD_XSCS: WorkFunctions.download_xscs
-        }
+        WorkRequest.WORK_FUNCTIONS = {WorkRequest.START_HAPI: WorkFunctions.start_hapi,
+            WorkRequest.FETCH:                                WorkFunctions.fetch,
+            WorkRequest.ABSORPTION_COEFFICIENT:
+                                          WorkFunctions.graph_absorption_coefficient,
+            WorkRequest.GET_TABLE:                            WorkFunctions.get_table,
+            WorkRequest.SAVE_TABLE:                           WorkFunctions.save_table,
+            WorkRequest.TABLE_NAMES:                          WorkFunctions.table_names,
+            WorkRequest.TABLE_META_DATA:                      WorkFunctions.table_meta_data,
+            WorkRequest.SELECT:                               WorkFunctions.select,
+            WorkRequest.ABSORPTION_SPECTRUM:
+                                          WorkFunctions.graph_absorption_spectrum,
+            WorkRequest.TRANSMITTANCE_SPECTRUM:
+                                          WorkFunctions.graph_transmittance_spectrum,
+            WorkRequest.RADIANCE_SPECTRUM:                    WorkFunctions.graph_radiance_spectrum,
+            WorkRequest.BANDS:                                WorkFunctions.graph_bands,
+            WorkRequest.DOWNLOAD_XSCS:                        WorkFunctions.download_xscs}
 
         WorkFunctions.start_hapi(**{})
 
         def print_tb(tb, exc_value):
-            print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n', '\n    |   ') + '\n')
+            print('\n'.join([''] + traceback.format_tb(tb) + [str(exc_value)]).replace('\n',
+                                                                                       '\n    |   '
+                                                                                       '') + '\n')
 
         while True:
             work_request = workq.get()
@@ -107,5 +103,6 @@ class Work:
                     resultq.put(result)
 
     def __init__(self):
-        self.process: mp.Process = mp.Process(target=Work.WORK_FUNCTION, args=(WorkRequest.WORKQ, WorkRequest.RESULTQ))
+        self.process: mp.Process = mp.Process(target=Work.WORK_FUNCTION,
+                                              args=(WorkRequest.WORKQ, WorkRequest.RESULTQ))
         self.process.start()

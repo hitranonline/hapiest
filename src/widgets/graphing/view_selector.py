@@ -1,6 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
+
 class ViewSelector(QDialog):
 
     def __init__(self, parent):

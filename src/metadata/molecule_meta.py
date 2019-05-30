@@ -1,13 +1,12 @@
 from datetime import timedelta
 from typing import Dict, List, Union
 
-from utils.api import CrossSectionApi
-from utils.cache import JsonCache
-from utils.xsc import CrossSectionMeta
+from data_structures.cache import JsonCache
+from data_structures.xsc import CrossSectionMeta
+from utils.hapi_api import CrossSectionApi
 
 
 class MoleculeMeta:
-
     __MOLECULE_METADATA: List[Dict] = None
 
     __FORMULA_TO_MID: Dict[str, int] = None
@@ -39,8 +38,13 @@ class MoleculeMeta:
     def all_names_with_xsc() -> List[str]:
         def has_xscs(name):
             return MoleculeMeta.__NAME_TO_MID[name] in CrossSectionMeta.molecule_metas
+
         r = [name for name in MoleculeMeta.all_names() if has_xscs(name)]
         return r
+
+    @staticmethod
+    def all_formulas() -> List[str]:
+        return list(MoleculeMeta.__FORMULA_TO_MID.keys())
 
     def __init__(self, molecule_id: Union[int, str]):
         if MoleculeMeta.__MOLECULE_METADATA is None:
@@ -62,9 +66,5 @@ class MoleculeMeta:
         else:
             self.populated = False
 
-
     def is_populated(self):
         return self.populated
-
-    def all_formulas(self) -> List[str]:
-        return list(MoleculeMeta.__FORMULA_TO_MID.keys())

@@ -1,10 +1,9 @@
-import json
 from datetime import timedelta
-from typing import List, Optional, Any, Dict, Tuple, Iterable
+from typing import Any, Dict, List
 
-from utils.cache import JsonCache
+from data_structures.cache import JsonCache
+from utils.hapi_api import CrossSectionApi
 from utils.log import err_log
-from utils.api import CrossSectionApi
 
 
 class CrossSectionMeta:
@@ -49,9 +48,8 @@ class CrossSectionMeta:
 
     """
 
-    ##
     # A dictionary that maps molecule id to a list of cross section meta info.
-    molecule_metas = {} 
+    molecule_metas = {}
 
     @staticmethod
     def add_meta_objects(meta_objs: List[Dict]):
@@ -59,14 +57,13 @@ class CrossSectionMeta:
             ind = meta_obj['molecule_id']
             # If there is no key 'ind' in molecule_metas and an identical
             # meta_obj hasn't already been added.
-            if ind in CrossSectionMeta.molecule_metas and \
-               meta_obj not in CrossSectionMeta.molecule_metas[ind]:
+            if ind in CrossSectionMeta.molecule_metas and meta_obj not in \
+                    CrossSectionMeta.molecule_metas[ind]:
                 CrossSectionMeta.molecule_metas[ind].append(meta_obj)
             else:
                 CrossSectionMeta.molecule_metas[ind] = [meta_obj]
 
         list(map(insert, meta_objs))
-
 
     def __init__(self, molecule_id):
         """
@@ -81,8 +78,7 @@ class CrossSectionMeta:
 
             self.api = CrossSectionApi()
 
-            self.cache = \
-                JsonCache(".xscm", self.api.request_xsc_meta, timedelta(days=1.0))
+            self.cache = JsonCache(".xscm", self.api.request_xsc_meta, timedelta(days=1.0))
             if not self.cache.ok():
                 err_log("Failed to load xscm from cache.")
             else:
@@ -93,8 +89,7 @@ class CrossSectionMeta:
         else:
             self.molecule_id = molecule_id
             self.metas = CrossSectionMeta.molecule_metas[molecule_id]
-            
-    
+
     def molecule_id_matches(self, d: Dict[str, Any]):
         return 'molecule_id' in d and d['molecule_id'] == self.molecule_id
 

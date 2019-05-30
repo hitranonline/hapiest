@@ -1,4 +1,3 @@
-
 class GUI:
     """
     A GUI class is an entire window; not just a single component or widget in a gui.

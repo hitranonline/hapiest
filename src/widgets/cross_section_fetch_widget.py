@@ -1,10 +1,11 @@
 from typing import List
 
-from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QCheckBox, QComboBox, QPushButton, QCompleter, QListWidget
+from PyQt5 import QtCore, QtWidgets, uic
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QCompleter, QDoubleSpinBox, QListWidget, \
+    QPushButton, QWidget
 
-from utils.metadata.molecule import MoleculeMeta
-from utils.xsc import CrossSectionMeta, CrossSectionFilter
+from data_structures.xsc import CrossSectionFilter, CrossSectionMeta
+from metadata.molecule_meta import MoleculeMeta
 from worker.hapi_worker import HapiWorker, WorkRequest, err_log
 
 
@@ -39,7 +40,8 @@ class CrossSectionFetchWidget(QWidget):
 
         uic.loadUi('layouts/cross_section_widget.ui', self)
 
-        self.pressure_check.toggled.connect(self.gen_toggle_function([self.pressure_max, self.pressure_min]))
+        self.pressure_check.toggled.connect(
+            self.gen_toggle_function([self.pressure_max, self.pressure_min]))
         self.temp_check.toggled.connect(self.gen_toggle_function([self.temp_max, self.temp_min]))
         self.wn_check.toggled.connect(self.gen_toggle_function([self.numax, self.numin]))
 
@@ -63,7 +65,8 @@ class CrossSectionFetchWidget(QWidget):
         self.__on_molecule_selection_changed(self.molecule.currentText())
 
     def gen_toggle_function(self, other_widgets: List[QWidget]):
-        return lambda checked: list(map(lambda widget: widget.setDisabled(not checked), other_widgets))
+        return lambda checked: list(
+            map(lambda widget: widget.setDisabled(not checked), other_widgets))
 
     def get_selected_xscs(self) -> List[str]:
         xscs = []
@@ -151,11 +154,11 @@ class CrossSectionFetchWidget(QWidget):
     ###
 
     def set_cross_section_list_items(self, xscs: List[str]):
-        list(map(lambda _: self.cross_section_list.takeItem(0), range(self.cross_section_list.count())))
+        list(map(lambda _: self.cross_section_list.takeItem(0),
+                 range(self.cross_section_list.count())))
         for xsc in xscs:
             item = QtWidgets.QListWidgetItem(xsc)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 

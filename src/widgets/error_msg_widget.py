@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
 
 
 class ErrorMsgWidget(QWidget):

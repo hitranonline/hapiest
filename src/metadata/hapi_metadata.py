@@ -1,20 +1,24 @@
-from utils.isotopologue import *
+from metadata.isotopologue_meta import *
+import toml
 
-class HapiMetaData():
+
+class HapiMetaData:
     """
-    Hapiest Meta Data class - to be paired with the .data and .header files generated
-    with each fetch request.
+    Hapiest Meta Data class - to be paired with the .data and .header files generated with each
+    fetch request.
     """
 
     HMD_FILEDS = ['numin', 'numax', 'table_name', 'isos', 'dirty_cells']
 
-    def __init__(self, table_name: str, iso_id_list: List[GlobalIsotopologueId] = None, numin: float = None, 
-                 numax: float = None, dirty_cells: List[Tuple[int, int]] = []):
+    def __init__(self, table_name: str, iso_id_list: List[GlobalIsotopologueId] = None,
+                 numin: float = None, numax: float = None, dirty_cells: List[Tuple[int, int]] = ()):
+        self.iso_tuples = ()
         self.table_name = table_name
         self.dirty_cells = set([])
-        if iso_id_list == None:
+        if iso_id_list is None:
             if not self.initialize_from_file():
-                # This should hopefully only be executed in the worker process (since the LOCAL_TABLE_CACHE is not
+                # This should hopefully only be executed in the worker process (since the
+                # LOCAL_TABLE_CACHE is not
                 # populated in the gui process)
                 self.initialize_from_hapi_table(table_name)
                 self.save()
@@ -34,7 +38,8 @@ class HapiMetaData():
             self.dirty_cells.remove(t)
 
     def populate_iso_tuples(self):
-        self.iso_tuples = list(map(lambda glbl_id: Isotopologue.from_global_id(glbl_id).iso_tuple(), self.isos))
+        self.iso_tuples = list(
+            map(lambda glbl_id: IsotopologueMeta.from_global_id(glbl_id).iso_tuple(), self.isos))
 
     def initialize_from_file(self):
         """
@@ -46,7 +51,7 @@ class HapiMetaData():
                 self.initialize_from_toml_dict(toml.loads(text))
                 return True
         except Exception as e:
-            print('Encoutnered error: {}'.format(str(e)))
+            print('Encountered error: {}'.format(str(e)))
             print('No HMD file found for table \'{}\'.'.format(self.table_name))
             return False
 
@@ -61,23 +66,24 @@ class HapiMetaData():
                 tup = (molec_ids[i], local_ids[i])
                 if tup not in iso_tuples:
                     iso_tuples[tup] = None
-            
+
             self.table_name = table_name
             self.iso_tuples = iso_tuples
-            self.isos = list(map(lambda tup: Isotopologue.FROM_MOL_ID_ISO_ID[tup].id, iso_tuples))
-            self.numin = data['nu'][0] 
+            self.isos = list(
+                map(lambda tup: IsotopologueMeta.FROM_MOL_ID_ISO_ID[tup].id, iso_tuples))
+            self.numin = data['nu'][0]
             self.numax = data['nu'][nrows - 1]
             self.dirty_cells = set([])
         else:
             print('Failed to initialize from LOCAL_TABLE_CACHE')
 
-    def initialize_from_toml_dict(self, dict):
+    def initialize_from_toml_dict(self, dictionary):
         """
-        Initializes all of the values in this HapiMetaData object from a dictonary that was read from a toml formatted
-        file.
+        Initializes all of the values in this HapiMetaData object from a dictionary that was read
+        from a toml file.
         """
         for field in HapiMetaData.HMD_FILEDS:
-            self.__dict__[field] = dict[field]
+            self.__dict__[field] = dictionary[field]
         if 'dirty_cells' not in self.__dict__:
             self.dirty_cells = set([])
         else:
@@ -100,8 +106,9 @@ class HapiMetaData():
         self.dirty_cells = set(self.dirty_cells)
 
     def save_as(self, new_table_name):
-        # Must convert the list of tuples to a list of lists, since the toml library doesn't properly serialize tuples.
-        # Must keep them as tuples because lists aren't hashable for some reason.
+        # Must convert the list of tuples to a list of lists, since the toml library doesn't
+        # properly serialize tuples. Must keep them as tuples because lists aren't hashable for
+        # some reason.
         self.dirty_cells = list(map(list, self.dirty_cells))
         old_table_name = self.table_name
         self.table_name = new_table_name

@@ -23,3 +23,4 @@ dist/*
 /binaries/Linux/bin/*
 /binaries/Mac OSX/bin/*
 /binaries/Windows/bin/*
+/venv/*

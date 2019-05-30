@@ -1,15 +1,16 @@
-from typing import List, Optional, Any, Dict, Tuple, Iterable
-import sys
+from typing import Iterable, List, Optional, Tuple
 
-from utils.metadata.xsc import CrossSectionMeta
+from metadata.xsc_meta import CrossSectionMeta
+
 
 class CrossSection:
     """
-    Represents a parsed cross section. This is just a data class so it doesn't get represented by a dictionary.
+    Represents a parsed cross section. This is just a data class so it doesn't get represented by
+    a dictionary.
     """
 
-    def __init__(self, nu: Iterable[float], abscoef: Iterable[float], step: float, numin: float, numax: float,
-                 molecule: str, len: int, pressure: float, temp: float):
+    def __init__(self, nu: Iterable[float], abscoef: Iterable[float], step: float, numin: float,
+                 numax: float, molecule: str, len: int, pressure: float, temp: float):
         self.nu = tuple(nu)
         self.abscoef = tuple(abscoef)
         self.step = step
@@ -55,7 +56,9 @@ class XscParser:
         step = (max_wavenum - numin) / float(num_points)
         x = list(map(lambda n: numin + float(n) * step, range(0, num_points)))
 
-        return CrossSection(x, y, step, numin, max_wavenum, molecule, num_points, pressure, temperature)
+        return CrossSection(x, y, step, numin, max_wavenum, molecule, num_points, pressure,
+                            temperature)
+
 
 class CrossSectionFilter:
 
@@ -70,9 +73,8 @@ class CrossSectionFilter:
     def get_cross_sections(self) -> List[str]:
         if self.molecule_id not in CrossSectionMeta.molecule_metas:
             return []
-        return [item['filename']
-                for item in CrossSectionMeta.molecule_metas[self.molecule_id] 
-                if self.xsc_is_conformant(item)]
+        return [item['filename'] for item in CrossSectionMeta.molecule_metas[self.molecule_id] if
+                self.xsc_is_conformant(item)]
 
     def xsc_is_conformant(self, xsc) -> bool:
         """
@@ -81,7 +83,9 @@ class CrossSectionFilter:
         :return: True if the supplied cross-section satisfies all of the
         conditions of this filter, otherwise false.
         """
-        return (self.pressure_range is None or (self.pressure_range[0] < xsc['pressure'] < self.pressure_range[1])) \
-                and (self.temp_range is None or (self.temp_range[0] < xsc['temperature'] < self.temp_range[1])) \
-                and (self.wn_range is None or (xsc['numin'] < self.wn_range[0] and xsc['numax'] > self.wn_range[1]))
-
+        return (self.pressure_range is None or (
+                self.pressure_range[0] < xsc['pressure'] < self.pressure_range[1])) and (
+                           self.temp_range is None or (
+                           self.temp_range[0] < xsc['temperature'] < self.temp_range[1])) and (
+                           self.wn_range is None or (
+                           xsc['numin'] < self.wn_range[0] and xsc['numax'] > self.wn_range[1]))
