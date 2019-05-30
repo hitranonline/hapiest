@@ -84,8 +84,8 @@ class CrossSectionFilter:
         conditions of this filter, otherwise false.
         """
         return (self.pressure_range is None or (
-                self.pressure_range[0] < xsc['pressure'] < self.pressure_range[1])) and (
+                self.pressure_range[0] <= xsc['pressure'] <= self.pressure_range[1])) and (
                            self.temp_range is None or (
-                           self.temp_range[0] < xsc['temperature'] < self.temp_range[1])) and (
+                           self.temp_range[0] <= xsc['temperature'] <= self.temp_range[1])) and (
                            self.wn_range is None or (
-                           xsc['numin'] < self.wn_range[0] and xsc['numax'] > self.wn_range[1]))
+                           xsc['numin'] <= self.wn_range[0] and xsc['numax'] >= self.wn_range[1]))
