@@ -82,21 +82,19 @@ class FetchWidget(QWidget):
         that HITRAN has to offer.
         """
 
-        for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key = str.lower) if
+        for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if
                       item[0].isalpha()]:
             item = QtWidgets.QListWidgetItem(group)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 
             self.param_group_list.addItem(item)
 
         # Add all parameter groups to the parameter groups list.
-        for par in sorted(PARLIST_ALL, key = str.lower):
+        for par in sorted(PARLIST_ALL, key=str.lower):
             item = QtWidgets.QListWidgetItem(par)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 
@@ -137,14 +135,13 @@ class FetchWidget(QWidget):
             for err in errs:
                 # This means the wavenumber range was too small (probably), so
                 # we'll tell the user it is too small
-                if err.error == FetchErrorKind.FailedToRetreiveData:
+                if err.error == FetchErrorKind.FailedToRetrieveData:
                     err_log('The entered wavenumber range is too small, try increasing it')
                 # Not much to do in regards to user feedback in this case....
                 elif err.error == FetchErrorKind.FailedToOpenThread:
                     err_log('Failed to open thread to make query HITRAN')
                 elif err.error == FetchErrorKind.BadConnection:
-                    err_log(
-                            'Error: Failed to connect to HITRAN. Check your internet connection '
+                    err_log('Error: Failed to connect to HITRAN. Check your internet connection '
                             'and try again.')
                 elif err.error == FetchErrorKind.BadIsoList:
                     err_log(' Error: You must select at least one isotopologue.')
@@ -236,9 +233,9 @@ class FetchWidget(QWidget):
 
             # Make sure there is a key associated with the item so we can use it later
             item.setData(QtCore.Qt.UserRole, isotopologue.id)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled |
-                          QtCore.Qt.ItemIsSelectable)
+            item.setFlags(
+                item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsSelectable)
 
             # The normal molecule is always at index 1, and we always want that
             # molecule to be selected
@@ -277,14 +274,9 @@ class FetchWidget(QWidget):
             return
 
         self.disable_fetch_button()
-        work = HapiWorker.echo(
-                data_name = self.get_data_name(),
-                iso_id_list = selected_isos,
-                numin = numin,
-                numax = numax,
-                parameter_groups = parameter_groups,
-                parameters = parameters)
-        self.worker = HapiWorker(WorkRequest.FETCH, work, callback = self.fetch_done)
+        work = HapiWorker.echo(data_name=self.get_data_name(), iso_id_list=selected_isos,
+            numin=numin, numax=numax, parameter_groups=parameter_groups, parameters=parameters)
+        self.worker = HapiWorker(WorkRequest.FETCH, work, callback=self.fetch_done)
         self.parent.workers.append(self.worker)
         self.worker.start()
 

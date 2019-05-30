@@ -117,11 +117,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 series.setName(name)
             else:
                 series.setName(
-                        name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, '
-                               'self: {:.2f}'.format(
-                                args['graph_fn'], args['Environment']['T'],
-                                args['Environment']['p'],
-                                args['Diluent']['air'], args['Diluent']['self']))
+                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, '
+                           'self: {:.2f}'.format(args['graph_fn'], args['Environment']['T'],
+                        args['Environment']['p'], args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
             self.chart = QChart()
@@ -169,12 +167,10 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             if 'xsc' in args and args['xsc']:
                 series.setName(name)
             else:
-                series.setName(
-                    name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>air: {:.2f}, '
-                           'self: {:.2f}'.format(
-                            args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
-                            args['Diluent']['air'],
-                            args['Diluent']['self']))
+                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>air: {:.2f}, '
+                                      'self: {:.2f}'.format(args['graph_fn'],
+                    args['Environment']['T'], args['Environment']['p'], args['Diluent']['air'],
+                    args['Diluent']['self']))
             series.setUseOpenGL(True)
 
             series.add_to_chart(self.chart)
@@ -406,15 +402,14 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             for point in points_vector:
                 x.append(point.x())
                 y.append(point.y())
-            return { 'x': x, 'y': y }
+            return {'x': x, 'y': y}
 
-        dict = { }
-        series_lists = list(map(lambda series: dict.update({
-            series.name(): to_x_y_arrays(series)
-        }), self.all_series()))
+        dict = {}
+        series_lists = list(map(lambda series: dict.update({series.name(): to_x_y_arrays(series)}),
+                                self.all_series()))
         try:
             with open(filename, 'w') as file:
-                file.write(json.dumps(dict, indent = 4))
+                file.write(json.dumps(dict, indent=4))
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 

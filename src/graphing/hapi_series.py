@@ -16,10 +16,8 @@ class HapiSeries:
             self.series = self.create_series()
             for i in range(0, len(x)):
                 # Since qt won't graph a chart using a log scale if there is a negative or zero 
-                # value,
-                # make sure everything is > 0.
-                # This shouldn't be a problem since all of the graph types work with positive 
-                # quantities.
+                # value, make sure everything is > 0. This shouldn't be a problem since all of
+                # the graph types work with positive quantities.
                 if y[i] < 1e-138:
                     self.append(x[i], 1e-138)
                 else:
@@ -50,8 +48,9 @@ class HapiSeries:
     def internal_copy(self):
         """
         Makes a copy of the underlying series. This is needed because after removing a series 
-        from a chart,
-        Qt deallocates the QLineSeries.
+        from a chart, Qt deallocates the QLineSeries (the qt documents say the QChart gains
+        ownership of the QLineSeries, which gives the QChart the responsibility of managing the
+        memory.
         """
         new_series = self.create_series()
         for point in self.series.pointsVector():

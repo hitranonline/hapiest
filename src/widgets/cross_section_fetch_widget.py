@@ -124,7 +124,7 @@ class CrossSectionFetchWidget(QWidget):
         xscs = self.get_selected_xscs()
         if len(xscs) == 0:
             return
-        args = HapiWorker.echo(xscs = xscs, molecule_name = self.molecule.currentText())
+        args = HapiWorker.echo(xscs=xscs, molecule_name=self.molecule.currentText())
         self.fetch_button.setDisabled(True)
         self.worker = HapiWorker(WorkRequest.DOWNLOAD_XSCS, args, self.__on_fetch_xsc_done)
         self.worker.start()
@@ -158,8 +158,7 @@ class CrossSectionFetchWidget(QWidget):
                  range(self.cross_section_list.count())))
         for xsc in xscs:
             item = QtWidgets.QListWidgetItem(xsc)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 

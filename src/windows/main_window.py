@@ -3,6 +3,7 @@ from windows.window import Window
 
 
 class MainWindow(Window):
+
     def __init__(self):
         Window.__init__(self, MainWindowGui(self), None)
 

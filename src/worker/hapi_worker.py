@@ -86,7 +86,7 @@ class HapiWorker(HapiThread):
                     return
                 HapiWorker.job_results.append(work_result)
             except Exception as e:
-                self.step_signal.emit({ })
+                self.step_signal.emit({})
             finally:
                 for work_result in HapiWorker.job_results:
                     if work_result.job_id == self.job_id:

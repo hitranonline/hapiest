@@ -32,7 +32,7 @@ def get_all_data_names():
     datas = []
     for f in files:
         match = DATA_FILE_REGEX.match(f)
-        if match == None:
+        if match is None:
             continue
         if f.endswith('.xsc'):
             datas.append(match.string)

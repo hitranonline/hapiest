@@ -2,6 +2,7 @@ from test.test import Test
 
 
 class FailTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 

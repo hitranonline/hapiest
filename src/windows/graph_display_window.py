@@ -11,15 +11,13 @@ from worker.work_result import WorkResult
 class GraphDisplayWindow(Window):
     done_signal = QtCore.pyqtSignal(object)
 
-    graph_ty_to_work_ty = {
-        GraphType.ABSORPTION_COEFFICIENT: WorkRequest.ABSORPTION_COEFFICIENT,
-        GraphType.TRANSMITTANCE_SPECTRUM: WorkRequest.TRANSMITTANCE_SPECTRUM,
-        GraphType.RADIANCE_SPECTRUM:      WorkRequest.RADIANCE_SPECTRUM,
-        GraphType.ABSORPTION_SPECTRUM:    WorkRequest.ABSORPTION_SPECTRUM,
-        GraphType.BANDS:                  WorkRequest.BANDS
-        }
+    graph_ty_to_work_ty = {GraphType.ABSORPTION_COEFFICIENT: WorkRequest.ABSORPTION_COEFFICIENT,
+        GraphType.TRANSMITTANCE_SPECTRUM:                    WorkRequest.TRANSMITTANCE_SPECTRUM,
+        GraphType.RADIANCE_SPECTRUM:                         WorkRequest.RADIANCE_SPECTRUM,
+        GraphType.ABSORPTION_SPECTRUM:                       WorkRequest.ABSORPTION_SPECTRUM,
+        GraphType.BANDS:                                     WorkRequest.BANDS}
 
-    graph_windows = { }
+    graph_windows = {}
 
     next_graph_window_id = 1
 
@@ -45,16 +43,14 @@ class GraphDisplayWindow(Window):
             gui: BandDisplayWindowGui = BandDisplayWindowGui()
             self.workers = {
                 '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
-                                lambda x: [self.plot_bands(x), self.workers.pop('0')])
-            }
+                                lambda x: [self.plot_bands(x), self.workers.pop('0')])}
         else:
             gui: GraphDisplayWindowGui = GraphDisplayWindowGui(graph_ty,
                                                                work_object['title'] + ' - ' + str(
                                                                    self.window_id))
             self.workers = {
                 '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
-                                lambda x: [self.plot(x), self.workers.pop('0')])
-            }
+                                lambda x: [self.plot(x), self.workers.pop('0')])}
 
         Window.__init__(self, gui, parent)
 
@@ -112,8 +108,7 @@ class GraphDisplayWindow(Window):
             result = work_result.result
             (x, y) = result['x'], result['y']
             self.gui.add_graph(x, y, result['title'], result['titlex'], result['titley'],
-                               result['name'],
-                               result['args'])
+                               result['name'], result['args'])
         except Exception as e:
             err_log(e)
 

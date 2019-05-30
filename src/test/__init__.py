@@ -13,16 +13,8 @@ from test.test import Test
 from test.throw_test import ThrowTest
 
 
-tests: List[Test] = [
-    Test(),
-    FailTest(),
-    ThrowTest(),
-    HapiSourcesTest(),
-    MoleculeInfoTest(),
-    GraphDisplayTest(),
-    BandDisplayTest(),
-    ConfigEditorTest()
-    ]
+tests: List[Test] = [Test(), FailTest(), ThrowTest(), HapiSourcesTest(), MoleculeInfoTest(),
+    GraphDisplayTest(), BandDisplayTest(), ConfigEditorTest()]
 
 
 def run_tests():
@@ -33,10 +25,12 @@ def run_tests():
     q = multiprocessing.Queue()
     for test in tests:
         print(name_fmt.format(test.name()))
-        p = Process(target = test.run, args = (q,))
+        p = Process(target=test.run, args=(q,))
         p.start()
         p.join()
         result: Union[bool, Tuple[type, Exception, TracebackType]] = q.get()
+        # Result is on object, so don't replace 'result == False' with 'not result' since that will
+        # be true if result is an exception.
         if test.should_fail():
             if result == False:
                 print(result_fmt.format('', 'Ok!'))
@@ -51,8 +45,7 @@ def run_tests():
                 print(result_fmt.format('', 'Failed (should throw)'))
             else:
                 traceback = result
-                print(result_fmt.format('', 'Ok!'))
-                # print(traceback)
+                print(result_fmt.format('', 'Ok!'))  # print(traceback)
         else:
             if result == True:
                 print(result_fmt.format('', 'Ok!'))

@@ -10,8 +10,7 @@ class CrossSection:
     """
 
     def __init__(self, nu: Iterable[float], abscoef: Iterable[float], step: float, numin: float,
-                 numax: float,
-                 molecule: str, len: int, pressure: float, temp: float):
+                 numax: float, molecule: str, len: int, pressure: float, temp: float):
         self.nu = tuple(nu)
         self.abscoef = tuple(abscoef)
         self.step = step
@@ -74,9 +73,8 @@ class CrossSectionFilter:
     def get_cross_sections(self) -> List[str]:
         if self.molecule_id not in CrossSectionMeta.molecule_metas:
             return []
-        return [item['filename']
-                for item in CrossSectionMeta.molecule_metas[self.molecule_id]
-                if self.xsc_is_conformant(item)]
+        return [item['filename'] for item in CrossSectionMeta.molecule_metas[self.molecule_id] if
+                self.xsc_is_conformant(item)]
 
     def xsc_is_conformant(self, xsc) -> bool:
         """
@@ -86,8 +84,8 @@ class CrossSectionFilter:
         conditions of this filter, otherwise false.
         """
         return (self.pressure_range is None or (
-                    self.pressure_range[0] < xsc['pressure'] < self.pressure_range[1])) \
-               and (self.temp_range is None or (
-                    self.temp_range[0] < xsc['temperature'] < self.temp_range[1])) \
-               and (self.wn_range is None or (
-                    xsc['numin'] < self.wn_range[0] and xsc['numax'] > self.wn_range[1]))
+                self.pressure_range[0] < xsc['pressure'] < self.pressure_range[1])) and (
+                           self.temp_range is None or (
+                           self.temp_range[0] < xsc['temperature'] < self.temp_range[1])) and (
+                           self.wn_range is None or (
+                           xsc['numin'] < self.wn_range[0] and xsc['numax'] > self.wn_range[1]))

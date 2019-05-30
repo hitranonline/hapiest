@@ -77,7 +77,7 @@ class SelectWidget(QWidget):
         if new_selection == '':
             return
 
-        args = HapiWorker.echo(table_name = new_selection)
+        args = HapiWorker.echo(table_name=new_selection)
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, args, self.__on_select_table_name_complete)
         worker.start()
@@ -98,8 +98,7 @@ class SelectWidget(QWidget):
         self.parameter_list.clear()
         for par in parameters:
             item = QtWidgets.QListWidgetItem(par)
-            item.setFlags(item.flags() |
-                          QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
             self.parameter_list.addItem(item)
@@ -128,9 +127,8 @@ class SelectWidget(QWidget):
 
         self.run_button.setDisabled(True)
 
-        args = HapiWorker.echo(ParameterNames = selected_params, TableName = table_name,
-                               DestinationTableName = new_table_name,
-                               Conditions = parsed_expression)
+        args = HapiWorker.echo(ParameterNames=selected_params, TableName=table_name,
+                               DestinationTableName=new_table_name, Conditions=parsed_expression)
 
         worker = HapiWorker(WorkRequest.SELECT, args, self.__on_run_done)
         self.parent.workers.append(worker)

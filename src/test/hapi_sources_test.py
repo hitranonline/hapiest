@@ -3,28 +3,23 @@ import threading
 from time import sleep
 
 
-sources = {
-    'hapi':    {
-        'authors':    ['R.V. Kochanov', 'I.E. Gordon', 'L.S. Rothman', 'P. Wcislo', 'C. Hill',
-                       'J.S. Wilzewski'],
-        'title':      'HITRAN Application Programming Interface (HAPI): A comprehensive approach '
-                      'to working with spectroscopic data',
-        'year':       '2016',
-        'journal':    'J. Quant. Spectrosc. Radiat. Transfer',
-        'volume':     177,
-        'page_start': 15,
-        'page_end':   30,
-        'doi':        '10.1016/j.jqsrt.2016.03.005'
-        },
-    'hapiest': {
+sources = {'hapi': {
+    'authors':                                               ['R.V. Kochanov', 'I.E. Gordon',
+                                                              'L.S. Rothman', 'P. Wcislo',
+                                                              'C. Hill', 'J.S. Wilzewski'],
+    'title':                                                 'HITRAN Application Programming '
+                                                             'Interface (HAPI): A comprehensive '
+                                                             'approach '
+                                                             'to working with spectroscopic data',
+    'year':                                                  '2016',
+    'journal':                                               'J. Quant. Spectrosc. Radiat. '
+                                                             'Transfer',
+    'volume':                                                177, 'page_start': 15, 'page_end': 30,
+    'doi':                                                   '10.1016/j.jqsrt.2016.03.005'},
+    'hapiest':     {
         'authors': ['W. Matt', 'J. Karns', 'B. Cairo', 'M. Sova', 'E. Messer', 'D. Lohmann',
-                    'R.V. Kochanov',
-                    'I.E. Gordon', 'B. Tenbergen', 'S. Kanbur'],
-        'title':   'HAPIEST: A GUI for HAPI',
-        'year':    '2018',
-        'doi':     None
-        }
-    }
+                    'R.V. Kochanov', 'I.E. Gordon', 'B. Tenbergen', 'S. Kanbur'],
+        'title':   'HAPIEST: A GUI for HAPI', 'year': '2018', 'doi': None}}
 
 from test.test import Test
 from PyQt5 import QtWidgets
@@ -32,6 +27,7 @@ from widgets.hapi_source_widget import HapiSourceWidget
 
 
 class HapiSourcesTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 
@@ -49,7 +45,7 @@ class HapiSourcesTest(Test):
             window.deleteLater()
             pass
 
-        t = threading.Thread(target = close_window)
+        t = threading.Thread(target=close_window)
         t.start()
         items = QtWidgets.QWidget(window)
         layout = QtWidgets.QVBoxLayout()

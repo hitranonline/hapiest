@@ -1,20 +1,21 @@
 from metadata.isotopologue_meta import *
+import toml
 
 
-class HapiMetaData():
+class HapiMetaData:
     """
-    Hapiest Meta Data class - to be paired with the .data and .header files generated
-    with each fetch request.
+    Hapiest Meta Data class - to be paired with the .data and .header files generated with each
+    fetch request.
     """
 
     HMD_FILEDS = ['numin', 'numax', 'table_name', 'isos', 'dirty_cells']
 
     def __init__(self, table_name: str, iso_id_list: List[GlobalIsotopologueId] = None,
-                 numin: float = None,
-                 numax: float = None, dirty_cells: List[Tuple[int, int]] = []):
+                 numin: float = None, numax: float = None, dirty_cells: List[Tuple[int, int]] = ()):
+        self.iso_tuples = ()
         self.table_name = table_name
         self.dirty_cells = set([])
-        if iso_id_list == None:
+        if iso_id_list is None:
             if not self.initialize_from_file():
                 # This should hopefully only be executed in the worker process (since the
                 # LOCAL_TABLE_CACHE is not
@@ -50,7 +51,7 @@ class HapiMetaData():
                 self.initialize_from_toml_dict(toml.loads(text))
                 return True
         except Exception as e:
-            print('Encoutnered error: {}'.format(str(e)))
+            print('Encountered error: {}'.format(str(e)))
             print('No HMD file found for table \'{}\'.'.format(self.table_name))
             return False
 
@@ -60,7 +61,7 @@ class HapiMetaData():
             molec_ids = data['molec_id']
             local_ids = data['local_iso_id']
             nrows = LOCAL_TABLE_CACHE[table_name]['header']['number_of_rows']
-            iso_tuples = { }
+            iso_tuples = {}
             for i in range(0, nrows):
                 tup = (molec_ids[i], local_ids[i])
                 if tup not in iso_tuples:
@@ -76,14 +77,13 @@ class HapiMetaData():
         else:
             print('Failed to initialize from LOCAL_TABLE_CACHE')
 
-    def initialize_from_toml_dict(self, dict):
+    def initialize_from_toml_dict(self, dictionary):
         """
-        Initializes all of the values in this HapiMetaData object from a dictonary that was read
-        from a toml formatted
-        file.
+        Initializes all of the values in this HapiMetaData object from a dictionary that was read
+        from a toml file.
         """
         for field in HapiMetaData.HMD_FILEDS:
-            self.__dict__[field] = dict[field]
+            self.__dict__[field] = dictionary[field]
         if 'dirty_cells' not in self.__dict__:
             self.dirty_cells = set([])
         else:
@@ -91,7 +91,7 @@ class HapiMetaData():
         self.populate_iso_tuples()
 
     def as_dict(self):
-        dict = { }
+        dict = {}
         for field in HapiMetaData.HMD_FILEDS:
             dict[field] = self.__dict__[field]
         return dict
@@ -107,8 +107,8 @@ class HapiMetaData():
 
     def save_as(self, new_table_name):
         # Must convert the list of tuples to a list of lists, since the toml library doesn't
-        # properly serialize tuples.
-        # Must keep them as tuples because lists aren't hashable for some reason.
+        # properly serialize tuples. Must keep them as tuples because lists aren't hashable for
+        # some reason.
         self.dirty_cells = list(map(list, self.dirty_cells))
         old_table_name = self.table_name
         self.table_name = new_table_name

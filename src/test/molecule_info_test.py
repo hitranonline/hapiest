@@ -2,24 +2,20 @@ import threading
 from time import sleep
 
 
-sources = {
-    'hapi':    {
-        'authors': ['R.V. Kochanov', 'I.E. Gordon', 'L.S. Rothman', 'P. Wcislo', 'C. Hill',
-                    'J.S. Wilzewski'],
-        'title':   'HITRAN Application Programming Interface (HAPI): A comprehensive approach to '
-                   'working with spectroscopic data',
-        'year':    '2016',
-        'doi':     '10.1016/j.jqsrt.2016.03.005'
-        },
-    'hapiest': {
+sources = {'hapi': {
+    'authors':                                            ['R.V. Kochanov', 'I.E. Gordon',
+                                                           'L.S. Rothman', 'P. Wcislo', 'C. Hill',
+                                                           'J.S. Wilzewski'],
+    'title':                                              'HITRAN Application Programming '
+                                                          'Interface (HAPI): A comprehensive '
+                                                          'approach to '
+                                                          'working with spectroscopic data',
+    'year':                                               '2016',
+    'doi':                                                '10.1016/j.jqsrt.2016.03.005'},
+    'hapiest':     {
         'authors': ['W. Matt', 'J. Karns', 'B. Cairo', 'M. Sova', 'E. Messer', 'D. Lohmann',
-                    'R.V. Kochanov',
-                    'I.E. Gordon', 'B. Tenbergen', 'S. Kanbur'],
-        'title':   'HAPIEST: A GUI for HAPI',
-        'year':    '2018',
-        'doi':     None
-        }
-    }
+                    'R.V. Kochanov', 'I.E. Gordon', 'B. Tenbergen', 'S. Kanbur'],
+        'title':   'HAPIEST: A GUI for HAPI', 'year': '2018', 'doi': None}}
 
 from test.test import Test
 from PyQt5 import QtWidgets
@@ -28,6 +24,7 @@ from metadata.molecule_meta import MoleculeMeta
 
 
 class MoleculeInfoTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 
@@ -45,7 +42,7 @@ class MoleculeInfoTest(Test):
         # Necessary initialization
         _ = MoleculeMeta(0)
 
-        t = threading.Thread(target = close_window)
+        t = threading.Thread(target=close_window)
         t.start()
         widget = MoleculeInfoWidget('CO2')
         window.setCentralWidget(widget)
