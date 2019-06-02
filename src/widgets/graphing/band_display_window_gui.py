@@ -45,13 +45,13 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.setName(band.band_id)
 
                 series.append(cur_series)
-                cur_series.hovered.connect(lambda point, state:
-                                           self.__on_series_hover(cur_series, point, state))
+                cur_series.hovered.connect(
+                    lambda point, state: self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
 
             self.chart = QChart()
-            self.band_series = { }
+            self.band_series = {}
             self.legend = BandLegend(self.chart)
 
             self.chart.legend().setVisible(False)
@@ -96,8 +96,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.series.setMarkerSize(LegendItem.NORMAL_WIDTH)
 
                 series.append(cur_series)
-                cur_series.hovered.connect(lambda point, state:
-                                           self.__on_series_hover(cur_series, point, state))
+                cur_series.hovered.connect(
+                    lambda point, state: self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
 

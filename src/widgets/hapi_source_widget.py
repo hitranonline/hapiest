@@ -7,8 +7,7 @@ class HapiSourceWidget(QtWidgets.QTextEdit):
 
     def __init__(self, title: str, authors: List[str], year: str, doi: Optional[str],
                  journal: Optional[str] = None, volume: Optional[str] = None,
-                 page_start: Optional[int] = None,
-                 page_end: Optional[int] = None, **_kwargs):
+                 page_start: Optional[int] = None, page_end: Optional[int] = None, **_kwargs):
         self.title = title
         self.authors = authors
         self.year = year

@@ -114,7 +114,7 @@ class HapiTableView(QTableView):
 
         if self.table_name != None:
             self.workers = []
-            args = HapiWorker.echo(table_name = table_name)
+            args = HapiWorker.echo(table_name=table_name)
 
             self.start_worker = HapiWorker(WorkRequest.GET_TABLE, args, self.display_first_page)
             self.start_worker.start()
@@ -127,8 +127,7 @@ class HapiTableView(QTableView):
         # self.items = []
         self.double_validator = QDoubleValidator()
         self.double_validator.setNotation(QDoubleValidator.ScientificNotation)
-        self.int_validator = QIntValidator()
-        # self.horizontalHeader().setStretchLastSection(True)
+        self.int_validator = QIntValidator()  # self.horizontalHeader().setStretchLastSection(True)
 
     def get_widget(self, row, column):
         return self.indexWidget(self.table_model.createIndex(row, column))
@@ -215,8 +214,8 @@ class HapiTableView(QTableView):
             column_width = sum(map(int, itertools.filterfalse(lambda x: not x.isdigit(),
                                                               ["".join(x) for _, x in
                                                                itertools.groupby(
-                                                                       self.column_formats[column],
-                                                                       key = str.isdigit)])))
+                                                                   self.column_formats[column],
+                                                                   key=str.isdigit)])))
             if column_width == 0:
                 column_width = 16
             self.setColumnWidth(column, column_width)
@@ -328,8 +327,7 @@ class HapiTableView(QTableView):
         # Name for the new table.
         output_name = self.view_widget.get_output_name()
 
-        worker = HapiWorker(WorkRequest.SAVE_TABLE,
-                            { 'table': self.table, 'name': output_name },
+        worker = HapiWorker(WorkRequest.SAVE_TABLE, {'table': self.table, 'name': output_name},
                             self.done_saving)
 
         self.hmd.save_as(output_name)

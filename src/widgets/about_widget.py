@@ -4,6 +4,7 @@ from utils.hapiest_util import program_icon
 
 
 class AboutWidget(QWidget):
+
     def __init__(self, parent):
         QWidget.__init__(self, parent)
         self.text = QTextEdit()

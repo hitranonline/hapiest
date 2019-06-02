@@ -116,8 +116,8 @@ class LegendItem(QFrame):
         self.layout.addLayout(self.toggle_all_layout)
 
         for band_item in self.band_widgets:
-            self.layout.addWidget(band_item)
-            # The hover-to-bolden feature has been replaced
+            self.layout.addWidget(
+                band_item)  # The hover-to-bolden feature has been replaced  # 
             # band_item.installEventFilter(self)
         self.layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Expanding))
 

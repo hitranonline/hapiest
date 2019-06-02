@@ -1,10 +1,11 @@
 import sys
 from multiprocessing import Queue
+from functools import reduce
 
 from PyQt5 import QtCore
 
 
-class TextStream():
+class TextStream:
     """
     Writes to the appropriate queues.
 
@@ -33,16 +34,16 @@ class TextReceiver(QtCore.QObject):
     write_text_signal = QtCore.pyqtSignal(str)
     write_html_signal = QtCore.pyqtSignal(str)
 
-    ## An instance of a TextStream that has the queue that the worker thread reads from
+    # An instance of a TextStream that has the queue that the worker thread reads from
     TEXT_STREAM = None
 
-    ## Receives text and writes it to the status bar
+    # Receives text and writes it to the status bar
     TEXT_RECEIVER = None
 
-    ## The worker thread
+    # The worker thread
     TEXT_THREAD = None
 
-    ## A reference to the main window
+    # A reference to the main window
     WINDOW = None
 
     @staticmethod
@@ -69,7 +70,7 @@ class TextReceiver(QtCore.QObject):
         TextReceiver.TEXT_THREAD = QtCore.QThread()
         # Connect the signal to the console output handler in the main window
         # Connect the console output signals
-        TextReceiver.TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.text_log(str))
+        TextReceiver.TEXT_RECEIVER.write_text_signal.connect(lambda st: main_window.text_log(st))
         TextReceiver.TEXT_RECEIVER.write_html_signal.connect(
             lambda html: main_window.html_log(html))
         # Move the receiver to the background thread
@@ -109,22 +110,22 @@ def debug(*args, **kwargs):
     
     """
 
-    print(*args, file = sys.stderr, **kwargs)
+    print(*args, file=sys.stderr, **kwargs)
 
 
-def log(arg):
+def log(*args):
     """
     Prints to the console_output with a fancy lookin log label.
 
     """
-    s = str(arg)
-    if TextReceiver.TEXT_STREAM != None:
+    s = reduce(lambda l, r: f"{l}, {r}", args)
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}')
-    print("[Log] ", s, file = sys.__stdout__)
+    print("[Log] ", s, file=sys.__stdout__)
 
 
 def err_log(dat):
@@ -134,13 +135,13 @@ def err_log(dat):
     """
     s = str(dat)
 
-    if TextReceiver.TEXT_STREAM != None:
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}')
-    print("[Err] ", str(dat), file = sys.__stdout__)
+    print("[Err] ", str(dat), file=sys.__stdout__)
 
 
 def debug_log(dat):
@@ -149,10 +150,10 @@ def debug_log(dat):
 
     """
     s = str(dat)
-    if TextReceiver.TEXT_STREAM != None:
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}')
-    print("[Debug] ", str(dat), file = sys.__stdout__)
+    print("[Debug] ", str(dat), file=sys.__stdout__)

@@ -11,6 +11,7 @@ from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
 
 
 class BandDisplayTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 
@@ -46,7 +47,7 @@ class BandDisplayTest(Test):
         for i in range(0, 10):
             bands2.add_band(random_band())
 
-        t = threading.Thread(target = close_window)
+        t = threading.Thread(target=close_window)
         t.start()
         widget.setMinimumSize(256, 256)
         widget.add_bands(bands1)

@@ -8,7 +8,7 @@ class FetchErrorKind(Enum):
     BadNuMax = 4  # This wont be used
     BadConnection = 5
     BadIsoList = 6
-    FailedToRetreiveData = 7
+    FailedToRetrieveData = 7
     FailedToOpenThread = 8
     EmptyName = 9
 

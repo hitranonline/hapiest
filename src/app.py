@@ -26,8 +26,8 @@ def obtain_apikey():
 
     from widgets.apikey_help_widget import ApiKeyHelpWidget, ApiKeyValidator
 
-    if Config.hapi_api_key == '0000' or \
-            ApiKeyValidator.APIKEY_REGEX.match(Config.hapi_api_key) is None:
+    if Config.hapi_api_key == '0000' or ApiKeyValidator.APIKEY_REGEX.match(
+        Config.hapi_api_key) is None:
         app = QtWidgets.QApplication(sys.argv)
         _ = ApiKeyHelpWidget()
         app.exec_()
@@ -47,7 +47,7 @@ def verify_internet_connection_and_obtain_api_key():
     try:
         with urllib.request.urlopen(
                 f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}" \
-                f"{CrossSectionApi.XSC_META_ROUTE}"):
+                        f"{CrossSectionApi.XSC_META_ROUTE}"):
             pass
         return True
     except HTTPError as _:

@@ -37,7 +37,6 @@ class Lines:
     ```
 
     This is the schema hapi version < 2.0 uses already.
-
     """
 
     def __init__(self, table: Dict[str, Any]):
@@ -84,6 +83,7 @@ class Lines:
 
 
 class Line:
+
     def __init__(self, line_index: int, line: List[Union[int, float, str]], lines: 'Lines'):
         self.line_index = line_index
         self.line = line

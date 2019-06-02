@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QAction, QStatusBar, QCompleter, QVBoxLayout, \
-    QPushButton, QWidget
+    QPushButton, \
+    QWidget
 
 from metadata.molecule_meta import MoleculeMeta
 from widgets.about_widget import AboutWidget

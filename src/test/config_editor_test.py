@@ -6,7 +6,9 @@ from PyQt5 import QtWidgets
 from test.test import Test
 from widgets.config_editor_widget import ConfigEditorWidget
 
+
 class ConfigEditorTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 
@@ -22,7 +24,7 @@ class ConfigEditorTest(Test):
             sleep(0.25)
             window.deleteLater()
 
-        t = threading.Thread(target = close_window)
+        t = threading.Thread(target=close_window)
         t.start()
         widget = ConfigEditorWidget(None)
         widget.setMinimumSize(256, 256)

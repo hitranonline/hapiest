@@ -46,7 +46,7 @@ class ConfigEditorWidget(QWidget):
 
             input.setToolTip(meta['tool_tip'])
             layout.addWidget(input)
-            setattr(self, key, { 'input': input, 'layout': layout })
+            setattr(self, key, {'input': input, 'layout': layout})
             # self.__dict__[key] = {
             #     'input': input,
             #     'layout': layout
@@ -78,8 +78,7 @@ class ConfigEditorWidget(QWidget):
                 value = self.__dict__[key]['input'].isChecked()
             else:
                 value = None
-            setattr(Config, key, value)
-            # Config.__dict__[key] = value
+            setattr(Config, key, value)  # Config.__dict__[key] = value
 
         Config.write_config(Config.gen_config_string())
         self.close()

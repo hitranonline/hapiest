@@ -2,6 +2,7 @@ from test.test import Test
 
 
 class ThrowTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 

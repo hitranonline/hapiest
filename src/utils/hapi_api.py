@@ -125,7 +125,8 @@ class CrossSectionApi:
     def __init__(self):
         pass
 
-    def __send_request(self, uri):
+    @staticmethod
+    def __send_request(uri):
         try:
             content = url.urlopen(uri).read()
         # TODO: Add more robust error handling here. It could be a bad connection or a bad API key.
@@ -140,8 +141,8 @@ class CrossSectionApi:
         :return: json text that contains information about every molecule in the HITRAN database.
         """
         uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}" \
-              f"/{CrossSectionApi.MOLECULES_ROUTE}"
-        return self.__send_request(uri)
+            f"/{CrossSectionApi.MOLECULES_ROUTE}"
+        return CrossSectionApi.__send_request(uri)
 
     def request_xsc_meta(self, molecule_id: int = None) -> Union[bytes, HapiApiException]:
         """
@@ -153,9 +154,9 @@ class CrossSectionApi:
                               something like 400 molecules as of August 2018).
         :return: will return a dictionary on success, which will
         """
-        uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/" + \
-              f"{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
-        return self.__send_request(uri)
+        uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/" + f"{
+        Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
+        return CrossSectionApi.__send_request(uri)
 
     def request_xsc(self, xsc_name: str, filename: str):
         """

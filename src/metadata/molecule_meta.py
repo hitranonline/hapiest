@@ -16,14 +16,14 @@ class MoleculeMeta:
     @staticmethod
     def __initialize_molecule_metadata():
         api = CrossSectionApi()
-        cache = JsonCache(".molm", api.request_molecule_meta, timedelta(days = 1))
+        cache = JsonCache(".molm", api.request_molecule_meta, timedelta(days=1))
         if cache.ok():
             data = cache.data()
         else:
             return
-        MoleculeMeta.__FORMULA_TO_MID = { }
-        MoleculeMeta.__MOLECULE_METADATA = { }
-        MoleculeMeta.__NAME_TO_MID = { }
+        MoleculeMeta.__FORMULA_TO_MID = {}
+        MoleculeMeta.__MOLECULE_METADATA = {}
+        MoleculeMeta.__NAME_TO_MID = {}
 
         for molecule in data:
             MoleculeMeta.__NAME_TO_MID[molecule['common_name']] = molecule['id']
@@ -41,6 +41,10 @@ class MoleculeMeta:
 
         r = [name for name in MoleculeMeta.all_names() if has_xscs(name)]
         return r
+
+    @staticmethod
+    def all_formulas() -> List[str]:
+        return list(MoleculeMeta.__FORMULA_TO_MID.keys())
 
     def __init__(self, molecule_id: Union[int, str]):
         if MoleculeMeta.__MOLECULE_METADATA is None:
@@ -64,6 +68,3 @@ class MoleculeMeta:
 
     def is_populated(self):
         return self.populated
-
-    def all_formulas(self) -> List[str]:
-        return list(MoleculeMeta.__FORMULA_TO_MID.keys())

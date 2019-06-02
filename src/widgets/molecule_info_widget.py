@@ -96,7 +96,7 @@ class MoleculeInfoWidget(QWidget):
             self.adjustSize()
 
     def restructure_aliases(self):
-        reformatted = { }
+        reformatted = {}
         for item in self.molecule.aliases:
             reformatted[item['type']] = item['alias']
         self.molecule.aliases = reformatted
