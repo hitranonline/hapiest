@@ -62,7 +62,8 @@ class Work:
         """
         Handles the calling of most hapi functions.
         """
-        WorkRequest.WORK_FUNCTIONS = {WorkRequest.START_HAPI: WorkFunctions.start_hapi,
+        WorkRequest.WORK_FUNCTIONS = {
+            WorkRequest.START_HAPI:                           WorkFunctions.start_hapi,
             WorkRequest.FETCH:                                WorkFunctions.fetch,
             WorkRequest.ABSORPTION_COEFFICIENT:
                                           WorkFunctions.graph_absorption_coefficient,
@@ -77,7 +78,8 @@ class Work:
                                           WorkFunctions.graph_transmittance_spectrum,
             WorkRequest.RADIANCE_SPECTRUM:                    WorkFunctions.graph_radiance_spectrum,
             WorkRequest.BANDS:                                WorkFunctions.graph_bands,
-            WorkRequest.DOWNLOAD_XSCS:                        WorkFunctions.download_xscs}
+            WorkRequest.DOWNLOAD_XSCS:                        WorkFunctions.download_xscs
+        }
 
         WorkFunctions.start_hapi(**{})
 

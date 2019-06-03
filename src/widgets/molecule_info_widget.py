@@ -84,9 +84,8 @@ class MoleculeInfoWidget(QWidget):
                 self.inchikey.setText(self.molecule.inchikey)
 
                 alias_text = ''
-                for ty, alias in self.molecule.aliases.items():
-                    alias_text = '{}<br><b>{}</b>: <i>{}</i>'.format(alias_text, str(ty),
-                                                                     str(alias))
+                for _, alias in self.molecule.aliases.items():
+                    alias_text = '{}<br><i>{}</i>'.format(alias_text, str(alias))
                 self.aliases.setText(alias_text)
 
             except Exception as e:

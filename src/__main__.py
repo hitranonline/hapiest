@@ -13,6 +13,7 @@ check_version()
 fix_cwd()
 
 if __name__ == '__main__':
+    import traceback
     freeze_support()
     try:
         sys.exit(run())
@@ -20,3 +21,4 @@ if __name__ == '__main__':
         print(f"Encountered type error:\n {str(err)}")
     except Exception as err:
         print(f"Encountered an error: \n {str(err)}")
+        traceback.print_exc()

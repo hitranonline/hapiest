@@ -44,18 +44,18 @@ def verify_internet_connection_and_obtain_api_key():
     import urllib.request
     from utils.hapi_api import CrossSectionApi
 
+    print(f"{Config.hapi_api_key}")
+
     try:
         with urllib.request.urlopen(
-                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}" \
+                f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}/" \
                         f"{CrossSectionApi.XSC_META_ROUTE}"):
             pass
         return True
     except HTTPError as _:
         # An HTTP error code was given the response. This means the APIKEY was invalid
         err_msg = """
-Your HAPI API key is invalid, or you did not enter one. Hapiest will close after you hit Ok, and
-will prompt you for your hapi API key upon the next launch. If you think your HAPI is valid,
-please file a bug report at https://github.com/hitranonline/hapiest
+Your HAPI API key will be used on the next launch. Please restart HAPIEST.
 """
         Config.hapi_api_key = '0000'
         obtain_apikey()
