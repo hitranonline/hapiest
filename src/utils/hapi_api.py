@@ -155,7 +155,7 @@ class CrossSectionApi:
         :return: will return a dictionary on success, which will
         """
         uri = f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/" \
-              f"{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
+        f"{Config.hapi_api_key}/{CrossSectionApi.XSC_META_ROUTE}"
         return CrossSectionApi.__send_request(uri)
 
     def request_xsc(self, xsc_name: str, filename: str):

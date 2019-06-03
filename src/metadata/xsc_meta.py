@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing import Any, Dict, List
 
 from data_structures.cache import JsonCache
+from metadata.molecule_meta import MoleculeMeta
 from utils.hapi_api import CrossSectionApi
 from utils.log import err_log
 
@@ -49,21 +50,65 @@ class CrossSectionMeta:
     """
 
     # A dictionary that maps molecule id to a list of cross section meta info.
-    molecule_metas = {}
+    __MOLECULE_METAS = {}
+
+    # A set of all aliases for all molecules that have cross sections available
+    __XSC_ALIASES = {}
+
+    # A set of the common name of each molecules that have cross sections available
+    __XSC_NAMES = {}
+
+    @staticmethod
+    def all_aliases() -> List[str]:
+        return list(CrossSectionMeta.__XSC_ALIASES)
+
+    @staticmethod
+    def all_names_sorted_by_hitran_id() -> List[str]:
+        molecules = list(map(lambda m: MoleculeMeta(m), CrossSectionMeta.__XSC_NAMES))
+        return list(map(lambda m: m.name, sorted(molecules, key=lambda m: m.id)))
+
 
     @staticmethod
     def add_meta_objects(meta_objs: List[Dict]):
         def insert(meta_obj):
             ind = meta_obj['molecule_id']
-            # If there is no key 'ind' in molecule_metas and an identical
+            # If there is no key 'ind' in __MOLECULE_METAS and an identical
             # meta_obj hasn't already been added.
-            if ind in CrossSectionMeta.molecule_metas and meta_obj not in \
-                    CrossSectionMeta.molecule_metas[ind]:
-                CrossSectionMeta.molecule_metas[ind].append(meta_obj)
+            if ind in CrossSectionMeta.__MOLECULE_METAS and meta_obj not in \
+                    CrossSectionMeta.__MOLECULE_METAS[ind]:
+                CrossSectionMeta.__MOLECULE_METAS[ind].append(meta_obj)
             else:
-                CrossSectionMeta.molecule_metas[ind] = [meta_obj]
+                CrossSectionMeta.__MOLECULE_METAS[ind] = [meta_obj]
 
         list(map(insert, meta_objs))
+
+    @staticmethod
+    def create_name_list(meta_objs: List[Dict]):
+        CrossSectionMeta.__XSC_NAMES = set()
+        for meta in meta_objs:
+            CrossSectionMeta.__XSC_NAMES.add(MoleculeMeta(meta['molecule_id']).name)
+
+    @staticmethod
+    def create_alias_list(meta_objs: List[Dict]):
+        mids = set(map(lambda m: m['molecule_id'], meta_objs))
+        aliases = set()
+        ambiguous_aliases = set()
+
+        for mid in mids:
+            mm = MoleculeMeta(mid)
+            if not mm.populated:
+                continue  # I don't think this will ever happen?
+            for alias in mm.aliases:
+                alias = alias['alias']
+                if alias in aliases:
+                    ambiguous_aliases.add(alias)
+                else:
+                    aliases.add(alias)
+
+        for alias in ambiguous_aliases:
+            aliases.remove(alias)
+
+        CrossSectionMeta.__XSC_ALIASES = aliases
 
     def __init__(self, molecule_id):
         """
@@ -71,7 +116,7 @@ class CrossSectionMeta:
         meta data for the specified molecule.
         """
 
-        if len(CrossSectionMeta.molecule_metas) == 0:
+        if len(CrossSectionMeta.__MOLECULE_METAS) == 0:
             self.molecule_id = molecule_id
 
             self.metas = []
@@ -83,12 +128,19 @@ class CrossSectionMeta:
                 err_log("Failed to load xscm from cache.")
             else:
                 xsc_meta_objects = self.cache.data()
+
                 CrossSectionMeta.add_meta_objects(xsc_meta_objects)
-                if self.molecule_id in CrossSectionMeta.molecule_metas:
-                    self.metas = CrossSectionMeta.molecule_metas[self.molecule_id]
+                CrossSectionMeta.create_alias_list(xsc_meta_objects)
+                CrossSectionMeta.create_name_list(xsc_meta_objects)
+
+                if self.molecule_id in CrossSectionMeta.__MOLECULE_METAS:
+                    self.metas = CrossSectionMeta.__MOLECULE_METAS[self.molecule_id]
         else:
             self.molecule_id = molecule_id
-            self.metas = CrossSectionMeta.molecule_metas[molecule_id]
+            if molecule_id in CrossSectionMeta.__MOLECULE_METAS:
+                self.metas = CrossSectionMeta.__MOLECULE_METAS[molecule_id]
+            else:
+                self.metas = ()
 
     def molecule_id_matches(self, d: Dict[str, Any]):
         return 'molecule_id' in d and d['molecule_id'] == self.molecule_id

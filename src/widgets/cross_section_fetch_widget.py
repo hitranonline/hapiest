@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import QCheckBox, QComboBox, QCompleter, QDoubleSpinBox, QListWidget, \
@@ -11,8 +11,15 @@ from worker.hapi_worker import HapiWorker, WorkRequest, err_log
 
 class CrossSectionFetchWidget(QWidget):
 
+    @staticmethod
+    def gen_toggle_function(other_widgets: List[QWidget]):
+        return lambda checked: list(
+            map(lambda widget: widget.setDisabled(not checked), other_widgets))
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+
+        self.all_molecules = MoleculeMeta.all_names()
 
         self.parent = parent
 
@@ -55,18 +62,14 @@ class CrossSectionFetchWidget(QWidget):
 
         self.fetch_button.clicked.connect(self.__on_fetch_clicked)
         self.apply_filters.clicked.connect(self.__on_apply_filters_clicked)
-        self.molecule.addItems(MoleculeMeta.all_names_with_xsc())
+        self.molecule.addItems(CrossSectionMeta.all_names_sorted_by_hitran_id())
         self.molecule.setEditable(True)
-        self.completer: QCompleter = QCompleter(MoleculeMeta.all_names(), self)
-        self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
+        self.completer: QCompleter = QCompleter(CrossSectionMeta.all_aliases(), self)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.molecule.setCompleter(self.completer)
 
         self.molecule.currentTextChanged.connect(self.__on_molecule_selection_changed)
         self.__on_molecule_selection_changed(self.molecule.currentText())
-
-    def gen_toggle_function(self, other_widgets: List[QWidget]):
-        return lambda checked: list(
-            map(lambda widget: widget.setDisabled(not checked), other_widgets))
 
     def get_selected_xscs(self) -> List[str]:
         xscs = []
@@ -100,8 +103,8 @@ class CrossSectionFetchWidget(QWidget):
         else:
             temp = None
 
-        filter = CrossSectionFilter(self.get_selected_molecule_id(), wn, pressure, temp)
-        self.set_cross_section_list_items(filter.get_cross_sections())
+        xsc_filter = CrossSectionFilter(self.get_selected_molecule_id(), wn, pressure, temp)
+        self.set_cross_section_list_items(xsc_filter.get_cross_sections())
 
     def __on_molecule_selection_changed(self, _current_text: str):
         mid = self.get_selected_molecule_id()
@@ -137,21 +140,13 @@ class CrossSectionFetchWidget(QWidget):
         self.fetching = False
         self.fetch_button.setEnabled(True)
 
-    ###
-    # Getters
-    ###
-
-    def get_selected_molecule_id(self) -> int:
+    def get_selected_molecule_id(self) -> Optional[int]:
         selected_molecule_name = self.molecule.currentText()
         mid = MoleculeMeta(selected_molecule_name)
         if mid.populated:
             return mid.id
         else:
             return None
-
-    ###
-    # Setters
-    ###
 
     def set_cross_section_list_items(self, xscs: List[str]):
         list(map(lambda _: self.cross_section_list.takeItem(0),

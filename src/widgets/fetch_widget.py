@@ -7,6 +7,7 @@ from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from hapi import PARAMETER_GROUPS, PARLIST_ALL
 from metadata.isotopologue_meta import IsotopologueMeta
 from utils.fetch_error import FetchErrorKind
 from utils.hapiest_util import get_all_data_names
@@ -123,7 +124,7 @@ class FetchWidget(QWidget):
             self.parent.remove_worker_by_jid(work_result.job_id)
             result = work_result.result
             self.enable_fetch_button()
-            if result != None and 'all_tables' in result:
+            if result is not None and 'all_tables' in result:
                 log("Successfully finished fetch.")
                 self.parent.populate_table_lists(result['all_tables'])
                 return

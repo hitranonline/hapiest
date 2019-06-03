@@ -1,8 +1,7 @@
 from datetime import timedelta
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from data_structures.cache import JsonCache
-from data_structures.xsc import CrossSectionMeta
 from utils.hapi_api import CrossSectionApi
 
 
@@ -13,6 +12,12 @@ class MoleculeMeta:
 
     __NAME_TO_MID: Dict[str, int] = None
 
+    # A dictonary that maps a string alias to a molecule id.
+    __ALIAS_TO_MID = None
+
+    # All aliases
+    __ALL_ALIASES = None
+
     @staticmethod
     def __initialize_molecule_metadata():
         api = CrossSectionApi()
@@ -21,26 +26,51 @@ class MoleculeMeta:
             data = cache.data()
         else:
             return
+
         MoleculeMeta.__FORMULA_TO_MID = {}
         MoleculeMeta.__MOLECULE_METADATA = {}
         MoleculeMeta.__NAME_TO_MID = {}
+        MoleculeMeta.__ALIAS_TO_MID = {}
+        MoleculeMeta.__ALL_ALIASES = set()
+
+        ambiguous_aliases = set()
 
         for molecule in data:
-            MoleculeMeta.__NAME_TO_MID[molecule['common_name']] = molecule['id']
-            MoleculeMeta.__FORMULA_TO_MID[molecule['ordinary_formula']] = molecule['id']
+            mid = molecule['id']
+            MoleculeMeta.__NAME_TO_MID[molecule['common_name']] = mid
+            MoleculeMeta.__FORMULA_TO_MID[molecule['ordinary_formula']] = mid
             MoleculeMeta.__MOLECULE_METADATA[molecule['id']] = molecule
+
+            aliases = set(map(lambda d: d['alias'], molecule['aliases']))
+            aliases.update((molecule['ordinary_formula'], molecule['common_name']))
+
+            for alias in aliases:
+                MoleculeMeta.__ALL_ALIASES.add(alias)
+                if alias in MoleculeMeta.__ALIAS_TO_MID:
+                    # Since this is ambiguous it cant be used to map to the molecule ID (which is
+                    # completely unique).
+                    ambiguous_aliases.add(alias)
+                else:
+                    MoleculeMeta.__ALIAS_TO_MID[alias] = mid
+
+        for alias in ambiguous_aliases:
+            MoleculeMeta.__ALL_ALIASES.remove(alias)
+            del MoleculeMeta.__ALIAS_TO_MID[alias]
 
     @staticmethod
     def all_names() -> List[str]:
         return list(MoleculeMeta.__NAME_TO_MID.keys())
 
     @staticmethod
-    def all_names_with_xsc() -> List[str]:
-        def has_xscs(name):
-            return MoleculeMeta.__NAME_TO_MID[name] in CrossSectionMeta.molecule_metas
+    def all_aliases() -> List[str]:
+        return list(MoleculeMeta.__ALL_ALIASES)
 
-        r = [name for name in MoleculeMeta.all_names() if has_xscs(name)]
-        return r
+    @staticmethod
+    def alias_to_mid(alias) -> Optional[int]:
+        if alias in MoleculeMeta.__ALIAS_TO_MID:
+            return MoleculeMeta.__ALIAS_TO_MID[alias]
+        else:
+            return None
 
     @staticmethod
     def all_formulas() -> List[str]:
@@ -50,10 +80,8 @@ class MoleculeMeta:
         if MoleculeMeta.__MOLECULE_METADATA is None:
             MoleculeMeta.__initialize_molecule_metadata()
         if type(molecule_id) == str:
-            if molecule_id in MoleculeMeta.__NAME_TO_MID:
-                molecule_id = MoleculeMeta.__NAME_TO_MID[molecule_id]
-            elif molecule_id in MoleculeMeta.__FORMULA_TO_MID:
-                molecule_id = MoleculeMeta.__FORMULA_TO_MID[molecule_id]
+            if molecule_id in MoleculeMeta.__ALIAS_TO_MID:
+                molecule_id = MoleculeMeta.__ALIAS_TO_MID[molecule_id]
         if molecule_id in MoleculeMeta.__MOLECULE_METADATA:
             self.populated = True
             self.mmd = MoleculeMeta.__MOLECULE_METADATA[molecule_id]
@@ -62,6 +90,7 @@ class MoleculeMeta:
             self.aliases = self.mmd['aliases']
             self.formula = self.mmd['ordinary_formula']
             self.html = self.mmd['ordinary_formula_html']
+            self.name = self.mmd['common_name']
             self.id = self.mmd['id']
         else:
             self.populated = False
