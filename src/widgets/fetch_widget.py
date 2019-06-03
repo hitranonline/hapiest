@@ -107,12 +107,17 @@ class FetchWidget(QWidget):
         Also, enable auto-complete for the combobox.
         """
         # our list of molecule names in the gui
+        molecules = []
         for molecule_id, _ in IsotopologueMeta.molecules.items():
             if molecule_id >= 1000:
                 continue
             molecule = IsotopologueMeta.from_molecule_id(molecule_id)
+            molecules.append(molecule)
+        # Ensure they are sorted by hitran id. They were before this line, but that was sort of just
+        # a coincidence
+        molecules = sorted(molecules, key=lambda m: m.molecule_id)
 
-            self.molecule_id.addItem(molecule.molecule_name)
+        list(map(lambda molecule: self.molecule_id.addItem(molecule.molecule_name), molecules))
 
     def fetch_done(self, work_result: WorkResult):
         """
