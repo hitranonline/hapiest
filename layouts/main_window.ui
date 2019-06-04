@@ -46,7 +46,7 @@
      <enum>QLayout::SetDefaultConstraint</enum>
     </property>
     <item row="1" column="0">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tab_widget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -150,7 +150,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="cross_section_tab">
        <attribute name="title">
         <string>Cross-sections</string>
        </attribute>

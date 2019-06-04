@@ -13,8 +13,9 @@ class MoleculeInfoWidget(QWidget):
     def __init__(self, molecule_name, parent):
         QWidget.__init__(self, parent)
 
-        self.fetch_widget = FetchWidget.FETCH_WIDGET_INSTANCE
-        self.xsc_widget = CrossSectionFetchWidget.CROSS_SECTION_FETCH_WIDGET_INSTANCE
+        self.fetch_widget: FetchWidget = FetchWidget.FETCH_WIDGET_INSTANCE
+        self.xsc_widget: CrossSectionFetchWidget = CrossSectionFetchWidget.CROSS_SECTION_FETCH_WIDGET_INSTANCE
+        self.main_gui = parent
 
         self.parent = parent
         self.setWindowIcon(program_icon())
@@ -34,6 +35,7 @@ class MoleculeInfoWidget(QWidget):
         self.setObjectName('MoleculeInfoWidget')
 
         self.name = QLabel()
+        self.get_data_button = QPushButton()
         self.img = QWidget()
         self.img.setMinimumWidth(400)
         self.img.setMaximumWidth(400)
@@ -57,8 +59,9 @@ class MoleculeInfoWidget(QWidget):
 
         self.vlayout = QVBoxLayout()
         self.vlayout.addWidget(self.name)
+        self.vlayout.addWidget(self.get_data_button)
         self.vlayout.addLayout(self.form_layout)
-        # self.vlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.Expanding))
+        self.vlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.Expanding))
         self.hlayout.addLayout(self.vlayout)
         self.hlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
 
@@ -66,13 +69,27 @@ class MoleculeInfoWidget(QWidget):
         self.container_layout.addLayout(self.hlayout)
         spacer = QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.container_layout.addItem(spacer)
-        self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum))
         self.vlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
         self.setLayout(self.container_layout)
 
         self.molecule = MoleculeMeta(molecule_name)
+
+        if not self.molecule.is_populated():
+            raise Exception("Don't make a molecule info widget with an invalid molecule")
+
+        if self.molecule.id < 100:
+            text = "Get line-by-line data."
+            on_press = self.__open_line_by_line
+        else:
+            text = "Get cross-sections."
+            on_press = self.__open_cross_sections
+
+        self.get_data_button.setText(text)
+        self.get_data_button.pressed.connect(on_press)
+
         formula = self.molecule.formula
         if self.molecule.is_populated():
             self.img.setAttribute(Qt.WA_StyledBackground)
@@ -98,3 +115,11 @@ class MoleculeInfoWidget(QWidget):
                     str(e)))
 
             self.adjustSize()
+
+    def __open_cross_sections(self, *_args):
+        self.xsc_widget.molecule.setCurrentText(self.molecule.name)
+        self.main_gui.tab_widget.setCurrentWidget(self.main_gui.cross_section_tab)
+
+    def __open_line_by_line(self, *_args):
+        self.fetch_widget.molecule_id.setCurrentText(self.molecule.name)
+        self.main_gui.tab_widget.setCurrentWidget(self.main_gui.fetch_tab)

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QAction, QStatusBar, QCompleter, QVBoxLayout, \
     QPushButton, \
-    QWidget
+    QWidget, QTabWidget
 
 from metadata.molecule_meta import MoleculeMeta
 from widgets.about_widget import AboutWidget
@@ -39,6 +39,8 @@ class MainWindowGui(GUI, QMainWindow):
     graphing widget.
     """
 
+    MAIN_WINDOW_GUI_INSTANCE = None
+
     def __init__(self, parent):
         """
         Instantiates all of the widgets for each of the individual tabs
@@ -46,12 +48,21 @@ class MainWindowGui(GUI, QMainWindow):
         QMainWindow.__init__(self)
         GUI.__init__(self)
 
+        if MainWindowGui.MAIN_WINDOW_GUI_INSTANCE is not None:
+            raise Exception("Only one instance of the MainWindowGui should be created")
+
+        MainWindowGui.MAIN_WINDOW_GUI_INSTANCE = self
+
         self.setWindowIcon(program_icon())
 
         self.parent = parent
         self.workers = []
 
+        self.tab_widget: QTabWidget = None
+
         # Containers
+        self.fetch_tab: QWidget = None
+        self.cross_section_tab: QWidget = None
         self.fetch_container: QVBoxLayout = None
         self.cross_section_fetch_widget: QVBoxLayout = None
 
@@ -164,7 +175,7 @@ class MainWindowGui(GUI, QMainWindow):
         # Make sure that molecule meta has had it's static members initialized initialized.
         self.molecules_current_molecule.addItems(list(set(MoleculeMeta.all_names())))
         self.completer: QCompleter = QCompleter(MoleculeMeta.all_aliases(), self)
-        self.completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.molecules_current_molecule.setEditable(True)
         self.molecules_current_molecule.setCompleter(self.completer)
 

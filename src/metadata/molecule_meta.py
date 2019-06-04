@@ -130,6 +130,7 @@ class MoleculeMeta:
         if MoleculeMeta.__MOLECULE_METADATA is None:
             MoleculeMeta.__initialize_molecule_metadata()
         if type(molecule_id) == str:
+            molecule_id = molecule_id
             if molecule_id in MoleculeMeta.__ALIAS_TO_MID:
                 molecule_id = MoleculeMeta.__ALIAS_TO_MID[molecule_id]
         if molecule_id in MoleculeMeta.__MOLECULE_METADATA:
