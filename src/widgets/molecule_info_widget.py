@@ -8,7 +8,7 @@ from widgets.fetch_widget import FetchWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 
 class MoleculeInfoWidget(QWidget):
-    FIELDS = ['Formula', 'InChi', 'InChiKey', 'HITRANonline_ID', 'Aliases']
+    FIELDS = ['Formula', 'InChI', 'InChIKey', 'HITRANonline_ID', 'Aliases']
 
     def __init__(self, molecule_name, parent):
         QWidget.__init__(self, parent)
@@ -82,7 +82,7 @@ class MoleculeInfoWidget(QWidget):
 
             try:
                 self.name.setText('<span style="font-size: 16pt"><i><b>{}</b></i></span>'.format(
-                    self.molecule.formula))
+                    self.molecule.name))
                 self.formula.setText(self.molecule.html)
                 self.hitranonline_id.setText(str(self.molecule.id))
                 self.inchi.setText(self.molecule.inchi)
@@ -90,7 +90,7 @@ class MoleculeInfoWidget(QWidget):
 
                 alias_text = ''
                 for alias in self.molecule.aliases:
-                    alias_text = '{}<br><i>{}</i>'.format(alias_text, str(alias))
+                    alias_text = '{}<i>{}</i><hr>'.format(alias_text, alias.alias)
                 self.aliases.setText(alias_text)
 
             except Exception as e:
