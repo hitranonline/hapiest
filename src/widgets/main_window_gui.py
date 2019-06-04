@@ -185,7 +185,6 @@ class MainWindowGui(GUI, QMainWindow):
         """
         if data_names == None:
             data_names = list(get_all_data_names())
-        print(data_names)
         non_xsc_data = list(data for data in data_names if not data.endswith(".xsc"))
 
         # self.view_widget.table_name.clear()

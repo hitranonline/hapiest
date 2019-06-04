@@ -73,7 +73,6 @@ class MoleculeMeta:
 
             # line by line data is only available for molecules with id < 100
             if mid < 100:
-                print(f"lbl aliases: {aliases}")
                 for alias in aliases:
                     if alias == molecule['inchikey'] or \
                        alias == molecule['inchi'] or \
@@ -99,7 +98,7 @@ class MoleculeMeta:
         for alias in ambiguous_aliases:
             MoleculeMeta.__ALL_ALIASES.remove(alias)
             del MoleculeMeta.__ALIAS_TO_MID[alias]
-        print(f"{ambiguous_lbl_aliases}")
+
         for alias in ambiguous_lbl_aliases:
             MoleculeMeta.__ALL_LINE_BY_LINE_ALIASES.remove(alias)
 
