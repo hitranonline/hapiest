@@ -44,11 +44,19 @@ class FetchWidget(QWidget):
         self.param_list = None
         self.select_button: QPushButton = None
         self.edit_button: QPushButton = None
+        self.completer = None  # Gets initialized in populate_molecule_list
 
         uic.loadUi('layouts/fetch_widget.ui', self)
 
         self.populate_molecule_list()
         self.populate_parameter_lists()
+
+        # Sets up auto-complete for molecule names
+        self.molecule_id.setEditable(True)
+        aliases = MoleculeMeta.all_aliases_with_line_by_line_data()
+        self.completer = QCompleter(aliases, self)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.molecule_id.setCompleter(self.completer)
 
         # A regular expression that all valid data-names match (strips out characters that arent
         # safe
@@ -117,11 +125,13 @@ class FetchWidget(QWidget):
         """
         # our list of molecule names in the gui
         molecules = []
+
         for molecule_id in range(0, 100):
             molecule = MoleculeMeta(molecule_id)
             if not molecule.is_populated():
                 continue
             molecules.append(molecule)
+
         # Ensure they are sorted by hitran id. They were before this line, but that was sort of just
         # a coincidence
         molecules = sorted(molecules, key=lambda m: m.id)
@@ -219,7 +229,11 @@ class FetchWidget(QWidget):
         This method repopulates the isotopologue list widget after the molecule
         that is being worked with changes.
         """
-        molecule = IsotopologueMeta(self.get_selected_molecule().id, 1)
+        molecule = self.get_selected_molecule()
+        if not molecule.is_populated():
+            return
+
+        molecule = IsotopologueMeta(molecule.id, 1)
 
         # Get the range
         min, max = molecule.get_wn_range()
