@@ -4,14 +4,19 @@ from PyQt5.QtWidgets import *
 from metadata.molecule_meta import MoleculeMeta
 from utils.hapiest_util import program_icon
 from utils.log import *
-
+from widgets.fetch_widget import FetchWidget
+from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 
 class MoleculeInfoWidget(QWidget):
     FIELDS = ['Formula', 'InChi', 'InChiKey', 'HITRANonline_ID', 'Aliases']
 
-    def __init__(self, molecule_name, parent=None):
+    def __init__(self, molecule_name, parent):
         QWidget.__init__(self, parent)
 
+        self.fetch_widget = FetchWidget.FETCH_WIDGET_INSTANCE
+        self.xsc_widget = CrossSectionFetchWidget.CROSS_SECTION_FETCH_WIDGET_INSTANCE
+
+        self.parent = parent
         self.setWindowIcon(program_icon())
 
         def create_field(text):
@@ -20,6 +25,7 @@ class MoleculeInfoWidget(QWidget):
             value = QLabel()
             value.setTextInteractionFlags(Qt.TextSelectableByMouse)
             label.setTextFormat(Qt.RichText)
+            value.setWordWrap(True)
             value.setTextFormat(Qt.RichText)
 
             self.__dict__[field_name + "_label"] = label
@@ -74,7 +80,6 @@ class MoleculeInfoWidget(QWidget):
                 f'border-image: url("res/img/molecules/{formula}.gif") 0 0 0 0 stretch stretch;')
             self.img.show()
 
-            self.restructure_aliases()
             try:
                 self.name.setText('<span style="font-size: 16pt"><i><b>{}</b></i></span>'.format(
                     self.molecule.formula))
@@ -84,7 +89,7 @@ class MoleculeInfoWidget(QWidget):
                 self.inchikey.setText(self.molecule.inchikey)
 
                 alias_text = ''
-                for _, alias in self.molecule.aliases.items():
+                for alias in self.molecule.aliases:
                     alias_text = '{}<br><i>{}</i>'.format(alias_text, str(alias))
                 self.aliases.setText(alias_text)
 
@@ -93,9 +98,3 @@ class MoleculeInfoWidget(QWidget):
                     str(e)))
 
             self.adjustSize()
-
-    def restructure_aliases(self):
-        reformatted = {}
-        for item in self.molecule.aliases:
-            reformatted[item['type']] = item['alias']
-        self.molecule.aliases = reformatted

@@ -11,6 +11,8 @@ from worker.hapi_worker import HapiWorker, WorkRequest, err_log
 
 class CrossSectionFetchWidget(QWidget):
 
+    CROSS_SECTION_FETCH_WIDGET_INSTANCE = None
+
     @staticmethod
     def gen_toggle_function(other_widgets: List[QWidget]):
         return lambda checked: list(
@@ -18,6 +20,11 @@ class CrossSectionFetchWidget(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+
+        if CrossSectionFetchWidget.CROSS_SECTION_FETCH_WIDGET_INSTANCE is not None:
+            raise Exception("No more than one instance of CrossSectionFetchWidget"
+                            " should be created")
+        CrossSectionFetchWidget.CROSS_SECTION_FETCH_WIDGET_INSTANCE = self
 
         self.all_molecules = MoleculeMeta.all_names()
 
@@ -79,10 +86,6 @@ class CrossSectionFetchWidget(QWidget):
             if item.checkState() == QtCore.Qt.Checked:
                 xscs.append(str(item.text()))
         return xscs
-
-    ###
-    # Event handlers
-    ###
 
     def __on_apply_filters_clicked(self, _checked: bool):
         if self.pressure_check.isChecked():

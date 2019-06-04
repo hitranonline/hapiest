@@ -98,12 +98,18 @@ class CrossSectionMeta:
             mm = MoleculeMeta(mid)
             if not mm.populated:
                 continue  # I don't think this will ever happen?
-            for alias in mm.aliases:
-                alias = alias['alias']
-                if alias in aliases:
-                    ambiguous_aliases.add(alias)
+
+            def try_add_alias(alias_str):
+                if alias_str in aliases:
+                    ambiguous_aliases.add(alias_str)
                 else:
-                    aliases.add(alias)
+                    aliases.add(alias_str)
+
+            for alias in mm.aliases:
+                try_add_alias(alias.alias)
+
+            try_add_alias(mm.inchi)
+            try_add_alias(mm.inchikey)
 
         for alias in ambiguous_aliases:
             aliases.remove(alias)

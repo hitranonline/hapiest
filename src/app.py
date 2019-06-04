@@ -44,7 +44,7 @@ def verify_internet_connection_and_obtain_api_key():
     import urllib.request
     from utils.hapi_api import CrossSectionApi
 
-    print(f"{Config.hapi_api_key}")
+    print(f"API Key: {Config.hapi_api_key}")
 
     try:
         with urllib.request.urlopen(

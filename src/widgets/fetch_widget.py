@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import *
 
 from hapi import PARAMETER_GROUPS, PARLIST_ALL
 from metadata.isotopologue_meta import IsotopologueMeta
+from metadata.molecule_meta import MoleculeMeta
 from utils.fetch_error import FetchErrorKind
 from utils.hapiest_util import get_all_data_names
 from widgets.select_widget import SelectWidget
@@ -18,8 +19,16 @@ from worker.hapi_worker import *
 
 class FetchWidget(QWidget):
 
+    FETCH_WIDGET_INSTANCE = None
+
     def __init__(self, parent):
         QWidget.__init__(self)
+
+        if FetchWidget.FETCH_WIDGET_INSTANCE is not None:
+            raise Exception("No more than one instance of FetchWidget should be created.")
+        FetchWidget.FETCH_WIDGET_INSTANCE = self
+
+
         self.parent = parent
 
         self.children = []
@@ -108,16 +117,16 @@ class FetchWidget(QWidget):
         """
         # our list of molecule names in the gui
         molecules = []
-        for molecule_id, _ in IsotopologueMeta.molecules.items():
-            if molecule_id >= 1000:
+        for molecule_id in range(0, 100):
+            molecule = MoleculeMeta(molecule_id)
+            if not molecule.is_populated():
                 continue
-            molecule = IsotopologueMeta.from_molecule_id(molecule_id)
             molecules.append(molecule)
         # Ensure they are sorted by hitran id. They were before this line, but that was sort of just
         # a coincidence
-        molecules = sorted(molecules, key=lambda m: m.molecule_id)
+        molecules = sorted(molecules, key=lambda m: m.id)
 
-        list(map(lambda molecule: self.molecule_id.addItem(molecule.molecule_name), molecules))
+        list(map(lambda molecule: self.molecule_id.addItem(molecule.name), molecules))
 
     def fetch_done(self, work_result: WorkResult):
         """
@@ -210,7 +219,7 @@ class FetchWidget(QWidget):
         This method repopulates the isotopologue list widget after the molecule
         that is being worked with changes.
         """
-        molecule = self.get_selected_molecule()
+        molecule = IsotopologueMeta(self.get_selected_molecule().id, 1)
 
         # Get the range
         min, max = molecule.get_wn_range()
@@ -259,7 +268,6 @@ class FetchWidget(QWidget):
         values being smaller than max numbers.
         """
         self.disable_fetch_button()
-        molecule = self.get_selected_molecule()
 
         numax = self.get_numax()
         numin = self.get_numin()
@@ -309,11 +317,11 @@ class FetchWidget(QWidget):
     # Getters
     ###
 
-    def get_selected_molecule(self):
+    def get_selected_molecule(self) -> MoleculeMeta:
         """
         converts the selected molecule to a molecule id.
         """
-        return IsotopologueMeta.from_molecule_name(self.molecule_id.currentText())
+        return MoleculeMeta(self.molecule_id.currentText())
 
     def get_selected_isotopologues(self):
         """

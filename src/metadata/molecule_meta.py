@@ -5,6 +5,13 @@ from data_structures.cache import JsonCache
 from utils.hapi_api import CrossSectionApi
 
 
+class Alias:
+
+    def __init__(self, alias, type):
+        self.alias = alias
+        self.type = type
+
+
 class MoleculeMeta:
     __MOLECULE_METADATA: List[Dict] = None
 
@@ -44,14 +51,21 @@ class MoleculeMeta:
             aliases = set(map(lambda d: d['alias'], molecule['aliases']))
             aliases.update((molecule['ordinary_formula'], molecule['common_name']))
 
-            for alias in aliases:
-                MoleculeMeta.__ALL_ALIASES.add(alias)
-                if alias in MoleculeMeta.__ALIAS_TO_MID:
+
+            def try_add_alias(alias_str):
+                MoleculeMeta.__ALL_ALIASES.add(alias_str)
+                if alias_str in MoleculeMeta.__ALIAS_TO_MID:
                     # Since this is ambiguous it cant be used to map to the molecule ID (which is
                     # completely unique).
-                    ambiguous_aliases.add(alias)
+                    ambiguous_aliases.add(alias_str)
                 else:
-                    MoleculeMeta.__ALIAS_TO_MID[alias] = mid
+                    MoleculeMeta.__ALIAS_TO_MID[alias_str] = mid
+
+            for alias in aliases:
+                try_add_alias(alias)
+
+            try_add_alias(molecule['inchikey'])
+            try_add_alias(molecule['inchi'])
 
         for alias in ambiguous_aliases:
             MoleculeMeta.__ALL_ALIASES.remove(alias)
@@ -87,7 +101,7 @@ class MoleculeMeta:
             self.mmd = MoleculeMeta.__MOLECULE_METADATA[molecule_id]
             self.inchi = self.mmd['inchi']
             self.inchikey = self.mmd['inchikey']
-            self.aliases = self.mmd['aliases']
+            self.aliases = list(map(lambda a: Alias(**a), self.mmd['aliases']))
             self.formula = self.mmd['ordinary_formula']
             self.html = self.mmd['ordinary_formula_html']
             self.name = self.mmd['common_name']

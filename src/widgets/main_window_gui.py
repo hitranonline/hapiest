@@ -147,12 +147,13 @@ class MainWindowGui(GUI, QMainWindow):
         if self.molecule_info != None:
             for i in reversed(range(self.molecule_container.count())):
                 self.molecule_container.itemAt(i).widget().setParent(None)
-        self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText())
+        self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText(), \
+                                                self)
         self.molecule_container.addWidget(self.molecule_info)
 
     def __on_molecules_popout_button(self):
-        new_window: MoleculeInfoWindow = MoleculeInfoWindow(self.parent,
-                                                            self.molecules_current_molecule.currentText())
+        new_window = MoleculeInfoWindow(self.parent,
+                                        self.molecules_current_molecule.currentText())
         new_window.gui.show()
         self.parent.add_child_window(new_window)
 

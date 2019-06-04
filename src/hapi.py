@@ -1243,6 +1243,7 @@ def putTableHeaderToString(TableName):
     return output_string
 
 
+__GET_ROW_OBJECT_FROM_STRING_REGEX = re.compile(FORMAT_PYTHON_REGEX)
 def getRowObjectFromString(input_string, TableName):
     # restore RowObject from string, get formats and names in TableName
     # print 'getRowObjectFromString:'
@@ -1251,8 +1252,8 @@ def getRowObjectFromString(input_string, TableName):
     for par_name in LOCAL_TABLE_CACHE[TableName]['header']['order']:
         par_format = LOCAL_TABLE_CACHE[TableName]['header']['format'][par_name]
         regex = '^\%([0-9]+)\.?[0-9]*([dfs])$'  #
-        regex = FORMAT_PYTHON_REGEX
-        (lng, trail, lngpnt, ty) = re.search(regex, par_format).groups()
+        regex = __GET_ROW_OBJECT_FROM_STRING_REGEX
+        (lng, trail, lngpnt, ty) = regex.search(par_format).groups()
         lng = int(lng)
         par_value = input_string[pos:(pos + lng)]
         if ty == 'd':  # integer value
@@ -1278,8 +1279,8 @@ def getRowObjectFromString(input_string, TableName):
         for par_name in LOCAL_TABLE_CACHE[TableName]['header']['extra']:
             par_format = LOCAL_TABLE_CACHE[TableName]['header']['extra_format'][par_name]
             regex = '^\%([0-9]+)\.?[0-9]*([dfs])$'  #
-            regex = FORMAT_PYTHON_REGEX
-            (lng, trail, lngpnt, ty) = re.search(regex, par_format).groups()
+            regex = __GET_ROW_OBJECT_FROM_STRING_REGEX
+            (lng, trail, lngpnt, ty) = regex.search(par_format).groups()
             lng = int(lng)
             par_value = csv_chunks[pos]
             if ty == 'd':  # integer value
@@ -1326,6 +1327,9 @@ def cache2storage(TableName):
 
 
 def storage2cache(TableName):
+    import time
+
+    start = time.clock()
     fullpath_data, fullpath_header = getFullTableAndHeaderName(TableName)
     InfileData = open(fullpath_data, 'r')
     InfileHeader = open(fullpath_header, 'r')
@@ -1384,6 +1388,8 @@ def storage2cache(TableName):
     InfileData.close()
     InfileHeader.close()
     print('                     Lines parsed: %d' % line_count)
+    end = time.clock()
+    print(f"                    Took {end - start} seconds")
     pass
 
 
