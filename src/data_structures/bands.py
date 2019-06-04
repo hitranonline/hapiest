@@ -1,10 +1,13 @@
 from typing import *
 
+
 class Band:
+
     def __init__(self, nu: List[float], sw: List[float], band_id: str):
         self.x = nu
         self.y = sw
         self.band_id = band_id
+
 
 class Bands:
 

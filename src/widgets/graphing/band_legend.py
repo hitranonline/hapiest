@@ -2,10 +2,10 @@ from typing import List
 
 from PyQt5.QtChart import *
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QFrame, QScrollArea, QSizePolicy, \
-    QSpacerItem
+from PyQt5.QtWidgets import QFrame, QScrollArea, QSizePolicy, QSpacerItem, QWidget, QCheckBox, \
+    QLabel, QHBoxLayout, QVBoxLayout
+from graphing.hapi_series import HapiSeries
 
-from utils.graphing.hapi_series import HapiSeries
 from utils.hapiest_util import *
 
 
@@ -62,11 +62,10 @@ class BandWidget(QWidget):
         self.band.series.setVisible(not self.band.isVisible())
         self.band.series.setVisible(not self.band.isVisible())
 
-class LegendItem(QFrame):
 
+class LegendItem(QFrame):
     SELECTED_WIDTH = 11
     NORMAL_WIDTH = 5
-
 
     def __init__(self, bands: List[HapiSeries], name, chart):
         QFrame.__init__(self)
@@ -79,6 +78,7 @@ class LegendItem(QFrame):
         def band_hide_function_gen(band):
             def hide(checked):
                 band.setVisible(not checked)
+
             return hide
 
         for band in self.bands:
@@ -104,18 +104,20 @@ class LegendItem(QFrame):
         self.label = QLabel('table: {}'.format(name))
         self.label.setWordWrap(True)
         self.toggle_all_layout.addWidget(self.toggle_all)
-        self.toggle_all_layout.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Fixed, QSizePolicy.Fixed))
+        self.toggle_all_layout.addSpacerItem(
+            QSpacerItem(20, 1, QSizePolicy.Fixed, QSizePolicy.Fixed))
         self.toggle_all_layout.addWidget(self.toggle_all_bold)
         self.toggle_all_layout.addWidget(self.label)
-        self.toggle_all_layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Maximum))
+        self.toggle_all_layout.addSpacerItem(
+            QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Maximum))
 
         self.layout = QVBoxLayout()
 
         self.layout.addLayout(self.toggle_all_layout)
 
         for band_item in self.band_widgets:
-            self.layout.addWidget(band_item)
-            # The hover-to-bolden feature has been replaced
+            self.layout.addWidget(
+                band_item)  # The hover-to-bolden feature has been replaced  # 
             # band_item.installEventFilter(self)
         self.layout.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Expanding))
 
@@ -178,5 +180,3 @@ class BandLegend(QWidget):
 
     def add_item(self, bands, name):
         self.widget.layout().addWidget(LegendItem(bands, name, self.chart))
-
-

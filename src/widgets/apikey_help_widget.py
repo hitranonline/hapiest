@@ -1,6 +1,8 @@
-from PyQt5.QtGui import QValidator
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
 import re
+
+from PyQt5.QtGui import QValidator
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
+
 
 class ApiKeyValidator(QValidator):
     APIKEY_REGEX = re.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
@@ -43,9 +45,11 @@ class ApiKeyHelpWidget(QWidget):
 
     def __on_ok_button_clicked(self, _checked):
         if self.validator.full_key_is_valid(self.api_key_area.text()):
-            from utils.metadata.config import Config
+            from metadata.config import Config
+
             Config.hapi_api_key = self.api_key_area.text()
             Config.write_config(Config.gen_config_string())
             self.close()
         else:
-            self.err.setText("<b style='color: red'>The key you have entered appears to be invalid.</b>")
+            self.err.setText(
+                "<b style='color: red'>The key you have entered appears to be invalid.</b>")

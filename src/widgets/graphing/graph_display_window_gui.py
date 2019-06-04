@@ -1,20 +1,18 @@
 import json
 import math
-import os
 from typing import *
 
 from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtWidgets import QOpenGLWidget, QLabel
 
-from utils.graphics.colors import Colors
-from utils.graphing.graph_type import GraphType
-from utils.graphing.hapi_series import HapiSeries
+from graphing.graph_type import GraphType
+from graphing.hapi_series import HapiSeries
+from utils.colors import Colors
 from utils.hapiest_util import *
 from utils.log import *
-from utils.metadata.config import Config
 from widgets.graphing.hapi_chart_view import HapiChartView
 from widgets.graphing.view_selector import ViewSelector
 from widgets.gui import GUI
@@ -119,9 +117,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 series.setName(name)
             else:
                 series.setName(
-                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, self: {:.2f}'.format(
-                    args['graph_fn'], args['Environment']['T'], args['Environment']['p'],
-                    args['Diluent']['air'], args['Diluent']['self']))
+                    name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, '
+                           'self: {:.2f}'.format(args['graph_fn'], args['Environment']['T'],
+                        args['Environment']['p'], args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
             self.chart = QChart()
@@ -169,8 +167,9 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             if 'xsc' in args and args['xsc']:
                 series.setName(name)
             else:
-                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>air: {:.2f}, self: {:.2f}'.format(
-                    args['graph_fn'], args['Environment']['T'], args['Environment']['p'], args['Diluent']['air'],
+                series.setName(name + ' -<br>Function={},<br>T={:.2f}, P={:.2f}<br>air: {:.2f}, '
+                                      'self: {:.2f}'.format(args['graph_fn'],
+                    args['Environment']['T'], args['Environment']['p'], args['Diluent']['air'],
                     args['Diluent']['self']))
             series.setUseOpenGL(True)
 
@@ -209,8 +208,10 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
     def __on_view_fit_triggered(self, _checked: bool = False):
         """
-        Sets the screen focus to maximum values of y and x for series in the graph. The xmin / ymin variables
-        are kept track of in such a way where they will always have the most extreme valid values, so using those
+        Sets the screen focus to maximum values of y and x for series in the graph. The xmin /
+        ymin variables
+        are kept track of in such a way where they will always have the most extreme valid
+        values, so using those
         to define the range works to fit the view
 
         """
@@ -281,7 +282,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.highlighted_point.attachAxis(self.axisy)
 
     def get_file_save_name(self, extension, filter) -> Union[str, None]:
-        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension,
+                                                         filter)
         if filename[0] == "":
             return None
         else:
@@ -292,7 +294,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return
 
         filename = self.get_file_save_name('.png',
-                                           'Portable Network Graphics (*.png *.PNG);; Windows Bitmap (*.bmp *.BMP);; Joint Photographic Experts Group (*.jpeg *.JPEG *.jpg *.JPG);; Portable Pixmap (*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap (*.xpm *.XPM)')
+                                           'Portable Network Graphics (*.png *.PNG);; Windows '
+                                           'Bitmap (*.bmp *.BMP);; Joint Photographic Experts '
+                                           'Group (*.jpeg *.JPEG *.jpg *.JPG);; Portable Pixmap ('
+                                           '*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap '
+                                           '(*.xpm *.XPM)')
 
         if filename == None:
             return
@@ -399,8 +405,8 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             return {'x': x, 'y': y}
 
         dict = {}
-        series_lists = list(map(lambda series: dict.update({
-            series.name(): to_x_y_arrays(series)}), self.all_series()))
+        series_lists = list(map(lambda series: dict.update({series.name(): to_x_y_arrays(series)}),
+                                self.all_series()))
         try:
             with open(filename, 'w') as file:
                 file.write(json.dumps(dict, indent=4))

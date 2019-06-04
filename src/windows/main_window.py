@@ -1,7 +1,9 @@
 from widgets.main_window_gui import MainWindowGui
 from windows.window import Window
 
+
 class MainWindow(Window):
+
     def __init__(self):
         Window.__init__(self, MainWindowGui(self), None)
 
@@ -14,7 +16,8 @@ class MainWindow(Window):
 
     def text_log(self, text):
         """
-        Sets status_bar_label to text mode to display console output when append_text signal received.
+        Sets status_bar_label to text mode to display console output when append_text signal
+        received.
         """
         self.gui.status_bar_label.setText(text)
 

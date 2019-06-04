@@ -4,10 +4,11 @@ from time import sleep
 from PyQt5 import QtWidgets
 
 from test.test import Test
-from utils.metadata.config import *
+from widgets.config_editor_widget import ConfigEditorWidget
 
 
 class ConfigEditorTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 

@@ -8,13 +8,13 @@ from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMainWindow
+from graphing.graph_type import GraphType
+from graphing.hapi_series import HapiSeries
 
-from utils.graphics.colors import Colors
-from utils.graphing.band import Bands
-from utils.graphing.graph_type import GraphType
-from utils.graphing.hapi_series import HapiSeries
+from data_structures.bands import Bands
+from metadata.config import Config
+from utils.colors import Colors
 from utils.log import *
-from utils.metadata.config import Config
 from widgets.graphing.band_legend import BandLegend, LegendItem
 from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
 from widgets.graphing.hapi_chart_view import HapiChartView
@@ -45,8 +45,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.setName(band.band_id)
 
                 series.append(cur_series)
-                cur_series.hovered.connect(lambda point, state:
-                                           self.__on_series_hover(cur_series, point, state))
+                cur_series.hovered.connect(
+                    lambda point, state: self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
 
@@ -96,8 +96,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
                 cur_series.series.setMarkerSize(LegendItem.NORMAL_WIDTH)
 
                 series.append(cur_series)
-                cur_series.hovered.connect(lambda point, state:
-                                           self.__on_series_hover(cur_series, point, state))
+                cur_series.hovered.connect(
+                    lambda point, state: self.__on_series_hover(cur_series, point, state))
                 cur_series.setName(band.band_id)
                 cur_series.setUseOpenGL(True)
 
@@ -195,7 +195,8 @@ class BandDisplayWindowGui(GraphDisplayWindowGui):
         for point in min_series.pointsVector():
             self.highlighted_point.append(point.x(), point.y())
         self.point_label.clear()
-        self.point_label.setText("<b>{:15s}</b> {}".format('Selected Band:' + ('&nbsp;' * 10), band))
+        self.point_label.setText(
+            "<b>{:15s}</b> {}".format('Selected Band:' + ('&nbsp;' * 10), band))
         color = QColor(0, 0, 0)
         self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)

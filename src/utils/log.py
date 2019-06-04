@@ -1,10 +1,11 @@
 import sys
 from multiprocessing import Queue
+from functools import reduce
 
 from PyQt5 import QtCore
 
 
-class TextStream():
+class TextStream:
     """
     Writes to the appropriate queues.
 
@@ -29,22 +30,21 @@ class TextReceiver(QtCore.QObject):
     Hangs out a background thread and displays messages in the GUI.
 
     """
-    
+
     write_text_signal = QtCore.pyqtSignal(str)
     write_html_signal = QtCore.pyqtSignal(str)
-    
-    ## An instance of a TextStream that has the queue that the worker thread reads from
+
+    # An instance of a TextStream that has the queue that the worker thread reads from
     TEXT_STREAM = None
 
-    ## Receives text and writes it to the status bar
+    # Receives text and writes it to the status bar
     TEXT_RECEIVER = None
 
-    ## The worker thread
+    # The worker thread
     TEXT_THREAD = None
 
-    ## A reference to the main window
+    # A reference to the main window
     WINDOW = None
-
 
     @staticmethod
     def redirect_close():
@@ -54,7 +54,6 @@ class TextReceiver(QtCore.QObject):
         """
         TextReceiver.TEXT_RECEIVER.running = False
         TextReceiver.TEXT_THREAD.quit()
-
 
     @staticmethod
     def init(main_window, *args, **kwargs):
@@ -71,8 +70,9 @@ class TextReceiver(QtCore.QObject):
         TextReceiver.TEXT_THREAD = QtCore.QThread()
         # Connect the signal to the console output handler in the main window
         # Connect the console output signals
-        TextReceiver.TEXT_RECEIVER.write_text_signal.connect(lambda str: main_window.text_log(str))
-        TextReceiver.TEXT_RECEIVER.write_html_signal.connect(lambda html: main_window.html_log(html))
+        TextReceiver.TEXT_RECEIVER.write_text_signal.connect(lambda st: main_window.text_log(st))
+        TextReceiver.TEXT_RECEIVER.write_html_signal.connect(
+            lambda html: main_window.html_log(html))
         # Move the receiver to the background thread
         TextReceiver.TEXT_RECEIVER.moveToThread(TextReceiver.TEXT_THREAD)
         # When the thread starts, start the text receiver
@@ -80,14 +80,15 @@ class TextReceiver(QtCore.QObject):
         # Start thread
         TextReceiver.TEXT_THREAD.start()
 
-    def __init__(self, queue, *args, **kwargs):
+    def __init__(self, queue, *_args, **_kwargs):
         QtCore.QObject.__init__(self)
         self.queue = queue
         self.running = True
 
     def run(self):
         """
-    Until the thread should close, read things from the queue and emit the appropriate signal to display them in
+    Until the thread should close, read things from the queue and emit the appropriate signal to
+    display them in
     the GUI.
 
     """
@@ -98,8 +99,10 @@ class TextReceiver(QtCore.QObject):
             else:
                 self.write_html_signal.emit(text)
 
+
 def print_html_to_status_bar(arg):
     TextReceiver.TEXT_STREAM.write_html(arg)
+
 
 def debug(*args, **kwargs):
     """
@@ -110,14 +113,13 @@ def debug(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-
-def log(arg):
+def log(*args):
     """
     Prints to the console_output with a fancy lookin log label.
 
     """
-    s = str(arg)
-    if TextReceiver.TEXT_STREAM != None:
+    s = reduce(lambda l, r: f"{l}, {r}", args)
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #7878e2">[Log]</div>&nbsp;{s}...')
@@ -133,7 +135,7 @@ def err_log(dat):
     """
     s = str(dat)
 
-    if TextReceiver.TEXT_STREAM != None:
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #e27878">[Error]</div>&nbsp;{s}...')
@@ -148,11 +150,10 @@ def debug_log(dat):
 
     """
     s = str(dat)
-    if TextReceiver.TEXT_STREAM != None:
+    if TextReceiver.TEXT_STREAM is not None:
         if len(s) > 128:
             s = s[0:128]
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}...')
         else:
             print_html_to_status_bar(f'<div style="color: #78e278">[Debug]</div>&nbsp;{s}')
     print("[Debug] ", str(dat), file=sys.__stdout__)
-

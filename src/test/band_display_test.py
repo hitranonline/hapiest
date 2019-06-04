@@ -5,12 +5,13 @@ from time import sleep
 
 from PyQt5 import QtWidgets
 
+from data_structures.bands import Band, Bands
 from test.test import Test
-from utils.graphing.band import Band, Bands
 from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
 
 
 class BandDisplayTest(Test):
+
     def __init__(self):
         Test.__init__(self)
 
@@ -30,6 +31,7 @@ class BandDisplayTest(Test):
         step = 0.1
 
         x = list(map(lambda x: float(x) * step, range(0, int(100.0 / step))))
+
         def random_band():
             freq = float(random.randint(1, 10)) / 100
             amp = float(random.randint(1, 100))

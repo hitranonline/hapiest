@@ -1,6 +1,6 @@
 from typing import *
 
-from utils.metadata.config import *
+from metadata.config import *
 from worker.hapi_worker import HapiWorker
 
 
@@ -37,7 +37,6 @@ class Lines:
     ```
 
     This is the schema hapi version < 2.0 uses already.
-
     """
 
     def __init__(self, table: Dict[str, Any]):
@@ -50,7 +49,7 @@ class Lines:
         if self.last_page * self.page_len != self.table_len:
             self.last_page_len = self.table_len - self.last_page * self.page_len
             self.last_page += 1
-        
+
         self.page_number = 1
         self.param_order = table['header']['order']
 
@@ -71,19 +70,20 @@ class Lines:
         """
         """
         line = []
-        
+
         # index of the `line_number`th field of page 
         index = line_number + ((self.page_number - 1) * self.page_len)
         for param in self.param_order:
             line.append(self.data[param][index])
         l = Line(line_number + (self.page_number - 1) * self.page_len, line, self)
         return l
-    
 
     def set_page(self, page_number):
         self.page_number = page_number
 
+
 class Line:
+
     def __init__(self, line_index: int, line: List[Union[int, float, str]], lines: 'Lines'):
         self.line_index = line_index
         self.line = line
@@ -93,7 +93,8 @@ class Line:
 
     def update_nth_field(self, field_index: int, new_value: Union[int, float, str]):
         """
-        *Given params: (self), int field_index, and a new values : [int,float], updates a field for the Line class.*
+        *Given params: (self), int field_index, and a new values : [int,float], updates a field
+        for the Line class.*
         """
         self.data[self.param_order[field_index]][self.line_index] = new_value
 
