@@ -20,9 +20,11 @@ from widgets.gui import GUI
 
 class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
-    def __init__(self, ty: GraphType, window_title: str):
+    def __init__(self, ty: GraphType, window_id: int, window_title: str):
         QtWidgets.QMainWindow.__init__(self)
         GUI.__init__(self)
+
+        self.window_id = window_id
 
         self.setWindowIcon(program_icon())
 
@@ -75,7 +77,14 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
 
         self.point_label: QLabel = QLabel()
 
+        self.set_on_close(self.__on_close_fn)
+
         self.show()
+
+    def __on_close_fn(self):
+        from windows.graph_display_window import GraphDisplayWindow
+
+        GraphDisplayWindow.remove_child_window(self.window_id)
 
     def all_series(self):
         if self.highlighted_point is None:

@@ -22,8 +22,8 @@ from widgets.graphing.hapi_chart_view import HapiChartView
 
 class BandDisplayWindowGui(GraphDisplayWindowGui):
 
-    def __init__(self):
-        GraphDisplayWindowGui.__init__(self, GraphType.BANDS, "Bands")
+    def __init__(self, window_id: int):
+        GraphDisplayWindowGui.__init__(self, GraphType.BANDS, window_id, "Bands")
         self.setting = False
 
     def closeEvent(self, event):

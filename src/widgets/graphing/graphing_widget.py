@@ -20,6 +20,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     RADIANCE_SPECTRUM_STRING: str = "Radiance Spectrum"
     BANDS_STRING: str = "Bands"
 
+    GRAPHING_WIDGET_INSTANCE = None
+
     str_to_graph_ty = {ABSORPTION_COEFFICIENT_STRING: GraphType.ABSORPTION_COEFFICIENT,
         ABSORPTION_SPECTRUM_STRING:                   GraphType.ABSORPTION_SPECTRUM,
         TRANSMITTANCE_SPECTRUM_STRING:                GraphType.TRANSMITTANCE_SPECTRUM,
@@ -29,6 +31,10 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def __init__(self, parent):
         QtWidgets.QWidget.__init__(self)
         GUI.__init__(self)
+
+        if GraphingWidget.GRAPHING_WIDGET_INSTANCE is not None:
+            raise Exception("Only one instance of GraphingWidget should be created")
+        GraphingWidget.GRAPHING_WIDGET_INSTANCE = self
 
         self.parent = parent
 
@@ -291,7 +297,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def graph_bands(self, standard_params):
         work = HapiWorker.echo(TableName=self.get_data_name(), title="Bands")
         if self.use_existing_window.isChecked():
-            selected_window = self.selected_window.currentText()
+            selected_window = int(self.selected_window.currentText())
             if selected_window in GraphDisplayWindow.graph_windows:
                 GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
                 return

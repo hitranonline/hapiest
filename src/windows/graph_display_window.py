@@ -27,6 +27,15 @@ class GraphDisplayWindow(Window):
         GraphDisplayWindow.next_graph_window_id += 1
         return r
 
+    @staticmethod
+    def remove_child_window(window_id: int):
+        from widgets.graphing.graphing_widget import GraphingWidget
+        print(f"Oh? {str(GraphDisplayWindow.graph_windows[window_id])} {window_id in GraphDisplayWindow.graph_windows}")
+        if window_id in GraphDisplayWindow.graph_windows:
+            print(GraphDisplayWindow.graph_windows.pop(window_id))
+            print("Good")
+        GraphingWidget.GRAPHING_WIDGET_INSTANCE.update_existing_window_items()
+
     def __init__(self, graph_ty, work_object, parent):
         """
         Initializes the GUI and sends a work request for the graph to be plotted, and connect 
@@ -45,7 +54,7 @@ class GraphDisplayWindow(Window):
                 '0': HapiWorker(GraphDisplayWindow.graph_ty_to_work_ty[graph_ty], work_object,
                                 lambda x: [self.plot_bands(x), self.workers.pop('0')])}
         else:
-            gui: GraphDisplayWindowGui = GraphDisplayWindowGui(graph_ty,
+            gui: GraphDisplayWindowGui = GraphDisplayWindowGui(graph_ty, self.window_id,
                                                                work_object['title'] + ' - ' + str(
                                                                    self.window_id))
             self.workers = {
@@ -56,7 +65,7 @@ class GraphDisplayWindow(Window):
 
         # GraphDisplayWindow.graph_windows[graph_ty][self.window_id] = self
 
-        GraphDisplayWindow.graph_windows[str(self.window_id)] = self
+        GraphDisplayWindow.graph_windows[self.window_id] = self
 
         self.workers['0'].start()
         self.cur_work_id = 1
@@ -82,7 +91,7 @@ class GraphDisplayWindow(Window):
         Overrides Window.close implementation, removes self from GraphDisplayWindow.graph_windows
         """
         # GraphDisplayWindow.graph_windows[graph_ty].pop(str(self.window_id), None)
-        GraphDisplayWindow.graph_windows.pop(str(self.window_id), None)
+        GraphDisplayWindow.graph_windows.pop(self.window_id, None)
         self.parent.update_existing_window_items()
         Window.close(self)
 
