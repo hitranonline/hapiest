@@ -56,10 +56,9 @@ class MoleculeInfoWidget(QWidget):
         self.get_lbl_button.setStyleSheet(self.button_style)
 
         self.img = QWidget()
-        self.img.setMinimumWidth(400)
-        self.img.setMaximumWidth(400)
-        self.img.setMinimumHeight(400)
-        self.img.setMaximumHeight(400)
+        self.img.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+        self.img.setFixedWidth(400)
+        self.img.setFixedHeight(400)
 
         # Have to call list because map is lazy
         list(map(create_field, MoleculeInfoWidget.FIELDS))
@@ -89,17 +88,7 @@ class MoleculeInfoWidget(QWidget):
         self.button_container.addSpacerItem(self.button_spacer)
         self.vlayout.addLayout(self.button_container)
 
-        self.scroll_widget = QScrollArea()
-        expanding_size_policy = QSizePolicy(QSizePolicy.Expanding,
-                                            QSizePolicy.Expanding)
-        self.scroll_widget.setWidgetResizable(True)
-        self.scroll_widget.setSizePolicy(expanding_size_policy)
-        self.scroll_central_widget = QWidget()
-        self.scroll_central_widget.setSizePolicy(expanding_size_policy)
-        self.scroll_central_widget.setLayout(self.form_layout)
-        self.scroll_widget.setWidget(self.scroll_central_widget)
-
-        self.vlayout.addWidget(self.scroll_widget)
+        self.vlayout.addLayout(self.form_layout)
         self.vlayout.addItem(QSpacerItem(1, 1, QSizePolicy.Preferred, QSizePolicy.Expanding))
         self.hlayout.addLayout(self.vlayout)
 
@@ -112,6 +101,8 @@ class MoleculeInfoWidget(QWidget):
         self.hlayout.setSizeConstraint(QLayout.SetMinimumSize)
         self.form_layout.setSizeConstraint(QLayout.SetMinimumSize)
         self.setLayout(self.container_layout)
+
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         formula = self.molecule.formula
         if self.molecule.is_populated():

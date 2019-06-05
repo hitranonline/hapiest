@@ -2,7 +2,7 @@ import builtins
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import QComboBox, QLayout, QLabel, QDoubleSpinBox, QLineEdit, QPushButton, \
-    QCheckBox
+    QCheckBox, QFormLayout, QWidget
 from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
@@ -41,15 +41,18 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.workers = []
 
         self.graph_type: QComboBox = None
-        self.line_profile_layout: QLayout = None
-        self.wn_layout: QLayout = None
-        self.wn_cfg_layout: QLayout = None
+
         self.graph_button_layout: QLayout = None
         self.window_layout: QLayout = None
         self.data_name_layout: QLayout = None
-        self.env_layout: QLayout = None
-        self.mixing_ratio_layout: QLayout = None
-        self.graph_type_layout: QLayout = None
+
+        self.spectrum_parameters_widget: QWidget = None
+        self.line_profile_widget: QWidget = None
+        self.wn_widget: QWidget = None
+        self.wn_cfg_widget: QWidget = None
+        self.env_widget: QWidget = None
+        self.mixing_ratio_widget: QWidget = None
+        self.graph_type_widget: QWidget = None
 
         self.data_name_error: QLabel = None
         self.data_name: QComboBox = None
@@ -77,23 +80,11 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.pressure: QDoubleSpinBox = None
         self.temperature: QDoubleSpinBox = None
 
-        # Absorption spectrum tab elements
-        self.as_path_length: QDoubleSpinBox = None
-        self.as_instrumental_fn: QComboBox = None
-        self.as_instrumental_fn_wing: QDoubleSpinBox = None
-        self.as_instrumental_resolution: QDoubleSpinBox = None
 
-        # Transmittance spectrum tab elements
-        self.ts_path_length: QDoubleSpinBox = None
-        self.ts_instrumental_fn: QComboBox = None
-        self.ts_instrumental_fn_wing: QDoubleSpinBox = None
-        self.ts_instrumental_resolution: QDoubleSpinBox = None
-
-        # Radiance spectrum tab elements
-        self.rs_path_length: QDoubleSpinBox = None
-        self.rs_instrumental_fn: QComboBox = None
-        self.rs_instrumental_resolution: QDoubleSpinBox = None
-        self.rs_instrumental_fn_wing: QDoubleSpinBox = None
+        self.path_length: QDoubleSpinBox = None
+        self.instrumental_fn: QComboBox = None
+        self.instrumental_fn_wing: QDoubleSpinBox = None
+        self.instrumental_resolution: QDoubleSpinBox = None
 
         uic.loadUi('layouts/graphing_widget.ui', self)
         self.wn_step_enabled.toggled.connect(
@@ -204,10 +195,10 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_as(self, standard_params):
-        path_length = self.get_as_path_length()
-        instrumental_fn = self.get_as_instrumental_fn()
-        AF_wing = self.get_as_instrumental_fn_wing()
-        Resolution = self.get_as_instrumental_resolution()
+        path_length = self.get_path_length()
+        instrumental_fn = self.get_instrumental_fn()
+        AF_wing = self.get_instrumental_fn_wing()
+        Resolution = self.get_instrumental_resolution()
 
         if standard_params['WavenumberStep'] is None:
             standard_params['WavenumberStep'] = Resolution / 2
@@ -232,10 +223,10 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_rs(self, standard_params):
-        path_length = self.get_rs_path_length()
-        instrumental_fn = self.get_rs_instrumental_fn()
-        AF_wing = self.get_rs_instrumental_fn_wing()
-        Resolution = self.get_rs_instrumental_resolution()
+        path_length = self.get_path_length()
+        instrumental_fn = self.get_instrumental_fn()
+        AF_wing = self.get_instrumental_fn_wing()
+        Resolution = self.get_instrumental_resolution()
 
         if standard_params['WavenumberStep'] == None:
             standard_params['WavenumberStep'] = Resolution / 2
@@ -264,10 +255,10 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.update_existing_window_items()
 
     def graph_ts(self, standard_params):
-        path_length = self.get_ts_path_length()
-        instrumental_fn = self.get_ts_instrumental_fn()
-        AF_wing = self.get_ts_instrumental_fn_wing()
-        Resolution = self.get_ts_instrumental_resolution()
+        path_length = self.get_path_length()
+        instrumental_fn = self.get_instrumental_fn()
+        AF_wing = self.get_instrumental_fn_wing()
+        Resolution = self.get_instrumental_resolution()
 
         if standard_params['WavenumberStep'] == None:
             standard_params['WavenumberStep'] = Resolution / 2
@@ -326,44 +317,29 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
     def __on_graph_type_changed(self, graph_type):
         self.update_existing_window_items()
 
-        self.line_profile_layout.setEnabled(True)
-        self.wn_layout.setEnabled(True)
-        self.wn_cfg_layout.setEnabled(True)
-        self.graph_button_layout.setEnabled(True)
-        self.window_layout.setEnabled(True)
-        self.data_name_layout.setEnabled(True)
-        self.env_layout.setEnabled(True)
-        self.mixing_ratio_layout.setEnabled(True)
-        self.graph_type_layout.setEnabled(True)
+        self.line_profile_widget.setEnabled(True)
+        self.wn_widget.setEnabled(True)
+        self.wn_cfg_widget.setEnabled(True)
+        self.graph_button.setEnabled(True)
+        self.env_widget.setEnabled(True)
+        self.mixing_ratio_widget.setEnabled(True)
+        self.graph_type_widget.setEnabled(True)
 
         if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
-            self.spectrum_tabs.setDisabled(True)
-        elif graph_type == GraphingWidget.ABSORPTION_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.absorbtion.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.absorbtion)
-            self.transmittance.setDisabled(True)
-            self.radiance.setDisabled(True)
-        elif graph_type == GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.transmittance.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.transmittance)
-            self.absorbtion.setDisabled(True)
-            self.radiance.setDisabled(True)
-        elif graph_type == GraphingWidget.RADIANCE_SPECTRUM_STRING:
-            self.spectrum_tabs.setEnabled(True)
-            self.radiance.setEnabled(True)
-            self.spectrum_tabs.setCurrentWidget(self.radiance)
-            self.absorbtion.setDisabled(True)
-            self.transmittance.setDisabled(True)
+            self.spectrum_parameters_widget.setEnabled(False)
+        elif graph_type in {GraphingWidget.ABSORPTION_SPECTRUM_STRING,
+                            GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
+                            GraphingWidget.RADIANCE_SPECTRUM_STRING}:
+            self.spectrum_parameters_widget.setEnabled(True)
         elif graph_type == GraphingWidget.BANDS_STRING:
-            self.line_profile_layout.setEnabled(False)
-            self.wn_layout.setEnabled(False)
-            self.line_profile_layout.setEnabled(False)
-            self.wn_layout.setEnabled(False)
-            self.wn_cfg_layout.setEnabled(False)
-            self.env_layout.setEnabled(False)
-            self.mixing_ratio_layout.setEnabled(False)
+            print("hey")
+            self.wn_widget.setEnabled(False)
+            self.line_profile_widget.setEnabled(False)
+            self.wn_widget.setEnabled(False)
+            self.wn_cfg_widget.setEnabled(False)
+            self.env_widget.setEnabled(False)
+            self.mixing_ratio_widget.setEnabled(False)
+            self.spectrum_parameters_widget.setEnabled(False)
 
     def __handle_checkbox_toggle(self, checkbox, element):
         """
@@ -434,7 +410,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         self.wn_wing_hw_enabled.setEnabled(enabled)
         self.intensity_threshold.setEnabled(enabled)
         self.intensity_threshold_enabled.setEnabled(enabled)
-        self.spectrum_tabs.setEnabled(enabled)
+        self.spectrum_parameters_widget.setEnabled(enabled)
         self.temperature.setEnabled(enabled)
         self.pressure.setEnabled(enabled)
         self.line_profile.setEnabled(enabled)
@@ -530,77 +506,29 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         """
         return self.pressure.value()
 
-    def get_as_instrumental_fn(self):
+    def get_instrumental_fn(self):
         """
         :returns: Absorption spectrum instrumental fn
         """
         return self.as_instrumental_fn.currentText()
 
-    def get_ts_instrumental_fn(self):
+    def get_path_length(self):
         """
-        :returns: the Transmittance spectrum instrumental fn
-        """
-        return self.ts_instrumental_fn.currentText()
-
-    def get_rs_instrumental_fn(self):
-        """
-        :returns: the Radiance spectrum instrumental fn
-        """
-        return self.rs_instrumental_fn.currentText()
-
-    def get_rs_path_length(self):
-        """
-        :returns: the radiance spectrum path length
-        """
-        return self.rs_path_length.value()
-
-    def get_ts_path_length(self):
-        """
-        :returns: the transmittance spectrum path length
-        """
-        return self.ts_path_length.value()
-
-    def get_as_path_length(self):
-        """
-        :returns: the absorbtion spectrum path length
+        :return: the path length
         """
         return self.as_path_length.value()
 
-    def get_as_instrumental_fn_wing(self):
+    def get_instrumental_fn_wing(self):
         """
-        :returns: the absorbtion spectrum instrumental fn wing
+        :return: the absorbtion spectrum instrumental fn wing
         """
         return self.as_instrumental_fn_wing.value()
 
-    def get_as_instrumental_resolution(self):
+    def get_instrumental_resolution(self):
         """
-        :returns: the absorbtion spectrum resolution
+        :return: the instrumental resolution
         """
         return self.as_instrumental_resolution.value()
-
-    def get_ts_instrumental_fn_wing(self):
-        """
-        :returns: the transmittance spectrum fn wing
-        """
-        return self.ts_instrumental_fn_wing.value()
-
-    def get_ts_instrumental_resolution(self):
-        """
-        :returns: the Transmittance spectrum resolution
-        """
-        return self.ts_instrumental_resolution.value()
-
-    def get_rs_instrumental_fn_wing(self):
-        """
-        :returns: the radiance spectrum instrumental fn wing
-        """
-        return self.rs_instrumental_fn_wing.value()
-
-    def get_rs_instrumental_resolution(self):
-        """
-        :returns: the radiance spectrum resolution
-        """
-        return self.rs_instrumental_resolution.value()
 
     def set_graph_buttons_enabled(self, enabled):
         """
