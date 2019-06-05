@@ -75,10 +75,10 @@ class FetchWidget(QWidget):
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
         # the drop-down list is populated so there is something to be selected
-        self.__molecule_id_index_changed()
+        self.__molecule_id_text_changed()
 
         # Set the molecule_id change method to the one we defined in the class
-        self.molecule_id.currentIndexChanged.connect(self.__molecule_id_index_changed)
+        self.molecule_id.currentIndexChanged.connect(self.__molecule_id_text_changed)
 
         QToolTip.setFont(QFont('SansSerif', 10))
         self.param_group_list.setToolTip('Specifies "non-standard" parameter to query.')
@@ -224,7 +224,7 @@ class FetchWidget(QWidget):
         if value < min:
             self.numin.setValue(min)
 
-    def __molecule_id_index_changed(self):
+    def __molecule_id_text_changed(self):
         """
         This method repopulates the isotopologue list widget after the molecule
         that is being worked with changes.
@@ -327,9 +327,9 @@ class FetchWidget(QWidget):
 
         SelectWidget.set_table_names(get_all_data_names())
 
-    ###
-    # Getters
-    ###
+    def set_molecule_id(self, molecule_id):
+        self.molecule_id.setCurrentText(molecule_id)
+        self.__molecule_id_text_changed()
 
     def get_selected_molecule(self) -> MoleculeMeta:
         """

@@ -107,9 +107,9 @@ class MainWindowGui(GUI, QMainWindow):
         self.populate_molecule_list()
 
         # Initially display a molecule in the molecule widget
-        self.__on_molecules_current_index_changed(0)
-        self.molecules_current_molecule.currentIndexChanged.connect(
-            self.__on_molecules_current_index_changed)
+        self.__on_molecules_current_text_changed()
+        self.molecules_current_molecule.currentTextChanged.connect(
+            self.__on_molecules_current_text_changed)
         self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
 
         self.workers = []
@@ -154,8 +154,12 @@ class MainWindowGui(GUI, QMainWindow):
         self.about_window = AboutWidget(None)
         self.about_window.show()
 
-    def __on_molecules_current_index_changed(self, _index):
-        if self.molecule_info != None:
+    def __on_molecules_current_text_changed(self, *_args):
+        molecule = MoleculeMeta(self.molecules_current_molecule.currentText())
+        if not molecule.is_populated():
+            return
+
+        if self.molecule_info is not None:
             for i in reversed(range(self.molecule_container.count())):
                 self.molecule_container.itemAt(i).widget().setParent(None)
         self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText(), \

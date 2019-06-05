@@ -19,9 +19,7 @@ if __name__ == '__main__':
         sys.exit(run())
     except TypeError as err:
         print(f"Encountered type error:\n {str(err)}")
-        traceback.print_last()
         traceback.print_stack()
     except Exception as err:
         print(f"Encountered an error: \n {str(err)}")
-        traceback.print_last()
         traceback.print_stack()
