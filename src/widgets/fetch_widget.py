@@ -233,6 +233,8 @@ class FetchWidget(QWidget):
         if not molecule.is_populated():
             return
 
+        self.data_name.setText(str(molecule.name).lower().replace(' ', '_').strip())
+
         molecule = IsotopologueMeta(molecule.id, 1)
 
         # Get the range
