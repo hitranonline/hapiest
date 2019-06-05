@@ -44,7 +44,7 @@ class MoleculeInfoTest(Test):
 
         t = threading.Thread(target=close_window)
         t.start()
-        widget = MoleculeInfoWidget('CO2')
+        widget = MoleculeInfoWidget('CO2', None)
         window.setCentralWidget(widget)
         window.show()
         return app.exec_() == 0

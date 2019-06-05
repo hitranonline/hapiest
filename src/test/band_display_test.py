@@ -21,7 +21,7 @@ class BandDisplayTest(Test):
     def test(self) -> bool:
         app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
-        widget = BandDisplayWindowGui()
+        widget = BandDisplayWindowGui(0)
 
         def close_window():
             sleep(0.25)
