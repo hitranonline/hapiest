@@ -20,7 +20,6 @@ from utils.log import *
 from widgets.graphing.band_legend import BandLegend, LegendItem
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from widgets.graphing.hapi_chart_view import HapiChartView
-from worker.hapi_worker import HapiWorker
 from worker.work_result import WorkResult
 
 
@@ -59,7 +58,7 @@ class BandDisplayWidget(GraphDisplayWidget):
         return list(functools.reduce(list.__add__, self.band_series.values(), start))
 
     def add_bands(self, bands: Bands):
-        if self.chart == None:
+        if self.chart is None:
             series = []
             for band in bands.bands:
                 cur_series = HapiSeries(band.x, band.y)
@@ -144,7 +143,7 @@ class BandDisplayWidget(GraphDisplayWidget):
             s.attachAxis(self.axisy)
 
         for band in bands.bands:
-            if self.view_xmin != None:
+            if self.view_xmin is not None:
                 self.view_xmin = min(min(band.x), self.view_xmin)
             else:
                 self.view_xmin = min(band.x)
