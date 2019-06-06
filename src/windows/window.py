@@ -1,20 +1,19 @@
-from typing import List
+from typing import Set
 
 from PyQt5 import QtCore
-
-from widgets.gui import GUI
+from PyQt5.QtWidgets import QWidget
 
 
 class Window(QtCore.QObject):
 
-    def __init__(self, gui: GUI, parent: 'Window'):
+    def __init__(self, gui: QWidget, parent: 'Window'):
         super(Window, self).__init__()
 
         self.parent: Window = parent
-        self.gui: GUI = gui
-        self.child_windows: List[Window] = []
+        self.gui: QWidget = gui
+        self.child_windows: Set[Window] = set()
 
-        self.is_open = False
+        self.open = False
 
     # def event(self, e):
     #    if e.type() == QtCore.QEvent.User:
@@ -23,20 +22,19 @@ class Window(QtCore.QObject):
     #    return False
 
     def open(self):
-        if not self.is_open and self.parent:
+        if not self.open and self.parent:
             self.gui.show()
-            self.is_open = True
+            self.open = True
 
     def close(self):
         """
         Closes all child windows, then itself.
         """
-        for i in range(0, len(self.child_windows)):
-            self.child_windows[0].close()
-            self.child_windows.pop(0)
+        for child in self.child_windows:
+            child.close()
 
         self.gui.close()
         self.open = False
 
-    def add_child_window(self, child_window: 'Window'):
-        self.child_windows.append(child_window)
+    def add_child_window(self, child: 'Window'):
+        self.child_windows.add(child)

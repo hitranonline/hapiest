@@ -1,11 +1,11 @@
-from widgets.main_window_gui import MainWindowGui
+from widgets.main_window_widget import MainWindowWidget
 from windows.window import Window
 
 
 class MainWindow(Window):
 
     def __init__(self):
-        Window.__init__(self, MainWindowGui(self), None)
+        Window.__init__(self, MainWindowWidget(self), None)
 
     def open(self):
         """

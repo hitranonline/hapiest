@@ -6,9 +6,9 @@ from PyQt5.QtGui import *
 
 class HapiChartView(QChartView):
 
-    def __init__(self, graph_display_window_gui):
-        QChartView.__init__(self, graph_display_window_gui.chart)
-        self.graph_display_window_gui = graph_display_window_gui
+    def __init__(self, graph_display_widget):
+        QChartView.__init__(self, graph_display_widget.chart)
+        self.graph_display_widget = graph_display_widget
         self.mouse_moved = False
 
     def mouseMoveEvent(self, event):
@@ -17,7 +17,7 @@ class HapiChartView(QChartView):
 
     def mouseReleaseEvent(self, event):
         if not self.mouse_moved and event.button() == Qt.LeftButton:
-            self.graph_display_window_gui.on_point_clicked()
+            self.graph_display_widget.on_point_clicked()
             return
         else:
             self.mouse_moved = False

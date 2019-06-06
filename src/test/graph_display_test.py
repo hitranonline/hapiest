@@ -6,7 +6,7 @@ from time import sleep
 from PyQt5 import QtWidgets
 
 from test.test import Test
-from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
+from widgets.graphing.graph_display_widget import GraphDisplayWidget
 
 
 class GraphDisplayTest(Test):
@@ -39,7 +39,7 @@ class GraphDisplayTest(Test):
 
         t = threading.Thread(target=close_window)
         t.start()
-        widget = GraphDisplayWindowGui('a', 1, 'h')
+        widget = GraphDisplayWidget('a', 1, 'h')
         widget.setMinimumSize(256, 256)
         # def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         args = {'Diluent':     {'self': 1.0, 'air': 0.0}, 'graph_fn': '',

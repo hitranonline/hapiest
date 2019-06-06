@@ -6,7 +6,7 @@ from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QOpenGLWidget, QLabel
+from PyQt5.QtWidgets import QOpenGLWidget, QLabel, QMainWindow
 
 from graphing.graph_type import GraphType
 from graphing.hapi_series import HapiSeries
@@ -15,20 +15,69 @@ from utils.hapiest_util import *
 from utils.log import *
 from widgets.graphing.hapi_chart_view import HapiChartView
 from widgets.graphing.view_selector import ViewSelector
-from widgets.gui import GUI
+from worker.hapi_worker import HapiWorker, WorkResult
+from worker.work_request import WorkRequest
 
 
-class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
+class GraphDisplayWidget(QMainWindow):
+    done_signal = QtCore.pyqtSignal(object)
 
-    def __init__(self, ty: GraphType, window_id: int, window_title: str):
-        QtWidgets.QMainWindow.__init__(self)
-        GUI.__init__(self)
+    graph_ty_to_work_ty = {
+            GraphType.ABSORPTION_COEFFICIENT:   WorkRequest.ABSORPTION_COEFFICIENT,
+            GraphType.TRANSMITTANCE_SPECTRUM:   WorkRequest.TRANSMITTANCE_SPECTRUM,
+            GraphType.RADIANCE_SPECTRUM:        WorkRequest.RADIANCE_SPECTRUM,
+            GraphType.ABSORPTION_SPECTRUM:      WorkRequest.ABSORPTION_SPECTRUM,
+            GraphType.BANDS:                    WorkRequest.BANDS
+        }
 
-        self.window_id = window_id
+    graph_windows = {}
+
+    next_graph_graph_display_id = 1
+
+    @staticmethod
+    def graph_display_id():
+        r = GraphDisplayWidget.next_graph_graph_display_id
+        GraphDisplayWidget.next_graph_graph_display_id += 1
+        return r
+
+    @staticmethod
+    def remove_child_window(graph_display_id: int):
+        from widgets.graphing.graphing_widget import GraphingWidget
+
+        if graph_display_id in GraphDisplayWidget.graph_windows:
+            print(GraphDisplayWidget.graph_windows.pop(graph_display_id))
+        GraphingWidget.GRAPHING_WIDGET_INSTANCE.update_existing_window_items()
+
+    def __init__(self, graph_ty: GraphType, work_object: Dict):
+        """
+        Initializes the GUI and sends a work request for the graph to be plotted, and connect
+        signals to the appropriate handler methods.
+
+        :param ty the type of graph to be calculated. May be different for different types of graphs
+        :param work_object has information about the graph that is to be made
+        :param parent the parent QObject
+
+        """
+        QMainWindow.__init__(self)
+
+        self.graph_ty = graph_ty
+        self.graph_display_id = GraphDisplayWidget.graph_display_id()
+        self.workers = {
+            0: HapiWorker(GraphDisplayWidget.graph_ty_to_work_ty[graph_ty], work_object,
+                          lambda x: (self.plot(x), self.workers.pop(0)))
+            }
+
+        GraphDisplayWidget.graph_windows[self.graph_display_id] = self
+
+        self.workers[0].start()
+        self.cur_work_id = 1
+
+        from widgets.graphing.graphing_widget import GraphingWidget
+
+        self.done_signal.connect(lambda: GraphingWidget.GRAPHING_WIDGET_INSTANCE.done_graphing())
+        self.setWindowTitle(f"{work_object['title']} - {str(self.graph_display_id)}")
 
         self.setWindowIcon(program_icon())
-
-        self.graph_ty = ty
 
         self.colors = Colors()
 
@@ -70,21 +119,70 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.chart = None
         self.highlighted_point = None
         self.series = []
-        self.set_chart_title(window_title)
+        self.set_chart_title(self.windowTitle())
 
         self.axisx_type = "linear"
         self.axisy_type = "linear"
 
         self.point_label: QLabel = QLabel()
 
-        self.set_on_close(self.__on_close_fn)
-
         self.show()
 
-    def __on_close_fn(self):
-        from windows.graph_display_window import GraphDisplayWindow
+    def add_worker(self, graph_ty, work_object):
+        id = self.cur_work_id
+        self.cur_work_id += 1
+        worker = HapiWorker(GraphDisplayWidget.graph_ty_to_work_ty[graph_ty], work_object,
+                            lambda x: (self.plot(x), self.workers.pop(id)))
 
-        GraphDisplayWindow.remove_child_window(self.window_id)
+        self.workers[id] = worker
+        worker.start()
+
+
+    def closeEvent(self, event):
+        self.close()
+        event.accept()
+
+    def reject(self):
+        self.close()
+
+    def close(self):
+        """
+        Overrides Window.close implementation, removes self from GraphDisplayWindow.graph_windows
+        """
+        from widgets.graphing.graphing_widget import GraphingWidget
+
+        GraphDisplayWidget.graph_windows.pop(self.graph_display_id, None)
+        GraphingWidget.GRAPHING_WIDGET_INSTANCE.update_existing_window_items()
+        QMainWindow.close(self)
+
+    def plot(self, work_result: WorkResult):
+        """
+        Plots the graph stored in 'work_result', which may be an error message rather than a result
+        dictionary. If this is the case the error is printed to the console. This also emits a
+        'done' signal.
+
+        :param work_result the result of the HapiWorker; it will either be a string (which
+        indicates an error), or it
+                            will be a dictionary that contains the x and y coordinates and some
+                            information about graph
+                            labels
+        """
+        self.done_signal.emit(0)
+
+        if type(work_result.result) != dict:
+            err_log('Encountered error while graphing: ' + str(work_result.result))
+            return
+
+        try:
+            result = work_result.result
+            (x, y) = result['x'], result['y']
+            self.add_graph(x, y, result['title'], result['titlex'], result['titley'],
+                               result['name'], result['args'])
+        except Exception as e:
+            err_log(e)
+
+    def __on_close_fn(self):
+        GraphDisplayWidget.remove_child_window(self.graph_display_id)
 
     def all_series(self):
         if self.highlighted_point is None:
@@ -128,7 +226,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 series.setName(
                     name + ' -<br>Function: {},<br>T: {:.2f} K, P: {:.2f} atm<br>air: {:.2f}, '
                            'self: {:.2f}'.format(args['graph_fn'], args['Environment']['T'],
-                        args['Environment']['p'], args['Diluent']['air'], args['Diluent']['self']))
+                            args['Environment']['p'], args['Diluent']['air'], args['Diluent']['self']))
 
             series.setUseOpenGL(True)
             self.chart = QChart()
@@ -232,11 +330,16 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.view_fit_widget = ViewSelector(self)
 
     def on_point_clicked(self):
-        if self.chart == None:
+        if self.chart is None:
             return
 
-        if self.highlighted_point != None:
+        if self.highlighted_point is not None:
             self.chart.removeSeries(self.highlighted_point.series)
+
+        # Adding a new series seems to change the viewport as determined by axes, so the viewport
+        # must be recorded and then restored after the series has been added
+        minx, maxx = self.axisx.min(), self.axisx.max()
+        miny, maxy = self.axisy.min(), self.axisy.max()
 
         global_coord = QCursor.pos()
         widget_coord = self.chart_view.mapFromGlobal(global_coord)
@@ -275,31 +378,36 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 x, y = (np.x(), np.y())
                 min_dist = distance
 
-        if x == None:
+        if x is None:
             return
 
         self.highlighted_point = HapiSeries()
+        self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.append(x, y)
-        self.point_label.setText("Selected point:<br>x: {},<br>y: {}".format(x, y))
         self.highlighted_point.setName(self.point_label.text())
         color = QColor(0, 0, 0)
-        self.highlighted_point.add_to_chart(self.chart)
         self.highlighted_point.brush().setColor(color)
         self.highlighted_point.pen().setColor(color)
         self.highlighted_point.pen().setWidth(8)
         self.highlighted_point.attachAxis(self.axisx)
         self.highlighted_point.attachAxis(self.axisy)
 
-    def get_file_save_name(self, extension, filter) -> Union[str, None]:
+        self.axisx.setMax(maxx)
+        self.axisx.setMin(minx)
+
+        self.axisy.setMax(maxy)
+        self.axisy.setMin(miny)
+
+    def get_file_save_name(self, extension, file_filter) -> Union[str, None]:
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save as", "./data" + extension,
-                                                         filter)
+                                                         file_filter)
         if filename[0] == "":
             return None
         else:
             return str(filename[0])
 
     def __on_save_as_other_img_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name('.png',
@@ -309,7 +417,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                                            '*.ppm *.PPM);; X11 Bitmap (*.xbm *.XBM);; X11 Pixmap '
                                            '(*.xpm *.XPM)')
 
-        if filename == None:
+        if filename is None:
             return
 
         _filename, file_extension = os.path.splitext(filename)
@@ -328,12 +436,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         pixmap.save(filename, extension)
 
     def __on_save_as_png_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name('.png', 'Portable Network Graphics (*.png *.PNG)')
 
-        if filename == None:
+        if filename is None:
             return
 
         gl_widget = self.chart_view.findChild(QOpenGLWidget)
@@ -349,12 +457,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         pixmap.save(filename, 'PNG')
 
     def __on_save_as_jpg_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name('.jpg', 'JPEG files (*.jpg *.JPG *.jpeg *.JPEG)')
 
-        if filename == None:
+        if filename is None:
             return
 
         gl_widget = self.chart_view.findChild(QOpenGLWidget)
@@ -370,12 +478,12 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         pixmap.save(filename, 'JPG')
 
     def __on_save_as_txt_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name(".txt", "Text files (*.txt)")
 
-        if filename == None:
+        if filename is None:
             return
 
         try:
@@ -397,11 +505,11 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
             print("Encountered error {} while saving to file".format(str(e)))
 
     def __on_save_as_json_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name(".json", "Javascript object notation files (*.json)")
-        if filename == None:
+        if filename is None:
             return
 
         def to_x_y_arrays(series):
@@ -413,22 +521,22 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
                 y.append(point.y())
             return {'x': x, 'y': y}
 
-        dict = {}
-        series_lists = list(map(lambda series: dict.update({series.name(): to_x_y_arrays(series)}),
+        dic = {}
+        series_lists = list(map(lambda series: dic.update({series.name(): to_x_y_arrays(series)}),
                                 self.all_series()))
         try:
             with open(filename, 'w') as file:
-                file.write(json.dumps(dict, indent=4))
+                file.write(json.dumps(dic, indent=4))
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
 
     def __on_save_as_csv_triggered(self, _checked: bool):
-        if self.chart == None:
+        if self.chart is None:
             return
 
         filename = self.get_file_save_name(".csv", "Comma separated value files (*.csv)")
 
-        if filename == None:
+        if filename is None:
             return
 
         try:
@@ -520,7 +628,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.__on_view_fit_triggered()
 
     def __on_y_ln_triggered(self, _checked: bool = False):
-        if self.axisy == None:
+        if self.axisy is None:
             return
 
         self.axisy_type = "ln"
@@ -529,7 +637,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.__on_view_fit_triggered()
 
     def __on_y_linear_triggered(self, _checked: bool = False):
-        if self.axisy == None:
+        if self.axisy is None:
             return
 
         self.axisy_type = "linear"
@@ -538,7 +646,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.__on_view_fit_triggered()
 
     def __on_x_log10_triggered(self, _checked: bool = False):
-        if self.axisx == None:
+        if self.axisx is None:
             return
 
         self.axisx_type = "log10"
@@ -547,7 +655,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.__on_view_fit_triggered()
 
     def __on_x_ln_triggered(self, _checked: bool = False):
-        if self.axisx == None:
+        if self.axisx is None:
             return
 
         self.axisx_type = "ln"
@@ -556,7 +664,7 @@ class GraphDisplayWindowGui(GUI, QtWidgets.QMainWindow):
         self.__on_view_fit_triggered()
 
     def __on_x_linear_triggered(self, _checked: bool = False):
-        if self.axisx == None:
+        if self.axisx is None:
             return
 
         self.axisx_type = "linear"

@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 
 from data_structures.bands import Band, Bands
 from test.test import Test
-from widgets.graphing.band_display_window_gui import BandDisplayWindowGui
+from widgets.graphing.band_display_widget import BandDisplayWidget
 
 
 class BandDisplayTest(Test):
@@ -21,7 +21,7 @@ class BandDisplayTest(Test):
     def test(self) -> bool:
         app = QtWidgets.QApplication([])
         window = QtWidgets.QMainWindow()
-        widget = BandDisplayWindowGui(0)
+        widget = BandDisplayWidget(0)
 
         def close_window():
             sleep(0.25)

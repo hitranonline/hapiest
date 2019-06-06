@@ -7,13 +7,12 @@ from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
 from utils.log import err_log
-from widgets.gui import GUI
-from windows.graph_display_window import GraphDisplayWindow
+from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 
 
-class GraphingWidget(GUI, QtWidgets.QWidget):
+class GraphingWidget(QtWidgets.QWidget):
     ABSORPTION_COEFFICIENT_STRING: str = "Absorption Coefficient"
     ABSORPTION_SPECTRUM_STRING: str = "Absorption Spectrum"
     TRANSMITTANCE_SPECTRUM_STRING: str = "Transmittance Spectrum"
@@ -22,15 +21,16 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
 
     GRAPHING_WIDGET_INSTANCE = None
 
-    str_to_graph_ty = {ABSORPTION_COEFFICIENT_STRING: GraphType.ABSORPTION_COEFFICIENT,
-        ABSORPTION_SPECTRUM_STRING:                   GraphType.ABSORPTION_SPECTRUM,
-        TRANSMITTANCE_SPECTRUM_STRING:                GraphType.TRANSMITTANCE_SPECTRUM,
-        RADIANCE_SPECTRUM_STRING:                     GraphType.RADIANCE_SPECTRUM,
-        BANDS_STRING:                                 GraphType.BANDS}
+    str_to_graph_ty = {
+        ABSORPTION_COEFFICIENT_STRING:  GraphType.ABSORPTION_COEFFICIENT,
+        ABSORPTION_SPECTRUM_STRING:     GraphType.ABSORPTION_SPECTRUM,
+        TRANSMITTANCE_SPECTRUM_STRING:  GraphType.TRANSMITTANCE_SPECTRUM,
+        RADIANCE_SPECTRUM_STRING:       GraphType.RADIANCE_SPECTRUM,
+        BANDS_STRING:                   GraphType.BANDS
+        }
 
     def __init__(self, parent):
         QtWidgets.QWidget.__init__(self)
-        GUI.__init__(self)
 
         if GraphingWidget.GRAPHING_WIDGET_INSTANCE is not None:
             raise Exception("Only one instance of GraphingWidget should be created")
@@ -184,14 +184,14 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             work['title'] = 'Absorption Cross-Section'
 
         if self.use_existing_window.isChecked():
-            selected_window = self.selected_window.currentText()
-            if selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(
                     GraphType.ABSORPTION_COEFFICIENT, work)
                 return
 
-        self.parent.parent.add_child_window(
-            GraphDisplayWindow(GraphType.ABSORPTION_COEFFICIENT, work, self))
+        GraphDisplayWidget(GraphType.ABSORPTION_COEFFICIENT, work)
+
         self.update_existing_window_items()
 
     def graph_as(self, standard_params):
@@ -212,14 +212,13 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             path_length=path_length, instrumental_fn=instrumental_fn, Resolution=Resolution,
             AF_wing=AF_wing, **standard_params)
         if self.use_existing_window.isChecked():
-            selected_window = self.selected_window.currentText()
-            if selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(
                     GraphType.ABSORPTION_SPECTRUM, work)
                 return
 
-        self.parent.parent.add_child_window(
-            GraphDisplayWindow(GraphType.ABSORPTION_SPECTRUM, work, self))
+        GraphDisplayWidget(GraphType.ABSORPTION_SPECTRUM, work)
         self.update_existing_window_items()
 
     def graph_rs(self, standard_params):
@@ -244,14 +243,13 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             instrumental_fn=instrumental_fn, Resolution=Resolution, AF_wing=AF_wing,
             **standard_params)
         if self.use_existing_window.isChecked():
-            selected_window = self.selected_window.currentText()
-            if selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(
                     GraphType.RADIANCE_SPECTRUM, work)
                 return
 
-        self.parent.parent.add_child_window(
-            GraphDisplayWindow(GraphType.RADIANCE_SPECTRUM, work, self))
+        GraphDisplayWidget(GraphType.RADIANCE_SPECTRUM, work)
         self.update_existing_window_items()
 
     def graph_ts(self, standard_params):
@@ -275,24 +273,23 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             instrumental_fn=instrumental_fn, Resolution=Resolution, AF_wing=AF_wing,
             **standard_params)
         if self.use_existing_window.isChecked():
-            selected_window = self.selected_window.currentText()
-            if selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(
                     GraphType.TRANSMITTANCE_SPECTRUM, work)
                 return
 
-        self.parent.parent.add_child_window(
-            GraphDisplayWindow(GraphType.TRANSMITTANCE_SPECTRUM, work, self))
+        GraphDisplayWidget(GraphType.TRANSMITTANCE_SPECTRUM, work)
         self.update_existing_window_items()
 
     def graph_bands(self, standard_params):
         work = HapiWorker.echo(TableName=self.get_data_name(), title="Bands")
         if self.use_existing_window.isChecked():
-            selected_window = int(self.selected_window.currentText())
-            if selected_window in GraphDisplayWindow.graph_windows:
-                GraphDisplayWindow.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
                 return
-        self.parent.parent.add_child_window(GraphDisplayWindow(GraphType.BANDS, work, self))
+        GraphDisplayWidget(GraphType.BANDS, work)
         self.update_existing_window_items()
 
     def populate_data_names(self):
@@ -310,9 +307,8 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
         """
         self.graph_button.setEnabled(True)
 
-    ###
-    #   Handlers
-    ####
+    def get_selected_window(self):
+        return int(self.selected_window.currentText())
 
     def __on_graph_type_changed(self, graph_type):
         self.update_existing_window_items()
@@ -560,7 +556,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             graph_ty = GraphingWidget.str_to_graph_ty[graph_ty_str]
 
             fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty == graph_ty,
-                                                         GraphDisplayWindow.graph_windows.values()))
+                                                         GraphDisplayWidget.graph_windows.values()))
 
         if len(fitting_graph_windows) == 0:
             self.use_existing_window.setDisabled(True)
@@ -568,7 +564,7 @@ class GraphingWidget(GUI, QtWidgets.QWidget):
             self.use_existing_window.setChecked(False)
             return
 
-        list(map(lambda x: self.selected_window.addItem(str(x.window_id), None),
+        list(map(lambda x: self.selected_window.addItem(str(x.graph_display_id), None),
                  fitting_graph_windows))
         self.use_existing_window.setEnabled(True)
 

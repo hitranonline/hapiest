@@ -16,15 +16,33 @@ from metadata.config import Config
 from utils.colors import Colors
 from utils.log import *
 from widgets.graphing.band_legend import BandLegend, LegendItem
-from widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
+from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from widgets.graphing.hapi_chart_view import HapiChartView
+from worker.hapi_worker import HapiWorker
+from worker.work_result import WorkResult
 
 
-class BandDisplayWindowGui(GraphDisplayWindowGui):
+class BandDisplayWidget(GraphDisplayWidget):
 
     def __init__(self, window_id: int):
-        GraphDisplayWindowGui.__init__(self, GraphType.BANDS, window_id, "Bands")
+        GraphDisplayWidget.__init__(self, GraphType.BANDS, window_id, "Bands")
         self.setting = False
+
+    def plot(self, work_result: WorkResult):
+        """
+        Functions the same as `plot`, except this function is for plotting `Bands` objects
+        """
+        self.done_signal.emit(0)
+
+        if type(work_result.result) != Bands:
+            err_log('Encountered error while graphing: ' + str(work_result.result))
+            return
+
+        try:
+            bands = work_result.result
+            self.add_bands(bands)
+        except Exception as e:
+            err_log(e)
 
     def closeEvent(self, event):
         self.legend.close()

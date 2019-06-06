@@ -1,57 +1,35 @@
-from PyQt5.QtWidgets import QMainWindow, QAction, QStatusBar, QCompleter, QVBoxLayout, \
-    QPushButton, \
-    QWidget, QTabWidget
-
+from PyQt5.QtWidgets import QAction, QCompleter, QMainWindow, QTabWidget, QStatusBar, QVBoxLayout
 from metadata.molecule_meta import MoleculeMeta
 from widgets.about_widget import AboutWidget
 from widgets.config_editor_widget import ConfigEditorWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
 from widgets.fetch_widget import FetchWidget
 from widgets.graphing.graphing_widget import *
-from widgets.gui import GUI
-from widgets.molecule_info_widget import MoleculeInfoWidget
-from widgets.select_widget import SelectWidget
-from widgets.view_widget import ViewWidget
-from windows.molecule_info_window import MoleculeInfoWindow
-from utils.hapiest_util import get_all_data_names, program_icon
-from PyQt5.QtWidgets import QAction, QCompleter, QMainWindow, QPushButton, QStatusBar, \
-    QVBoxLayout, \
-    QWidget
-
-from metadata.molecule_meta import MoleculeMeta
-from utils.hapiest_util import get_all_data_names, program_icon
-from widgets.about_widget import AboutWidget
-from widgets.config_editor_widget import ConfigEditorWidget
-from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
-from widgets.fetch_widget import FetchWidget
-from widgets.graphing.graphing_widget import *
-from widgets.gui import GUI
 from widgets.molecule_info_widget import MoleculeInfoWidget
 from widgets.select_widget import SelectWidget
 from widgets.view_widget import ViewWidget
 from windows.molecule_info_window import MoleculeInfoWindow
 
 
-class MainWindowGui(GUI, QMainWindow):
+class MainWindowWidget(QMainWindow):
     """
     The main window contains most of the functionality. This includes the Edit widget,
     Fetch widget, Select widget, and
     graphing widget.
     """
 
-    MAIN_WINDOW_GUI_INSTANCE = None
+    MAIN_WINDOW_WIDGET_INSTANCE = None
 
     def __init__(self, parent):
         """
         Instantiates all of the widgets for each of the individual tabs
         """
         QMainWindow.__init__(self)
-        GUI.__init__(self)
 
-        if MainWindowGui.MAIN_WINDOW_GUI_INSTANCE is not None:
+        if MainWindowWidget.MAIN_WINDOW_WIDGET_INSTANCE is not None:
             raise Exception("Only one instance of the MainWindowGui should be created")
 
-        MainWindowGui.MAIN_WINDOW_GUI_INSTANCE = self
+        MainWindowWidget.MAIN_WINDOW_WIDGET_INSTANCE = self
 
         self.setWindowIcon(program_icon())
 
@@ -121,16 +99,18 @@ class MainWindowGui(GUI, QMainWindow):
         self.show()
 
     def closeEvent(self, event):
+        print("owo")
         if self.config_window:
             self.config_window.close()
         if self.about_window:
             self.about_window.close()
-        for window in list(GraphDisplayWindow.graph_windows.values()):
-            window.close()
-        for window in list(SelectWidget.instances):
-            window.close()
-        for window in list(ViewWidget.instances):
-            window.close()
+        for widget in list(GraphDisplayWidget.graph_windows.values()):
+            print(widget)
+            widget.close()
+        for widget in list(SelectWidget.instances):
+            widget.close()
+        for widget in list(ViewWidget.instances):
+            widget.close()
         QMainWindow.closeEvent(self, event)
 
     def remove_worker_by_jid(self, jid: int):
