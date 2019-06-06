@@ -8,6 +8,8 @@ from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMainWindow
+from typing import Dict
+
 from graphing.graph_type import GraphType
 from graphing.hapi_series import HapiSeries
 
@@ -24,8 +26,8 @@ from worker.work_result import WorkResult
 
 class BandDisplayWidget(GraphDisplayWidget):
 
-    def __init__(self, window_id: int):
-        GraphDisplayWidget.__init__(self, GraphType.BANDS, window_id, "Bands")
+    def __init__(self, work_object: Dict):
+        GraphDisplayWidget.__init__(self, GraphType.BANDS, work_object)
         self.setting = False
 
     def plot(self, work_result: WorkResult):
@@ -34,7 +36,7 @@ class BandDisplayWidget(GraphDisplayWidget):
         """
         self.done_signal.emit(0)
 
-        if type(work_result.result) != Bands:
+        if type(work_result.result) is not Bands:
             err_log('Encountered error while graphing: ' + str(work_result.result))
             return
 
@@ -46,6 +48,7 @@ class BandDisplayWidget(GraphDisplayWidget):
 
     def closeEvent(self, event):
         self.legend.close()
+        GraphDisplayWidget.closeEvent(self, event)
         QMainWindow.closeEvent(self, event)
 
     def all_series(self):

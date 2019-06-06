@@ -99,7 +99,6 @@ class MainWindowWidget(QMainWindow):
         self.show()
 
     def closeEvent(self, event):
-        print("owo")
         if self.config_window:
             self.config_window.close()
         if self.about_window:

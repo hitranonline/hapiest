@@ -7,6 +7,7 @@ from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
 from utils.log import err_log
+from widgets.graphing.band_display_widget import BandDisplayWidget
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
@@ -289,7 +290,7 @@ class GraphingWidget(QtWidgets.QWidget):
             if selected_window in GraphDisplayWidget.graph_windows:
                 GraphDisplayWidget.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
                 return
-        GraphDisplayWidget(GraphType.BANDS, work)
+        BandDisplayWidget(work)
         self.update_existing_window_items()
 
     def populate_data_names(self):
@@ -328,7 +329,6 @@ class GraphingWidget(QtWidgets.QWidget):
                             GraphingWidget.RADIANCE_SPECTRUM_STRING}:
             self.spectrum_parameters_widget.setEnabled(True)
         elif graph_type == GraphingWidget.BANDS_STRING:
-            print("hey")
             self.wn_widget.setEnabled(False)
             self.line_profile_widget.setEnabled(False)
             self.wn_widget.setEnabled(False)
@@ -559,9 +559,9 @@ class GraphingWidget(QtWidgets.QWidget):
                                                          GraphDisplayWidget.graph_windows.values()))
 
         if len(fitting_graph_windows) == 0:
+            self.use_existing_window.setChecked(False)
             self.use_existing_window.setDisabled(True)
             self.selected_window.setDisabled(True)
-            self.use_existing_window.setChecked(False)
             return
 
         list(map(lambda x: self.selected_window.addItem(str(x.graph_display_id), None),
