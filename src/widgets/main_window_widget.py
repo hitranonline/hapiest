@@ -141,8 +141,7 @@ class MainWindowWidget(QMainWindow):
         if self.molecule_info is not None:
             for i in reversed(range(self.molecule_container.count())):
                 self.molecule_container.itemAt(i).widget().setParent(None)
-        self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText(), \
-                                                self)
+        self.molecule_info = MoleculeInfoWidget(self.molecules_current_molecule.currentText(), self)
         self.molecule_container.addWidget(self.molecule_info)
 
     def __on_molecules_popout_button(self):
@@ -156,7 +155,7 @@ class MainWindowWidget(QMainWindow):
         Extract the name of each molocule that hapi has data on and add it to the molecule list.
         """
         # Make sure that molecule meta has had it's static members initialized initialized.
-        self.molecules_current_molecule.addItems(list(set(MoleculeMeta.all_names())))
+        self.molecules_current_molecule.addItems(MoleculeMeta.all_names_sorted_by_hitran_id())
         self.completer: QCompleter = QCompleter(MoleculeMeta.all_aliases(), self)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.molecules_current_molecule.setEditable(True)

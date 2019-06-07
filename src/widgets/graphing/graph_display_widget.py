@@ -119,6 +119,7 @@ class GraphDisplayWidget(QMainWindow):
         self.chart = None
         self.highlighted_point = None
         self.series = []
+        self.setWindowTitle(f"Graphing window {self.graph_display_id}")
         self.set_chart_title(self.windowTitle())
 
         self.axisx_type = "linear"

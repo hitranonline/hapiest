@@ -3,83 +3,100 @@ import os.path
 import toml
 
 
-class Config():
+class Config:
     """
     The configuration class is a singleton class that contains static members for each of the
     possible user
     configurable settings.
 
     """
-    config_options = {# The number of values to display along the x axis in graphs
-        'axisx_ticks':                                                      {'default_value': 5,
+    config_options = {  # The number of values to display along the x axis in graphs
+        'axisx_ticks':            {
+            'default_value': 5,
             'display_name':
-                'X-Axis Ticks',
+                             'X-Axis Ticks',
             'tool_tip':
-                                                                                 'The number of '
-                                                                                 'ticks that will '
-                                                                                 'be displayed '
-                                                                                 'along the x '
-                                                                                 'axis.',
-            'type':                                                                           int},
+                             'The number of '
+                             'ticks that will '
+                             'be displayed '
+                             'along the x '
+                             'axis.',
+            'type':          int
+        },
 
         # The number of values to display along the y axis in graphs
-        'axisy_ticks':                                                      {'default_value': 5,
+        'axisy_ticks':            {
+            'default_value': 5,
             'display_name':
-                'Y-Axis Ticks',
+                             'Y-Axis Ticks',
             'tool_tip':
-                                                                                 'The number of '
-                                                                                 'ticks that will '
-                                                                                 'be displayed '
-                                                                                 'along the y '
-                                                                                 'axis.',
-            'type':                                                                           int},
+                             'The number of '
+                             'ticks that will '
+                             'be displayed '
+                             'along the y '
+                             'axis.',
+            'type':          int
+        },
 
         # The folder where data is stored
-        'data_folder':                                                      {
+        'data_folder':            {
             'default_value': 'data', 'display_name': 'Data Folder',
             'tool_tip': 'The path to the folder where data downloaded from HITRAN will be '
-                        'stored.', 'type': str},
+                        'stored.', 'type': str
+        },
 
         # Whether the program should be ran with high-dpi scaling enabled.
-        'high_dpi':                                                         {'default_value': False,
+        'high_dpi':               {
+            'default_value': False,
             'display_name': 'High DPI Mode',
             'tool_tip': 'Whether to use high DPI mode or not. If the program looks strange '
                         'on your screen you may want '
-                        'to enable this.', 'type': bool},
+                        'to enable this.', 'type': bool
+        },
 
         # The number of rows that tables should be paginated with.
-        'select_page_length':                                               {'default_value': 100,
+        'select_page_length':     {
+            'default_value': 100,
             'display_name':
-                'View Page Length',
+                             'View Page Length',
             'tool_tip':
-                                                                                 'The number of '
-                                                                                 'rows to show '
-                                                                                 'per page in the '
-                                                                                 'view table.',
-            'type':                                                                           int},
+                             'The number of '
+                             'rows to show '
+                             'per page in the '
+                             'view table.',
+            'type':          int
+        },
 
-        'hapi_api_key':                                                     {
+        'hapi_api_key':           {
             'default_value': '0000', 'display_name': 'HAPI API Key',
             'tool_tip':      'The HAPI API key that is needed to use HAPI v2 functionality.',
-            'type':          str}, 'axisx_label_format':                    {
+            'type':          str
+        },
+        'axisx_label_format':  {
             'default_value': '%.3E', 'display_name': 'Axis-X Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style '
-                        'format.', 'type': str},
+                        'format.',
+            'type': str
+        },
 
-        'axisx_log_label_format':                                           {
+        'axisx_log_label_format': {
             'default_value': '%.3E', 'display_name': 'Log Axis-X Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style '
-                        'format.', 'type': str},
+                        'format.', 'type': str
+        },
 
-        'axisy_label_format':                                               {
+        'axisy_label_format':     {
             'default_value': '%.3E', 'display_name': 'Axis-Y Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style '
-                        'format.', 'type': str},
+                        'format.', 'type': str
+        },
 
-        'axisy_log_label_format':                                           {
+        'axisy_log_label_format': {
             'default_value': '%.3E', 'display_name': 'Log Axis-Y Tick Label Format',
             'tool_tip': 'Format specifier for the tick labels. This should be a C-Style '
-                        'format.', 'type': str}, }
+                        'format.', 'type': str
+        },
+    }
 
     DEFAULT_CONFIG = ""
 
@@ -153,7 +170,7 @@ class Config():
         """
         for key, _ in Config.config_options.items():
             if key in dict['hapiest'] and key in Config.config_options and type(
-                dict['hapiest'][key]) == Config.config_options[key]['type']:
+                    dict['hapiest'][key]) == Config.config_options[key]['type']:
                 setattr(Config, key, dict['hapiest'][key])
 
         # Config.data_folder = dict['hapiest']['data_folder']  # Config.high_dpi = dict[

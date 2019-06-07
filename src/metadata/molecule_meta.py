@@ -103,6 +103,11 @@ class MoleculeMeta:
             MoleculeMeta.__ALL_LINE_BY_LINE_ALIASES.remove(alias)
 
     @staticmethod
+    def all_names_sorted_by_hitran_id() -> List[str]:
+        return sorted(MoleculeMeta.__NAME_TO_MID.keys(),
+                      key=lambda name: MoleculeMeta.__NAME_TO_MID[name])
+
+    @staticmethod
     def all_names() -> List[str]:
         return list(MoleculeMeta.__NAME_TO_MID.keys())
 
