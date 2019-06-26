@@ -55,6 +55,8 @@ class GraphingWidget(QtWidgets.QWidget):
         self.mixing_ratio_widget: QWidget = None
         self.graph_type_widget: QWidget = None
 
+        self.backend: QComboBox = None
+        self.plot_name: QLineEdit = None
         self.data_name_error: QLabel = None
         self.data_name: QComboBox = None
         self.use_existing_window: QCheckBox = None
@@ -131,6 +133,8 @@ class GraphingWidget(QtWidgets.QWidget):
 
     def get_standard_parameters(self):
         data_name = self.get_data_name()
+        backend = self.backend.currentText()
+
         if self.xsc is not None:
             Components = []
             SourceTables = [data_name]
@@ -157,7 +161,7 @@ class GraphingWidget(QtWidgets.QWidget):
         return HapiWorker.echo(graph_fn=graph_fn, Components=Components, SourceTables=SourceTables,
             Environment=Environment, Diluent=Diluent, HITRAN_units=False,
             WavenumberRange=WavenumberRange, WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing, WavenumberWingHW=WavenumberWingHW)
+            WavenumberWing=WavenumberWing, WavenumberWingHW=WavenumberWingHW, backend=backend)
 
     def graph(self):
         standard_params = self.get_standard_parameters()
@@ -177,11 +181,11 @@ class GraphingWidget(QtWidgets.QWidget):
 
     def graph_abs_coef(self, standard_parameters):
         work = HapiWorker.echo(title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
-                               titlex="Wavenumber (cm<sup>-1</sup>)",
+                               titlex="Wavenumber (cm$^{-1}$)",
                                titley='Absorption Coefficient ', **standard_parameters)
 
         if work['SourceTables'][0].endswith('.xsc'):
-            work['titley'] = 'molecules / cm<sup>2</sup>'
+            work['titley'] = 'molecules / cm$^2$'
             work['title'] = 'Absorption Cross-Section'
 
         if self.use_existing_window.isChecked():
@@ -191,7 +195,7 @@ class GraphingWidget(QtWidgets.QWidget):
                     GraphType.ABSORPTION_COEFFICIENT, work)
                 return
 
-        GraphDisplayWidget(GraphType.ABSORPTION_COEFFICIENT, work)
+        GraphDisplayWidget(GraphType.ABSORPTION_COEFFICIENT, work, self.backend.currentText())
 
         self.update_existing_window_items()
 
@@ -209,7 +213,7 @@ class GraphingWidget(QtWidgets.QWidget):
             # than Instrumental Resolution')  # self.done_graphing()  # return
 
         work = HapiWorker.echo(title=GraphingWidget.ABSORPTION_SPECTRUM_STRING,
-            titlex="Wavenumber (cm<sup>-1</sup>)", titley="Absorption Spectrum",
+            titlex="Wavenumber (cm$^{-1}$)", titley="Absorption Spectrum",
             path_length=path_length, instrumental_fn=instrumental_fn, Resolution=Resolution,
             AF_wing=AF_wing, **standard_params)
         if self.use_existing_window.isChecked():
@@ -239,8 +243,8 @@ class GraphingWidget(QtWidgets.QWidget):
             return
 
         work = HapiWorker.echo(title=GraphingWidget.RADIANCE_SPECTRUM_STRING,
-            titlex="Wavenumber (cm<sup>-1</sup>)",
-            titley="Radiance (erg * c<sup>-1</sup>*cm<sup>-1</sup>)", path_length=path_length,
+            titlex="Wavenumber (cm$^{-1}$)",
+            titley="Radiance (erg * c$^{-1}$*cm$^{-1}$)", path_length=path_length,
             instrumental_fn=instrumental_fn, Resolution=Resolution, AF_wing=AF_wing,
             **standard_params)
         if self.use_existing_window.isChecked():
@@ -270,7 +274,7 @@ class GraphingWidget(QtWidgets.QWidget):
             return
 
         work = HapiWorker.echo(title=GraphingWidget.TRANSMITTANCE_SPECTRUM_STRING,
-            titlex="Wavenumber (cm<sup>-1</sup>)", titley="Transmittance", path_length=path_length,
+            titlex="Wavenumber (cm$^{-1}$)", titley="Transmittance", path_length=path_length,
             instrumental_fn=instrumental_fn, Resolution=Resolution, AF_wing=AF_wing,
             **standard_params)
         if self.use_existing_window.isChecked():
@@ -361,6 +365,9 @@ class GraphingWidget(QtWidgets.QWidget):
             result = work_result.result
             if result is None:
                 return
+
+            self.plot_name.setText(self.data_name.currentText())
+
             if 'parameters' not in result:
                 self.set_graph_buttons_enabled(True)
                 return
@@ -385,7 +392,6 @@ class GraphingWidget(QtWidgets.QWidget):
                 self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
 
             self.xsc = result['xsc']
-
             self.use_existing_window.setChecked(self.same_window_checked)
 
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)

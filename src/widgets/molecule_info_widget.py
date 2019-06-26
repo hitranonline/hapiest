@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 
 from metadata.molecule_meta import MoleculeMeta
 from metadata.xsc_meta import CrossSectionMeta
-from utils.hapiest_util import program_icon
+from utils.hapiest_util import program_icon, Config
 from utils.log import *
 from widgets.fetch_widget import FetchWidget
 from widgets.cross_section_fetch_widget import CrossSectionFetchWidget
@@ -59,8 +59,13 @@ class MoleculeInfoWidget(QWidget):
 
         self.img = QWidget()
         self.img.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-        self.img.setFixedWidth(400)
-        self.img.setFixedHeight(400)
+
+        if Config.high_dpi:
+            self.img.setFixedWidth(300)
+            self.img.setFixedHeight(300)
+        else:
+            self.img.setFixedWidth(400)
+            self.img.setFixedHeight(400)
 
         # Have to call list because map is lazy
         list(map(create_field, MoleculeInfoWidget.FIELDS))

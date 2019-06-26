@@ -16,6 +16,7 @@ from utils.log import *
 from widgets.graphing.hapi_chart_view import HapiChartView
 from widgets.graphing.mpl_widget import MplWidget
 from widgets.graphing.view_selector import ViewSelector
+from widgets.graphing.vispy_widget import VispyWidget
 from worker.hapi_worker import HapiWorker, WorkResult
 from worker.work_request import WorkRequest
 
@@ -49,7 +50,7 @@ class GraphDisplayWidget(QMainWindow):
             print(GraphDisplayWidget.graph_windows.pop(graph_display_id))
         GraphingWidget.GRAPHING_WIDGET_INSTANCE.update_existing_window_items()
 
-    def __init__(self, graph_ty: GraphType, work_object: Dict):
+    def __init__(self, graph_ty: GraphType, work_object: Dict, backend: str):
         """
         Initializes the GUI and sends a work request for the graph to be plotted, and connect
         signals to the appropriate handler methods.
@@ -81,8 +82,13 @@ class GraphDisplayWidget(QMainWindow):
         self.setWindowIcon(program_icon())
 
         uic.loadUi('layouts/graph_display_window.ui', self)
-        self.mpl_widget = MplWidget()
-        self.setCentralWidget(self.mpl_widget)
+
+        if backend == "matplotlib":
+            self.backend = MplWidget(self)
+        else:
+            self.backend = VispyWidget(self)
+
+        self.setCentralWidget(self.backend)
         self.series = []
 
         self.setWindowTitle(f"Graphing window {self.graph_display_id}")
@@ -134,7 +140,7 @@ class GraphDisplayWidget(QMainWindow):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
-            self.mpl_widget.add_graph(x, y, result['title'], result['titlex'], result['titley'],
-                                      result['name'], result['args'])
+            self.backend.add_graph(x, y, result['title'], result['titlex'], result['titley'],
+                                   result['name'], result['args'])
         except Exception as e:
             err_log(e)

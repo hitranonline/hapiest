@@ -4,16 +4,22 @@ import matplotlib as mp
 from PyQt5 import QtCore
 from matplotlib import axes
 
+from metadata.config import Config
+from widgets.graphing.graph_display_backend import GraphDisplayBackend
+
 
 mp.use('QT5Agg')
 
-from PyQt5.QtWidgets import QWidget, QSizePolicy, QVBoxLayout, QMainWindow
+from PyQt5.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self):
+        #if Config.high_dpi:
+        #    self.fig = Figure(dpi=100)
+        #else:
         self.fig = Figure()
         self.ax: axes.SubplotBase = self.fig.add_subplot(111)
 
@@ -26,16 +32,22 @@ class MplCanvas(FigureCanvasQTAgg):
         self.fig.legend(loc=9)
 
 
-class MplWidget(QMainWindow):
+class MplWidget(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+        GraphDisplayBackend.__init__(self)
 
         self.canvas = MplCanvas()
-        self.setCentralWidget(self.canvas)
-        self.addToolBar(QtCore.Qt.BottomToolBarArea,
+        self.parent().addToolBar(QtCore.Qt.BottomToolBarArea,
                         NavigationToolbar2QT(self.canvas, self))
+        self.layout = QHBoxLayout()
+        self.layout.addWidget(self.canvas)
+        self.setLayout(self.layout)
 
     def add_graph(self, x, y, title, titlex, titley, name, args):
         self.canvas.ax.plot(x, y, label=name)
         self.canvas.show_legend()
+        self.canvas.ax.set_xlabel(titlex)
+        self.canvas.ax.set_ylabel(titley)
+        self.canvas.draw()
