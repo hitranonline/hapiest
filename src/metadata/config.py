@@ -129,7 +129,7 @@ class Config:
     @staticmethod
     def config_init():
         """
-        Reads in the config file. If it doesn't eist, it will create it with the default settings
+        Reads in the config file. If it doesn't exist, it will create it with the default settings
         set.
         """
         for name, meta in Config.config_options.items():
