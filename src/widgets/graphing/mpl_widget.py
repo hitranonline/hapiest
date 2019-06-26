@@ -4,9 +4,8 @@ import matplotlib as mp
 from PyQt5 import QtCore
 from matplotlib import axes
 
-from metadata.config import Config
+from widgets.graphing.band_legend import LegendItem
 from widgets.graphing.graph_display_backend import GraphDisplayBackend
-
 
 mp.use('QT5Agg')
 
@@ -31,6 +30,8 @@ class MplCanvas(FigureCanvasQTAgg):
     def show_legend(self):
         self.fig.legend(loc=9)
 
+    def hide_legend(self):
+        self.fig.legends = []
 
 class MplWidget(QWidget):
 
@@ -41,6 +42,7 @@ class MplWidget(QWidget):
         self.canvas = MplCanvas()
         self.parent().addToolBar(QtCore.Qt.BottomToolBarArea,
                         NavigationToolbar2QT(self.canvas, self))
+        print("?")
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.canvas)
         self.setLayout(self.layout)
@@ -51,3 +53,15 @@ class MplWidget(QWidget):
         self.canvas.ax.set_xlabel(titlex)
         self.canvas.ax.set_ylabel(titley)
         self.canvas.draw()
+
+    def hide_legend(self):
+        self.canvas.hide_legend()
+
+    def update_canvas(self):
+        self.canvas.draw()
+        self.canvas.flush_events()
+
+    def add_band(self, x, y):
+        return self.canvas.ax.plot(x, y, linewidth=0,
+                                   markersize=LegendItem.NORMAL_WIDTH,
+                                   marker='o')[0]  # For some reason this returns a list

@@ -287,14 +287,14 @@ class GraphingWidget(QtWidgets.QWidget):
         GraphDisplayWidget(GraphType.TRANSMITTANCE_SPECTRUM, work)
         self.update_existing_window_items()
 
-    def graph_bands(self, standard_params):
+    def graph_bands(self, _standard_params):
         work = HapiWorker.echo(TableName=self.get_data_name(), title="Bands")
         if self.use_existing_window.isChecked():
             selected_window = self.get_selected_window()
             if selected_window in GraphDisplayWidget.graph_windows:
                 GraphDisplayWidget.graph_windows[selected_window].add_worker(GraphType.BANDS, work)
                 return
-        BandDisplayWidget(work)
+        BandDisplayWidget(work, self.backend.currentText())
         self.update_existing_window_items()
 
     def populate_data_names(self):
