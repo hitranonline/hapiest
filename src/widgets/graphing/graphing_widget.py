@@ -223,7 +223,7 @@ class GraphingWidget(QtWidgets.QWidget):
                     GraphType.ABSORPTION_SPECTRUM, work)
                 return
 
-        GraphDisplayWidget(GraphType.ABSORPTION_SPECTRUM, work)
+        GraphDisplayWidget(GraphType.ABSORPTION_SPECTRUM, work, self.backend.currentText())
         self.update_existing_window_items()
 
     def graph_rs(self, standard_params):
@@ -254,7 +254,7 @@ class GraphingWidget(QtWidgets.QWidget):
                     GraphType.RADIANCE_SPECTRUM, work)
                 return
 
-        GraphDisplayWidget(GraphType.RADIANCE_SPECTRUM, work)
+        GraphDisplayWidget(GraphType.RADIANCE_SPECTRUM, work, self.backend.currentText())
         self.update_existing_window_items()
 
     def graph_ts(self, standard_params):
@@ -284,7 +284,7 @@ class GraphingWidget(QtWidgets.QWidget):
                     GraphType.TRANSMITTANCE_SPECTRUM, work)
                 return
 
-        GraphDisplayWidget(GraphType.TRANSMITTANCE_SPECTRUM, work)
+        GraphDisplayWidget(GraphType.TRANSMITTANCE_SPECTRUM, work, self.backend.currentText())
         self.update_existing_window_items()
 
     def graph_bands(self, _standard_params):
@@ -512,25 +512,25 @@ class GraphingWidget(QtWidgets.QWidget):
         """
         :returns: Absorption spectrum instrumental fn
         """
-        return self.as_instrumental_fn.currentText()
+        return self.instrumental_fn.currentText()
 
     def get_path_length(self):
         """
         :return: the path length
         """
-        return self.as_path_length.value()
+        return self.path_length.value()
 
     def get_instrumental_fn_wing(self):
         """
         :return: the absorbtion spectrum instrumental fn wing
         """
-        return self.as_instrumental_fn_wing.value()
+        return self.instrumental_fn_wing.value()
 
     def get_instrumental_resolution(self):
         """
         :return: the instrumental resolution
         """
-        return self.as_instrumental_resolution.value()
+        return self.instrumental_resolution.value()
 
     def set_graph_buttons_enabled(self, enabled):
         """

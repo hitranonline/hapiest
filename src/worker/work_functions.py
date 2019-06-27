@@ -241,8 +241,7 @@ class WorkFunctions:
     @staticmethod
     def graph_absorption_spectrum(
             graph_fn: str, Components: List[Tuple[int, int]], SourceTables: List[str],
-            Environment: Dict[str, Any], Diluent: dict, _HITRAN_units: bool,
-            WavenumberRange: Tuple[float, float],
+            Environment: Dict[str, Any], Diluent: dict, WavenumberRange: Tuple[float, float],
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str,
             titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",

@@ -13,8 +13,8 @@ def check_version():
     python is used.
     """
     if sys.version_info < (3, 6):
-        print(f"You must have Python 3 installed to use hapiest, current version is"
-              f"{str(sys.version)}")
+        print("You must have Python 3 installed to use hapiest, current version is " +\
+                str(sys.version))
         sys.exit(0)
 
 

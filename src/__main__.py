@@ -6,11 +6,11 @@ from multiprocessing import freeze_support
 import sys
 
 from startup import fix_cwd, check_version
-from app import run
-
 
 check_version()
 fix_cwd()
+
+from app import run
 
 if __name__ == '__main__':
     import traceback
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     try:
         sys.exit(run())
     except TypeError as err:
-        print(f"Encountered type error:\n {str(err)}")
+        print("Encountered type error:\n" + str(err))
         traceback.print_stack()
     except Exception as err:
-        print(f"Encountered an error: \n {str(err)}")
+        print("Encountered an error: \n" + str(err))
         traceback.print_stack()
