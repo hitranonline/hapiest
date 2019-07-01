@@ -7,6 +7,7 @@ from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
 from utils.log import err_log
+from widgets.broadener_input_widget import BroadenerInputWidget
 from widgets.graphing.band_display_widget import BandDisplayWidget
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from worker.hapi_worker import HapiWorker
@@ -47,6 +48,8 @@ class GraphingWidget(QtWidgets.QWidget):
         self.window_layout: QLayout = None
         self.data_name_layout: QLayout = None
 
+        self.broadener_widget: QWidget = None
+        self.broadener_layout: QLayout = None
         self.spectrum_parameters_widget: QWidget = None
         self.line_profile_widget: QWidget = None
         self.wn_widget: QWidget = None
@@ -90,6 +93,10 @@ class GraphingWidget(QtWidgets.QWidget):
         self.instrumental_resolution: QDoubleSpinBox = None
 
         uic.loadUi('layouts/graphing_widget.ui', self)
+
+        self.broadener_input = BroadenerInputWidget(self)
+        self.broadener_layout.addWidget(self.broadener_input)
+
         self.wn_step_enabled.toggled.connect(
             lambda: self.__handle_checkbox_toggle(self.wn_step_enabled, self.wn_step))
         self.wn_wing_enabled.toggled.connect(

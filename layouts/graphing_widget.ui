@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1229</width>
-    <height>693</height>
+    <width>1243</width>
+    <height>919</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,7 +50,7 @@
      <property name="spacing">
       <number>10</number>
      </property>
-     <item row="6" column="0" colspan="2">
+     <item row="7" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <layout class="QHBoxLayout" name="graph_button_layout">
@@ -977,7 +977,7 @@ font-weight: bold;</string>
        </layout>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QWidget" name="wn_widget" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
@@ -1183,7 +1183,7 @@ font-weight: bold;</string>
        </layout>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QWidget" name="wn_cfg_widget" native="true">
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="1" column="2">
@@ -1444,6 +1444,34 @@ font-weight: bold;</string>
            <double>0.100000000000000</double>
           </property>
          </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QWidget" name="broadener_widget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="broadener_layout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+         </layout>
         </item>
        </layout>
       </widget>
