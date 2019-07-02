@@ -1,10 +1,12 @@
 import unittest
 import math
+import os
 import random
 import threading
 from time import sleep
 from PyQt5 import QtWidgets
-from src.widgets.graphing.graph_display_window_gui import GraphDisplayWindowGui
+from graphing.graph_type import GraphType
+from widgets.graphing.graph_display_widget import GraphDisplayWidget
 
 
 class TestGraphDisplay(unittest.TestCase):
@@ -31,7 +33,8 @@ class TestGraphDisplay(unittest.TestCase):
 
         t = threading.Thread(target=close_window)
         t.start()
-        widget = GraphDisplayWindowGui('a', 1, 'h')
+        os.chdir('../')
+        widget = GraphDisplayWidget(GraphType.ABSORPTION_COEFFICIENT, {'title': 'test_graph'})
         widget.setMinimumSize(256, 256)
         # def add_graph(self, x, y, title, xtitle, ytitle, name, args):
         args = {'Diluent': {'self': 1.0, 'air': 0.0}, 'graph_fn': '',
