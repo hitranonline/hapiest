@@ -60,12 +60,13 @@ Your HAPI API key will be used on the next launch. Please restart HAPIEST.
         Config.hapi_api_key = '0000'
         obtain_apikey()
         Config.rewrite_config()
-    except URLError as _:
+    except URLError as e:
         # URL Lookup failed. Probably means there is no internet connection
         err_msg = """
 You do not have a working internet connection. A working internet connection
 is needed in order to use hapiest.
 """
+        print(str(e))
 
     from widgets.error_msg_widget import ErrorMsgWidget
 
