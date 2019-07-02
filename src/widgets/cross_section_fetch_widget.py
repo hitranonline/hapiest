@@ -95,7 +95,7 @@ class CrossSectionFetchWidget(QWidget):
             pressure = None
 
         if self.wn_check.isChecked():
-            wn = [self.numin.value(), self.pressure_max.value()]
+            wn = [self.numin.value(), self.numax.value()]
             wn.sort()
         else:
             wn = None

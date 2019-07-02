@@ -71,9 +71,8 @@ class CrossSectionFilter:
         self.pressure_range = pressure_range
 
     def get_cross_sections(self) -> List[str]:
-        if self.molecule_id not in CrossSectionMeta.molecule_metas:
-            return []
-        return [item['filename'] for item in CrossSectionMeta.molecule_metas[self.molecule_id] if
+        xsc_meta = CrossSectionMeta(self.molecule_id)
+        return [item['filename'] for item in xsc_meta.metas if
                 self.xsc_is_conformant(item)]
 
     def xsc_is_conformant(self, xsc) -> bool:
@@ -84,8 +83,11 @@ class CrossSectionFilter:
         conditions of this filter, otherwise false.
         """
         return (self.pressure_range is None or (
-                self.pressure_range[0] <= xsc['pressure'] <= self.pressure_range[1])) and (
-                           self.temp_range is None or (
-                           self.temp_range[0] <= xsc['temperature'] <= self.temp_range[1])) and (
-                           self.wn_range is None or (
-                           xsc['numin'] <= self.wn_range[0] and xsc['numax'] >= self.wn_range[1]))
+                    self.pressure_range[0] <= xsc['pressure'] <= self.pressure_range[1])
+                ) and \
+                (self.temp_range is None or (
+                           self.temp_range[0] <= xsc['temperature'] <= self.temp_range[1])
+                ) and \
+                (self.wn_range is None or (
+                                self.wn_range[0] <= xsc['numin'] <= self.wn_range[1]
+                                or self.wn_range[0] <= xsc['numax'] <= self.wn_range[1]))

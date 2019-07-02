@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
+    <width>793</width>
     <height>632</height>
    </rect>
   </property>
@@ -16,37 +16,45 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="2" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="2">
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QCheckBox" name="wn_check">
+         <property name="text">
+          <string>Wavenumber</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>(cm&lt;sup&gt;-1&lt;/sup&gt;)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1">
       <widget class="QCheckBox" name="pressure_check">
        <property name="text">
-        <string>Pressure</string>
+        <string>Pressure (Torr)</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="2" column="2">
-      <widget class="QCheckBox" name="wn_check">
-       <property name="text">
-        <string>Wavenumber</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
+     <item row="1" column="1">
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="1" column="0">
         <widget class="QLabel" name="label_2">
@@ -64,7 +72,7 @@
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="pressure_max">
          <property name="suffix">
-          <string>torr</string>
+          <string/>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -74,7 +82,7 @@
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="pressure_min">
          <property name="suffix">
-          <string>torr</string>
+          <string/>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -96,14 +104,14 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="2">
+     <item row="6" column="1">
       <widget class="QPushButton" name="apply_filters">
        <property name="text">
         <string>Apply Filters</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="3" column="1">
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
@@ -121,7 +129,10 @@
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="numax">
          <property name="suffix">
-          <string>cm^-1</string>
+          <string/>
+         </property>
+         <property name="decimals">
+          <number>0</number>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -131,7 +142,10 @@
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="numin">
          <property name="suffix">
-          <string>cm^-1</string>
+          <string/>
+         </property>
+         <property name="decimals">
+          <number>0</number>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -153,12 +167,12 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="2">
+     <item row="5" column="1">
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="temp_max">
          <property name="suffix">
-          <string>K</string>
+          <string/>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -194,7 +208,7 @@
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="temp_min">
          <property name="suffix">
-          <string>K</string>
+          <string/>
          </property>
          <property name="maximum">
           <double>1000000000000000019884624838656.000000000000000</double>
@@ -203,24 +217,24 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="2">
+     <item row="4" column="1">
       <widget class="QCheckBox" name="temp_check">
        <property name="text">
-        <string>Temperature</string>
+        <string>Temperature (Kelvin)</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>
