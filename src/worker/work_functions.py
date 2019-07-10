@@ -371,7 +371,7 @@ class WorkFunctions:
                         'Bad connection: Failed to connect to send request. Check your connection.')
             else:
                 return FetchError(
-                        FetchErrorKind.FailedToRetreiveData,
+                        FetchErrorKind.FailedToRetrieveData,
                         'Fetch failure: Failed to fetch data (connected successfully, received '
                         'HTTP error as response)')
 

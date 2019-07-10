@@ -77,7 +77,7 @@ class GraphingWidget(QtWidgets.QWidget):
         # Changed to gamma_air, gamma_self proportion
         # self.broadening_parameter: QComboBox = None
         self.gamma_air: QDoubleSpinBox = None
-        self.gamma_self: QLabel = None
+        self.gamma_self: QDoubleSpinBox = None
         self.data_name: QComboBox = None
         self.graph_button: QPushButton = None
         self.line_profile: QComboBox = None
@@ -112,11 +112,9 @@ class GraphingWidget(QtWidgets.QWidget):
         self.graph_button.clicked.connect(self.graph)
         self.graph_type.currentTextChanged.connect(self.__on_graph_type_changed)
         self.data_name.currentTextChanged.connect(self.__on_data_name_changed)
-        self.gamma_air.valueChanged.connect(self.__on_gamma_air_changed)
 
         # Set initial values automatically for gamma_air and gamma_self
         self.gamma_air.setValue(0.0)
-        self.__on_gamma_air_changed(0.0)
 
         self.update_existing_window_items()
         self.populate_graph_types()
@@ -401,6 +399,8 @@ class GraphingWidget(QtWidgets.QWidget):
             self.xsc = result['xsc']
             self.use_existing_window.setChecked(self.same_window_checked)
 
+        self.broadener_input.set_table(new_table)
+
         worker = HapiWorker(WorkRequest.TABLE_META_DATA, {'table_name': new_table}, callback)
         self.workers.append(worker)
         worker.start()
@@ -424,9 +424,6 @@ class GraphingWidget(QtWidgets.QWidget):
         self.pressure.setEnabled(enabled)
         self.line_profile.setEnabled(enabled)
 
-    def __on_gamma_air_changed(self, new_value: float):
-        self.gamma_self.setText('{:8.4f}'.format(1.0 - new_value))
-
     ##
     # Getters
     ##
@@ -436,8 +433,12 @@ class GraphingWidget(QtWidgets.QWidget):
         :returns: a dictionary containing all of the broadening parameters (currently,
         that is just gamma_air and gamma_self).
         """
+        diluent = self.broadener_input.get_diluent()
         gamma_air = self.gamma_air.value()
-        return {'air': gamma_air, 'self': 1.0 - gamma_air}
+        diluent['air'] = gamma_air
+        diluent['self'] = self.gamma_self.value()
+        print(diluent)
+        return diluent
 
     def get_data_name(self):
         """

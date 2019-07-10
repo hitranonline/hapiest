@@ -2844,7 +2844,7 @@ def prepareParlist(pargroups=[], params=[], dotpar=True):
 
     # Iterate over single parameters.
     for param in params:
-        param = param.lower()
+        # param = param.lower()
         parlist.append(param)
 
     # Clean up parameter list.

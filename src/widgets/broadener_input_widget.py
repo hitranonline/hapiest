@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QCheckBox, QSpacerItem, QSizePolicy, \
     QDoubleSpinBox, QComboBox, QPushButton, QVBoxLayout, QScrollArea
 
+from metadata.table_header import TableHeader
+
 
 class BroadenerItemWidget(QWidget):
 
@@ -28,16 +30,26 @@ class BroadenerItemWidget(QWidget):
 
         self.setLayout(self.hlayout)
 
+    def get_value(self):
+        return self.proportion.value()
+
 
 class BroadenerInputWidget(QWidget):
 
-    BROADENERS = {"b1", "b2", "b3", "b4", "b5", "b6", "b7S"}
+    BROADENERS = {"gamma_CO2", "gamma_H2", "gamma_He"}
+
+    BROADENER_NAME_MAP = {
+        "gamma_CO2": "CO2",
+        "gamma_H2": "H2",
+        "gamma_He": "He"
+    }
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
 
+        self.broadeners = set()
+
         self.selected_broadener = QComboBox()
-        self.selected_broadener.addItems(BroadenerInputWidget.BROADENERS)
 
         self.add_broadener = QPushButton()
         self.add_broadener.setText("Add Broadener")
@@ -71,6 +83,33 @@ class BroadenerInputWidget(QWidget):
 
         self.update_widgets()
 
+    def set_table(self, table):
+        table = TableHeader(table)
+        # This table is either not a table, or missing a header. In either case, it cant be used
+        if not table.populated:
+            self.setDisabled(True)
+            return
+
+        if len(table.extra) == 0:
+            self.setDisabled(True)
+            return
+
+        self.setEnabled(True)
+
+        pre_broadeners = BroadenerInputWidget.BROADENERS.intersection(table.extra)
+        # Go from 'gamma_CO2' to 'CO2'
+        self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[pb] for pb in pre_broadeners}
+
+        self.update_widgets()
+
+    def get_diluent(self):
+        diluent = {}
+
+        for name in self.added_broadener_names:
+            diluent[name] = self.broadener_items[name].get_value()
+
+        return diluent
+
     def update_widgets(self):
         # Removes all items from broadener_item_layout, and adds the ones that are in
         # added_broadener_names. Then updates selected_broadener to only contain the names
@@ -91,7 +130,7 @@ class BroadenerInputWidget(QWidget):
 
         self.selected_broadener.clear()
         self.selected_broadener.addItems(
-                list(BroadenerInputWidget.BROADENERS.difference(self.added_broadener_names)))
+                list(self.broadeners.difference(self.added_broadener_names)))
 
         if len(self.selected_broadener) == 0:
             self.add_broadener.setDisabled(True)
