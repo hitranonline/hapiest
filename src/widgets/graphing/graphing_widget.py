@@ -2,12 +2,12 @@ import builtins
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import QComboBox, QLayout, QLabel, QDoubleSpinBox, QLineEdit, QPushButton, \
-    QCheckBox, QFormLayout, QWidget
+    QCheckBox, QWidget
 from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
 from utils.log import err_log
-from widgets.broadener_input_widget import BroadenerInputWidget
+from widgets.graphing.broadener_input_widget import BroadenerInputWidget
 from widgets.graphing.band_display_widget import BandDisplayWidget
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from worker.hapi_worker import HapiWorker
