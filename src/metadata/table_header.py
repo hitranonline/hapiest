@@ -14,7 +14,7 @@ class TableHeader:
             self.format = parsed['format']
             self.default = parsed['default']
             self.order = parsed['order']
-            self.extra = set(parsed['extra'])
+            self.extra = parsed['extra']
             self.extra_format = parsed['extra_format']
             self.populated = True
         except IOError as e:

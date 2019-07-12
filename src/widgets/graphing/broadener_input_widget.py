@@ -60,6 +60,8 @@ class BroadenerInputWidget(QWidget):
     def __init__(self, parent):
         QWidget.__init__(self, parent)
 
+        self.table: TableHeader = None
+
         self.broadeners = set()
         self.broadener_items = {}
 
@@ -82,6 +84,8 @@ class BroadenerInputWidget(QWidget):
 
     def set_table(self, table):
         table = TableHeader(table)
+        self.table = table
+
         # This table is either not a table, or missing a header. In either case, it cant be used
         if not table.populated:
             self.setDisabled(True)
@@ -93,9 +97,10 @@ class BroadenerInputWidget(QWidget):
 
         self.setEnabled(True)
 
-        pre_broadeners = BroadenerInputWidget.BROADENERS.intersection(table.extra)
+        extras = table.non_empty_extra_fields()
+        broadeners = BroadenerInputWidget.BROADENERS.intersection(extras)
         # Go from 'gamma_CO2' to 'CO2'
-        self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[pb] for pb in pre_broadeners}
+        self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
 
         self.update_widgets()
 
