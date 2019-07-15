@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QCheckBox, QSpacerItem, QSizePolicy, \
     QDoubleSpinBox, QComboBox, QPushButton, QVBoxLayout, QScrollArea
 
+from metadata.broadener_availability import BroadenerAvailability
+from metadata.hapi_metadata import HapiMetaData
 from metadata.table_header import TableHeader
 
 
@@ -82,9 +84,12 @@ class BroadenerInputWidget(QWidget):
 
         self.update_widgets()
 
-    def set_table(self, table):
-        table = TableHeader(table)
+    def set_table(self, table_name):
+        table = TableHeader(table_name)
         self.table = table
+        self.hmd = HapiMetaData(table_name)
+
+        self.broadener_availability = BroadenerAvailability(self.hmd.molecule_id())
 
         # This table is either not a table, or missing a header. In either case, it cant be used
         if not table.populated:
@@ -97,8 +102,10 @@ class BroadenerInputWidget(QWidget):
 
         self.setEnabled(True)
 
-        extras = table.non_empty_extra_fields()
-        broadeners = BroadenerInputWidget.BROADENERS.intersection(extras)
+        extras = set(table.extra)
+        broadeners = BroadenerInputWidget.BROADENERS\
+            .intersection(extras)\
+            .intersection(self.broadener_availability.broadeners)
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
 

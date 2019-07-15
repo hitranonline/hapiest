@@ -1,13 +1,10 @@
-"""
-
-"""
-
 from PyQt5 import QtGui, uic
 from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from hapi import PARAMETER_GROUPS, PARLIST_ALL
+from metadata.broadener_availability import BroadenerAvailability
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
 from utils.fetch_error import FetchErrorKind
@@ -39,8 +36,8 @@ class FetchWidget(QWidget):
         self.molecule_id: QComboBox = None
         self.numax: QDoubleSpinBox = None
         self.numin: QDoubleSpinBox = None
-        self.iso_list = None
-        self.param_group_list = None
+        self.iso_list: QListWidget = None
+        self.param_group_list: QListWidget = None
         self.param_list = None
         self.select_button: QPushButton = None
         self.edit_button: QPushButton = None
@@ -100,8 +97,14 @@ class FetchWidget(QWidget):
         that HITRAN has to offer.
         """
 
-        for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if
-                      item[0].isalpha()]:
+        ba = BroadenerAvailability(self.molecule_id.currentText())
+        if not ba.molecule.populated:
+            return
+
+        self.param_group_list.clear()
+        self.param_list.clear()
+
+        for group in sorted(list(ba.parameter_groups()), key=str.lower):
             item = QtWidgets.QListWidgetItem(group)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
@@ -110,7 +113,7 @@ class FetchWidget(QWidget):
             self.param_group_list.addItem(item)
 
         # Add all parameter groups to the parameter groups list.
-        for par in sorted(PARLIST_ALL, key=str.lower):
+        for par in sorted(list(ba.parameters()), key=str.lower):
             item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
@@ -233,6 +236,7 @@ class FetchWidget(QWidget):
         if not molecule.is_populated():
             return
 
+        self.populate_parameter_lists()
         self.data_name.setText(str(molecule.name).lower().replace(' ', '_').strip())
 
         molecule = IsotopologueMeta(molecule.id, 1)

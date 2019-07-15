@@ -28,20 +28,23 @@ from widgets.graphing.broadener_input_widget import BroadenerInputWidget
 BROADENERS = BroadenerInputWidget.BROADENERS
 
 def check_availability(molecule: MoleculeMeta):
-    iso = IsotopologueMeta.from_molecule_id(molecule.id)
-    hapi.fetch_by_ids("TempTable", [iso.id], numin=200,numax=500,Parameters=BROADENERS)
-    table_header = TableHeader("TempTable")
-    with open("__temp_data/TempTable.data") as f:
-        line = f.readline()
+    try:
+        iso = IsotopologueMeta.from_molecule_id(molecule.id)
+        hapi.fetch_by_ids("TempTable", [iso.id], numin=200,numax=500,Parameters=BROADENERS)
+        table_header = TableHeader("TempTable")
+        with open("__temp_data/TempTable.data") as f:
+            line = f.readline()
 
-    segments = line.split(',')
-    assert len(segments) == (len(BROADENERS) + 1)
-    segments = segments[1:]
-    available_broadeners = set()
-    for s, i in zip(segments, range(len(segments))):
-        if "#" not in s:
-            available_broadeners.add(table_header.extra[i])
-    return available_broadeners
+        segments = line.split(',')
+        assert len(segments) == (len(BROADENERS) + 1)
+        segments = segments[1:]
+        available_broadeners = set()
+        for s, i in zip(segments, range(len(segments))):
+            if "#" not in s:
+                available_broadeners.add(table_header.extra[i])
+        return list(available_broadeners)
+    except:
+        return ()
 
 
 def generate_availability():
