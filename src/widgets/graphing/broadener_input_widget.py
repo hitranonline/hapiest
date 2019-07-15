@@ -51,12 +51,13 @@ class BroadenerItemWidget(QWidget):
 
 class BroadenerInputWidget(QWidget):
 
-    BROADENERS = {"gamma_CO2", "gamma_H2", "gamma_He"}
+    BROADENERS = {"gamma_co2", "gamma_h2", "gamma_he", "gamma_h2o"}
 
     BROADENER_NAME_MAP = {
-        "gamma_CO2": "CO2",
-        "gamma_H2": "H2",
-        "gamma_He": "He"
+        "gamma_co2": "CO2",
+        "gamma_h2": "H2",
+        "gamma_he": "He",
+        "gamma_h2o": "H2O"
     }
 
     def __init__(self, parent):
@@ -87,28 +88,26 @@ class BroadenerInputWidget(QWidget):
     def set_table(self, table_name):
         table = TableHeader(table_name)
         self.table = table
-        self.hmd = HapiMetaData(table_name)
+        hmd = HapiMetaData(table_name)
 
-        self.broadener_availability = BroadenerAvailability(self.hmd.molecule_id())
+        self.broadener_availability = BroadenerAvailability(hmd.molecule_id())
 
         # This table is either not a table, or missing a header. In either case, it cant be used
         if not table.populated:
             self.setDisabled(True)
             return
 
-        if len(table.extra) == 0:
-            self.setDisabled(True)
-            return
-
         self.setEnabled(True)
 
         extras = set(table.extra)
+        print(extras)
         broadeners = BroadenerInputWidget.BROADENERS\
             .intersection(extras)\
             .intersection(self.broadener_availability.broadeners)
+
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
-
+        print(self.broadeners)
         self.update_widgets()
 
     def get_diluent(self):

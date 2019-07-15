@@ -17,20 +17,25 @@ Current possible issues:
 
 import json
 import sys
+import traceback
 
 import hapi
+from metadata.broadener_availability import BroadenerAvailability
 from metadata.config import Config
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
 from metadata.table_header import TableHeader
 from widgets.graphing.broadener_input_widget import BroadenerInputWidget
 
-BROADENERS = BroadenerInputWidget.BROADENERS
+
+BROADENERS = BroadenerAvailability.hitran_parameter_fix(BroadenerInputWidget.BROADENERS)
+params = list(BROADENERS) + hapi.PARLIST_DOTPAR
+
 
 def check_availability(molecule: MoleculeMeta):
     try:
         iso = IsotopologueMeta.from_molecule_id(molecule.id)
-        hapi.fetch_by_ids("TempTable", [iso.id], numin=200,numax=500,Parameters=BROADENERS)
+        hapi.fetch_by_ids("TempTable", [iso.id], numin=200,numax=500, Parameters=BROADENERS)
         table_header = TableHeader("TempTable")
         with open("__temp_data/TempTable.data") as f:
             line = f.readline()
@@ -44,6 +49,7 @@ def check_availability(molecule: MoleculeMeta):
                 available_broadeners.add(table_header.extra[i])
         return list(available_broadeners)
     except:
+        traceback.print_exc()
         return ()
 
 
@@ -61,7 +67,7 @@ def generate_availability_():
     hapi.db_begin(Config.data_folder)
 
     records = dict()
-    for molecule_id in range(0, 100):
+    for molecule_id in range(0, 35):
         molecule = MoleculeMeta(molecule_id)
         if not molecule.is_populated():
             continue
@@ -69,5 +75,7 @@ def generate_availability_():
 
     with open(f"res/broadeners/availability.json", "w+") as f:
         f.write(json.dumps(records, indent=2, sort_keys=True))
+
+    print(records)
 
     sys.exit(0)
