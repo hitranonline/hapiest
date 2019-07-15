@@ -100,14 +100,12 @@ class BroadenerInputWidget(QWidget):
         self.setEnabled(True)
 
         extras = set(table.extra)
-        print(extras)
         broadeners = BroadenerInputWidget.BROADENERS\
             .intersection(extras)\
             .intersection(self.broadener_availability.broadeners)
 
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
-        print(self.broadeners)
         self.update_widgets()
 
     def get_diluent(self):

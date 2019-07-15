@@ -72,7 +72,5 @@ class BroadenerAvailability:
         for param in BroadenerAvailability.__PARAMETER_MAP:
             if param not in self.broadeners:
                 parameters.remove(param)
-        print(self.broadeners)
-
 
         return set(BroadenerAvailability.hitran_parameter_fix(parameters))

@@ -12,22 +12,22 @@ class HapiMetaData:
 
     def __init__(self, table_name: str, iso_id_list: List[GlobalIsotopologueId] = None,
                  numin: float = None, numax: float = None, dirty_cells: List[Tuple[int, int]] = ()):
-        self.iso_tuples = ()
-        self.table_name = table_name
-        self.dirty_cells = set([])
-        if iso_id_list is None:
-            if not self.initialize_from_file():
-                # This should hopefully only be executed in the worker process (since the
-                # LOCAL_TABLE_CACHE is not
-                # populated in the gui process)
-                self.initialize_from_hapi_table(table_name)
+            self.iso_tuples = ()
+            self.table_name = table_name
+            self.dirty_cells = set([])
+            if iso_id_list is None and table_name:
+                if not self.initialize_from_file():
+                    # This should hopefully only be executed in the worker process (since the
+                    # LOCAL_TABLE_CACHE is not
+                    # populated in the gui process)
+                    self.initialize_from_hapi_table(table_name)
+                    self.save()
+            else:
+                self.isos = iso_id_list
+                self.numin = numin
+                self.numax = numax
+                self.dirty_cells = set(dirty_cells)
                 self.save()
-        else:
-            self.isos = iso_id_list
-            self.numin = numin
-            self.numax = numax
-            self.dirty_cells = set(dirty_cells)
-            self.save()
 
     def molecule_id(self):
         if len(self.iso_tuples) == 0:

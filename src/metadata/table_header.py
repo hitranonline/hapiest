@@ -17,7 +17,5 @@ class TableHeader:
             self.extra = parsed['extra']
             self.extra_format = parsed['extra_format']
             self.populated = True
-        except IOError as e:
-            print(f"Encountered io error: {str(e)}")
-        except Exception as e:
-            print(f"Encountered error: {str(e)}")
+        except:
+            pass # The file probably doesnt exist
