@@ -55,7 +55,6 @@ class GraphingWidget(QtWidgets.QWidget):
         self.wn_widget: QWidget = None
         self.wn_cfg_widget: QWidget = None
         self.env_widget: QWidget = None
-        self.mixing_ratio_widget: QWidget = None
         self.graph_type_widget: QWidget = None
 
         self.backend: QComboBox = None
@@ -74,10 +73,6 @@ class GraphingWidget(QtWidgets.QWidget):
         self.intensity_threshold_enabled: QCheckBox = None
         self.numax: QDoubleSpinBox = None
         self.numin: QDoubleSpinBox = None
-        # Changed to gamma_air, gamma_self proportion
-        # self.broadening_parameter: QComboBox = None
-        self.gamma_air: QDoubleSpinBox = None
-        self.gamma_self: QDoubleSpinBox = None
         self.data_name: QComboBox = None
         self.graph_button: QPushButton = None
         self.line_profile: QComboBox = None
@@ -112,9 +107,6 @@ class GraphingWidget(QtWidgets.QWidget):
         self.graph_button.clicked.connect(self.graph)
         self.graph_type.currentTextChanged.connect(self.__on_graph_type_changed)
         self.data_name.currentTextChanged.connect(self.__on_data_name_changed)
-
-        # Set initial values automatically for gamma_air and gamma_self
-        self.gamma_air.setValue(0.0)
 
         self.update_existing_window_items()
         self.populate_graph_types()
@@ -328,7 +320,6 @@ class GraphingWidget(QtWidgets.QWidget):
         self.wn_cfg_widget.setEnabled(True)
         self.graph_button.setEnabled(True)
         self.env_widget.setEnabled(True)
-        self.mixing_ratio_widget.setEnabled(True)
         self.graph_type_widget.setEnabled(True)
 
         if graph_type == GraphingWidget.ABSORPTION_COEFFICIENT_STRING:
@@ -343,7 +334,6 @@ class GraphingWidget(QtWidgets.QWidget):
             self.wn_widget.setEnabled(False)
             self.wn_cfg_widget.setEnabled(False)
             self.env_widget.setEnabled(False)
-            self.mixing_ratio_widget.setEnabled(False)
             self.spectrum_parameters_widget.setEnabled(False)
 
     def __handle_checkbox_toggle(self, checkbox, element):
@@ -407,8 +397,6 @@ class GraphingWidget(QtWidgets.QWidget):
 
     def set_xsc_mode(self, xsc_mode):
         enabled = not xsc_mode
-        self.gamma_air.setEnabled(enabled)
-        self.gamma_self.setEnabled(enabled)
         self.numin.setEnabled(enabled)
         self.numax.setEnabled(enabled)
         self.wn_step_enabled.setEnabled(enabled)
@@ -430,14 +418,9 @@ class GraphingWidget(QtWidgets.QWidget):
 
     def get_diluent(self):
         """
-        :returns: a dictionary containing all of the broadening parameters (currently,
-        that is just gamma_air and gamma_self).
+        :returns: a dictionary containing all of the broadening parameters
         """
         diluent = self.broadener_input.get_diluent()
-        gamma_air = self.gamma_air.value()
-        diluent['air'] = gamma_air
-        diluent['self'] = self.gamma_self.value()
-        print(diluent)
         return diluent
 
     def get_data_name(self):

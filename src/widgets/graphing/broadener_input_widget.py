@@ -9,8 +9,8 @@ from metadata.table_header import TableHeader
 
 class BroadenerItemWidget(QWidget):
 
-    def __init__(self, broadener: str):
-        QWidget.__init__(self)
+    def __init__(self, parent, broadener: str):
+        QWidget.__init__(self, parent)
 
         self.broadener = broadener
 
@@ -22,6 +22,7 @@ class BroadenerItemWidget(QWidget):
 
         # Spin box with two decimal places, constant size, range from 0 to 1
         self.proportion = QDoubleSpinBox()
+        self.proportion.valueChanged.connect(self.__on_value_changed)
         self.proportion.setDecimals(2)
         self.proportion.setRange(0.0, 1.0)
         self.proportion.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
@@ -38,6 +39,9 @@ class BroadenerItemWidget(QWidget):
         self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
 
         self.setLayout(self.hlayout)
+
+    def __on_value_changed(self, checked):
+        self.parent.on_value_updated()
 
     def __on_enabled_toggled(self, checked):
         self.proportion.setEnabled(checked)
@@ -62,6 +66,8 @@ class BroadenerInputWidget(QWidget):
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
+
+        self.parent = parent
 
         self.table: TableHeader = None
 
@@ -106,6 +112,8 @@ class BroadenerInputWidget(QWidget):
 
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
+        self.broadeners.add("self")
+        self.broadeners.add("air")
         self.update_widgets()
 
     def get_diluent(self):
@@ -128,9 +136,24 @@ class BroadenerInputWidget(QWidget):
                 break
             a.widget().hide()
 
-        for name in self.broadeners:
+        broadeners = list(self.broadeners)  # Clone the list so we dont modify it
+
+        if "self" in broadeners: broadeners.remove("self")
+        if "air" in broadeners: broadeners.remove("air")
+
+        def show(name):
             if name not in self.broadener_items:
-                self.broadener_items[name] = BroadenerItemWidget(name)
+                self.broadener_items[name] = BroadenerItemWidget(self, name)
 
             self.broadener_items[name].show()
             self.broadener_item_layout.addWidget(self.broadener_items[name])
+
+
+        show("self")
+        show("air")
+
+        for name in broadeners:
+            show(name)
+
+    def on_value_updated(self):
+        self.parent.on_value_updated()
