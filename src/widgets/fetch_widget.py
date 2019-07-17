@@ -94,11 +94,29 @@ class FetchWidget(QWidget):
             'default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
+        self.param_all_last = 0;
     def populate_parameter_lists(self):
         """
         Populates the parameter lists with all parameters / parameter groups
         that HITRAN has to offer.
         """
+
+        def sel_all():
+            """
+            Enables clicking the 'all' list item to toggle all other items
+            in the parameter group list
+            """
+            if self.param_group_list.item(0).checkState() != self.param_all_last:
+                self.param_all_last = self.param_group_list.item(0).checkState()
+                for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
+                    if item.text is not 'all':
+                        if self.param_group_list.item(0).checkState():
+                            item.setCheckState(QtCore.Qt.Checked)
+                        elif not self.param_group_list.item(0).checkState():
+                            item.setCheckState(QtCore.Qt.Unchecked)
+
+        #Signal has to be placed on the list rather than the 'all' item
+        self.param_group_list.itemClicked.connect(sel_all)
 
         for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if
                       item[0].isalpha()]:
@@ -117,6 +135,9 @@ class FetchWidget(QWidget):
             item.setCheckState(QtCore.Qt.Unchecked)
 
             self.param_list.addItem(item)
+
+
+
 
     def populate_molecule_list(self):
         """
