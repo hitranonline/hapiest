@@ -1,21 +1,15 @@
-import json
-import math
 from typing import *
 
-from PyQt5 import QtGui, QtWidgets, uic
-from PyQt5.QtChart import *
+from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QOpenGLWidget, QLabel, QMainWindow
 
 from graphing.graph_type import GraphType
-from graphing.hapi_series import HapiSeries
 from utils.colors import Colors
 from utils.hapiest_util import *
 from utils.log import *
-from widgets.graphing.hapi_chart_view import HapiChartView
 from widgets.graphing.mpl_widget import MplWidget
-from widgets.graphing.view_selector import ViewSelector
 from widgets.graphing.vispy_widget import VispyWidget
 from worker.hapi_worker import HapiWorker, WorkResult
 from worker.work_request import WorkRequest

@@ -1,6 +1,5 @@
 from typing import List, Dict
 
-from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QFrame, QScrollArea, QSizePolicy, QSpacerItem, QWidget, QCheckBox, \
     QLabel, QHBoxLayout, QVBoxLayout
@@ -8,7 +7,6 @@ from matplotlib.lines import Line2D
 import matplotlib.colors as mpc
 
 from data_structures.bands import Bands
-from graphing.hapi_series import HapiSeries
 
 from utils.hapiest_util import *
 

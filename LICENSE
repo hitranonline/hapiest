@@ -3,7 +3,6 @@ Third-party Software
 this program uses the following packages:
 
 - PyQt5 v5.9, GPL v3, available at: https://riverbankcomputing.com/software/pyqt/intro
-- PyQtChart v5.9, GPL v3, available at: https://www.riverbankcomputing.com/software/pyqtchart/intro
 - toml v0.9.3, MIT License, available at: https://github.com/uiri/toml
 - parsy v1.2.0, MIT License, available at: https://github.com/python-parsy/parsy
 - hapi v1.1.0.7, MIT License, available at: http://hitran.org/hapi/

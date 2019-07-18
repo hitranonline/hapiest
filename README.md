@@ -34,7 +34,6 @@ This will download the latest version of hapiest and put it in a folder named ha
 you must have the following packages installed:
 
 - PyQt5
-- PyQtChart
 - vispy
 - numpy
 - matplotlib

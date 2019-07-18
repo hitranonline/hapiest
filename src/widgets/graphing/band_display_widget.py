@@ -1,28 +1,18 @@
-import functools
-import math
-from itertools import cycle
-from time import sleep
-
 from PyQt5 import QtGui, uic
-from PyQt5.QtChart import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QSplitter
+from PyQt5.QtWidgets import QMainWindow, QSplitter
 from typing import Dict
 
 from matplotlib.lines import Line2D
 
 from graphing.graph_type import GraphType
-from graphing.hapi_series import HapiSeries
 
 from data_structures.bands import Bands
-from metadata.config import Config
-from utils.colors import Colors
 from utils.hapiest_util import program_icon
 from utils.log import *
-from widgets.graphing.band_legend import BandLegend, LegendItem
+from widgets.graphing.band_legend import BandLegend
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
-from widgets.graphing.hapi_chart_view import HapiChartView
 from widgets.graphing.mpl_widget import MplWidget
 from widgets.graphing.vispy_widget import VispyWidget
 from worker.hapi_worker import HapiWorker
