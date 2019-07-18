@@ -65,6 +65,8 @@ class ViewWidget(QWidget):
         *Disables view button, displays table.*
         """
         table_name = self.get_table_name()
+        if not table_name:
+            return
         self.view_button.setDisabled(True)
         if self.table:
             self.table.close_table()
