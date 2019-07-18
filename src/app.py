@@ -85,12 +85,20 @@ def run():
     if not os.path.exists(Config.data_folder):
         os.makedirs(Config.data_folder)
 
-    if len(sys.argv) > 1 and sys.argv[1] == 'test':
-        import test
+    if len(sys.argv) > 1:
+        if sys.argv[1] in {'--test', '-t'}:
+            import test
 
-        test.run_tests()
-        return 0
-
+            test.run_tests()
+            return 0
+        elif sys.argv[1] in ('--download-molecule-images', '-dmi'):
+            import res_gen.image_downloader as id
+            id.download_images()
+            return 0
+        elif sys.argv[1] in ("-gba", "--generate-broadener-availability"):
+            import res_gen.generate_broadener_availability as gba
+            gba.generate_availability()
+            return 0
     if Config.high_dpi:
         # Enable High DPI display with PyQt5
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

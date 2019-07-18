@@ -104,7 +104,6 @@ class MainWindowWidget(QMainWindow):
         if self.about_window:
             self.about_window.close()
         for widget in list(GraphDisplayWidget.graph_windows.values()):
-            print(widget)
             widget.close()
         for widget in list(SelectWidget.instances):
             widget.close()

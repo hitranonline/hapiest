@@ -64,6 +64,7 @@ class WorkFunctions:
             print('Done initializing hapi db...')
         except Exception as e:
             print('Error initializing hapi db...' + str(e))
+            traceback.print_exc()
             return False
 
         # All file names in the data folder
@@ -75,6 +76,7 @@ class WorkFunctions:
                 hmd.initialize_from_hapi_table(key)
                 hmd.save()
         for filename in os.listdir(Config.data_folder):
+            print(filename)
             if filename.endswith('.xsc'):
                 add_xsc_to_cache(filename)
 
@@ -371,7 +373,7 @@ class WorkFunctions:
                         'Bad connection: Failed to connect to send request. Check your connection.')
             else:
                 return FetchError(
-                        FetchErrorKind.FailedToRetreiveData,
+                        FetchErrorKind.FailedToRetrieveData,
                         'Fetch failure: Failed to fetch data (connected successfully, received '
                         'HTTP error as response)')
 
