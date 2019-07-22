@@ -14,10 +14,13 @@ class BroadenerAvailability:
         "gamma_h2o": {"voigt_h2o"}
     }
 
+    __PARAMETER_BLACKLIST = set() # empty set for now
+    __PARAMETER_GROUP_BLACKLIST = {".par", "160-char", "par_line"}
+
     # Since case matters when querying HITRAN, we'll use lowercase all the time
     # except here, where we will fix casing for HITRAN compliant
     # HAPI uses lowercase names for already downloaded data :(\
-    __PARAM_HITRAN_FIX = {
+    __PARAMETER_HITRAN_FIX = {
         "gamma_co2": "gamma_CO2",
         "gamma_h2": "gamma_H2",
         "gamma_he": "gamma_He",
@@ -27,8 +30,8 @@ class BroadenerAvailability:
     @staticmethod
     def hitran_parameter_fix(params):
         def fix(param):
-            if param in BroadenerAvailability.__PARAM_HITRAN_FIX:
-                return BroadenerAvailability.__PARAM_HITRAN_FIX[param]
+            if param in BroadenerAvailability.__PARAMETER_HITRAN_FIX:
+                return BroadenerAvailability.__PARAMETER_HITRAN_FIX[param]
             else:
                 return param
 
@@ -64,6 +67,10 @@ class BroadenerAvailability:
                 for p in BroadenerAvailability.__PARAMETER_MAP[req_param]:
                     groups.remove(p)
 
+        for group in BroadenerAvailability.__PARAMETER_GROUP_BLACKLIST:
+            if group in groups:
+                groups.remove(group)
+
         return groups
 
     def parameters(self):
@@ -71,6 +78,10 @@ class BroadenerAvailability:
 
         for param in BroadenerAvailability.__PARAMETER_MAP:
             if param not in self.broadeners:
+                parameters.remove(param)
+
+        for param in BroadenerAvailability.__PARAMETER_BLACKLIST:
+            if param in parameters:
                 parameters.remove(param)
 
         return set(BroadenerAvailability.hitran_parameter_fix(parameters))
