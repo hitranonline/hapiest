@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import hapi
-from metadata.broadener_availability import BroadenerAvailability
+from metadata.parameter_availability import ParameterAvailability
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
 from utils.fetch_error import FetchErrorKind
@@ -137,7 +137,7 @@ class FetchWidget(QWidget):
         """
         Populates the parameter lists with all parameters from a specific group.
         """
-        ba = BroadenerAvailability(self.molecule_id.currentText())
+        ba = ParameterAvailability(self.molecule_id.currentText())
         if not ba.molecule.populated:
             return
 
