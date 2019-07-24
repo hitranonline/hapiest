@@ -42,7 +42,6 @@ class MplWidget(QWidget):
         self.canvas = MplCanvas()
         self.parent().addToolBar(QtCore.Qt.BottomToolBarArea,
                         NavigationToolbar2QT(self.canvas, self))
-        print("?")
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.canvas)
         self.setLayout(self.layout)
