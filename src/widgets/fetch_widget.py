@@ -3,7 +3,7 @@ from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from hapi import PARAMETER_GROUPS, PARLIST_ALL
+from hapi import PARAMETER_GROUPS, PARLIST_ALL, mergeParlist
 from metadata.broadener_availability import BroadenerAvailability
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
@@ -31,6 +31,7 @@ class FetchWidget(QWidget):
         self.children = []
 
         self.data_name: QLineEdit = None
+        self.clear_param_button: QPushButton = None
         self.fetch_button: QPushButton = None
         self.list_container: QWidget = None
         self.molecule_id: QComboBox = None
@@ -68,6 +69,7 @@ class FetchWidget(QWidget):
         self.numin.valueChanged.connect(self.__numin_change)
         self.edit_button.clicked.connect(self.__on_edit_clicked)
         self.select_button.clicked.connect(self.__on_select_clicked)
+        self.clear_param_button.clicked.connect(self.__clear_lists)
 
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
@@ -92,32 +94,15 @@ class FetchWidget(QWidget):
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
         self.param_all_last = 0;
+
     def populate_parameter_lists(self):
         """
         Populates the parameter lists with all parameters / parameter groups
         that HITRAN has to offer.
         """
-        def sel_all():
-            """
-            Enables clicking the 'all' list item to toggle all other items
-            in the parameter group list
-            """
-
-            for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
-                if item.text() == 'all':
-                    all_item = item
-            #determines if the all item was clicked, updates the rest of the list if with its new state
-            if all_item.checkState() != self.param_all_last:
-                self.param_all_last = all_item.checkState()
-                for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
-                    if item.text is not 'all':
-                        if all_item.checkState():
-                            item.setCheckState(QtCore.Qt.Checked)
-                        elif not all_item.checkState():
-                            item.setCheckState(QtCore.Qt.Unchecked)
-
         #Signal has to be placed on the list rather than the 'all' listitem
-        self.param_group_list.itemClicked.connect(sel_all)
+        self.param_group_list.itemClicked.connect(self.group_select)
+        # self.param_list.itemClicked.connect(self.param_select)
 
         for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if
                       item[0].isalpha()]:
@@ -129,12 +114,13 @@ class FetchWidget(QWidget):
         self.param_list.clear()
 
         for group in sorted(list(ba.parameter_groups()), key=str.lower):
-            item = QtWidgets.QListWidgetItem(group)
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            if group != '.par' and group != 'par_line':
+                item = QtWidgets.QListWidgetItem(group)
+                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
-            item.setCheckState(QtCore.Qt.Unchecked)
+                item.setCheckState(QtCore.Qt.Unchecked)
 
-            self.param_group_list.addItem(item)
+                self.param_group_list.addItem(item)
 
         # Add all parameter groups to the parameter groups list.
         for par in sorted(list(ba.parameters()), key=str.lower):
@@ -145,7 +131,68 @@ class FetchWidget(QWidget):
 
             self.param_list.addItem(item)
 
+    def get_checked_list(self):
+        result = []
+        for i in range(self.param_list.count()):
+            list_item = self.param_list.item(i)
+            if list_item.checkState() == QtCore.Qt.Checked:
+                result.append(list_item)
+        return result
 
+    def get_checked_group(self):
+        result = []
+        for i in range(self.param_group_list.count()):
+            list_item = self.param_group_list.item(i)
+            if list_item.checkState() == QtCore.Qt.Checked:
+                result.append(list_item)
+        return result
+
+    def check_param(self, p):
+        """
+        Assigns Checked to the list item corresponding to the string passed in
+        :param p: Name of QListWidgetItem to set checked
+        """
+        for i in range(self.param_list.count()):
+            list_item = self.param_list.item(i)
+            if list_item.checkState() != QtCore.Qt.Checked:
+                if list_item.text() == p:
+                    list_item.setCheckState(QtCore.Qt.Checked)
+
+    def group_select(self):
+        """
+        Enables clicking the 'all' list item to toggle all other items
+        in the parameter group list, and links parameter groups to their elements.
+        """
+        pgroup_list = self.get_checked_group()
+        # plist = self.get_checked_list()
+        param_groups = []
+        params = []
+
+        # Finds the all_item
+        for i in range(self.param_group_list.count()):
+            list_item = self.param_group_list.item(i)
+            if list_item.text() == 'all':
+                all_item = list_item
+
+        # Determines if the all item was clicked, updates the rest of the list if with its new state
+        if all_item.checkState() != self.param_all_last:
+            self.param_all_last = all_item.checkState()
+            for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
+                if item.text is not 'all':
+                    if all_item.checkState():
+                        item.setCheckState(QtCore.Qt.Checked)
+                    elif not all_item.checkState():
+                        item.setCheckState(QtCore.Qt.Unchecked)
+        # Link groups to parameters
+        for list_item in pgroup_list:
+            if list_item.text() in PARAMETER_GROUPS:
+                param_groups.append(PARAMETER_GROUPS[list_item.text()])
+        for group in param_groups:
+            for key in group:
+                if key not in params:
+                    params.append(key)
+        for p in params:
+            self.check_param(p)
 
 
     def populate_molecule_list(self):
@@ -359,6 +406,12 @@ class FetchWidget(QWidget):
         new_select_window.show()
 
         SelectWidget.set_table_names(get_all_data_names())
+
+    def __clear_lists(self):
+        for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
+        for item in self.param_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
 
     def set_molecule_id(self, molecule_id):
         self.molecule_id.setCurrentText(molecule_id)
