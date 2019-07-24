@@ -29,31 +29,44 @@ PARAMETERS = hapi.PARLIST_ALL
 params = list(PARAMETERS) + hapi.PARLIST_DOTPAR
 
 
-def check_availability(molecule: MoleculeMeta, numin=200, numax=500):
-    try:
-        iso = IsotopologueMeta.from_molecule_id(molecule.id)
-        print(f"Trying to fetch for {iso.id} {numin}-{numax}")
-        hapi.fetch_by_ids("TempTable", [iso.id], numin=numin,numax=numax, Parameters=PARAMETERS)
-        table_header = TableHeader("TempTable")
-        with open("__temp_data/TempTable.data") as f:
-            line = f.readline()
+def check_availability(molecule: MoleculeMeta, numin=2000, numax=2050):
+    available_params = []
+    
+    for i in [".par", "160-char", "par_line"]:
+        available_params.append(i)
 
-        segments = line.split(',')
-        segments = segments[1:]
-        available_params = set()
-        for s, i in zip(segments, range(len(segments))):
-            if "#" not in s:
-                available_params.add(table_header.extra[i])
+    print(available_params)
 
-        for i in [".par", "160-char", "par_line"]:
-            available_params.add(i)
-        return list(available_params)
-    except:
-        if numin > 5000:
-            return ()
-        print("recursing")
-        return check_availability(molecule, numin+200, numin+200)
+    for param in params:
+        try:
+            iso = IsotopologueMeta.from_molecule_id(molecule.id)
+            print(f"Trying to fetch {param} for {iso.iso_name} {numin}-{numax}")
+            
+            hapi.fetch_by_ids("TempTable", [iso.id], numin=numin,numax=numax, Parameters=["par_line", param])
+            
+            table_header = TableHeader("TempTable")
+            
+            with open("__temp_data/TempTable.data") as f:
+                line = f.readline()
+    
+            segments = line.split(',')
+            if len(segments) == 1:
+                print(segments)
+                continue
+            segments = segments[1:]
+            print(segments)
+            assert len(segments) == 1
+            if "#" not in segments[0]:
+                available_params.append(param)
+                assert table_header.extra[0] == param
+                print("ADDED " + param)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(e)
+            pass
 
+    return list(set(available_params))
 
 def generate_availability():
     try:
@@ -75,7 +88,7 @@ def generate_availability_():
             continue
         records[molecule.id] = check_availability(molecule)
 
-    with open(f"res/broadeners/availability.json", "w+") as f:
+    with open(f"res/parameters/availability.json", "w+") as f:
         f.write(json.dumps(records, indent=2, sort_keys=True))
 
     print(records)
