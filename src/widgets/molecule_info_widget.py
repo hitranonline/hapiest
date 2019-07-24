@@ -80,7 +80,7 @@ class MoleculeInfoWidget(QWidget):
 
         self.button_container = QHBoxLayout()
 
-        if self.molecule.id < 100:
+        if self.molecule.has_lbl_data:
             self.button_container.addWidget(self.get_lbl_button)
         if len(CrossSectionMeta(self.molecule.id).metas) > 0:
             self.button_container.addWidget(self.get_xsc_button)

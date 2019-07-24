@@ -108,7 +108,7 @@ class BroadenerInputWidget(QWidget):
         extras = set(table.extra)
         broadeners = BroadenerInputWidget.BROADENERS\
             .intersection(extras)\
-            .intersection(self.broadener_availability.broadeners)
+            .intersection(self.parameter_availability.parameters())
 
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}

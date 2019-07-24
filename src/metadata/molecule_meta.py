@@ -3,7 +3,7 @@ from typing import Dict, List, Union, Optional
 
 from data_structures.cache import JsonCache
 from utils.hapi_api import CrossSectionApi
-
+from metadata.isotopologue_meta import IsotopologueMeta
 
 class Alias:
 
@@ -49,6 +49,15 @@ class MoleculeMeta:
 
         for molecule in data:
             mid = molecule['id']
+            
+            # If there is no info about the isotopologue (which is internal hapi data), we can't
+            # fetch data for this, so we shouldnt add its names and aliases to the list. 
+            mol_has_lbl_data = True
+            try:
+                im = IsotopologueMeta(mid, 1)
+            except:
+               mol_has_lbl_data = False
+
             MoleculeMeta.__NAME_TO_MID[molecule['common_name']] = mid
             MoleculeMeta.__FORMULA_TO_MID[molecule['ordinary_formula']] = mid
             MoleculeMeta.__MOLECULE_METADATA[molecule['id']] = molecule
@@ -72,7 +81,7 @@ class MoleculeMeta:
                     MoleculeMeta.__ALIAS_TO_MID[alias_str] = mid
 
             # line by line data is only available for molecules with id < 100
-            if mid < 100:
+            if mid < 100 and mol_has_lbl_data:
                 for alias in aliases:
                     if alias == molecule['inchikey'] or \
                        alias == molecule['inchi'] or \
@@ -147,6 +156,12 @@ class MoleculeMeta:
             self.html = self.mmd['ordinary_formula_html']
             self.name = self.mmd['common_name']
             self.id = self.mmd['id']
+
+            try:
+                iso = IsotopologueMeta(self.id, 1)
+                self.has_lbl_data = True
+            except:
+                self.has_lbl_data = False
         else:
             self.populated = False
 
