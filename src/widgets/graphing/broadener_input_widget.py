@@ -11,6 +11,8 @@ class BroadenerItemWidget(QWidget):
 
     def __init__(self, parent, broadener: str):
         QWidget.__init__(self, parent)
+        
+        self._parent = parent
 
         self.broadener = broadener
 
@@ -41,7 +43,7 @@ class BroadenerItemWidget(QWidget):
         self.setLayout(self.hlayout)
 
     def __on_value_changed(self, checked):
-        self.parent.on_value_updated()
+        self._parent.on_value_updated()
 
     def __on_enabled_toggled(self, checked):
         self.proportion.setEnabled(checked)
@@ -156,4 +158,4 @@ class BroadenerInputWidget(QWidget):
             show(name)
 
     def on_value_updated(self):
-        self.parent.on_value_updated()
+        pass # self.parent.on_value_updated()
