@@ -1,365 +1,394 @@
 {
   "1": [
     "statepp",
-    ".par",
-    "statep",
-    "160-char",
-    "trans_id",
-    "par_line"
-  ],
-  "2": [
-    "gamma_h2o",
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
     "par_line",
-    "n_h2o"
+    ".par",
+    "statep"
+  ],
+  "2": [
+    "statepp",
+    "gamma_H2O",
+    "160-char",
+    "trans_id",
+    "par_line",
+    ".par",
+    "n_H2O",
+    "statep"
   ],
   "3": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
-  ],
-  "4": [],
-  "5": [
-    "delta_h2",
-    "gamma_h2o",
-    "statepp",
-    "delta_he",
-    ".par",
-    "gamma_he",
-    "statep",
-    "n_he",
-    "gamma_co2",
-    "160-char",
-    "n_co2",
-    "trans_id",
-    "gamma_h2",
-    "n_h2",
     "par_line",
-    "delta_co2",
-    "n_h2o"
+    ".par",
+    "statep"
+  ],
+  "4": [
+    "statepp",
+    "gamma_H2O",
+    "160-char",
+    "trans_id",
+    "par_line",
+    ".par",
+    "n_H2O",
+    "statep"
+  ],
+  "5": [
+    "statepp",
+    "gamma_H2O",
+    "gamma_He",
+    "delta_H2",
+    "n_CO2",
+    "160-char",
+    "trans_id",
+    "gamma_CO2",
+    "delta_CO2",
+    "n_He",
+    "gamma_H2",
+    "delta_He",
+    "par_line",
+    ".par",
+    "n_H2O",
+    "n_H2",
+    "statep"
   ],
   "6": [
-    "gamma_h2o",
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
     "par_line",
-    "n_h2o"
+    ".par"
   ],
   "7": [
-    "gamma_h2o",
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
     "par_line",
-    "n_h2o"
+    ".par"
   ],
   "8": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
   "9": [
-    "delta_h2",
-    "statepp",
-    "delta_he",
-    ".par",
-    "gamma_he",
-    "statep",
-    "n_he",
-    "gamma_co2",
     "160-char",
-    "n_co2",
-    "trans_id",
-    "gamma_h2",
-    "n_h2",
     "par_line",
-    "delta_co2"
+    ".par"
   ],
   "10": [
-    ".par",
+    "160-char",
     "trans_id",
     "par_line",
-    "160-char"
+    ".par"
   ],
   "11": [
-    "gamma_h2o",
     "statepp",
-    ".par",
-    "statep",
+    "gamma_H2O",
     "160-char",
     "trans_id",
     "par_line",
-    "n_h2o"
+    ".par",
+    "n_H2O",
+    "statep"
   ],
   "12": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "13": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
   "14": [
-    "delta_h2",
     "statepp",
-    "delta_he",
-    ".par",
-    "gamma_he",
-    "statep",
-    "n_he",
-    "gamma_co2",
+    "gamma_He",
+    "delta_H2",
+    "n_CO2",
     "160-char",
-    "n_co2",
     "trans_id",
-    "gamma_h2",
-    "n_h2",
+    "gamma_CO2",
+    "delta_CO2",
+    "beta_g_air",
+    "n_He",
+    "gamma_H2",
+    "delta_He",
     "par_line",
-    "delta_co2",
-    "beta_g_air"
+    ".par",
+    "n_H2",
+    "statep"
   ],
   "15": [
-    "delta_h2",
     "statepp",
-    "delta_he",
-    ".par",
-    "gamma_he",
-    "statep",
-    "n_he",
-    "gamma_co2",
+    "gamma_He",
+    "delta_H2",
+    "deltap_H2",
+    "n_CO2",
     "160-char",
-    "n_co2",
     "trans_id",
-    "gamma_h2",
-    "n_h2",
+    "gamma_CO2",
+    "delta_CO2",
+    "beta_g_air",
+    "n_He",
+    "gamma_H2",
+    "delta_He",
     "par_line",
-    "deltap_h2",
-    "delta_co2",
-    "beta_g_air"
+    ".par",
+    "n_H2",
+    "statep"
   ],
   "16": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
   "17": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
   "18": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "19": [
-    "delta_h2",
     "statepp",
-    "delta_he",
-    ".par",
-    "gamma_he",
-    "statep",
-    "n_he",
-    "gamma_co2",
+    "gamma_He",
+    "delta_H2",
+    "n_CO2",
     "160-char",
-    "n_co2",
     "trans_id",
-    "gamma_h2",
-    "n_h2",
+    "gamma_CO2",
+    "delta_CO2",
+    "n_He",
+    "gamma_H2",
+    "delta_He",
     "par_line",
-    "delta_co2"
+    ".par",
+    "n_H2",
+    "statep"
   ],
   "20": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "21": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "22": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
-  "23": [],
-  "24": [],
-  "25": [
+  "23": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
+  ],
+  "24": [
+    "statepp",
+    "160-char",
+    "trans_id",
+    "par_line",
+    ".par",
+    "statep"
+  ],
+  "25": [
+    "160-char",
+    "par_line",
+    ".par"
   ],
   "26": [
     "statepp",
-    ".par",
-    "statep",
+    "gamma_He",
+    "delta_H2",
+    "n_CO2",
     "160-char",
     "trans_id",
-    "par_line"
+    "gamma_CO2",
+    "delta_CO2",
+    "n_He",
+    "gamma_H2",
+    "delta_He",
+    "par_line",
+    ".par",
+    "n_H2",
+    "statep"
   ],
   "27": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "28": [
     "statepp",
-    ".par",
-    "statep",
     "160-char",
     "trans_id",
-    "par_line"
+    "par_line",
+    ".par",
+    "statep"
   ],
-  "29": [],
-  "30": [],
+  "29": [
+    "statepp",
+    "160-char",
+    "trans_id",
+    "par_line",
+    ".par",
+    "statep"
+  ],
+  "30": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
   "31": [
-    "gamma_h2o",
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
     "par_line",
-    "n_h2o"
+    ".par"
   ],
-  "32": [],
+  "32": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
   "33": [
-    ".par",
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "34": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "35": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "36": [
+    "statepp",
+    "160-char",
     "trans_id",
     "par_line",
-    "160-char"
+    ".par",
+    "statep"
   ],
-  "34": [],
-  "35": [],
-  "36": [],
   "37": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
-  "38": [],
-  "39": [],
-  "40": [],
-  "41": [],
-  "42": [],
-  "43": [
-    "statepp",
-    ".par",
-    "statep",
+  "38": [
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
+  ],
+  "39": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "40": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "41": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "42": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "43": [
+    "160-char",
+    "par_line",
+    ".par"
   ],
   "44": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
   "45": [
     "statepp",
-    "delta_ht_2_self_150",
-    ".par",
-    "gamma_ht_0_self_150",
-    "deltap_ht_self_700",
-    "statep",
-    "gamma_ht_0_self_50",
+    "nu_HT_self",
+    "gamma_HT_2_self_50",
+    "n_HT_self_296",
     "par_line",
-    "deltap_ht_self_150",
-    "delta_ht_0_self_296",
-    "n_ht_self_296",
-    "n_ht_self_150",
-    "kappa_ht_self",
-    "gamma_ht_0_self_700",
-    "gamma_ht_2_self_296",
-    "gamma_ht_0_self_296",
-    "delta_ht_0_self_700",
-    "delta_ht_0_self_50",
-    "delta_ht_0_self_150",
-    "160-char",
-    "deltap_ht_self_296",
-    "n_ht_self_700",
-    "gamma_ht_2_self_700",
-    "gamma_ht_2_self_150",
-    "nu_ht_self",
-    "gamma_ht_2_self_50",
-    "eta_ht_self",
-    "delta_ht_2_self_296",
-    "trans_id",
-    "delta_ht_2_self_700",
-    "deltap_ht_self_50",
-    "delta_ht_2_self_50",
-    "n_ht_self_50"
-  ],
-  "46": [],
-  "47": [
-    "statepp",
+    "gamma_HT_2_self_296",
     ".par",
-    "statep",
-    "160-char",
+    "delta_HT_0_self_50",
+    "deltap_HT_self_50",
+    "kappa_HT_self",
+    "delta_HT_2_self_150",
+    "eta_HT_self",
+    "delta_HT_0_self_296",
+    "gamma_HT_2_self_150",
     "trans_id",
-    "par_line"
+    "delta_HT_2_self_296",
+    "delta_HT_0_self_700",
+    "gamma_HT_0_self_50",
+    "n_HT_self_700",
+    "statep",
+    "deltap_HT_self_700",
+    "deltap_HT_self_150",
+    "160-char",
+    "n_HT_self_50",
+    "gamma_HT_0_self_700",
+    "gamma_HT_0_self_150",
+    "deltap_HT_self_296",
+    "gamma_HT_2_self_700",
+    "n_HT_self_150",
+    "delta_HT_2_self_700",
+    "delta_HT_2_self_50",
+    "gamma_HT_0_self_296",
+    "delta_HT_0_self_150"
+  ],
+  "46": [
+    "160-char",
+    "par_line",
+    ".par"
+  ],
+  "47": [
+    "160-char",
+    "par_line",
+    ".par"
   ],
   "48": [
-    "statepp",
-    ".par",
-    "statep",
     "160-char",
-    "trans_id",
-    "par_line"
+    "par_line",
+    ".par"
   ],
-  "49": []
+  "49": [
+    "160-char",
+    "par_line",
+    ".par"
+  ]
 }
