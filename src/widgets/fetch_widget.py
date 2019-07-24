@@ -3,8 +3,8 @@ from PyQt5.QtCore import QEvent, QObject
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from hapi import PARAMETER_GROUPS, PARLIST_ALL, mergeParlist
-from metadata.broadener_availability import BroadenerAvailability
+import hapi
+from metadata.parameter_availability import ParameterAvailability
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
 from utils.fetch_error import FetchErrorKind
@@ -15,7 +15,6 @@ from worker.hapi_worker import *
 
 
 class FetchWidget(QWidget):
-
     FETCH_WIDGET_INSTANCE = None
 
     def __init__(self, parent):
@@ -25,14 +24,15 @@ class FetchWidget(QWidget):
             raise Exception("No more than one instance of FetchWidget should be created.")
         FetchWidget.FETCH_WIDGET_INSTANCE = self
 
-
         self.parent = parent
 
         self.children = []
+        self.parameter_group_items = {}
+        self.parameter_items = {}
 
         self.data_name: QLineEdit = None
-        self.clear_param_button: QPushButton = None
         self.fetch_button: QPushButton = None
+        self.clear_param_button: QPushButton = None
         self.list_container: QWidget = None
         self.molecule_id: QComboBox = None
         self.numax: QDoubleSpinBox = None
@@ -46,8 +46,8 @@ class FetchWidget(QWidget):
 
         uic.loadUi('layouts/fetch_widget.ui', self)
 
-        self.populate_molecule_list()
-        self.populate_parameter_lists()
+        self.init_molecule_list()
+        self.init_parameter_lists()
 
         # Sets up auto-complete for molecule names
         self.molecule_id.setEditable(True)
@@ -69,7 +69,7 @@ class FetchWidget(QWidget):
         self.numin.valueChanged.connect(self.__numin_change)
         self.edit_button.clicked.connect(self.__on_edit_clicked)
         self.select_button.clicked.connect(self.__on_select_clicked)
-        self.clear_param_button.clicked.connect(self.__clear_lists)
+        self.clear_param_button.clicked.connect(self.__on_clear_clicked)
 
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
@@ -93,109 +93,27 @@ class FetchWidget(QWidget):
             'default: absolute max for given molecule)')
         self.fetch_button.setToolTip('Fetch data from HITRAN!')
 
-        self.param_all_last = 0;
+    def init_parameter_lists(self):
+        self.param_group_list.itemClicked.connect(self.__on_group_clicked)
+        for group in hapi.PARAMETER_GROUPS:
+            item = QtWidgets.QListWidgetItem(group)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
-    def populate_parameter_lists(self):
-        """
-        Populates the parameter lists with all parameters / parameter groups
-        that HITRAN has to offer.
-        """
-        #Signal has to be placed on the list rather than the 'all' listitem
-        self.param_group_list.itemClicked.connect(self.group_select)
-        # self.param_list.itemClicked.connect(self.param_select)
+            item.setCheckState(QtCore.Qt.Unchecked)
 
-        for group in [item for item in sorted(PARAMETER_GROUPS.keys(), key=str.lower) if
-                      item[0].isalpha()]:
-            ba = BroadenerAvailability(self.molecule_id.currentText())
-            if not ba.molecule.populated:
-                return
+            self.param_group_list.addItem(item)
+            self.parameter_group_items[group] = item
 
-        self.param_group_list.clear()
-        self.param_list.clear()
-
-        for group in sorted(list(ba.parameter_groups()), key=str.lower):
-            if group != '.par' and group != 'par_line':
-                item = QtWidgets.QListWidgetItem(group)
-                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-
-                item.setCheckState(QtCore.Qt.Unchecked)
-
-                self.param_group_list.addItem(item)
-
-        # Add all parameter groups to the parameter groups list.
-        for par in sorted(list(ba.parameters()), key=str.lower):
+        for par in hapi.PARLIST_ALL:
             item = QtWidgets.QListWidgetItem(par)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 
             item.setCheckState(QtCore.Qt.Unchecked)
 
             self.param_list.addItem(item)
+            self.parameter_items[par] = item
 
-    def get_checked_list(self):
-        result = []
-        for i in range(self.param_list.count()):
-            list_item = self.param_list.item(i)
-            if list_item.checkState() == QtCore.Qt.Checked:
-                result.append(list_item)
-        return result
-
-    def get_checked_group(self):
-        result = []
-        for i in range(self.param_group_list.count()):
-            list_item = self.param_group_list.item(i)
-            if list_item.checkState() == QtCore.Qt.Checked:
-                result.append(list_item)
-        return result
-
-    def check_param(self, p):
-        """
-        Assigns Checked to the list item corresponding to the string passed in
-        :param p: Name of QListWidgetItem to set checked
-        """
-        for i in range(self.param_list.count()):
-            list_item = self.param_list.item(i)
-            if list_item.checkState() != QtCore.Qt.Checked:
-                if list_item.text() == p:
-                    list_item.setCheckState(QtCore.Qt.Checked)
-
-    def group_select(self):
-        """
-        Enables clicking the 'all' list item to toggle all other items
-        in the parameter group list, and links parameter groups to their elements.
-        """
-        pgroup_list = self.get_checked_group()
-        # plist = self.get_checked_list()
-        param_groups = []
-        params = []
-
-        # Finds the all_item
-        for i in range(self.param_group_list.count()):
-            list_item = self.param_group_list.item(i)
-            if list_item.text() == 'all':
-                all_item = list_item
-
-        # Determines if the all item was clicked, updates the rest of the list if with its new state
-        if all_item.checkState() != self.param_all_last:
-            self.param_all_last = all_item.checkState()
-            for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
-                if item.text is not 'all':
-                    if all_item.checkState():
-                        item.setCheckState(QtCore.Qt.Checked)
-                    elif not all_item.checkState():
-                        item.setCheckState(QtCore.Qt.Unchecked)
-        # Link groups to parameters
-        for list_item in pgroup_list:
-            if list_item.text() in PARAMETER_GROUPS:
-                param_groups.append(PARAMETER_GROUPS[list_item.text()])
-        for group in param_groups:
-            for key in group:
-                if key not in params:
-                    params.append(key)
-        for p in params:
-            self.check_param(p)
-
-
-    def populate_molecule_list(self):
+    def init_molecule_list(self):
         """
         Extract the name of each molocule that hapi has data on and add it to the molecule list.
         Also, enable auto-complete for the combobox.
@@ -213,7 +131,40 @@ class FetchWidget(QWidget):
         # a coincidence
         molecules = sorted(molecules, key=lambda m: m.id)
 
-        list(map(lambda molecule: self.molecule_id.addItem(molecule.name), molecules))
+        list(map(lambda mol: self.molecule_id.addItem(mol.name), molecules))
+
+    def populate_parameter_lists(self):
+        """
+        Populates the parameter lists with all parameters from a specific group.
+        """
+        ba = ParameterAvailability(self.molecule_id.currentText())
+        if not ba.molecule.populated:
+            return
+
+        self.param_group_list.clear()
+        self.param_list.clear()
+
+        self.parameter_items = {}
+        self.parameter_group_items = {}
+
+        for group in sorted(list(ba.parameter_groups()), key=str.lower):
+            item = QtWidgets.QListWidgetItem(group)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            self.parameter_group_items[group] = item
+            self.param_group_list.addItem(item)
+
+        # Add all parameter groups to the parameter groups list.
+        for par in sorted(list(ba.parameters()), key=str.lower):
+            item = QtWidgets.QListWidgetItem(par)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            self.parameter_items[par] = item
+            self.param_list.addItem(item)
 
     def fetch_done(self, work_result: WorkResult):
         """
@@ -256,20 +207,62 @@ class FetchWidget(QWidget):
     def disable_fetch_button(self):
         """
         Disable fetch button to disallow user to stack data requests.
-        
+
         """
         self.fetch_button.setDisabled(True)
 
     def enable_fetch_button(self):
         """
         Re-enables fetch button to allow user to request data.
-    
+
         """
         self.fetch_button.setEnabled(True)
 
     ###
     # Event Handlers
     ###
+
+    def __on_group_clicked(self, i: QListWidgetItem):
+        """
+        Enables clicking the 'all' list item to toggle all other items
+        in the parameter group list
+        """
+        group_name = i.text()
+
+        if group_name not in hapi.PARAMETER_GROUPS:
+            return
+
+        if group_name == "all":
+            check_state = self.parameter_group_items[group_name].checkState()
+            for group in self.parameter_group_items:
+                if group == "all":
+                    continue
+                self.parameter_group_items[group].setCheckState(check_state)
+
+            for param in self.parameter_items:
+                self.parameter_items[param].setCheckState(check_state)
+
+        for param in hapi.PARLIST_ALL:
+            if param not in self.parameter_items:
+                continue
+            self.parameter_items[param].setCheckState(QtCore.Qt.Unchecked)
+
+        for group in hapi.PARAMETER_GROUPS:
+            if group not in self.parameter_group_items:
+                continue
+
+            item = self.parameter_group_items[group]
+            if item.checkState() == QtCore.Qt.Checked:
+                for param in hapi.PARAMETER_GROUPS[group]:
+                    if param not in self.parameter_items:
+                        continue
+                    self.parameter_items[param].setCheckState(QtCore.Qt.Checked)
+
+    def __on_clear_clicked(self):
+        for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
+        for item in self.param_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
 
     def __iso_list_item_click(self, item):
         """
@@ -383,7 +376,7 @@ class FetchWidget(QWidget):
 
         self.disable_fetch_button()
         work = HapiWorker.echo(data_name=self.get_data_name(), iso_id_list=selected_isos,
-            numin=numin, numax=numax, parameter_groups=parameter_groups, parameters=parameters)
+                               numin=numin, numax=numax, parameter_groups=parameter_groups, parameters=parameters)
         self.worker = HapiWorker(WorkRequest.FETCH, work, callback=self.fetch_done)
         self.parent.workers.append(self.worker)
         self.worker.start()
@@ -406,12 +399,6 @@ class FetchWidget(QWidget):
         new_select_window.show()
 
         SelectWidget.set_table_names(get_all_data_names())
-
-    def __clear_lists(self):
-        for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
-            item.setCheckState(QtCore.Qt.Unchecked)
-        for item in self.param_list.findItems("*", QtCore.Qt.MatchWildcard):
-            item.setCheckState(QtCore.Qt.Unchecked)
 
     def set_molecule_id(self, molecule_id):
         self.molecule_id.setCurrentText(molecule_id)

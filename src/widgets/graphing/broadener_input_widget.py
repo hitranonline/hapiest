@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QCheckBox, QSpacerItem, QSizePolicy, \
     QDoubleSpinBox, QComboBox, QPushButton, QVBoxLayout, QScrollArea
 
-from metadata.broadener_availability import BroadenerAvailability
+from metadata.parameter_availability import ParameterAvailability
 from metadata.hapi_metadata import HapiMetaData
 from metadata.table_header import TableHeader
 
@@ -96,7 +96,7 @@ class BroadenerInputWidget(QWidget):
         self.table = table
         hmd = HapiMetaData(table_name)
 
-        self.broadener_availability = BroadenerAvailability(hmd.molecule_id())
+        self.parameter_availability = ParameterAvailability(hmd.molecule_id())
 
         # This table is either not a table, or missing a header. In either case, it cant be used
         if not table.populated:

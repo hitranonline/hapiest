@@ -20,37 +20,39 @@ import sys
 import traceback
 
 import hapi
-from metadata.broadener_availability import BroadenerAvailability
 from metadata.config import Config
 from metadata.isotopologue_meta import IsotopologueMeta
 from metadata.molecule_meta import MoleculeMeta
 from metadata.table_header import TableHeader
-from widgets.graphing.broadener_input_widget import BroadenerInputWidget
+
+PARAMETERS = hapi.PARLIST_ALL
+params = list(PARAMETERS) + hapi.PARLIST_DOTPAR
 
 
-BROADENERS = BroadenerAvailability.hitran_parameter_fix(BroadenerInputWidget.BROADENERS)
-params = list(BROADENERS) + hapi.PARLIST_DOTPAR
-
-
-def check_availability(molecule: MoleculeMeta):
+def check_availability(molecule: MoleculeMeta, numin=200, numax=500):
     try:
         iso = IsotopologueMeta.from_molecule_id(molecule.id)
-        hapi.fetch_by_ids("TempTable", [iso.id], numin=200,numax=500, Parameters=BROADENERS)
+        print(f"Trying to fetch for {iso.id} {numin}-{numax}")
+        hapi.fetch_by_ids("TempTable", [iso.id], numin=numin,numax=numax, Parameters=PARAMETERS)
         table_header = TableHeader("TempTable")
         with open("__temp_data/TempTable.data") as f:
             line = f.readline()
 
         segments = line.split(',')
-        assert len(segments) == (len(BROADENERS) + 1)
         segments = segments[1:]
-        available_broadeners = set()
+        available_params = set()
         for s, i in zip(segments, range(len(segments))):
             if "#" not in s:
-                available_broadeners.add(table_header.extra[i])
-        return list(available_broadeners)
+                available_params.add(table_header.extra[i])
+
+        for i in [".par", "160-char", "par_line"]:
+            available_params.add(i)
+        return list(available_params)
     except:
-        traceback.print_exc()
-        return ()
+        if numin > 5000:
+            return ()
+        print("recursing")
+        return check_availability(molecule, numin+200, numin+200)
 
 
 def generate_availability():
@@ -67,7 +69,7 @@ def generate_availability_():
     hapi.db_begin(Config.data_folder)
 
     records = dict()
-    for molecule_id in range(0, 35):
+    for molecule_id in range(0, 100):
         molecule = MoleculeMeta(molecule_id)
         if not molecule.is_populated():
             continue
