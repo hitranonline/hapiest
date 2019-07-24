@@ -76,7 +76,6 @@ class WorkFunctions:
                 hmd.initialize_from_hapi_table(key)
                 hmd.save()
         for filename in os.listdir(Config.data_folder):
-            print(filename)
             if filename.endswith('.xsc'):
                 add_xsc_to_cache(filename)
 
