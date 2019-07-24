@@ -15,7 +15,6 @@ from worker.hapi_worker import *
 
 
 class FetchWidget(QWidget):
-
     FETCH_WIDGET_INSTANCE = None
 
     def __init__(self, parent):
@@ -25,7 +24,6 @@ class FetchWidget(QWidget):
             raise Exception("No more than one instance of FetchWidget should be created.")
         FetchWidget.FETCH_WIDGET_INSTANCE = self
 
-
         self.parent = parent
 
         self.children = []
@@ -34,6 +32,7 @@ class FetchWidget(QWidget):
 
         self.data_name: QLineEdit = None
         self.fetch_button: QPushButton = None
+        self.clear_param_button: QPushButton = None
         self.list_container: QWidget = None
         self.molecule_id: QComboBox = None
         self.numax: QDoubleSpinBox = None
@@ -70,6 +69,7 @@ class FetchWidget(QWidget):
         self.numin.valueChanged.connect(self.__numin_change)
         self.edit_button.clicked.connect(self.__on_edit_clicked)
         self.select_button.clicked.connect(self.__on_select_clicked)
+        self.clear_param_button.clicked.connect(self.__on_clear_clicked)
 
         # Calling this will populate the isotopologue list with isotopologues of
         # whatever the default selected molecule is. This has to be called after
@@ -166,7 +166,6 @@ class FetchWidget(QWidget):
             self.parameter_items[par] = item
             self.param_list.addItem(item)
 
-
     def fetch_done(self, work_result: WorkResult):
         """
         User feedback for GUI paramter fields of the fetch function in the Main Window.
@@ -208,14 +207,14 @@ class FetchWidget(QWidget):
     def disable_fetch_button(self):
         """
         Disable fetch button to disallow user to stack data requests.
-        
+
         """
         self.fetch_button.setDisabled(True)
 
     def enable_fetch_button(self):
         """
         Re-enables fetch button to allow user to request data.
-    
+
         """
         self.fetch_button.setEnabled(True)
 
@@ -243,7 +242,6 @@ class FetchWidget(QWidget):
             for param in self.parameter_items:
                 self.parameter_items[param].setCheckState(check_state)
 
-
         for param in hapi.PARLIST_ALL:
             if param not in self.parameter_items:
                 continue
@@ -259,6 +257,12 @@ class FetchWidget(QWidget):
                     if param not in self.parameter_items:
                         continue
                     self.parameter_items[param].setCheckState(QtCore.Qt.Checked)
+
+    def __on_clear_clicked(self):
+        for item in self.param_group_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
+        for item in self.param_list.findItems("*", QtCore.Qt.MatchWildcard):
+            item.setCheckState(QtCore.Qt.Unchecked)
 
     def __iso_list_item_click(self, item):
         """
@@ -372,7 +376,7 @@ class FetchWidget(QWidget):
 
         self.disable_fetch_button()
         work = HapiWorker.echo(data_name=self.get_data_name(), iso_id_list=selected_isos,
-            numin=numin, numax=numax, parameter_groups=parameter_groups, parameters=parameters)
+                               numin=numin, numax=numax, parameter_groups=parameter_groups, parameters=parameters)
         self.worker = HapiWorker(WorkRequest.FETCH, work, callback=self.fetch_done)
         self.parent.workers.append(self.worker)
         self.worker.start()

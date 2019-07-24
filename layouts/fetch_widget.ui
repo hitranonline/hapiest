@@ -477,6 +477,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="clear_param_button">
+       <property name="text">
+        <string>Clear Parameters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_8">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
