@@ -56,6 +56,8 @@ class GraphDisplayWidget(QMainWindow):
         """
         QMainWindow.__init__(self)
 
+        self.n_plots = 0
+
         self.graph_ty = graph_ty
         self.graph_display_id = GraphDisplayWidget.graph_display_id()
         self.workers = {
@@ -134,7 +136,8 @@ class GraphDisplayWidget(QMainWindow):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
+            self.n_plots += 1
             self.backend.add_graph(x, y, result['title'], result['titlex'], result['titley'],
-                                   result['name'], result['args'])
+                                   f"{result['name']} - {self.n_plots}", result['args'])
         except Exception as e:
             err_log(e)
