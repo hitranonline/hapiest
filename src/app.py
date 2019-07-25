@@ -15,7 +15,6 @@ from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from metadata.config import Config
 
-
 def obtain_apikey():
     """
     Attempts to obtain an API key from the user if there is not one in the user Config already.
@@ -43,9 +42,9 @@ def verify_internet_connection_and_obtain_api_key():
     """
     import urllib.request
     from utils.hapi_api import CrossSectionApi
+    Config.online = True
 
     print(f"API Key: {Config.hapi_api_key}")
-
     try:
         with urllib.request.urlopen(
                 f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}/" \
@@ -61,6 +60,7 @@ Your HAPI API key will be used on the next launch. Please restart HAPIEST.
         obtain_apikey()
         Config.rewrite_config()
     except URLError as e:
+        Config.online = False
         # URL Lookup failed. Probably means there is no internet connection
         err_msg = """
 You do not have a working internet connection. A working internet connection
@@ -71,7 +71,7 @@ is needed in order to use hapiest.
     from widgets.error_msg_widget import ErrorMsgWidget
 
     app = QtWidgets.QApplication(sys.argv)
-    _ = ErrorMsgWidget(err_msg)
+    _ = ErrorMsgWidget(err_msg, Config.online)
     app.exec_()
     sys.exit(0)
 

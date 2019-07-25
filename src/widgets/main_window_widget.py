@@ -84,11 +84,17 @@ class MainWindowWidget(QMainWindow):
         self.populate_table_lists()
         self.populate_molecule_list()
 
+
         # Initially display a molecule in the molecule widget
         self.__on_molecules_current_text_changed()
         self.molecules_current_molecule.currentTextChanged.connect(
-            self.__on_molecules_current_text_changed)
+        self.__on_molecules_current_text_changed)
         self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
+
+        if Config.continue_offline:
+            self.fetch_tab.setDisabled(True)
+            self.cross_section_tab.setDisabled(True)
+
 
         self.workers = []
 
