@@ -64,7 +64,7 @@ class BroadenerInputWidget(QWidget):
         "gamma_h2": "H2",
         "gamma_he": "He",
         "gamma_h2o": "H2O"
-    }
+        }
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
@@ -98,7 +98,7 @@ class BroadenerInputWidget(QWidget):
         self.table = table
         hmd = HapiMetaData(table_name)
 
-        self.parameter_availability = ParameterAvailability(hmd.molecule_id())
+        parameter_availability = ParameterAvailability(hmd.molecule_id())
 
         # This table is either not a table, or missing a header. In either case, it cant be used
         if not table.populated:
@@ -108,9 +108,7 @@ class BroadenerInputWidget(QWidget):
         self.setEnabled(True)
 
         extras = set(table.extra)
-        broadeners = BroadenerInputWidget.BROADENERS\
-            .intersection(extras)\
-            .intersection(self.parameter_availability.parameters())
+        broadeners = BroadenerInputWidget.BROADENERS.intersection(extras)
 
         # Go from 'gamma_CO2' to 'CO2'
         self.broadeners = {BroadenerInputWidget.BROADENER_NAME_MAP[b] for b in broadeners}
@@ -140,8 +138,11 @@ class BroadenerInputWidget(QWidget):
 
         broadeners = list(self.broadeners)  # Clone the list so we dont modify it
 
-        if "self" in broadeners: broadeners.remove("self")
-        if "air" in broadeners: broadeners.remove("air")
+        # If you call remove on a set and the element is not in there it will throw an exception
+        if "self" in broadeners:
+            broadeners.remove("self")
+        if "air" in broadeners:
+            broadeners.remove("air")
 
         def show(name):
             if name not in self.broadener_items:
@@ -149,7 +150,6 @@ class BroadenerInputWidget(QWidget):
 
             self.broadener_items[name].show()
             self.broadener_item_layout.addWidget(self.broadener_items[name])
-
 
         show("self")
         show("air")

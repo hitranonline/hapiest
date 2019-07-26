@@ -9,8 +9,9 @@ class ParameterAvailability:
 
     __PARAMETER_GROUP_REQUIREMENTS = None
 
-    __PARAMETER_BLACKLIST = set() # empty set for now
-    __PARAMETER_GROUP_BLACKLIST = {".par", "160-char", "par_line"}
+    __PARAMETER_BLACKLIST = {".par", "160-char", "par_line", "statep", "statepp"}
+                             # "delta_co2", "delta_he", "delta_h2"}  # empty set for now
+    __PARAMETER_GROUP_BLACKLIST = set()
 
     # Since case matters when querying HITRAN, we'll use lowercase all the time
     # except here, where we will fix casing for HITRAN compliant
@@ -19,7 +20,16 @@ class ParameterAvailability:
         "gamma_co2": "gamma_CO2",
         "gamma_h2": "gamma_H2",
         "gamma_he": "gamma_He",
-        "gamma_h2o": "gamma_H2O"
+        "gamma_h2o": "gamma_H2O",
+        "delta_h2o": "delta_H2O",
+        "delta_he": "delta_He",
+        "delta_h2": "delta_H2",
+        "delta_co2": "delta_CO2",
+        "n_h2o": "n_H2O",
+        "n_he": "n_He",
+        "n_h2": "n_H2",
+        "n_co2": "n_CO2",
+
     }
 
     @staticmethod
