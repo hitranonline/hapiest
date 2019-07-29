@@ -5,7 +5,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QOpenGLWidget, QLabel, QMainWindow
 
-from graphing.graph_type import GraphType
 from utils.colors import Colors
 from utils.hapiest_util import *
 from utils.log import *
@@ -14,16 +13,20 @@ from widgets.graphing.vispy_widget import VispyWidget
 from worker.hapi_worker import HapiWorker, WorkResult
 from worker.work_request import WorkRequest
 
+from widgets.graphing.graph_type import GraphType
 
 class GraphDisplayWidget(QMainWindow):
     done_signal = QtCore.pyqtSignal(object)
+
 
     graph_ty_to_work_ty = {
             GraphType.ABSORPTION_COEFFICIENT:   WorkRequest.ABSORPTION_COEFFICIENT,
             GraphType.TRANSMITTANCE_SPECTRUM:   WorkRequest.TRANSMITTANCE_SPECTRUM,
             GraphType.RADIANCE_SPECTRUM:        WorkRequest.RADIANCE_SPECTRUM,
             GraphType.ABSORPTION_SPECTRUM:      WorkRequest.ABSORPTION_SPECTRUM,
-            GraphType.BANDS:                    WorkRequest.BANDS
+            GraphType.BANDS:                    WorkRequest.BANDS,
+            # The abs coef work function also works for cross sectioons
+            GraphType.XSC:                      WorkRequest.ABSORPTION_COEFFICIENT
         }
 
     graph_windows = {}
@@ -55,7 +58,6 @@ class GraphDisplayWidget(QMainWindow):
 
         """
         QMainWindow.__init__(self)
-
         self.n_plots = 0
 
         self.graph_ty = graph_ty

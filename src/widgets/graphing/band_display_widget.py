@@ -6,8 +6,6 @@ from typing import Dict
 
 from matplotlib.lines import Line2D
 
-from graphing.graph_type import GraphType
-
 from data_structures.bands import Bands
 from utils.hapiest_util import program_icon
 from utils.log import *
@@ -17,7 +15,7 @@ from widgets.graphing.mpl_widget import MplWidget
 from widgets.graphing.vispy_widget import VispyWidget
 from worker.hapi_worker import HapiWorker
 from worker.work_result import WorkResult
-
+from widgets.graphing.graph_type import GraphType
 
 class BandDisplayWidget(QMainWindow):
     done_signal = QtCore.pyqtSignal(object)

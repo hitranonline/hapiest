@@ -96,6 +96,10 @@ class BroadenerInputWidget(QWidget):
     def set_table(self, table_name):
         table = TableHeader(table_name)
         self.table = table
+        if table_name.endswith(".xsc"):
+            hmd = None
+            self.broadeners = set()
+            return
         hmd = HapiMetaData(table_name)
 
         parameter_availability = ParameterAvailability(hmd.molecule_id())

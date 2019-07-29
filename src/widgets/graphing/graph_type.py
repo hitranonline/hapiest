@@ -7,3 +7,4 @@ class GraphType(Enum):
     RADIANCE_SPECTRUM = 2
     ABSORPTION_COEFFICIENT = 3
     BANDS = 4
+    XSC = 5

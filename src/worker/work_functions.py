@@ -71,7 +71,7 @@ class WorkFunctions:
         all_files = os.listdir(Config.data_folder)
         # Create a HMD file for every table that doesn't have one.
         for key, table in LOCAL_TABLE_CACHE.items():
-            if (str(key) + ".hmd") not in all_files:
+            if (str(key) + ".hmd") not in all_files and not key.endswith(".xsc"):
                 hmd = HapiMetaData(key)
                 hmd.initialize_from_hapi_table(key)
                 hmd.save()
