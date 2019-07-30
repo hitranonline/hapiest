@@ -15,7 +15,6 @@ from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
 from metadata.config import Config
 
-
 def obtain_apikey():
     """
     Attempts to obtain an API key from the user if there is not one in the user Config already.
@@ -33,7 +32,7 @@ def obtain_apikey():
         app.exec_()
 
 
-def verify_internet_connection_and_obtain_api_key():
+def check_internet_connection_and_obtain_api_key():
     """
     This function also verifies that the supplied hapi api key is valid. If the api key is not
     valid, then the value in the config (in memory and on disk) is overwritten and the
@@ -45,7 +44,6 @@ def verify_internet_connection_and_obtain_api_key():
     from utils.hapi_api import CrossSectionApi
 
     print(f"API Key: {Config.hapi_api_key}")
-
     try:
         with urllib.request.urlopen(
                 f"{CrossSectionApi.BASE_URL}/{CrossSectionApi.API_ROUTE}/{Config.hapi_api_key}/" \
@@ -61,12 +59,14 @@ Your HAPI API key will be used on the next launch. Please restart HAPIEST.
         obtain_apikey()
         Config.rewrite_config()
     except URLError as e:
+        Config.online = False
         # URL Lookup failed. Probably means there is no internet connection
-        err_msg = """
-You do not have a working internet connection. A working internet connection
-is needed in order to use hapiest.
-"""
-        print(str(e))
+#         err_msg = """
+# You do not have a working internet connection. A working internet connection
+# is needed in order to use hapiest.
+# """
+#         print(str(e))
+        return True
 
     from widgets.error_msg_widget import ErrorMsgWidget
 
@@ -81,24 +81,28 @@ def run():
     The main method starts the GUI after asking for an api key if necessary.
     """
 
+    if not check_internet_connection_and_obtain_api_key():
+        return 0
+
     # Create the data folder if it doesn't exist.
     if not os.path.exists(Config.data_folder):
         os.makedirs(Config.data_folder)
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] in {'--test', '-t'}:
-            import test
+    if Config.online:
+        if len(sys.argv) > 1:
+            if sys.argv[1] in {'--test', '-t'}:
+                import test
 
-            test.run_tests()
-            return 0
-        elif sys.argv[1] in ('--download-molecule-images', '-dmi'):
-            import res_gen.image_downloader as id
-            id.download_images()
-            return 0
-        elif sys.argv[1] in ("-gba", "--generate-broadener-availability"):
-            import res_gen.generate_broadener_availability as gba
-            gba.generate_availability()
-            return 0
+                test.run_tests()
+                return 0
+            elif sys.argv[1] in ('--download-molecule-images', '-dmi'):
+                import res_gen.image_downloader as id
+                id.download_images()
+                return 0
+            elif sys.argv[1] in ("-gba", "--generate-broadener-availability"):
+                import res_gen.generate_broadener_availability as gba
+                gba.generate_availability()
+                return 0
     if Config.high_dpi:
         # Enable High DPI display with PyQt5
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -114,9 +118,6 @@ def run():
     # connection the GUI should simply disable the features that require it,
     # and there could be a periodic check for internet connection that will
     # re-enable them.
-
-    if not verify_internet_connection_and_obtain_api_key():
-        return 0
 
     from metadata.molecule_meta import MoleculeMeta
 
