@@ -194,6 +194,7 @@ class WorkFunctions:
         :param kwargs:         Unused keyword-arguments
         :return:
         """
+        name = kwargs['name']
         kwargs = {
             'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
             'Diluent':         Diluent
@@ -203,7 +204,8 @@ class WorkFunctions:
             return {
                 'x':      xsc.nu, 'y': xsc.abscoef, 'title': title, 'titlex': titlex,
                 'titley': titley,
-                'name':   SourceTables[0], 'args': { 'xsc': True, **kwargs }
+                'name': name,
+                'args': {'xsc': True, **kwargs}
             }
 
         # absorptionCoefficient_Doppler functions do not use Diluent
@@ -235,7 +237,7 @@ class WorkFunctions:
             'title':  title,
             'titlex': titlex,
             'titley': titley,
-            'name':   SourceTables[0],
+            'name':   name,
             'args':   { 'xsc': False, **kwargs }
             }
 
@@ -246,11 +248,12 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str,
             titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
-            Resolution: float = 0.01, AF_wing: float = 100.0, **_kwargs) -> Union[
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[
         Dict[str, Any], Exception]:
         """
         Generates coordinates for absorption spectrum graph.
         """
+        name = kwargs['name']
         kwargs = {
             'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
             'Diluent':         Diluent
@@ -270,7 +273,7 @@ class WorkFunctions:
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution = Resolution,
                                                  AF_wing = AF_wing)
         return {
-            'x':      rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+            'x':      rx, 'y': ry, 'title': title, 'name': name, 'titlex': titlex,
             'titley': titley, 'args': kwargs
         }
 
@@ -282,11 +285,12 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str,
             titlex: str, titley: str,
             Format='%e %e', path_length=100.0, temp=296.0, File=None, instrumental_fn: str = "",
-            Resolution: float = 0.01, AF_wing: float = 100.0, **_kwargs) -> Union[
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[
         Dict[str, Any], Exception]:
         """
         Generates coordinates for radiance spectrum graph.
         """
+        name = kwargs['name']
         kwargs = {
             'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
             'Diluent':         Diluent
@@ -306,7 +310,7 @@ class WorkFunctions:
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution = Resolution,
                                                  AF_wing = AF_wing)
         return {
-            'x':      rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+            'x':      rx, 'y': ry, 'title': title, 'name': name, 'titlex': titlex,
             'titley': titley, 'args': kwargs
         }
 
@@ -318,11 +322,12 @@ class WorkFunctions:
             WavenumberStep: float, WavenumberWing: float, WavenumberWingHW: float, title: str,
             titlex: str, titley: str,
             Format='%e %e', path_length=100.0, File=None, instrumental_fn: str = "",
-            Resolution: float = 0.01, AF_wing: float = 100.0, **_kwargs) -> Union[
+            Resolution: float = 0.01, AF_wing: float = 100.0, **kwargs) -> Union[
         Dict[str, Any], Exception]:
         """
         Generates coordinates for transmittance spectrum graph.
         """
+        name = kwargs['name']
         kwargs = {
             'WavenumberRange': WavenumberRange, 'Environment': Environment, 'graph_fn': graph_fn,
             'Diluent':         Diluent
@@ -343,7 +348,7 @@ class WorkFunctions:
         rx, ry = WorkFunctions.convolve_spectrum(x, y, instrumental_fn, Resolution = Resolution,
                                                  AF_wing = AF_wing)
         return {
-            'x':      rx, 'y': ry, 'title': title, 'name': SourceTables[0], 'titlex': titlex,
+            'x':      rx, 'y': ry, 'title': title, 'name': name, 'titlex': titlex,
             'titley': titley, 'args': kwargs
         }
 

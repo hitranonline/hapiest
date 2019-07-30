@@ -136,6 +136,10 @@ class GraphDisplayWidget(QMainWindow):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
+            if len(x) > len(y):
+                x = x[:len(y)]
+            elif len(x) < len(y):
+                y = y[:len(x)]
             self.n_plots += 1
             self.backend.add_graph(x, y, result['title'], result['titlex'], result['titley'],
                                    f"{result['name']} - {self.n_plots}", result['args'])

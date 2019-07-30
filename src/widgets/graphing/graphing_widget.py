@@ -153,11 +153,13 @@ class GraphingWidget(QtWidgets.QWidget):
             WavenumberWing = self.get_wn_wing()
             WavenumberWingHW = self.get_wn_wing_hw()
 
+        name = self.plot_name.text()
         graph_fn = self.get_line_profile()
         return HapiWorker.echo(graph_fn=graph_fn, Components=Components, SourceTables=SourceTables,
             Environment=Environment, Diluent=Diluent, HITRAN_units=False,
             WavenumberRange=WavenumberRange, WavenumberStep=WavenumberStep,
-            WavenumberWing=WavenumberWing, WavenumberWingHW=WavenumberWingHW, backend=backend)
+            WavenumberWing=WavenumberWing, WavenumberWingHW=WavenumberWingHW, backend=backend,
+            name=name)
 
     def graph(self):
         standard_params = self.get_standard_parameters()
@@ -179,21 +181,17 @@ class GraphingWidget(QtWidgets.QWidget):
         work = HapiWorker.echo(title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
                                titlex="Wavenumber (cm$^{-1}$)",
                                titley='Absorption Coefficient ', **standard_parameters)
-        print("1")
         if work['SourceTables'][0].endswith('.xsc'):
             work['titley'] = 'molecules / cm$^2$'
             work['title'] = 'Absorption Cross-Section'
-        print("2")
         if self.use_existing_window.isChecked():
             selected_window = self.get_selected_window()
             if selected_window in GraphDisplayWidget.graph_windows:
                 GraphDisplayWidget.graph_windows[selected_window].add_worker(
                     GraphType.ABSORPTION_COEFFICIENT, work)
                 return
-        print("aaa")
         # No need to store a reference to it, since the GraphDisplayWidget will add itself to a list
         _ = GraphDisplayWidget(GraphType.ABSORPTION_COEFFICIENT, work, self.backend.currentText())
-        print("3")
         self.update_existing_window_items()
 
     def graph_as(self, standard_params):

@@ -48,6 +48,7 @@ class MplWidget(QWidget):
 
     def add_graph(self, x, y, title, titlex, titley, name, args):
         self.canvas.ax.plot(x, y, label=name)
+        self.canvas.hide_legend()
         self.canvas.show_legend()
         self.canvas.ax.set_xlabel(titlex)
         self.canvas.ax.set_ylabel(titley)
