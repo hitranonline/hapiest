@@ -1,9 +1,9 @@
 import builtins
+from enum import Enum
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import QComboBox, QLayout, QLabel, QDoubleSpinBox, QLineEdit, QPushButton, \
     QCheckBox, QWidget
-from graphing.graph_type import GraphType
 
 from metadata.hapi_metadata import *
 from utils.log import err_log
@@ -12,10 +12,12 @@ from widgets.graphing.band_display_widget import BandDisplayWidget
 from widgets.graphing.graph_display_widget import GraphDisplayWidget
 from worker.hapi_worker import HapiWorker
 from worker.work_request import WorkRequest
+from widgets.graphing.graph_type import GraphType
 
 
 class GraphingWidget(QtWidgets.QWidget):
     ABSORPTION_COEFFICIENT_STRING: str = "Absorption Coefficient"
+    XSC_STRING: str = "Cross Section"
     ABSORPTION_SPECTRUM_STRING: str = "Absorption Spectrum"
     TRANSMITTANCE_SPECTRUM_STRING: str = "Transmittance Spectrum"
     RADIANCE_SPECTRUM_STRING: str = "Radiance Spectrum"
@@ -28,7 +30,8 @@ class GraphingWidget(QtWidgets.QWidget):
         ABSORPTION_SPECTRUM_STRING:     GraphType.ABSORPTION_SPECTRUM,
         TRANSMITTANCE_SPECTRUM_STRING:  GraphType.TRANSMITTANCE_SPECTRUM,
         RADIANCE_SPECTRUM_STRING:       GraphType.RADIANCE_SPECTRUM,
-        BANDS_STRING:                   GraphType.BANDS
+        BANDS_STRING:                   GraphType.BANDS,
+        XSC_STRING:                     GraphType.XSC
         }
 
     def __init__(self, parent):
@@ -132,7 +135,7 @@ class GraphingWidget(QtWidgets.QWidget):
         data_name = self.get_data_name()
         backend = self.backend.currentText()
 
-        if self.xsc is not None:
+        if data_name.endswith(".xsc"):
             Components = []
             SourceTables = [data_name]
             Environment = {'p': self.xsc.pressure, 'T': self.xsc.temp}
@@ -176,6 +179,23 @@ class GraphingWidget(QtWidgets.QWidget):
             self.graph_rs(standard_params)
         elif graph_type == GraphingWidget.BANDS_STRING:
             self.graph_bands(standard_params)
+        elif graph_type == GraphingWidget.XSC_STRING:
+            self.graph_xsc(standard_params)
+
+    def graph_xsc(self, standard_params):
+        work = HapiWorker.echo(title=GraphingWidget.XSC_STRING,
+                               titlex="Wavenumber (cm$^{-1}$)",
+                               titley="Intensity",
+                               **standard_params)
+        if self.use_existing_window.isChecked():
+            selected_window = self.get_selected_window()
+            if selected_window in GraphDisplayWidget.graph_windows:
+                GraphDisplayWidget.graph_windows[selected_window].add_worker(
+                    GraphType.XSC, work
+                )
+                return
+
+        _ = GraphDisplayWidget(GraphType.XSC, work, self.backend.currentText())
 
     def graph_abs_coef(self, standard_parameters):
         work = HapiWorker.echo(title=GraphingWidget.ABSORPTION_COEFFICIENT_STRING,
@@ -306,6 +326,7 @@ class GraphingWidget(QtWidgets.QWidget):
         Re-enables buttons for use after graphing is finished.
         """
         self.graph_button.setEnabled(True)
+        self.update_existing_window_items()
 
     def get_selected_window(self):
         return int(self.selected_window.currentText())
@@ -375,13 +396,17 @@ class GraphingWidget(QtWidgets.QWidget):
             self.numax.setValue(result['numax'])
             self.set_graph_buttons_enabled(True)
 
+            # Cross sections can only be graphed as cross sections
             if result['xsc'] is not None:
                 self.set_xsc_mode(True)
                 self.graph_type.clear()
-                self.graph_type.addItems([GraphingWidget.ABSORPTION_COEFFICIENT_STRING])
+                self.graph_type.addItems([GraphingWidget.XSC_STRING])
             else:
+                # Normal tables can be graphed as anything other than a cross section
                 self.set_xsc_mode(False)
                 self.graph_type.clear()
+                graph_types = list(GraphingWidget.str_to_graph_ty.keys())
+                graph_types.remove(GraphingWidget.XSC_STRING)
                 self.graph_type.addItems(list(GraphingWidget.str_to_graph_ty.keys()))
 
             self.xsc = result['xsc']
@@ -549,10 +574,14 @@ class GraphingWidget(QtWidgets.QWidget):
             fitting_graph_windows = []
         else:
             graph_ty = GraphingWidget.str_to_graph_ty[graph_ty_str]
-
-            fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty == graph_ty,
+            if graph_ty == GraphType.BANDS:
+                fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty ==
+                                                                            graph_ty,
                                                          GraphDisplayWidget.graph_windows.values()))
-
+            else:
+                 fitting_graph_windows = list(builtins.filter(lambda window: window.graph_ty !=
+                                                                             GraphType.BANDS,
+                                                         GraphDisplayWidget.graph_windows.values()))
         if len(fitting_graph_windows) == 0:
             self.use_existing_window.setChecked(False)
             self.use_existing_window.setDisabled(True)
