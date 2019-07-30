@@ -64,6 +64,13 @@ class MainWindowWidget(QMainWindow):
         self.config_window = None
         self.about_window = None
 
+        offline_text = 'HAPPIEST is currently offline. Data fetching is disabled, ' \
+                       'but you can still use the graph tab.'
+        self.fetch_offline_label = QLabel(offline_text)
+        self.cross_section_offline_label = QLabel(offline_text)
+        self.fetch_offline_label.setStyleSheet("color : red")
+        self.cross_section_offline_label.setStyleSheet("color : red")
+
         # All of the gui elements get loaded and initialized by loading the ui file
         uic.loadUi('layouts/main_window.ui', self)
 
@@ -73,12 +80,16 @@ class MainWindowWidget(QMainWindow):
         self.about_hapiest_action.triggered.connect(self.__on_about_action)
 
         self.fetch_widget = FetchWidget(self)
+        if not Config.online:
+            self.fetch_container.addWidget(self.fetch_offline_label)
         self.fetch_container.addWidget(self.fetch_widget)
 
         self.graphing_widget: QWidget = GraphingWidget(self)
         self.graphing_container.addWidget(self.graphing_widget)
 
         self.cross_section_fetch_widget = CrossSectionFetchWidget(self)
+        if not Config.online:
+            self.cross_section_container.addWidget(self.cross_section_offline_label)
         self.cross_section_container.addWidget(self.cross_section_fetch_widget)
 
         self.populate_table_lists()
@@ -91,18 +102,24 @@ class MainWindowWidget(QMainWindow):
         self.__on_molecules_current_text_changed)
         self.molecules_popout_button.clicked.connect(self.__on_molecules_popout_button)
 
-        if Config.continue_offline:
-            self.fetch_tab.setDisabled(True)
-            self.cross_section_tab.setDisabled(True)
-
-
         self.workers = []
 
         self.status_bar_label: QWidget = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
 
+        self.setWindowTitle("hapiest - {}".format(VERSION_STRING))
+
+        if not Config.online:
+            self.fetch_tab.setDisabled(True)
+            self.cross_section_tab.setDisabled(True)
+            self.setWindowTitle("hapiest - OFFLINE")
+
+
+
         # Display the GUI since we're done configuring it
         self.show()
+
+
 
     def closeEvent(self, event):
         if self.config_window:

@@ -112,7 +112,7 @@ class Config:
     axisx_log_label_format = None
     axisy_label_format = None
     axisy_log_label_format = None
-    online = None
+    online = True #assume online
     continue_offline = False
 
     @staticmethod

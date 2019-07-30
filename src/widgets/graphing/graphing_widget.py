@@ -81,6 +81,8 @@ class GraphingWidget(QtWidgets.QWidget):
         self.pressure: QDoubleSpinBox = None
         self.temperature: QDoubleSpinBox = None
 
+        # self.xsc = None
+
 
         self.path_length: QDoubleSpinBox = None
         self.instrumental_fn: QComboBox = None
