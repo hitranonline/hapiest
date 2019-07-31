@@ -125,7 +125,8 @@ class BroadenerInputWidget(QWidget):
 
         for name in self.broadeners:
             if self.broadener_items[name].is_enabled():
-                diluent[name] = self.broadener_items[name].get_value()
+                diluent_name = name.lower()  # Diluent requires lowercase names rather than upper case.
+                diluent[diluent_name] = self.broadener_items[name].get_value()
 
         return diluent
 
