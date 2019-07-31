@@ -9,7 +9,7 @@ from widgets.molecule_info_widget import MoleculeInfoWidget
 from widgets.select_widget import SelectWidget
 from widgets.view_widget import ViewWidget
 from windows.molecule_info_window import MoleculeInfoWindow
-
+import webbrowser
 
 class MainWindowWidget(QMainWindow):
     """
@@ -60,6 +60,7 @@ class MainWindowWidget(QMainWindow):
         self.config_action: QAction = None
         self.about_hapiest_action: QAction = None
         self.statusbar: QStatusBar = None
+        self.help_manual: QAction = None
 
         self.config_window = None
         self.about_window = None
@@ -95,7 +96,6 @@ class MainWindowWidget(QMainWindow):
         self.populate_table_lists()
         self.populate_molecule_list()
 
-
         # Initially display a molecule in the molecule widget
         self.__on_molecules_current_text_changed()
         self.molecules_current_molecule.currentTextChanged.connect(
@@ -107,6 +107,8 @@ class MainWindowWidget(QMainWindow):
         self.status_bar_label: QWidget = QtWidgets.QLabel("Ready")
         self.statusbar.addWidget(self.status_bar_label)
 
+        self.help_manual.triggered.connect(self.open_manual)
+
         self.setWindowTitle("hapiest - {}".format(VERSION_STRING))
 
         if not Config.online:
@@ -114,12 +116,8 @@ class MainWindowWidget(QMainWindow):
             self.cross_section_tab.setDisabled(True)
             self.setWindowTitle("hapiest - OFFLINE")
 
-
-
         # Display the GUI since we're done configuring it
         self.show()
-
-
 
     def closeEvent(self, event):
         if self.config_window:
@@ -202,3 +200,6 @@ class MainWindowWidget(QMainWindow):
 
         self.graphing_widget.data_name.clear()
         self.graphing_widget.data_name.addItems(data_names)
+
+    def open_manual(self):
+        webbrowser.open_new(r'docs/manual.pdf')
