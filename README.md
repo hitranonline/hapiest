@@ -31,19 +31,11 @@ git clone https://github.com/hitranonline/hapiest
 ```
 
 This will download the latest version of hapiest and put it in a folder named hapiest. In order to run *hapiest*, 
-you must have the following packages installed:
+you must have all of the packages listen in requirements.txt installed. 
 
-- PyQt5
-- vispy
-- numpy
-- matplotlib
-- toml
-- parsy
-
-Install these using pip, for example:
-
+To install these packages automatically, you can run the following command:
 ```bash
-python3 -m pip install PyQt5
+pip install -r requirements.txt
 ```
 
 Then, to run the program execute the following:
