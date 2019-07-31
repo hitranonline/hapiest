@@ -133,7 +133,7 @@
               <item row="1" column="1">
                <widget class="QDoubleSpinBox" name="instrumental_resolution">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>2</number>
                 </property>
                 <property name="minimum">
                  <double>0.000000000000000</double>
@@ -156,7 +156,7 @@
               <item row="2" column="1">
                <widget class="QDoubleSpinBox" name="instrumental_fn_wing">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>2</number>
                 </property>
                 <property name="minimum">
                  <double>0.000000000000000</double>
@@ -194,7 +194,7 @@
                  <string>cm</string>
                 </property>
                 <property name="decimals">
-                 <number>4</number>
+                 <number>2</number>
                 </property>
                 <property name="maximum">
                  <double>10000000.000000000000000</double>
@@ -320,7 +320,7 @@ font-weight: bold;</string>
                <string/>
               </property>
               <property name="decimals">
-               <number>4</number>
+               <number>2</number>
               </property>
               <property name="maximum">
                <double>1000000000.000000000000000</double>
@@ -389,7 +389,7 @@ font-weight: bold;</string>
                <string/>
               </property>
               <property name="decimals">
-               <number>4</number>
+               <number>2</number>
               </property>
               <property name="maximum">
                <double>10000000.000000000000000</double>
@@ -853,7 +853,7 @@ font-weight: bold;</string>
              <string/>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="maximum">
              <double>1000000000.000000000000000</double>
@@ -874,7 +874,7 @@ font-weight: bold;</string>
              <string/>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="maximum">
              <double>1000000000.000000000000000</double>
@@ -1000,7 +1000,7 @@ font-weight: bold;</string>
              <string/>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="minimum">
              <double>0.000000000000000</double>
@@ -1101,7 +1101,7 @@ font-weight: bold;</string>
              <string/>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="minimum">
              <double>0.000000000000000</double>
@@ -1131,7 +1131,7 @@ font-weight: bold;</string>
              </font>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="minimum">
              <double>0.000000000000000</double>
@@ -1192,7 +1192,7 @@ font-weight: bold;</string>
              </font>
             </property>
             <property name="decimals">
-             <number>4</number>
+             <number>2</number>
             </property>
             <property name="minimum">
              <double>0.000000000000000</double>

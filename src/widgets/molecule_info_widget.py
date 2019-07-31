@@ -107,6 +107,10 @@ class MoleculeInfoWidget(QWidget):
 
         self.setLayout(self.central_layout)
 
+        if not Config.online:
+            self.get_xsc_button.setDisabled(True)
+            self.get_lbl_button.setDisabled(True)
+
         formula = self.molecule.formula
         if self.molecule.is_populated():
             self.img.setAttribute(Qt.WA_StyledBackground)
