@@ -14,7 +14,6 @@ class MoleculeInfoWidget(QWidget):
 
     def __init__(self, molecule_name, parent):
         QWidget.__init__(self, parent)
-        self.setStyleSheet("background-color: white;")
 
         self.molecule = MoleculeMeta(molecule_name)
 

@@ -122,10 +122,14 @@ class FetchWidget(QWidget):
         molecules = []
 
         for molecule_id in range(0, 100):
-            molecule = MoleculeMeta(molecule_id)
-            if not molecule.is_populated():
+            try:
+                molecule = MoleculeMeta(molecule_id)
+                iso = IsotopologueMeta(molecule_id, 1)
+                if not molecule.is_populated():
+                    continue
+                molecules.append(molecule)
+            except Exception as e:
                 continue
-            molecules.append(molecule)
 
         # Ensure they are sorted by hitran id. They were before this line, but that was sort of just
         # a coincidence

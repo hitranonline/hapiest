@@ -231,6 +231,7 @@ class IsotopologueMeta:
     def __init__(self, molecule_id: int, isotopologue_id: int):
         # This should never happen, but just in case...
         if (molecule_id, isotopologue_id) not in ISO:
+            print(f"{molecule_id}, {isotopologue_id}")
             raise Exception("Invalid isotopologue")
 
         # Grab data from hapi
