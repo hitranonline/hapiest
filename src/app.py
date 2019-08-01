@@ -8,6 +8,8 @@ from urllib.error import HTTPError, URLError
 
 from PyQt5 import QtCore, QtWidgets
 
+from PyQt5.QtWidgets import QStyleFactory
+
 from utils.log import TextReceiver
 from windows.main_window import MainWindow
 from worker.hapi_thread import HapiThread
@@ -135,7 +137,7 @@ def run():
     _ = CrossSectionMeta(0)
 
     app = QtWidgets.QApplication(sys.argv)
-
+    app.setStyle(QStyleFactory.create("Fusion"))
     window = MainWindow()
     window.gui.adjustSize()
 
