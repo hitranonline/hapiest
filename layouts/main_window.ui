@@ -118,11 +118,6 @@
         </item>
         <item row="1" column="0">
          <widget class="QScrollArea" name="scrollArea">
-          <property name="styleSheet">
-           <string notr="true">QWidget#scrollArea {
-background-color: transparent;
-}</string>
-          </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -143,11 +138,6 @@ background-color: transparent;
            </property>
            <property name="autoFillBackground">
             <bool>false</bool>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QWidget#scrollAreaContents {
-	background-color: white;
-}</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <property name="leftMargin">
