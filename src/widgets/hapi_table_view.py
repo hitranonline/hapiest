@@ -10,6 +10,7 @@ from metadata.hapi_metadata import HapiMetaData
 from worker.work_request import *
 from worker.work_result import *
 
+from hapi import *
 
 class HapiLineEdit(QLineEdit):
 
