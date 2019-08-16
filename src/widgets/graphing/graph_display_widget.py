@@ -188,7 +188,42 @@ class GraphDisplayWidget(QMainWindow):
                 file.write(json.dumps(d, indent=4))
         except Exception as e:
             print("Encountered error {} while saving to file".format(str(e)))
-
+    
+    def __on_save_as_fixed_column_triggered(self, _checked: bool):
+        if len(self.plots) == 0:
+            return
+        import re
+        filename = self.get_file_save_name(".data", "Fixed-width Column Data File")
+        header_filename = re.sub("\\.data$", ".header", filename)
+        try:
+            point_vectors = []
+            order = list(self.plots.keys())
+            lens = list(map(lambda plot_name: len(self.plots[plot_name][0]), order))
+            max_len = max(lens)
+            with open(filename, "w") as file:
+                for point_index in range(0, max_len):
+                    for i, name in enumerate(order):
+                        if point_index >= lens[i]:
+                            file.write('{:10s}{:10s}'.format('', ''))
+                        else:
+                            file.write('{:10E}{:10E}'.format(self.plots[name][0][point_index],
+                                                         self.plots[name][1][point_index]))
+                    file.write('\n')
+            with open(header_filename, "w") as file:
+                d = {}
+                d['order'] = []
+                fmts = {}
+                for p in order:
+                    xn = "x_{}".format(p)
+                    yn = "y_{}".format(p)
+                    d['order'].append(xn)
+                    d['order'].append(yn)
+                    fmts[xn] = "%10.E"
+                    fmts[yn] = "%10.E"
+                d['formats'] = fmts
+                file.write(json.dumps(d))
+        except Exception as e:
+            print(str(e))
     def __on_save_as_csv_triggered(self, _checked: bool):
         if len(self.plots) == 0:
             return
