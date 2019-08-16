@@ -78,6 +78,24 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>874</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSave_Coordinates">
+    <property name="title">
+     <string>Save Coordinates</string>
+    </property>
+    <addaction name="as_json"/>
+    <addaction name="as_csv"/>
+   </widget>
+   <addaction name="menuSave_Coordinates"/>
+  </widget>
   <action name="view_fit">
    <property name="text">
     <string>Reset</string>
@@ -176,6 +194,16 @@
   <action name="y_linear">
    <property name="text">
     <string>Linear</string>
+   </property>
+  </action>
+  <action name="as_json">
+   <property name="text">
+    <string>As JSON</string>
+   </property>
+  </action>
+  <action name="as_csv">
+   <property name="text">
+    <string>As CSV</string>
    </property>
   </action>
  </widget>

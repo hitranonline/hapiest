@@ -1,9 +1,10 @@
+import json
 from typing import *
 
 from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QOpenGLWidget, QLabel, QMainWindow
+from PyQt5.QtWidgets import QOpenGLWidget, QLabel, QMainWindow, QFileDialog, QAction
 
 from utils.colors import Colors
 from utils.hapiest_util import *
@@ -59,6 +60,7 @@ class GraphDisplayWidget(QMainWindow):
         """
         QMainWindow.__init__(self)
         self.n_plots = 0
+        self.plots = {}
 
         self.graph_ty = graph_ty
         self.graph_display_id = GraphDisplayWidget.graph_display_id()
@@ -78,8 +80,13 @@ class GraphDisplayWidget(QMainWindow):
         self.setWindowTitle(f"{work_object['title']} - {str(self.graph_display_id)}")
 
         self.setWindowIcon(program_icon())
+        self.as_json: QAction = None
+
 
         uic.loadUi('layouts/graph_display_window.ui', self)
+
+        self.as_json.triggered.connect(self.__on_save_as_json_triggered)
+        self.as_csv.triggered.connect(self.__on_save_as_csv_triggered)
 
         if backend == "matplotlib":
             self.backend = MplWidget(self)
@@ -138,6 +145,11 @@ class GraphDisplayWidget(QMainWindow):
         try:
             result = work_result.result
             (x, y) = result['x'], result['y']
+            sanitized_name = str(result['name']) \
+                .replace(',', '') \
+                .replace('\'', '') \
+                .replace('"', '')
+            self.plots[sanitized_name] = (x, y)
             if len(x) > len(y):
                 x = x[:len(y)]
             elif len(x) < len(y):
@@ -147,3 +159,67 @@ class GraphDisplayWidget(QMainWindow):
                                    f"{result['name']} - {self.n_plots}", result['args'])
         except Exception as e:
             err_log(e)
+
+    def get_file_save_name(self, extension, filter) -> Union[str, None]:
+        filename = QFileDialog.getSaveFileName(self, "Save as", "./data" + extension, filter)
+        if filename[0] == "":
+            return None
+        else:
+            return str(filename[0])
+
+    def __on_save_as_json_triggered(self, _checked: bool):
+        if len(self.plots) == 0:
+            return
+
+        filename = self.get_file_save_name(".json", "Javascript Object Notation (*.json)")
+        if filename is None:
+            return
+
+        def to_x_y_arrays(series):
+            (x, y) = series
+            return {'x': x, 'y': y}
+
+        d = {}
+        for name, coords in self.plots.items():
+            x, y = coords
+            d[name] = {'x': list(x), 'y': list(y)}
+        try:
+            with open(filename, 'w') as file:
+                file.write(json.dumps(d, indent=4))
+        except Exception as e:
+            print("Encountered error {} while saving to file".format(str(e)))
+
+    def __on_save_as_csv_triggered(self, _checked: bool):
+        if len(self.plots) == 0:
+            return
+
+        filename = self.get_file_save_name(".csv", "Comma separated value files (*.csv)")
+
+        if filename is None:
+            return
+
+        try:
+            point_vectors = []
+            order = list(self.plots.keys())
+            lens = list(map(lambda plot_name: len(self.plots[plot_name][0]), order))
+            max_len = max(lens)
+            with open(filename, "w") as file:
+                s = ''
+                for name in order:
+                    s += ' x_{:23s}, y_{:23s},'.format(name, name)
+                file.write('{}\n'.format(s))
+
+                for point_index in range(0, max_len):
+                    s = ''
+                    for i, name in enumerate(order):
+                        if point_index >= lens[i]:
+                            s = '{} {:14s}, {:14s},'.format(s, '', '')
+                        else:
+                            s = '{} {:14s}, {:14s},'.format(s,
+                                                            str(self.plots[name][0][point_index]),
+                                                            str(self.plots[name][1][point_index]))
+
+                    file.write('{}\n'.format(s))
+
+        except Exception as e:
+            print("Encountered error {} while saving to file".format(str(e)))

@@ -436,6 +436,7 @@ class GraphingWidget(QtWidgets.QWidget):
         self.temperature.setEnabled(enabled)
         self.pressure.setEnabled(enabled)
         self.line_profile.setEnabled(enabled)
+        self.broadener_input.setEnabled(enabled)
 
     ##
     # Getters
