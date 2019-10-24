@@ -64,7 +64,8 @@ class CrossSectionMeta:
 
     @staticmethod
     def all_names_sorted_by_hitran_id() -> List[str]:
-        molecules = list(map(lambda m: MoleculeMeta(m), CrossSectionMeta.__XSC_NAMES))
+        molecules = list(filter(lambda m: m.populated, map(lambda m: MoleculeMeta(m), CrossSectionMeta.__XSC_NAMES)))
+        
         return list(map(lambda m: m.name, sorted(molecules, key=lambda m: m.id)))
 
 
